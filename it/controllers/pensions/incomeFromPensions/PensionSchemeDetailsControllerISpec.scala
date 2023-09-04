@@ -73,13 +73,10 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     val providerNameLabel: String
     val referenceLabel: String
     val pIdLabel: String
-    val providerNameEmptyErrorText: String
     val refEmptyErrorText: String
-    val pIdEmptyErrorText: String
     val providerNameInvalidFormatErrorText: String
     val refInvalidFormatErrorText: String
     val pIdInvalidFormatErrorText: String
-    val providerNameOverCharLimitErrorText: String
     val pIdOverCharLimitText: String
   }
 
@@ -87,6 +84,9 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     val expectedYouCanFindThisParagraph: String
     val expectedIfYouGetParagraph: String
     val pIdHintText: String
+    val providerNameEmptyErrorText: String
+    val providerNameOverCharLimitErrorText: String
+    val pIdEmptyErrorText: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -98,15 +98,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     val referenceLabel = "Pension scheme PAYE reference number"
     val pIdLabel = "Pension Identification (PID)"
     val refHintText = "For example 123/AB456"
-    val providerNameEmptyErrorText = "Enter the pension provider name"
     val refEmptyErrorText = "Enter the pension scheme PAYE reference number"
-    val pIdEmptyErrorText = "Enter the pension identification (PID)"
     val providerNameInvalidFormatErrorText: String = "The pension provider name must only include numbers 0 to 9, " +
       "letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters &\\:"
     val refInvalidFormatErrorText = "Enter the pension scheme PAYE reference number in the correct format"
     val pIdInvalidFormatErrorText: String = "The pension identification (PID) must only include numbers " +
       "0 to 9, letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters /=!\"%&*;<>+:\\?"
-    val providerNameOverCharLimitErrorText = "The pension provider name must be 74 characters or fewer"
     val pIdOverCharLimitText = "The pension identification (PID) must be 38 characters or fewer"
   }
 
@@ -119,15 +116,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
     val referenceLabel = "Cyfeirnod TWE y cynllun pensiwn"
     val pIdLabel = "Rhif dynodydd pensiwn (PID)"
     val refHintText = "Er enghraifft, 123/AB456"
-    val providerNameEmptyErrorText = "Nodwch enw’r darparwr pensiwn"
     val refEmptyErrorText = "Nodwch gyfeirnod TWE y cynllun pensiwn"
-    val pIdEmptyErrorText = "Nodwch rif dynodydd y pensiwn (PID)"
     val providerNameInvalidFormatErrorText: String = "Mae’n rhaid i enw’r darparwr pensiwn gynnwys y rhifau 0 i 9, " +
       "llythrennau a-z, cysylltnodau, bylchau, collnodau, comas, atalnodau llawn, cromfachau crwn a’r cymeriadau arbennig &\\: yn unig"
     val refInvalidFormatErrorText = "Nodwch gyfeirnod TWE y cynllun pensiwn yn y fformat cywir"
     val pIdInvalidFormatErrorText: String = "Mae’n rhaid i rif dynodydd y pensiwn gynnwys y rhifau " +
       "0 i 9, llythrennau a-z, cysylltnodau, bylchau, collnodau, comas, atalnodau llawn, cromfachau crwn a’r cymeriadau arbennig /=!\"%&*;<>+:\\? yn unig"
-    val providerNameOverCharLimitErrorText = "Mae’n rhaid i enw’r darparwr pensiwn fod yn 74 o gymeriadau neu lai"
     val pIdOverCharLimitText = "Mae’n rhaid i rif dynodydd y pensiwn (PID) fod yn 38 o gymeriadau neu lai"
   }
 
@@ -136,6 +130,9 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
       "If you do not have a pension statement, you can ask your pension provider."
     val expectedIfYouGetParagraph = "If you get pension income from more than one UK pension scheme, you can add them later."
     val pIdHintText = "Check your pension statement or P60"
+    val providerNameEmptyErrorText = "Enter the name of your pension scheme provider"
+    val providerNameOverCharLimitErrorText = "The pension scheme name must be 74 characters or fewer"
+    val pIdEmptyErrorText = "Enter your pension identification (PID)"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
@@ -143,6 +140,9 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
       "Os nad oes gennych ddatganiad pensiwn, gallwch ofyn i’ch darparwr pensiwn."
     val expectedIfYouGetParagraph = "Os cawsoch incwm o bensiwn o fwy nag un cynllun pensiwn y DU, gallwch eu hychwanegu nes ymlaen."
     val pIdHintText = "Gwirio’ch datganiad pensiwn neu P60"
+    val providerNameEmptyErrorText = "Enter the name of your pension scheme provider"
+    val providerNameOverCharLimitErrorText = "The pension scheme name must be 74 characters or fewer"
+    val pIdEmptyErrorText = "Enter your pension identification (PID)"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
@@ -150,6 +150,9 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
       "If they do not have a pension statement, they can ask their pension provider."
     val expectedIfYouGetParagraph = "If your client gets pension income from more than one UK pension scheme, you can add them later."
     val pIdHintText = "Check your client’s pension statement or P60"
+    val providerNameEmptyErrorText = "Enter the name of your client’s pension scheme provider"
+    val providerNameOverCharLimitErrorText = "The name of your client’s pension scheme must be 74 characters or fewer"
+    val pIdEmptyErrorText = "Enter your client’s pension identification (PID)"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -157,6 +160,9 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
       "Os nad oes ganddo ddatganiad pensiwn, gall ofyn i’w ddarparwr pensiwn."
     val expectedIfYouGetParagraph = "Os cafodd eich cleient incwm o bensiwn o fwy nag un cynllun pensiwn y DU, gallwch eu hychwanegu nes ymlaen."
     val pIdHintText = "Gwirio datganiad pensiwn neu P60 eich cleient"
+    val providerNameEmptyErrorText = "Enter the name of your client’s pension scheme provider"
+    val providerNameOverCharLimitErrorText = "The name of your client’s pension scheme must be 74 characters or fewer"
+    val pIdEmptyErrorText = "Enter your client’s pension identification (PID)"
   }
 
 
@@ -336,12 +342,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           inputFieldValueCheck(refInputName, refInputSelector, "")
           inputFieldValueCheck(pIdInputName, pIdInputSelector, "")
           multipleSummaryErrorCheck(List(
-            (providerNameEmptyErrorText, providerNameErrorHref),
+            (user.specificExpectedResults.get.providerNameEmptyErrorText, providerNameErrorHref),
             (refEmptyErrorText, refErrorHref),
-            (pIdEmptyErrorText, pIdErrorHref)))
-          errorAboveElementCheck(providerNameEmptyErrorText, Some(providerNameInputName))
+            (user.specificExpectedResults.get.pIdEmptyErrorText, pIdErrorHref)))
+          errorAboveElementCheck(user.specificExpectedResults.get.providerNameEmptyErrorText, Some(providerNameInputName))
           errorAboveElementCheck(refEmptyErrorText, Some(refInputName))
-          errorAboveElementCheck(pIdEmptyErrorText, Some(pIdInputName))
+          errorAboveElementCheck(user.specificExpectedResults.get.pIdEmptyErrorText, Some(pIdInputName))
         }
 
         "return correct errors when form is submitted with invalid format for all fields" which {
@@ -400,9 +406,9 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           inputFieldValueCheck(refInputName, refInputSelector, validRef)
           inputFieldValueCheck(pIdInputName, pIdInputSelector, pidTooLong)
           multipleSummaryErrorCheck(List(
-            (providerNameOverCharLimitErrorText, providerNameErrorHref),
+            (user.specificExpectedResults.get.providerNameOverCharLimitErrorText, providerNameErrorHref),
             (pIdOverCharLimitText, pIdErrorHref)))
-          errorAboveElementCheck(providerNameOverCharLimitErrorText, Some(providerNameInputName))
+          errorAboveElementCheck(user.specificExpectedResults.get.providerNameOverCharLimitErrorText, Some(providerNameInputName))
           errorAboveElementCheck(pIdOverCharLimitText, Some(pIdInputName))
         }
       }

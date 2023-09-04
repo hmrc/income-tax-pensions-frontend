@@ -553,12 +553,12 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
         errorSummarySectionOpt = Some(
           ErrorSummarySection(
             title = "There is a problem",
-            body = "Select yes or no if you had Special Withholding Tax deducted from your pension.",
+            body = "Select yes if you had Special Withholding Tax deducted from your pension.",
             link = "#value")
         ),
         errorAboveElementCheckSectionOpt = Some(
           ErrorAboveElementCheckSection(
-            title = "Error: Select yes or no if you had Special Withholding Tax deducted from your pension.",
+            title = "Error: Select yes if you had Special Withholding Tax deducted from your pension.",
             idOpt = Some("value")
           )
         ),
@@ -568,10 +568,10 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
         title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
         header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
         errorSummarySectionOpt = Some(ErrorSummarySection(
-          title = "There is a problem", body = "Select yes or no if your client had Special Withholding Tax deducted from their pension.", link = "#value")
+          title = "There is a problem", body = "Select yes if your client had Special Withholding Tax deducted from their pension.", link = "#value")
         ),
         errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-          title = "Error: Select yes or no if your client had Special Withholding Tax deducted from their pension.", idOpt = Some("value"))
+          title = "Error: Select yes if your client had Special Withholding Tax deducted from their pension.", idOpt = Some("value"))
         )
       )
 
@@ -586,12 +586,12 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
         errorSummarySectionOpt = Some(
           ErrorSummarySection(
             title = "There is a problem",
-            body = "Select yes or no if you had Special Withholding Tax deducted from your pension.",
+            body = "Select yes if you had Special Withholding Tax deducted from your pension.",
             link = "#value")
         ),
         errorAboveElementCheckSectionOpt = Some(
           ErrorAboveElementCheckSection(
-            title = "Error: Select yes or no if you had Special Withholding Tax deducted from your pension.",
+            title = "Error: Select yes if you had Special Withholding Tax deducted from your pension.",
             idOpt = Some("value")
           )
         ),
@@ -601,10 +601,10 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
         title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
         header = "Did your client have Special Withholding Tax (SWT) deducted from their pension?",
         errorSummarySectionOpt = Some(ErrorSummarySection(
-          title = "There is a problem", body = "Select yes or no if your client had Special Withholding Tax deducted from their pension.", link = "#value")
+          title = "There is a problem", body = "Select yes if your client had Special Withholding Tax deducted from their pension.", link = "#value")
         ),
         errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-          title = "Error: Select yes or no if your client had Special Withholding Tax deducted from their pension.", idOpt = Some("value"))
+          title = "Error: Select yes if your client had Special Withholding Tax deducted from their pension.", idOpt = Some("value"))
         )
       )
 
@@ -744,10 +744,10 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
             radioButtonForYes = checkedExpectedRadioButton("Yes"),
             amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64", Some("For example, £193.54")),
             errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in the correct format", link = "#amount-2")
+              title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in pounds", link = "#amount-2")
             ),
             errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount of Special Withholding Tax deducted in the correct format", idOpt = Some("amount-2")))
+              title = "Error: Enter the amount of Special Withholding Tax deducted in pounds", idOpt = Some("amount-2")))
           )
           val expContentsAgentEN = expContentsIndividualEN.copy(
             title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
@@ -758,10 +758,10 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
             radioButtonForYes = checkedExpectedRadioButton("Yes"),
             amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "x2.64", Some("For example, £193.54")),
             errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in the correct format", link = "#amount-2")
+              title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in pounds", link = "#amount-2")
             ),
             errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount of Special Withholding Tax deducted in the correct format", idOpt = Some("amount-2")))
+              title = "Error: Enter the amount of Special Withholding Tax deducted in pounds", idOpt = Some("amount-2")))
           )
           val expContentsAgentCY = expContentsIndividualCY.copy(
             title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
@@ -811,10 +811,10 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
             radioButtonForYes = checkedExpectedRadioButton("Yes"),
             amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64", Some("For example, £193.54")),
             errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in the correct format", link = "#amount-2")
+              title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in pounds", link = "#amount-2")
             ),
             errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount of Special Withholding Tax deducted in the correct format", idOpt = Some("amount-2")))
+              title = "Error: Enter the amount of Special Withholding Tax deducted in pounds", idOpt = Some("amount-2")))
           )
           val expContentsAgentEN = expContentsIndividualEN.copy(
             title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",
@@ -825,10 +825,10 @@ class SpecialWithholdingTaxControllerISpec extends YesNoAmountControllerSpec("/o
             radioButtonForYes = checkedExpectedRadioButton("Yes"),
             amountSection = ExpectedAmountSection("Amount of SWT, in pounds", "-42.64", Some("For example, £193.54")),
             errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in the correct format", link = "#amount-2")
+              title = "There is a problem", body = "Enter the amount of Special Withholding Tax deducted in pounds", link = "#amount-2")
             ),
             errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount of Special Withholding Tax deducted in the correct format", idOpt = Some("amount-2")))
+              title = "Error: Enter the amount of Special Withholding Tax deducted in pounds", idOpt = Some("amount-2")))
           )
           val expContentsAgentCY = expContentsIndividualCY.copy(
             title = "Error: Did your client have Special Withholding Tax (SWT) deducted from their pension?",

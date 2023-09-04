@@ -16,6 +16,7 @@
 
 package views.pensions.paymentsIntoOverseasPensions
 
+import controllers.pensions.paymentsIntoOverseasPensions.routes.UntaxedEmployerPaymentsController
 import forms.{AmountForm, FormsProvider}
 import models.pension.pages.UntaxedEmployerPayments
 import models.requests.UserSessionDataRequest
@@ -27,15 +28,14 @@ import play.twirl.api.Html
 import support.ViewUnitTest
 import utils.FakeRequestProvider
 import views.html.pensions.paymentsIntoOverseasPensions.UntaxedEmployerPaymentsView
-import controllers.pensions.paymentsIntoOverseasPensions.routes.UntaxedEmployerPaymentsController
 
 
-class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvider{
+class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvider {
 
   val poundPrefixText = "£"
   val amountInputName = "amount"
 
-  object Selectors{
+  object Selectors {
 
     val captionSelector: String = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
@@ -80,7 +80,7 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
 
   trait CommonExpectedResults {
     val expectedTitle: String
-    lazy val expectedHeading = expectedTitle
+    lazy val expectedHeading: String = expectedTitle
     val expectedErrorTitle: String
     val expectedPara1: String
     val expectedSubHeading1: String
@@ -102,7 +102,7 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
     override val expectedQuestion: String = "How much did your employers pay into your overseas pension scheme?"
     override val expectedErrorNoEntry: String = "Enter the amount your employers paid into your overseas pension schemes"
     override val expectedErrorTooBig: String = "The amount your employers paid into overseas pension schemes must be less than £100,000,000,000"
-    override val expectedErrorInvalidFormat: String = "Enter the amount your employers paid into overseas pension schemes in the correct format"
+    override val expectedErrorInvalidFormat: String = "Enter the amount your employers paid into overseas pension schemes in pounds"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
@@ -114,7 +114,7 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
     override val expectedSub2Details3: String = "llai unrhyw daliadau a wnaethoch i mewn i’r cynllun"
     override val expectedQuestion: String = "Faint dalodd eich cyflogwyr i mewn i’ch cynllun pensiwn tramor?"
     override val expectedErrorNoEntry: String = "Nodwch y swm y dalodd eich cyflogwyr i mewn i’ch cynlluniau pensiwn tramor"
-    override val expectedErrorTooBig: String = "Mae’n rhaid i’r swm a dalodd eich cyflogwyr i mewn i gynlluniau pensiwn tramor fod yn llai na £100,000,000,000"
+    override val expectedErrorTooBig: String = "The amount your employers paid into overseas pension schemes must be less than £100,000,000,000"
     override val expectedErrorInvalidFormat: String = "Nodwch y swm a dalodd eich cyflogwyr i mewn i gynlluniau pensiwn tramor yn y fformat cywir"
 
   }
@@ -129,7 +129,7 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
     val expectedQuestion: String = "How much did your client’s employers pay into the overseas pension scheme?"
     val expectedErrorNoEntry: String = "Enter the amount that your client’s employer paid into their overseas pension scheme"
     val expectedErrorTooBig: String = "The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000"
-    val expectedErrorInvalidFormat: String = "Enter the total amount that your client’s employers paid into their overseas pension scheme in the correct format"
+    val expectedErrorInvalidFormat: String = "Enter the total amount that your client’s employers paid into their overseas pension scheme in pounds"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -141,7 +141,7 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
     val expectedSub2Details3: String = "llai unrhyw daliadau a wnaeth eich cleient i mewn i’r cynllun"
     val expectedQuestion: String = "Faint dalodd cyflogwyr eich cleient i mewn i’r cynlluniau pensiwn tramor?"
     val expectedErrorNoEntry: String = "Nodwch y swm y dalodd cyflogwr eich cleient i mewn i’w gynllun pensiwn tramor"
-    val expectedErrorTooBig: String = "Mae’n rhaid i’r swm a dalodd cyflogwyr eich cleient i mewn i gynllun pensiwn tramor eich cleient fod yn llai na £100,000,000,000"
+    val expectedErrorTooBig: String = "The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000"
     val expectedErrorInvalidFormat: String = "Nodwch y cyfanswm a dalodd cyflogwyr eich cleient i mewn i gynllun pensiwn tramor eich cleient yn y fformat cywir"
   }
 
@@ -292,5 +292,6 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
         errorAboveElementCheck(user.specificExpectedResults.get.expectedErrorTooBig, Some("amount"))
         errorSummaryCheck(user.specificExpectedResults.get.expectedErrorTooBig, "#amount")
       }
-    }}
+    }
+  }
 }

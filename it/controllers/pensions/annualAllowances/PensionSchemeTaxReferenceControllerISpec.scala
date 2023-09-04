@@ -45,7 +45,6 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
   trait SpecificExpectedResults {
     val expectedNoEntryError: String
-    val expectedIncorrectFormatError: String
   }
 
   trait CommonExpectedResults {
@@ -59,27 +58,24 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
     val expectedButtonText: String
     val yesText: String
     val noText: String
+    val expectedIncorrectFormatError: String
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedNoEntryError: String = "Enter your PSTR"
-    val expectedIncorrectFormatError: String = "Enter your PSTR in the correct format"
+    val expectedNoEntryError: String = "Enter your Pension Scheme Tax Reference"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedNoEntryError: String = "Nodwch eich PSTR"
-    val expectedIncorrectFormatError: String = "Nodwch eich PSTR yn y fformat cywir"
+    val expectedNoEntryError: String = "Nodwch Gyfeirnod Treth eich Cynllun Pensiwn"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedNoEntryError: String = "Enter your client’s PSTR"
-    val expectedIncorrectFormatError: String = "Enter your client’s PSTR in the correct format"
+    val expectedNoEntryError: String = "Enter your client’s Pension Scheme Tax Reference"
     val expectedParagraph1: String = "If more than one of your client’s pension schemes paid the tax, you can add these details later."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedNoEntryError: String = "Nodwch PSTR eich cleient"
-    val expectedIncorrectFormatError: String = "Nodwch PSTR eich cleient yn y fformat cywir"
+    val expectedNoEntryError: String = "Nodwch Gyfeirnod Treth Cynllun Pensiwn eich cleient"
     val expectedParagraph1: String =
       "Os gwnaeth mwy nag un o gynlluniau pensiwn eich cleient dalu’r dreth, gallwch ychwanegu’r manylion hyn yn nes ymlaen."
   }
@@ -94,6 +90,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
     val hintText = "For example, ‘12345678RA’"
     val expectedParagraph1: String = "If more than one pension scheme paid or agreed to pay the tax, you can add them later."
     val expectedParagraph2: String = "Pension Scheme Tax Reference"
+    val expectedIncorrectFormatError: String = "Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -106,6 +103,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
     val hintText = "Er enghraifft, ‘12345678RA’"
     val expectedParagraph1: String = "Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen."
     val expectedParagraph2: String = "Cyfeirnod Treth y Cynllun Pensiwn"
+    val expectedIncorrectFormatError: String = "Nodwch gyfeirnod sydd ag 8 rhif a 2 lythyren, megis ‘12345678AB’"
   }
 
   val inputName: String = "taxReferenceId"
@@ -349,8 +347,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           buttonCheck(expectedButtonText, continueButtonSelector)
           formPostLinkCheck(pensionSchemeTaxReferenceUrl(taxYearEOY), formSelector)
           welshToggleCheck(user.isWelsh)
-          errorSummaryCheck(user.specificExpectedResults.get.expectedIncorrectFormatError, inputSelector)
-          errorAboveElementCheck(user.specificExpectedResults.get.expectedIncorrectFormatError)
+          errorSummaryCheck(user.commonExpectedResults.expectedIncorrectFormatError, inputSelector)
+          errorAboveElementCheck(user.commonExpectedResults.expectedIncorrectFormatError)
         }
       }
     }

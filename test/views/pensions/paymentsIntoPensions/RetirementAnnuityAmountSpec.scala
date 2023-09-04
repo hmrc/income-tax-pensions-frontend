@@ -64,7 +64,7 @@ object RetirementAnnuityAmountSpec {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val hintText = "For example, £193.52"
     val emptyErrorText = "Enter the amount paid into retirement annuity contracts"
-    val invalidFormatErrorText = "Enter the amount paid into retirement annuity contracts in the correct format"
+    val invalidFormatErrorText = "Enter the amount paid into retirement annuity contracts in pounds"
     val maxAmountErrorText = "The amount paid into retirement annuity contracts must be less than £100,000,000,000"
     val buttonText = "Continue"
   }

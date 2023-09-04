@@ -67,7 +67,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
     val errorTitle: String = s"Error: $expectedTitle"
     val noCountryErrorText: String = "Enter the tax treaty country"
     val noReliefErrorText: String = "Enter the amount of double taxation relief"
-    val reliefWrongFormatErrorText: String = "Enter the amount of double taxation relief in the correct format"
+    val reliefWrongFormatErrorText: String = "Enter the amount of double taxation relief in pounds"
     val reliefTooBigErrorText: String = "The amount of double taxation relief must be less than £100,000,000,000"
   }
 

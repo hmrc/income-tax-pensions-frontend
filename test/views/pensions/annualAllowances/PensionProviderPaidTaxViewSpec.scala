@@ -43,6 +43,7 @@ class PensionProviderPaidTaxViewSpec extends ViewUnitTest {
     val noText: String
     val continue: String
     val errorAmountIdOpt: String
+    val errorZeroAmount: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -53,6 +54,7 @@ class PensionProviderPaidTaxViewSpec extends ViewUnitTest {
     val noText = "No"
     val continue = "Continue"
     val errorAmountIdOpt = "amount-2"
+    val errorZeroAmount = "Enter an amount greater than zero"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -63,14 +65,14 @@ class PensionProviderPaidTaxViewSpec extends ViewUnitTest {
     val noText = "Na"
     val continue = "Yn eich blaen"
     val errorAmountIdOpt = "amount-2"
+    val errorZeroAmount = "Nodwch swm sy’n fwy na sero"
   }
 
   trait SpecificExpectedResults {
     val expectedTitle: String
     val errorTitle: String
-    lazy val expectedH1 = expectedTitle
+    lazy val expectedH1: String = expectedTitle
     val expectedErrorSelectText: String
-    val amountTaxPaid: String
     val errorEmptyAmountText: String
     val errorAmountFormatText: String
     val errorAmountLessThan: String
@@ -79,45 +81,37 @@ class PensionProviderPaidTaxViewSpec extends ViewUnitTest {
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "Did your pension schemes pay or agree to pay the tax?"
     lazy val errorTitle = s"Error: $expectedTitle"
-    val expectedErrorSelectText = "Select yes if your pension provider paid or agreed to pay your annual allowance tax"
-    val amountTaxPaid = "amount of tax your pension provider paid or agreed to pay"
-    val errorEmptyAmountText = s"Enter the $amountTaxPaid"
-    val errorAmountFormatText = s"$errorEmptyAmountText in the correct format"
-    val errorAmountLessThan = s"The $amountTaxPaid must be less than £100,000,000,000"
+    val expectedErrorSelectText = "Select yes if your pension schemes paid or agreed to pay tax"
+    val errorEmptyAmountText = "Enter the amount of tax your pension schemes paid or agreed to pay"
+    val errorAmountFormatText = "Enter the amount of tax your pension schemes paid, or agreed to pay, in pounds and pence"
+    val errorAmountLessThan = "The amount of tax your pension schemes paid or agreed to pay must be less than £100,000,000,000"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "Did your client’s pension schemes pay or agree to pay the tax?"
     lazy val errorTitle = s"Error: $expectedTitle"
-    val expectedErrorSelectText = "Select yes if your client’s pension provider paid or agreed to pay the annual allowance tax"
-    val amountTaxPaid = "amount of tax your client’s pension provider paid or agreed to pay"
-    val errorEmptyAmountText = s"Enter the $amountTaxPaid"
-    val errorAmountFormatText = s"$errorEmptyAmountText in the correct format"
-    val errorAmountLessThan = s"The $amountTaxPaid must be less than £100,000,000,000"
+    val expectedErrorSelectText = "Select yes if your client’s pension provider paid or agreed to pay the tax"
+    val errorEmptyAmountText = "Enter the amount of tax your client’s pension provider paid or agreed to pay"
+    val errorAmountFormatText = "Enter the amount of tax your client’s pension provider paid, or agreed to pay, in pounds and pence"
+    val errorAmountLessThan = "The amount of tax your client’s pension provider paid or agreed to pay must be less than £100,000,000,000"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "A wnaeth eich cynlluniau pensiwn dalu’r dreth neu gytuno i dalu’r dreth?"
     lazy val errorTitle = s"Gwall: $expectedTitle"
-    val expectedErrorSelectText = "Dewiswch ‘Iawn’ os gwnaeth eich darparwr pensiwn dalu’ch treth lwfans blynyddol neu gytuno i wneud hynny"
-    val amountTaxPaid = "swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu"
-    val errorEmptyAmountText = s"Nodwch $amountTaxPaid"
-    val errorAmountFormatText = s"$errorEmptyAmountText, yn y fformat cywir"
-    val errorAmountLessThan = "Mae’n rhaid i swm y dreth a dalwyd gan eich darparwr pensiwn, " +
-      "neu’r swm a gytunodd i’w dalu, fod yn llai na £100,000,000,000"
-    val emptyErrorText = s"Gwall: $expectedTitle"
+    val expectedErrorSelectText = "Dewiswch ‘Iawn’ os gwnaeth eich darparwr pensiwn dalu treth neu gytuno i wneud hynny"
+    val errorEmptyAmountText = s"Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu"
+    val errorAmountFormatText = s"Nodwch swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu, yn y fformat cywir"
+    val errorAmountLessThan = "Mae’n rhaid i swm y dreth a dalwyd gan eich darparwr pensiwn, neu’r swm a gytunodd i’w dalu, fod yn llai na £100,000,000,000"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "A wnaeth cynlluniau pensiwn eich cleient dalu’r dreth neu gytuno i wneud hynny?"
     lazy val errorTitle = s"Gwall: $expectedTitle"
-    val expectedErrorSelectText = "Dewiswch ‘Iawn’ os gwnaeth darparwr pensiwn eich cleient dalu’r dreth lwfans blynyddol neu gytuno i wneud hynny"
-    val amountTaxPaid = "swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu"
-    val errorEmptyAmountText = s"Nodwch $amountTaxPaid"
-    val errorAmountFormatText = s"$errorEmptyAmountText, yn y fformat cywir"
-    val errorAmountLessThan = "Mae’n rhaid i swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, " +
-      "neu’r swm a gytunodd i’w dalu, fod yn llai na £100,000,000,000"
-    val emptyErrorText = s"Gwall: $expectedTitle"
+    val expectedErrorSelectText = "Dewiswch ‘Iawn’ os gwnaeth darparwr pensiwn eich cleient dalu treth neu gytuno i wneud hynny"
+    val errorEmptyAmountText = "Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu"
+    val errorAmountFormatText = "Nodwch swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu, yn y fformat cywir"
+    val errorAmountLessThan = "Mae’n rhaid i swm y dreth a dalwyd gan ddarparwr pensiwn eich cleient, neu’r swm a gytunodd i’w dalu, fod yn llai na £100,000,000,000"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -196,13 +190,16 @@ class PensionProviderPaidTaxViewSpec extends ViewUnitTest {
         welshToggleCheck(userScenario.isWelsh)
       }
 
-      for (errorType <- Seq("empty", "incorrect format", "max amount")) {
+      for (errorType <- Seq("empty", "incorrect format", "max amount", "zero amount")) {
         s"render the page with a radio choice Yes selected and $errorType amount is submitted" which {
           implicit val request: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
           implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
           val bindAmountData = errorType match {
-            case "empty" => "";  case "incorrect format" => "123.45678";  case "max amount" => "200000000000"
+            case "empty" => ""
+            case "incorrect format" => "123.45678"
+            case "max amount" => "200000000000"
+            case "zero amount" => "0"
           }
           val formData = pensionProviderPaidTaxForm(userScenario.isAgent)
             .bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> bindAmountData))
@@ -222,6 +219,9 @@ class PensionProviderPaidTaxViewSpec extends ViewUnitTest {
             case "max amount" =>
               errorSummaryCheck(userScenario.specificExpectedResults.get.errorAmountLessThan, Selectors.amountValueSelector)
               errorAboveElementCheck(userScenario.specificExpectedResults.get.errorAmountLessThan)
+            case "zero amount" =>
+              errorSummaryCheck(userScenario.commonExpectedResults.errorZeroAmount, Selectors.amountValueSelector)
+              errorAboveElementCheck(userScenario.commonExpectedResults.errorZeroAmount)
           }
         }
       }

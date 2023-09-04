@@ -61,7 +61,7 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
     def labelSelector(index: Int): String = s"#statePensionLumpSumStartDate > div:nth-child($index) > div > label"
   }
 
-  val dateInFutureErrorText = "The date you entered must be in the past"
+  val dateInFutureErrorText = "The pension lump sum start date must be in the past"
   val realDateErrorText = "The day, month and year must be valid"
   val tooLongAgoErrorText = "The date must be after 1 January 1900"
   val emptyAllErrorText = "Enter the pension lump sum start date"

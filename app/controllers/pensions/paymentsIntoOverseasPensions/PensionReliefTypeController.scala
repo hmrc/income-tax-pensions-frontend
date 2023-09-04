@@ -21,6 +21,7 @@ import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import controllers.predicates.actions.ActionsProvider
 import controllers.validatedIndex
 import forms.FormsProvider
+import models.User
 import models.pension.charges.{Relief, TaxReliefQuestion}
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
@@ -48,10 +49,10 @@ class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
     implicit sessionData =>
       indexCheckThenJourneyCheck(sessionData.pensionsUserData, reliefIndex, PensionReliefTypePage, taxYear) { relief: Relief =>
         relief.reliefType.fold {
-          Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex)))
+          Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm(sessionData.user), taxYear, reliefIndex)))
         } {
           reliefType =>
-            Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm.fill(reliefType), taxYear, reliefIndex)))
+            Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm(sessionData.user).fill(reliefType), taxYear, reliefIndex)))
         }
       }
   }
@@ -59,17 +60,16 @@ class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
   def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionData =>
       indexCheckThenJourneyCheck(sessionData.pensionsUserData, reliefIndex, PensionReliefTypePage, taxYear) { _: Relief =>
-        formsProvider.overseasPensionsReliefTypeForm.bindFromRequest().fold(
+        formsProvider.overseasPensionsReliefTypeForm(sessionData.user).bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
           newTaxReliefQuestion => updateViewModel(newTaxReliefQuestion, reliefIndex, taxYear)(request = sessionData)
         )
       }
   }
 
-  private def updateViewModel(
-                               taxReliefQuestion: String,
-                               indexOpt: Option[Int],
-                               taxYear: Int)(implicit request: UserSessionDataRequest[_]): Future[Result] = {
+  private def updateViewModel(taxReliefQuestion: String,
+                              indexOpt: Option[Int],
+                              taxYear: Int)(implicit request: UserSessionDataRequest[_]): Future[Result] = {
 
     val piopReliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
     validatedIndex(indexOpt, piopReliefs.size) match {
@@ -93,10 +93,10 @@ class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
             taxYear,
             request.pensionsUserData.isPriorSubmission
           )(errorHandler.internalServerError()) {
-            redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(request)
+            redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, request.user, indexOpt)(request)
           }
         } else {
-          Future.successful(redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, indexOpt)(request))
+          Future.successful(redirectBaseOnTaxReliefQuestion(taxReliefQuestion, taxYear, request.user, indexOpt)(request))
         }
       case _ =>
         Future.successful(Redirect(redirectForSchemeLoop(piopReliefs, taxYear)))
@@ -104,7 +104,7 @@ class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
   }
 
   private def redirectBaseOnTaxReliefQuestion(taxReliefQuestion: String,
-                                              taxYear: Int,
+                                              taxYear: Int, user: User,
                                               reliefIndex: Option[Int]
                                              )(implicit request: UserSessionDataRequest[_]): Result =
     taxReliefQuestion match {
@@ -117,6 +117,6 @@ class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
       case TaxReliefQuestion.NoTaxRelief =>
         Redirect(ReliefsSchemeDetailsController.show(taxYear, reliefIndex))
       case _ =>
-        BadRequest(view(formsProvider.overseasPensionsReliefTypeForm, taxYear, reliefIndex))
+        BadRequest(view(formsProvider.overseasPensionsReliefTypeForm(user), taxYear, reliefIndex))
     }
 }

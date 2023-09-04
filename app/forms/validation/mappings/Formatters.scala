@@ -23,7 +23,7 @@ import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters {
 
-  val maxAmount = "100000000000"
+  private val maxAmount = "100000000000"
 
   private[mappings] def stringFormatter(errorKey: String, optional: Boolean = false): Formatter[String] = new Formatter[String] {
 
@@ -77,26 +77,26 @@ trait Formatters {
     }
 
 
-  def checksWithMinAmount(x: BigDecimal,
-                          key: String,
-                          minAmountkey: String,
-                          maxAmountKey: String,
-                          args: Seq[String]): Either[Seq[FormError], Option[BigDecimal]] = x match {
-    case bigDecimal if bigDecimal == BigDecimal("0") => Left(Seq(FormError(key, minAmountkey, args)))
+  private def checksWithMinAmount(x: BigDecimal,
+                                  key: String,
+                                  minAmountKey: String,
+                                  maxAmountKey: String,
+                                  args: Seq[String]): Either[Seq[FormError], Option[BigDecimal]] = x match {
+    case bigDecimal if bigDecimal == BigDecimal("0") => Left(Seq(FormError(key, minAmountKey, args)))
     case bigDecimal if bigDecimal >= BigDecimal(maxAmount) => Left(Seq(FormError(key, maxAmountKey, args)))
     case bigDecimal => Right(Some(bigDecimal))
   }
 
-  def checksWithOutMinAmount(x: BigDecimal,
-                             key: String,
-                             maxAmountKey: String,
-                             args: Seq[String]): Either[Seq[FormError], Option[BigDecimal]] = x match {
+  private def checksWithOutMinAmount(x: BigDecimal,
+                                     key: String,
+                                     maxAmountKey: String,
+                                     args: Seq[String]): Either[Seq[FormError], Option[BigDecimal]] = x match {
     case bigDecimal if bigDecimal >= BigDecimal(maxAmount) => Left(Seq(FormError(key, maxAmountKey, args)))
     case bigDecimal => Right(Some(bigDecimal))
   }
 
-  def checkIfValidString(inputString: String, key: String, requiredKey: String, invalidNumericKey: String,
-                         args: Seq[String]): Either[Seq[FormError], BigDecimal] = {
+  private def checkIfValidString(inputString: String, key: String, requiredKey: String, invalidNumericKey: String,
+                                 args: Seq[String]): Either[Seq[FormError], BigDecimal] = {
 
     val is2dp = """\d+|\d*\.\d{1,2}"""
     val validNumeric = """[0-9.]*"""
@@ -129,10 +129,12 @@ trait Formatters {
           .map(_.replace("£", ""))
           .map(_.replaceAll("""\s""", ""))
           .flatMap(s => checkIfValidString(s, key, requiredKey, invalidNumericKey, args))
-          .flatMap( bd =>
+          .flatMap(bd =>
             if (minAmountkey != "") {
               checksWithMinAmount(bd, key, minAmountkey, maxAmountKey, args)
-            } else { checksWithOutMinAmount(bd, key, maxAmountKey, args) }
+            } else {
+              checksWithOutMinAmount(bd, key, maxAmountKey, args)
+            }
           )
       }
 

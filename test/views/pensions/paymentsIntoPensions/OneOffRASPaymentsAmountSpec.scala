@@ -77,7 +77,7 @@ object OneOffRASPaymentsAmountSpec {
     val expectedExampleCalculation = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625."
     val hintText = "For example, £193.52"
     val emptyErrorText = "Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief"
-    val invalidFormatErrorText = "Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in the correct format"
+    val invalidFormatErrorText = "Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in pounds"
     val maxAmountErrorText = "The total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000"
     val buttonText = "Continue"
   }

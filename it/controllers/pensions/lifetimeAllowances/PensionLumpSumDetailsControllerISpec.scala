@@ -123,9 +123,9 @@ class PensionLumpSumDetailsControllerISpec extends IntegrationTest with ViewHelp
     val buttonText = "Continue"
     val beforeTax: String = "Total amount before tax"
     val taxPaid: String = "Total tax paid"
-    val beforeTaxErrorIncorrectFormat: String = "Enter the amount of lump sum in the correct format"
-    val beforeTaxErrorOverMaximum: String = "The amount of lifetime allowance must be less than £100,000,000,000"
-    val taxPaidErrorIncorrectFormat: String = "Enter the amount of lifetime allowance tax in the correct format"
+    val beforeTaxErrorIncorrectFormat: String = "Enter the amount of lump sum in pounds and pence"
+    val beforeTaxErrorOverMaximum: String = "The amount taken above the lifetime allowance must be less than £100,000,000,000"
+    val taxPaidErrorIncorrectFormat: String = "Enter the amount of lifetime allowance tax in pounds"
     val taxPaidErrorOverMaximum: String = "The amount of lifetime allowance tax must be less than £100,000,000,000"
   }
 

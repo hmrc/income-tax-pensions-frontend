@@ -26,8 +26,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.UnauthorisedPaymentsPages.noSurchargeAmountUrl
-import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, taxOnAmountNotSurchargedUrl, unauthorisedPaymentsUrl}
+import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, noSurchargeAmountUrl, taxOnAmountNotSurchargedUrl, unauthorisedPaymentsUrl}
 
 
 class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEach {
@@ -47,7 +46,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val expectedTitle: String
-    lazy val expectedHeading = expectedTitle
+    lazy val expectedHeading: String = expectedTitle
     val expectedErrorTitle: String
     val noEntryErrorMessage: String
     val invalidFormatErrorText: String
@@ -57,7 +56,6 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
   }
 
   trait SpecificExpectedResults {
-    val expectedParagraph: String
   }
 
   object Selectors {
@@ -78,7 +76,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
     val expectedErrorTitle = s"Error: $expectedTitle"
     val hintText = "For example, £193.52"
     val noEntryErrorMessage = "Enter the total amount of unauthorised payment that did not result in a surcharge"
-    val invalidFormatErrorText = "Enter the total amount in the correct format"
+    val invalidFormatErrorText = "Enter the total amount in pounds"
     val maxAmountErrorText = "The total amount must be less than £100,000,000,000"
     val buttonText = "Continue"
   }

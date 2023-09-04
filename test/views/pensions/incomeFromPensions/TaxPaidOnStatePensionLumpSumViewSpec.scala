@@ -62,7 +62,6 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
     val expectedDetailsBullet1: String
     val expectedDetailsBullet2: String
     val emptyErrorText: String
-    val incorrectFormatErrorText: String
     val maxAmountErrorText: String
   }
 
@@ -74,6 +73,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
     val noText: String
     val amountHeading: String
     val amountHint: String
+    val incorrectFormatErrorText: String
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -84,7 +84,6 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
     val expectedDetailsBullet1 = "your P60"
     val expectedDetailsBullet2 = "the ’About general increases in benefits’ letter the Pension Service sent you"
     val emptyErrorText = "Enter the total amount of tax paid on the State Pension lump sum"
-    val incorrectFormatErrorText = "Enter the total amount of tax paid on the State Pension lump sum in the correct format"
     val maxAmountErrorText = "The amount of tax paid on the State Pension lump sum must be less than £100,000,000,000"
   }
 
@@ -96,7 +95,6 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
     val expectedDetailsBullet1 = "eich P60"
     val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
     val emptyErrorText = "Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth"
-    val incorrectFormatErrorText = "Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
     val maxAmountErrorText = "Mae’n rhaid i swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
   }
 
@@ -108,7 +106,6 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
     val expectedDetailsBullet1 = "your client’s P60"
     val expectedDetailsBullet2 = "the ’About general increases in benefits’ letter the Pension Service sent your client"
     val emptyErrorText = "Enter the amount of tax your client paid on the State Pension lump sum"
-    val incorrectFormatErrorText = "Enter the amount of tax your client paid on the State Pension lump sum in the correct format"
     val maxAmountErrorText = "The amount of tax your client paid on the State Pension lump sum must be less than £100,000,000,000"
   }
 
@@ -120,7 +117,6 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
     val expectedDetailsBullet1 = "P60 eich cleient"
     val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
     val emptyErrorText = "Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth"
-    val incorrectFormatErrorText = "Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
     val maxAmountErrorText = "Mae’n rhaid i swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
   }
 
@@ -132,6 +128,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
     val noText = "No"
     val amountHeading = "Amount of tax paid"
     val amountHint = "For example, £193.54"
+    val incorrectFormatErrorText = "Enter the total amount of tax paid on the State Pension lump sum in pounds"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
@@ -142,6 +139,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
     val noText = "Na"
     val amountHeading = "Swm y dreth a dalwyd"
     val amountHint = "Er enghraifft, £193.54"
+    val incorrectFormatErrorText = "Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -266,8 +264,8 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedErrorTitle, userScenario.isWelsh)
-        errorSummaryCheck(userScenario.specificExpectedResults.get.incorrectFormatErrorText, Selectors.expectedErrorHref)
-        errorAboveElementCheck(userScenario.specificExpectedResults.get.incorrectFormatErrorText)
+        errorSummaryCheck(userScenario.commonExpectedResults.incorrectFormatErrorText, Selectors.expectedErrorHref)
+        errorAboveElementCheck(userScenario.commonExpectedResults.incorrectFormatErrorText)
       }
 
       "render page with over-maximum error when no lump sum tax paid amount has wrong amount" which {

@@ -26,7 +26,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FormsProvider() {
-  
+
   def reducedAnnualAllowanceForm(user: User): Form[Boolean] = {
     val agentOrIndividual = userType(user.isAgent)
     YesNoForm.yesNoForm(missingInputError = s"annualAllowance.reducedAnnualAllowance.error.noEntry.$agentOrIndividual")
@@ -70,13 +70,14 @@ class FormsProvider() {
     )
   }
 
-  lazy val pensionAmountForm: Form[(Option[BigDecimal], Option[BigDecimal])] = {
+  def pensionAmountForm(user: User): Form[(Option[BigDecimal], Option[BigDecimal])] = {
+    val agentIndividual = if (user.isAgent) "agent" else "individual"
     OptionalTupleAmountForm.amountForm(OptionalTupleAmountFormErrorMessage(
-      emptyFieldKey1 = "pensions.pensionAmount.totalTax.error.noEntry",
+      emptyFieldKey1 = s"pensions.pensionAmount.totalTax.error.noEntry.$agentIndividual",
       wrongFormatKey1 = s"pensions.pensionAmount.totalTax.error.incorrectFormat",
       exceedsMaxAmountKey1 = s"pensions.pensionAmount.totalTax.error.overMaximum",
-      emptyFieldKey2 = s"pensions.pensionAmount.taxPaid.error.noEntry",
-      wrongFormatKey2 = s"pensions.pensionAmount.taxPaid.error.incorrectFormat",
+      emptyFieldKey2 = s"pensions.pensionAmount.taxPaid.error.noEntry.$agentIndividual",
+      wrongFormatKey2 = s"pensions.pensionAmount.taxPaid.error.incorrectFormat.$agentIndividual",
       exceedsMaxAmountKey2 = s"pensions.pensionAmount.taxPaid.error.overMaximum"
     ))
   }
@@ -107,8 +108,8 @@ class FormsProvider() {
     val agentOrIndividual = userType(user.isAgent)
     RadioButtonAmountForm.radioButtonAndAmountForm(
       missingInputError = s"pensions.statePension.error.noEntry.$agentOrIndividual",
-      emptyFieldKey = s"pensions.statePension.amount.error.noEntry.$agentOrIndividual",
-      wrongFormatKey = s"pensions.statePension.amount.error.incorrectFormat.$agentOrIndividual",
+      emptyFieldKey = "pensions.statePension.amount.error.incorrectOrEmpty",
+      wrongFormatKey = "pensions.statePension.amount.error.incorrectOrEmpty",
       exceedsMaxAmountKey = s"pensions.statePension.amount.error.overMaximum.$agentOrIndividual"
     )
   }
@@ -118,10 +119,10 @@ class FormsProvider() {
     OptionalTupleAmountForm.amountForm(OptionalTupleAmountFormErrorMessage(
       emptyFieldKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.$agentOrIndividual",
       wrongFormatKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.$agentOrIndividual",
-      exceedsMaxAmountKey1 = s"common.beforeTax.error.overMaximum",
+      exceedsMaxAmountKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.overMax.$agentOrIndividual",
       emptyFieldKey2 = s"lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.$agentOrIndividual",
-      wrongFormatKey2 = s"common.taxPaid.error.incorrectFormat",
-      exceedsMaxAmountKey2 = s"common.taxPaid.error.overMaximum"
+      wrongFormatKey2 = "common.taxPaid.error.incorrectFormat",
+      exceedsMaxAmountKey2 = "common.taxPaid.error.overMaximum"
     ))
   }
 
@@ -130,7 +131,7 @@ class FormsProvider() {
     AmountForm.amountForm(
       emptyFieldKey = s"overseasPension.untaxedEmployerPayments.error.noEntry.$agentOrIndividual",
       wrongFormatKey = s"overseasPension.untaxedEmployerPayments.error.incorrectFormat.$agentOrIndividual",
-      exceedsMaxAmountKey = s"overseasPension.untaxedEmployerPayments.error.tooBig.$agentOrIndividual"
+      exceedsMaxAmountKey = s"common.overseas.pension.schemes.error.tooBig.$agentOrIndividual"
     )
   }
 
@@ -139,8 +140,11 @@ class FormsProvider() {
     incorrectFormatMsg = "pensions.paymentsIntoOverseasPensions.sf74Reference.incorrectFormat"
   )
 
-  def overseasPensionsReliefTypeForm: Form[String] = {
-    RadioButtonForm.radioButtonForm("overseasPension.pensionReliefType.error.noEntry", TaxReliefQuestion.validTaxList)
+  def overseasPensionsReliefTypeForm(user: User): Form[String] = {
+    val agentOrIndividual = userType(user.isAgent)
+    RadioButtonForm.radioButtonForm(
+      s"overseasPension.pensionReliefType.error.noEntry.$agentOrIndividual",
+      TaxReliefQuestion.validTaxList)
   }
 
   def taxPaidOnStatePensionLumpSum(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
@@ -148,7 +152,7 @@ class FormsProvider() {
     RadioButtonAmountForm.radioButtonAndAmountForm(
       missingInputError = s"pensions.taxPaidOnStatePensionLumpSum.error.noEntry.$agentOrIndividual",
       emptyFieldKey = s"pensions.taxPaidOnStatePensionLumpSum.amount.error.noEntry.$agentOrIndividual",
-      wrongFormatKey = s"pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat.$agentOrIndividual",
+      wrongFormatKey = "pensions.taxPaidOnStatePensionLumpSum.amount.error.incorrectFormat",
       exceedsMaxAmountKey = s"pensions.taxPaidOnStatePensionLumpSum.amount.error.overMaximum.$agentOrIndividual"
     )
   }
@@ -219,7 +223,8 @@ object FormsProvider {
       missingInputError = s"pensions.pensionsProviderPaidTax.error.noEntry.$agentOrIndividual",
       emptyFieldKey = s"pensions.pensionsProviderPaidTax.error.noAmount.$agentOrIndividual",
       wrongFormatKey = s"pensions.pensionsProviderPaidTax.error.incorrectFormat.$agentOrIndividual",
-      exceedsMaxAmountKey = s"common.pensions.error.amountMaxLimit.$agentOrIndividual"
+      exceedsMaxAmountKey = s"common.pensions.error.amountMaxLimit.$agentOrIndividual",
+      minAmountKey = "common.error.amountNotZero"
     )
   }
 }

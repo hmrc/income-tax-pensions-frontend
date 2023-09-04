@@ -73,11 +73,8 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
     val buttonText: String
     val totalTax: String
     val taxPaid: String
-    val totalTaxErrorNoEntry: String
     val totalTaxErrorIncorrectFormat: String
     val totalTaxErrorOverMaximum: String
-    val taxPaidErrorNoEntry: String
-    val taxPaidErrorIncorrectFormat: String
     val taxPaidErrorOverMaximum: String
   }
 
@@ -85,6 +82,9 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
     val expectedTitle: String
     val expectedHeading: String
     val expectedErrorTitle: String
+    val totalTaxErrorNoEntry: String
+    val taxPaidErrorNoEntry: String
+    val taxPaidErrorIncorrectFormat: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
@@ -93,11 +93,8 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
     val buttonText = "Continue"
     val totalTax: String = "Total amount this tax year"
     val taxPaid: String = "Tax paid"
-    val totalTaxErrorNoEntry: String = "Enter the amount of pension paid"
-    val totalTaxErrorIncorrectFormat: String = "Enter the amount of pension paid in the correct format"
+    val totalTaxErrorIncorrectFormat: String = "Enter the amount of pension paid in pounds"
     val totalTaxErrorOverMaximum: String = "The amount of pension paid must be less than £100,000,000,000"
-    val taxPaidErrorNoEntry: String = "Enter the amount of tax paid"
-    val taxPaidErrorIncorrectFormat: String = "Enter the amount of tax paid in the correct format"
     val taxPaidErrorOverMaximum: String = "The amount of tax paid must be less than £100,000,000,000"
   }
 
@@ -107,11 +104,8 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
     val buttonText = "Yn eich blaen"
     val totalTax: String = "Cyfanswm ar gyfer y flwyddyn dreth hon"
     val taxPaid: String = "Treth a dalwyd"
-    val totalTaxErrorNoEntry: String = "Nodwch swm y pensiwn a dalwyd"
-    val totalTaxErrorIncorrectFormat: String = "Nodwch swm y pensiwn a dalwyd, yn y fformat cywir"
+    val totalTaxErrorIncorrectFormat: String = "Enter the amount of pension paid in pounds"
     val totalTaxErrorOverMaximum: String = "Mae’n rhaid i swm y pensiwn a dalwyd fod yn llai na £100,000,000,000"
-    val taxPaidErrorNoEntry: String = "Nodwch swm y dreth a dalwyd"
-    val taxPaidErrorIncorrectFormat: String = "Nodwch swm y dreth a dalwyd yn y fformat cywir"
     val taxPaidErrorOverMaximum: String = "Mae’n rhaid i swm y dreth a dalwyd fod yn llai na £100,000,000,000"
   }
 
@@ -119,24 +113,36 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
     val expectedTitle = "How much pension did you get paid?"
     val expectedHeading = "How much pension did you get paid?"
     val expectedErrorTitle = s"Error: $expectedTitle"
+    val totalTaxErrorNoEntry: String = "Enter the total amount of your pension income"
+    val taxPaidErrorNoEntry: String = "Enter the amount of tax you paid"
+    val taxPaidErrorIncorrectFormat: String = "Enter the total amount of tax paid in pounds"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "Faint o bensiwn a gawsoch chi?"
     val expectedHeading = "Faint o bensiwn a gawsoch chi?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val totalTaxErrorNoEntry: String = "Enter the total amount of your pension income"
+    val taxPaidErrorNoEntry: String = "Enter the amount of tax you paid"
+    val taxPaidErrorIncorrectFormat: String = "Enter the total amount of tax paid in pounds"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "How much pension did your client get paid?"
     val expectedHeading = "How much pension did your client get paid?"
     val expectedErrorTitle = s"Error: $expectedTitle"
+    val totalTaxErrorNoEntry: String = "Enter the total amount of your client’s pension income"
+    val taxPaidErrorNoEntry: String = "Enter the amount of tax paid by your client"
+    val taxPaidErrorIncorrectFormat: String = "Enter the total amount of tax paid by your client in pounds"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Faint o bensiwn a gafodd eich cleient?"
     val expectedHeading = "Faint o bensiwn a gafodd eich cleient?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val totalTaxErrorNoEntry: String = "Enter the total amount of your client’s pension income"
+    val taxPaidErrorNoEntry: String = "Enter the amount of tax paid by your client"
+    val taxPaidErrorIncorrectFormat: String = "Enter the total amount of tax paid by your client in pounds"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -337,10 +343,10 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           buttonCheck(buttonText, continueButtonSelector)
           formPostLinkCheck(pensionAmountUrl(taxYearEOY, Some(index)), formSelector)
           multipleSummaryErrorCheck(List(
-            (totalTaxErrorNoEntry, expectedAmount1ErrorHref),
-            (taxPaidErrorNoEntry, expectedAmount2ErrorHref)))
-          errorAboveElementCheck(totalTaxErrorNoEntry, Some(amount1InputName))
-          errorAboveElementCheck(taxPaidErrorNoEntry, Some(amount2InputName))
+            (user.specificExpectedResults.get.totalTaxErrorNoEntry, expectedAmount1ErrorHref),
+            (user.specificExpectedResults.get.taxPaidErrorNoEntry, expectedAmount2ErrorHref)))
+          errorAboveElementCheck(user.specificExpectedResults.get.totalTaxErrorNoEntry, Some(amount1InputName))
+          errorAboveElementCheck(user.specificExpectedResults.get.taxPaidErrorNoEntry, Some(amount2InputName))
           welshToggleCheck(user.isWelsh)
         }
 
@@ -376,9 +382,9 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           formPostLinkCheck(pensionAmountUrl(taxYearEOY, Some(index)), formSelector)
           multipleSummaryErrorCheck(List(
             (totalTaxErrorIncorrectFormat, expectedAmount1ErrorHref),
-            (taxPaidErrorIncorrectFormat, expectedAmount2ErrorHref)))
+            (user.specificExpectedResults.get.taxPaidErrorIncorrectFormat, expectedAmount2ErrorHref)))
           errorAboveElementCheck(totalTaxErrorIncorrectFormat, Some(amount1InputName))
-          errorAboveElementCheck(taxPaidErrorIncorrectFormat, Some(amount2InputName))
+          errorAboveElementCheck(user.specificExpectedResults.get.taxPaidErrorIncorrectFormat, Some(amount2InputName))
           welshToggleCheck(user.isWelsh)
         }
 

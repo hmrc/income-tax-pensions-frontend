@@ -57,7 +57,7 @@ class StatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequestProvider 
 
   trait SpecificExpectedResults {
     val expectedTitle: String
-    lazy val expectedHeading = expectedTitle
+    lazy val expectedHeading: String = expectedTitle
     val expectedErrorTitle: String
     val expectedError: String
     val emptyErrorText: String
@@ -83,7 +83,7 @@ class StatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequestProvider 
     val expectedError = "Select yes if you got a State Pension lump sum"
     val expectedP1 = "You might have received a one-off lump sum payment if you delayed claiming your State Pension for 12 months in a row."
     val emptyErrorText = "Enter the amount of your State Pension lump sum"
-    val incorrectFormatErrorText = "Enter your State Pension lump sum amount in the correct format"
+    val incorrectFormatErrorText = "Enter your State Pension lump sum amount in pounds"
     val maxAmountErrorText = "Your State Pension lump sum amount must be less than £100,000,000,000"
     val expectedBullet1 = "your P60"
     val expectedBullet2 = "the ‘About general increases in benefits‘ letter, the Pension Service sent you"
@@ -107,7 +107,7 @@ class StatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequestProvider 
     val expectedError = "Select yes if your client got a State Pension lump sum"
     val expectedP1 = "Your client might have received a one-off lump sum payment if they delayed claiming their State Pension for 12 months in a row."
     val emptyErrorText = "Enter the amount of your client’s State Pension lump sum"
-    val incorrectFormatErrorText = "Enter your client’s State Pension lump sum amount in the correct format"
+    val incorrectFormatErrorText = "Enter your client’s State Pension lump sum amount in pounds"
     val maxAmountErrorText = "Your client’s State Pension lump sum amount must be less than £100,000,000,000"
     val expectedBullet1 = "your client’s P60"
     val expectedBullet2 = "the ‘About general increases in benefits‘ letter, the Pension Service sent your client"

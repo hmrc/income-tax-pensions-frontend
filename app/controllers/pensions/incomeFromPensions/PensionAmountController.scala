@@ -61,7 +61,7 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
             val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
             validateIndex(pensionSchemeIndex, pensionIncomesList) match {
               case Some(index) =>
-                Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm.fill((
+                Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm(request.user).fill((
                   pensionIncomesList(index).amount,
                   pensionIncomesList(index).taxPaid)),
                   taxYear, index)))
@@ -81,7 +81,7 @@ class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComp
             val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
             validateIndex(pensionSchemeIndex, pensionIncomesList) match {
               case Some(index) =>
-                formsProvider.pensionAmountForm.bindFromRequest().fold(
+                formsProvider.pensionAmountForm(request.user).bindFromRequest().fold(
                   formWithErrors => Future.successful(BadRequest(pensionAmountView(formWithErrors, taxYear, index))),
                   amounts => {
                     val pensionsCYAModel: PensionsCYAModel = data.pensions

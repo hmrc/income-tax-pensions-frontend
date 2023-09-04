@@ -64,7 +64,6 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
     val expectedButtonText: String
     val expectedTitle: String
     lazy val expectedHeading: String = expectedTitle
-    val expectedError: String
     val expectedErrorTitle: String
     val expectedSubHeading: String
     val checkboxHint: String
@@ -73,15 +72,17 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
     val expectedYesSurchargeCheckboxText: String
     val expectedYesNotSurchargeCheckboxText: String
     val expectedNoSurchargeCheckboxText: String
-    val noEntryErrorMessage: String
     val expectedDetailsExternalLinkText: String
+  }
+
+  trait SpecificExpectedResults {
+    val noEntryErrorMessage: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText = "Continue"
     val expectedTitle = "Unauthorised payments"
-    val expectedError = "Select yes if you got an unauthorised payment from a pension scheme"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedSubHeading = "Did you get an unauthorised payment from a pension scheme?"
     val expectedParagraphText = "Unauthorised payments are made outside the tax rules"
@@ -91,7 +92,6 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
     val expectedYesSurchargeCheckboxText = "Yes, unauthorised payments that resulted in a surcharge"
     val expectedYesNotSurchargeCheckboxText = "Yes, unauthorised payments that did not result in a surcharge"
     val expectedNoSurchargeCheckboxText = "No"
-    val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
     val checkboxHint = "Select all that apply."
     val expectedDetailsExternalLinkText = "Find out more about unauthorised payments (opens in new tab)"
   }
@@ -100,7 +100,6 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText = "Yn eich blaen"
     val expectedTitle = "Taliadau heb awdurdod"
-    val expectedError = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedSubHeading = "A gawsoch daliad heb awdurdod o gynllun pensiwn?"
     val expectedParagraphText = "Gwneir taliadau heb awdurdod y tu allan i’r rheolau treth"
@@ -110,16 +109,31 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
     val expectedYesSurchargeCheckboxText = "Iawn, taliadau heb awdurdod a wnaeth arwain at ordal"
     val expectedYesNotSurchargeCheckboxText = "Iawn, taliadau heb awdurdod na wnaethant arwain at ordal"
     val expectedNoSurchargeCheckboxText = "Na"
-    val noEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
     val checkboxHint = "Dewiswch bob un sy’n berthnasol."
     val expectedDetailsExternalLinkText = "Dysgwch ragor am daliadau heb awdurdod (yn agor tab newydd)"
   }
 
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, _]] = Seq(
-    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN),
-    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN),
-    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY)
+  object ExpectedIndividualEN extends SpecificExpectedResults {
+    val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
+  }
+
+  object ExpectedIndividualCY extends SpecificExpectedResults {
+    val noEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
+  }
+
+  object ExpectedAgentEN extends SpecificExpectedResults {
+    val noEntryErrorMessage = "Select yes if your client got an unauthorised payment from a pension scheme"
+  }
+
+  object ExpectedAgentCY extends SpecificExpectedResults {
+    val noEntryErrorMessage = "Select yes if your client got an unauthorised payment from a pension scheme"
+  }
+
+  val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
+    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
+    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
+    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
+    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
   )
 
   ".show" should {
@@ -372,13 +386,13 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
           welshToggleCheck(user.isWelsh)
           formPostLinkCheck(unauthorisedPaymentsUrl(taxYearEOY), formSelector)
 
-          errorSummaryCheck(user.commonExpectedResults.expectedError, "#")
-          errorAboveElementCheck(user.commonExpectedResults.expectedError, Some("unauthorisedPayments"))
+          errorSummaryCheck(user.specificExpectedResults.get.noEntryErrorMessage, "#")
+          errorAboveElementCheck(user.specificExpectedResults.get.noEntryErrorMessage, Some("unauthorisedPayments"))
         }
       }
 
       s"redirects to surchargeAmountUrl when ${agentTest(user.isAgent)} submits a valid form with " +
-        s"yesSurcharge checkboxes checked  in Language${welshTest(user.isWelsh)}" which {
+        s"yesSurcharge checkboxes checked in Language${welshTest(user.isWelsh)}" which {
 
         val form = {
           Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesSurchargeValue))

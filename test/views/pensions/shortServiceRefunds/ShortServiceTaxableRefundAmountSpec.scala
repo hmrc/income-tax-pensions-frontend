@@ -74,9 +74,9 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     override val expectedDetailsP2: String = "You might have got a short service refund if you paid into a scheme for less than 2 years. This depends on the type of pension scheme you have."
     override val h2: String = "Did you get a short service refund?"
     override val expectedNoEntryErrorText: String = "Select yes if you got a taxable short service refund from an overseas pension scheme"
-    override val expectedNoAmountEntryErrorText: String = "Enter the taxable short service refund amount"
-    override val expectedIncorrectFormatErrorText: String = "Enter the taxable short service refund amount in the correct format"
-    override val expectedTooBigErrorText: String = "The taxable short service refund amount must be less than £100,000,000,000"
+    override val expectedNoAmountEntryErrorText: String = "Enter your taxable short service refund amount"
+    override val expectedIncorrectFormatErrorText: String = "Enter the taxable short service refund amount in pounds"
+    override val expectedTooBigErrorText: String = "Your taxable short service refund amount must be less than £100,000,000,000"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
@@ -99,7 +99,7 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
       override val h2: String = "Did your client get a short service refund?"
       override val expectedNoEntryErrorText: String = "Select yes if your client got a taxable short service refund from an overseas pension scheme"
       override val expectedNoAmountEntryErrorText: String = "Enter your client’s taxable short service refund amount"
-      override val expectedIncorrectFormatErrorText: String = "Enter your client’s taxable short service refund amount in the correct format"
+      override val expectedIncorrectFormatErrorText: String = "Enter your client’s taxable short service refund amount in pounds"
       override val expectedTooBigErrorText: String = "Your client’s taxable short service refund amount must be less than £100,000,000,000"
     }
 
@@ -152,11 +152,11 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render page without pre filled date" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData,
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().shortServiceTaxableRefundForm(if(userScenario.isAgent) anAgentUser else aUser)
-        implicit val htmlFormat = underTest(form, taxYearEOY)
+        implicit val htmlFormat: HtmlFormat.Appendable = underTest(form, taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
@@ -176,11 +176,11 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData,
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().shortServiceTaxableRefundForm(if(userScenario.isAgent) anAgentUser else aUser)
-        implicit val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100.00")), taxYearEOY)
+        implicit val htmlFormat: HtmlFormat.Appendable = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100.00")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
@@ -200,9 +200,9 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
 
       "render the page with an error when the user doesn’t select a radio button" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().shortServiceTaxableRefundForm(if(userScenario.isAgent) anAgentUser else aUser)
-        implicit val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "")), taxYearEOY)
+        implicit val htmlFormat: HtmlFormat.Appendable = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoEntryErrorText, Some("value"))
@@ -211,9 +211,9 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
 
       "render the page with an error when the user selects yes but doesn’t enter the amount" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().shortServiceTaxableRefundForm(if(userScenario.isAgent) anAgentUser else aUser)
-        implicit val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "")), taxYearEOY)
+        implicit val htmlFormat: HtmlFormat.Appendable = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoAmountEntryErrorText, Some("amount-2"))
@@ -222,9 +222,9 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
 
       "render the page with an error when the user selects yes but amount is in wrong format" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().shortServiceTaxableRefundForm(if(userScenario.isAgent) anAgentUser else aUser)
-        implicit val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "bfsbrfg")), taxYearEOY)
+        implicit val htmlFormat: HtmlFormat.Appendable = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "bfsbrfg")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedIncorrectFormatErrorText, Some("amount-2"))
@@ -232,7 +232,7 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
       }
       "render the page with an error when the user selects yes but amount exceeds max" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().shortServiceTaxableRefundForm(if(userScenario.isAgent) anAgentUser else aUser)
         implicit val htmlFormat: HtmlFormat.Appendable = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "1000000000000000000000.00")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)

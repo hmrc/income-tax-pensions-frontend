@@ -78,7 +78,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
     val expectedErrorTitle = s"Error: $expectedTitle"
     val hintText = "For example, £193.52"
     val noEntryErrorMessage = "Enter the total amount of unauthorised payment that resulted in a surcharge"
-    val invalidFormatErrorText = "Enter the total amount in the correct format"
+    val invalidFormatErrorText = "Enter the total amount in pounds"
     val maxAmountErrorText = "The amount entered must be less than £100,000,000,000"
     val buttonText = "Continue"
     val expectedParagraph = "Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes."

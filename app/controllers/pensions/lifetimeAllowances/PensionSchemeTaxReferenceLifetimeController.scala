@@ -50,7 +50,7 @@ class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: Authoris
   private def prefillValue(pstrListOpt: Option[Seq[String]], pensionSchemeTaxReference: Option[Int], user: User): Form[String] = {
     val errorMsgDetails = (
       s"common.pensionSchemeTaxReference.error.noEntry.${if (user.isAgent) "agent" else "individual"}",
-      s"lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat")
+      s"common.pensionSchemeTaxReference.error.incorrectFormat")
     val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
     (pstrListOpt, pensionSchemeTaxReference) match {
       case (Some(pstrList), Some(pstrIndex)) => emptyForm.fill(pstrList(pstrIndex))
@@ -89,7 +89,7 @@ class PensionSchemeTaxReferenceLifetimeController @Inject()(authAction: Authoris
 
       val errorMsgDetails = (
         s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
-        s"lifetimeAllowance.pensionSchemeTaxReference.error.incorrectFormat")
+        s"common.pensionSchemeTaxReference.error.incorrectFormat")
 
       PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2).bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, taxYear, pensionSchemeTaxReferenceIndex))),
