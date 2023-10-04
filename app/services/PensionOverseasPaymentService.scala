@@ -84,11 +84,15 @@ class PensionOverseasPaymentService @Inject()(pensionUserDataRepository: Pension
         subRequestModel = None,
         cya = viewModelPayments,
         requestModel = updatedReliefsData)(hcWithExtras, ec))
-      _ <- FutureEitherOps[ServiceError, Unit](pensionIncomeConnectorHelper.sendDownstream(user.nino, taxYear,
-        subRequestModel = incomeSubModel,
-        cya = viewModelOverseas,
-        requestModel = updatedIncomeData)(hcWithExtras, ec))
 
+      _ <- if (updatedIncomeData.foreignPension.isEmpty && updatedIncomeData.overseasPensionContribution.isEmpty) {
+        FutureEitherOps[ServiceError, Unit](Future.successful(Right()))
+      } else {
+        FutureEitherOps[ServiceError, Unit](pensionIncomeConnectorHelper.sendDownstream(user.nino, taxYear,
+          subRequestModel = incomeSubModel,
+          cya = viewModelOverseas,
+          requestModel = updatedIncomeData)(hcWithExtras, ec))
+      }
       updatedCYA = getPensionsUserData(sessionData, user, taxYear)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
     } yield {

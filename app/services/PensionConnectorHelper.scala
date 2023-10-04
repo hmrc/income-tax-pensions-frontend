@@ -42,7 +42,7 @@ trait PensionConnectorHelper[SubRequestModel <: PensionSubRequestModel, RequestM
       subModel.exists(_.isEmpty)
     }
 
-    if (cya.exists(_.journeyIsNo) || cya.exists(_.journeyIsUnanswered)) {
+    if (cya.exists(_.journeyIsNo) || cya.exists(_.journeyIsUnanswered) ) {
       (otherModels, subRequestModel.isEmpty || isSubModelEmpty(subRequestModel)) match {
         case (true, true) =>
           //Do nothing or delete
