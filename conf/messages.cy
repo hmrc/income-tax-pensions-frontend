@@ -472,12 +472,8 @@ annualAllowance.pstrSummary.title = Cynlluniau pensiwn a dalodd y dreth lwfans b
 ####### annual allowance CYA #######
 annualAllowance.cya.heading.individual = Gwiriwch eich lwfansau blynyddol
 annualAllowance.cya.heading.agent = Gwiriwch lwfansau blynyddol eich cleient
-annualAllowance.cya.reducedAnnualAllowance = Lwfans blynyddol wedi’i ostwng
-annualAllowance.cya.typeOfReducedAnnualAllowance = Math o lwfans blynyddol wedi’i ostwng
-annualAllowance.cya.aboveAnnualAllowance = Uwch na’r lwfans blynyddol
 annualAllowance.cya.amountAboveAnnualAllowance = Swm uwch na’r lwfans blynyddol
-annualAllowance.cya.annualAllowanceTax = Treth lwfans blynyddol
-annualAllowance.cya.annualPensionSchemeTaxReferences = Cynlluniau sy’n talu treth lwfans blynyddol
+annualAllowance.cya.amountAboveAnnualAllowance.hidden = Newidiwch swm uwch na’r lwfans blynyddol
 
 #################       INCOME FROM PENSIONS        ########################################
 

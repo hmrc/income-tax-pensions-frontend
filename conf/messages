@@ -472,12 +472,8 @@ annualAllowance.pstrSummary.title = Pension schemes that paid or agreed to pay t
 ####### annual allowance CYA #######
 annualAllowance.cya.heading.individual = Check your annual allowance
 annualAllowance.cya.heading.agent = Check your client’s annual allowance
-annualAllowance.cya.reducedAnnualAllowance = Reduced annual allowance
-annualAllowance.cya.typeOfReducedAnnualAllowance = Type of reduced annual allowance
-annualAllowance.cya.aboveAnnualAllowance = Above annual allowance
 annualAllowance.cya.amountAboveAnnualAllowance = Amount above annual allowance
-annualAllowance.cya.annualAllowanceTax = Annual allowance tax
-annualAllowance.cya.annualPensionSchemeTaxReferences = Schemes paying annual allowance tax
+annualAllowance.cya.amountAboveAnnualAllowance.hidden = Change amount above annual allowance
 
 #################       INCOME FROM PENSIONS        ########################################
 
