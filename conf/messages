@@ -1084,11 +1084,15 @@ incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Change Paym
 
 incomeFromOverseasPensions.summary.title = Pension scheme summary
 incomeFromOverseasPensions.summary.country = Country
+incomeFromOverseasPensions.summary.country.hidden = Change country
 incomeFromOverseasPensions.summary.pension.payments = Pensions payments
+incomeFromOverseasPensions.summary.pension.payments.hidden = Change pensions payments
 incomeFromOverseasPensions.summary.amount = Amount: {0}
 incomeFromOverseasPensions.summary.nonUk.amount = Non-uk tax: {0}
 incomeFromOverseasPensions.summary.swt = Special Withholding Tax
+incomeFromOverseasPensions.summary.swt.hidden = Change Special Withholding Tax
 incomeFromOverseasPensions.summary.ftc = Foreign Tax Credit
+incomeFromOverseasPensions.summary.ftc.hidden = Change foreign tax credit
 incomeFromOverseasPensions.summary.tax.amount = Taxable amount
 
 #Overseas Pension Income Summary Page

@@ -1084,11 +1084,15 @@ incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Newid talia
 
 incomeFromOverseasPensions.summary.title = Crynodeb o’r cynllun pensiwn
 incomeFromOverseasPensions.summary.country = Gwlad
+incomeFromOverseasPensions.summary.country.hidden = Newid Gwlad
 incomeFromOverseasPensions.summary.pension.payments = Taliadau pensiwn
+incomeFromOverseasPensions.summary.pension.payments.hidden = Newid Taliadau pensiwn
 incomeFromOverseasPensions.summary.amount = Swm: {0}
 incomeFromOverseasPensions.summary.nonUk.amount = Treth y tu allan i’r DU: {0}
 incomeFromOverseasPensions.summary.swt = Treth Ataliedig Arbennig
+incomeFromOverseasPensions.summary.swt.hidden = Newid Treth Ataliedig Arbennig
 incomeFromOverseasPensions.summary.ftc = Credyd Treth Tramor
+incomeFromOverseasPensions.summary.ftc.hidden = Newid Credyd Treth Tramor
 incomeFromOverseasPensions.summary.tax.amount = Swm trethadwy
 
 #Overseas Pension Income Summary Page
