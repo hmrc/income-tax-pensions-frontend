@@ -41,7 +41,7 @@ object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
     annualAllowancesViewModel.reducedAnnualAllowanceQuestion
       .map(_ =>
         summaryListRowWithBooleanValue(
-          "annualAllowance.cya.reducedAnnualAllowance",
+          "lifetimeAllowance.cya.reducedAnnualAllowance",
           annualAllowancesViewModel.reducedAnnualAllowanceQuestion,
           annualRoutes.ReducedAnnualAllowanceController.show(taxYear))(messages)
       )
@@ -52,7 +52,7 @@ object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
     annualAllowancesViewModel.reducedAnnualAllowanceQuestion.filter(x => x)
       .map { _ =>
         summaryListRowWithStrings(
-          "annualAllowance.cya.typeOfReducedAnnualAllowance",
+          "lifetimeAllowance.cya.typeOfReducedAnnualAllowance",
           annualAllowancesViewModel.typeOfAllowance,
           annualRoutes.ReducedAnnualAllowanceTypeController.show(taxYear))(messages)
       }
@@ -63,7 +63,7 @@ object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
     annualAllowancesViewModel.reducedAnnualAllowanceQuestion.filter(x => x)
       .map(_ =>
         summaryListRowWithBooleanValue(
-          "annualAllowance.cya.aboveAnnualAllowance",
+          "lifetimeAllowance.cya.aboveAnnualAllowance",
           annualAllowancesViewModel.aboveAnnualAllowanceQuestion,
           annualRoutes.AboveReducedAnnualAllowanceController.show(taxYear))(messages)
       )
@@ -90,12 +90,12 @@ object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
           annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion match {
             case Some(true) if annualAllowancesViewModel.taxPaidByPensionProvider.isDefined =>
               summaryListRowWithOptionalAmountValue(
-                "annualAllowance.cya.annualAllowanceTax",
+                "lifetimeAllowance.cya.annualAllowanceTax",
                 annualAllowancesViewModel.taxPaidByPensionProvider,
                 routes.PensionProviderPaidTaxController.show(taxYear))(messages)
             case _ =>
               summaryListRowWithBooleanValue(
-                "annualAllowance.cya.annualAllowanceTax",
+                "lifetimeAllowance.cya.annualAllowanceTax",
                 annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion,
                 routes.PensionProviderPaidTaxController.show(taxYear))(messages)
           }
@@ -109,7 +109,7 @@ object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
       annualAllowancesViewModel.aboveAnnualAllowanceQuestion.filter(x => x).flatMap(_ =>
         annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion.filter(x => x).map(_ =>
           summaryListRowWithStrings(
-            "annualAllowance.cya.annualPensionSchemeTaxReferences",
+            "lifetimeAllowance.cya.annualPensionSchemeTaxReferences",
             annualAllowancesViewModel.pensionSchemeTaxReferences,
             annualRoutes.PstrSummaryController.show(taxYear))(messages)
         )))

@@ -472,12 +472,8 @@ annualAllowance.pstrSummary.title = Cynlluniau pensiwn a dalodd y dreth lwfans b
 ####### annual allowance CYA #######
 annualAllowance.cya.heading.individual = Gwiriwch eich lwfansau blynyddol
 annualAllowance.cya.heading.agent = Gwiriwch lwfansau blynyddol eich cleient
-annualAllowance.cya.reducedAnnualAllowance = Lwfans blynyddol wedi’i ostwng
-annualAllowance.cya.typeOfReducedAnnualAllowance = Math o lwfans blynyddol wedi’i ostwng
-annualAllowance.cya.aboveAnnualAllowance = Uwch na’r lwfans blynyddol
 annualAllowance.cya.amountAboveAnnualAllowance = Swm uwch na’r lwfans blynyddol
-annualAllowance.cya.annualAllowanceTax = Treth lwfans blynyddol
-annualAllowance.cya.annualPensionSchemeTaxReferences = Cynlluniau sy’n talu treth lwfans blynyddol
+annualAllowance.cya.amountAboveAnnualAllowance.hidden = Newidiwch swm uwch na’r lwfans blynyddol
 
 #################       INCOME FROM PENSIONS        ########################################
 
@@ -1088,11 +1084,15 @@ incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden = Newid talia
 
 incomeFromOverseasPensions.summary.title = Crynodeb o’r cynllun pensiwn
 incomeFromOverseasPensions.summary.country = Gwlad
+incomeFromOverseasPensions.summary.country.hidden = Newid Gwlad
 incomeFromOverseasPensions.summary.pension.payments = Taliadau pensiwn
+incomeFromOverseasPensions.summary.pension.payments.hidden = Newid Taliadau pensiwn
 incomeFromOverseasPensions.summary.amount = Swm: {0}
 incomeFromOverseasPensions.summary.nonUk.amount = Treth y tu allan i’r DU: {0}
 incomeFromOverseasPensions.summary.swt = Treth Ataliedig Arbennig
+incomeFromOverseasPensions.summary.swt.hidden = Newid Treth Ataliedig Arbennig
 incomeFromOverseasPensions.summary.ftc = Credyd Treth Tramor
+incomeFromOverseasPensions.summary.ftc.hidden = Newid Credyd Treth Tramor
 incomeFromOverseasPensions.summary.tax.amount = Swm trethadwy
 
 #Overseas Pension Income Summary Page

@@ -53,30 +53,30 @@
             inline = false,
             items = Seq(
                 RadioItem(
-                    id = Some("value"),
+                    id = Some("mmrValue"),
                     value = Some("Migrant member relief"),
                     checked = form("value").value.contains("Migrant member relief"),
                     content = Text(messages("overseasPension.pensionReliefType.MMR"))
                 ),
                 RadioItem(
-                    id = Some("value"),
+                    id = Some("dtrValue"),
                     value = Some("Double taxation relief"),
                     checked = form("value").value.contains("Double taxation relief"),
                     content = Text(messages("overseasPension.pensionReliefType.DTR"))
                 ),
                 RadioItem(
-                    id = Some("value"),
+                    id = Some("tcrValue"),
                     value = Some("Transitional corresponding relief"),
                     checked = form("value").value.contains("Transitional corresponding relief"),
                     content = Text(messages("overseasPension.pensionReliefType.TCR"))
                 ),
                 RadioItem(
-                    id = Some("value"),
+                    id = Some("divider"),
                     content = Text(""),
                     divider = Some(messages("common.or"))
                 ),
                 RadioItem(
-                    id = Some("value"),
+                    id = Some("noTaxRelief"),
                     value = Some("No tax relief"),
                     checked = form("value").value.contains("No tax relief"),
                     content = Text(messages("overseasPension.pensionReliefType.NoneOfThese")))
