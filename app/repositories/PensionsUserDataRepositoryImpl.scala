@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,6 @@ class PensionsUserDataRepositoryImpl @Inject()(mongo: MongoComponent, appConfig:
     }.toEither match {
       case Left(exception: Exception) => Future.successful(handleEncryptionDecryptionException(exception, start))
       case Right(encryptedData) =>
-
         val queryFilter = filter(encryptedData.sessionId, encryptedData.mtdItId, encryptedData.nino, encryptedData.taxYear)
         val replacement = encryptedData
         val options = FindOneAndReplaceOptions().upsert(true).returnDocument(ReturnDocument.AFTER)
