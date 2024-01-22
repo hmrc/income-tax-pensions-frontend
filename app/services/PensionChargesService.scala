@@ -50,7 +50,7 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
           .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
 
       viewModel: Option[PensionLifetimeAllowancesViewModel] = sessionData.map(_.pensions.pensionLifetimeAllowances)
-      savingsTaxChargesModel: Option[PensionSavingsTaxCharges] = viewModel.map(_.toPensionSavingsTaxChargesModel(priorData.pensions))
+      savingsTaxChargesModel: Option[PensionSavingsTaxCharges] = viewModel.map(_.toPensionSavingsTaxChargesModel)
 
       result <-
         FutureEitherOps[ServiceError, Unit](savePensionChargesData(
@@ -207,7 +207,7 @@ object PensionChargesService {
     def createLifetimeAllowanceChargesModel(viewModel: Option[PensionLifetimeAllowancesViewModel],
                                             priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel = {
       CreateUpdatePensionChargesRequestModel(
-        pensionSavingsTaxCharges = viewModel.map(_.toPensionSavingsTaxChargesModel(priorData.pensions)),
+        pensionSavingsTaxCharges = viewModel.map(_.toPensionSavingsTaxChargesModel),
         pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
         pensionSchemeUnauthorisedPayments = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)),
         pensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
@@ -225,7 +225,7 @@ object PensionChargesService {
         pensionSavingsTaxCharges = viewModel.map(_.toPensionSavingsTaxCharges(priorData.pensions)),
         pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
         pensionSchemeUnauthorisedPayments = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)),
-        pensionContributions = viewModel.map(_.toPensionContributions(priorData.pensions)),
+        pensionContributions = viewModel.map(_.toPensionContributions),
         overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
       )
     }

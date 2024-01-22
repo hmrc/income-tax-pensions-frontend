@@ -64,7 +64,7 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
     }
   }
 
-  def toPensionContributions(priorData: Option[AllPensionsData]): PensionContributions = {
+  def toPensionContributions: PensionContributions = {
     PensionContributions(
       pensionSchemeTaxReference = pensionSchemeTaxReferences.getOrElse(Seq("00123456RA")),
       inExcessOfTheAnnualAllowance = aboveAnnualAllowance.getOrElse(BigDecimal(0.00)),
@@ -76,7 +76,9 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
   }
 
   def toPensionSavingsTaxCharges(prior: Option[AllPensionsData]): PensionSavingsTaxCharges = {
-    // FIXME: We need to add a hardcoded value for one of these fields when we use a nino w/out prior data, e.g AA000001D.
+    // FIXME: When we use a nino w/out prior data being set-up in the stub, e.g.AA000001D, our app breaks. This is
+    //        because at least 1 of these 3 fields is required to be present by the schema in the stub. W/out prior data,
+    //        they are all None.
     PensionSavingsTaxCharges(
       pensionSchemeTaxReference = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges)
         .flatMap(_.pensionSchemeTaxReference),
@@ -98,7 +100,7 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
       if (pensionSchemeTaxReferences.getOrElse(Nil) == Nil && aboveAnnualAllowance.isEmpty && taxPaidByPensionProvider.isEmpty) {
         None
       } else {
-        Some(toPensionContributions(prior))
+        Some(toPensionContributions)
       }
 
     val pensionSavingsTaxChargesOpt =

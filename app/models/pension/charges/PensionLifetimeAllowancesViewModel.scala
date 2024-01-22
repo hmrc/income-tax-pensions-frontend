@@ -54,7 +54,7 @@ case class PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion: Op
       pensionPaidAnotherWay.isEmpty &&
       pensionSchemeTaxReferences.isEmpty
   
-  def toPensionSavingsTaxChargesModel(priorData: Option[AllPensionsData]): PensionSavingsTaxCharges = {
+  def toPensionSavingsTaxChargesModel: PensionSavingsTaxCharges = {
     PensionSavingsTaxCharges(
       lumpSumBenefitTakenInExcessOfLifetimeAllowance = this.pensionAsLumpSum,
       benefitInExcessOfLifetimeAllowance = this.pensionPaidAnotherWay,
