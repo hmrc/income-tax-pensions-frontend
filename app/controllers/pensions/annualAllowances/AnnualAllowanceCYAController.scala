@@ -60,10 +60,8 @@ class AnnualAllowanceCYAController @Inject()(auditProvider: AuditActionsProvider
         sessionData =>
           if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
             pensionChargesService.saveAnnualAllowanceViewModel(request.user, taxYear).map {
-              case Left(_) =>
-                errorHandler.internalServerError()
-              case Right(_) =>
-                Redirect(PensionsSummaryController.show(taxYear))
+              case Left(_) => errorHandler.internalServerError()
+              case Right(_) => Redirect(PensionsSummaryController.show(taxYear))
             }
           } else {
             Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
