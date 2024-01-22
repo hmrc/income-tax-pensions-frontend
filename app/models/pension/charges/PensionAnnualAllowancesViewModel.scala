@@ -64,23 +64,32 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
     }
   }
 
-  def toPensionContributions: PensionContributions =
+  def toPensionContributions(priorData: Option[AllPensionsData]): PensionContributions = {
     PensionContributions(
-      pensionSchemeTaxReference = pensionSchemeTaxReferences.getOrElse(Nil),
+      pensionSchemeTaxReference = pensionSchemeTaxReferences.getOrElse(Seq("00123456RA")),
       inExcessOfTheAnnualAllowance = aboveAnnualAllowance.getOrElse(BigDecimal(0.00)),
-      annualAllowanceTaxPaid = taxPaidByPensionProvider.getOrElse(BigDecimal(0.00))
-    )
-
-  def toPensionSavingsTaxCharges(prior: Option[AllPensionsData]): PensionSavingsTaxCharges = {
-    PensionSavingsTaxCharges(
-      pensionSchemeTaxReference = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges)
-        .flatMap(_.pensionSchemeTaxReference),
-      lumpSumBenefitTakenInExcessOfLifetimeAllowance = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges)
-        .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
-      benefitInExcessOfLifetimeAllowance = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance),
+      annualAllowanceTaxPaid = taxPaidByPensionProvider.getOrElse(BigDecimal(0.00)),
       isAnnualAllowanceReduced = reducedAnnualAllowanceQuestion,
       taperedAnnualAllowance = taperedAnnualAllowance,
       moneyPurchasedAllowance = moneyPurchaseAnnualAllowance
+    )
+  }
+
+  def toPensionSavingsTaxCharges(prior: Option[AllPensionsData]): PensionSavingsTaxCharges = {
+    // FIXME: We need to add a hardcoded value for one of these fields when we use a nino w/out prior data, e.g AA000001D.
+    PensionSavingsTaxCharges(
+      pensionSchemeTaxReference = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges)
+        .flatMap(_.pensionSchemeTaxReference),
+
+      lumpSumBenefitTakenInExcessOfLifetimeAllowance =
+        prior.flatMap(_.pensionCharges)
+          .flatMap(_.pensionSavingsTaxCharges)
+          .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
+
+      benefitInExcessOfLifetimeAllowance =
+        prior.flatMap(_.pensionCharges)
+          .flatMap(_.pensionSavingsTaxCharges)
+          .flatMap(_.benefitInExcessOfLifetimeAllowance)
     )
   }
 
@@ -89,7 +98,7 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
       if (pensionSchemeTaxReferences.getOrElse(Nil) == Nil && aboveAnnualAllowance.isEmpty && taxPaidByPensionProvider.isEmpty) {
         None
       } else {
-        Some(toPensionContributions)
+        Some(toPensionContributions(prior))
       }
 
     val pensionSavingsTaxChargesOpt =

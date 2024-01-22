@@ -148,8 +148,11 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
     (for {
       priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector
         .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
+
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
+
       viewModel = sessionData.map(_.pensions.pensionsAnnualAllowances)
+
       annualAllowanceSubModel = viewModel.map(_.toAnnualAllowanceChargesModel(priorData.pensions))
 
       result <-
@@ -222,7 +225,7 @@ object PensionChargesService {
         pensionSavingsTaxCharges = viewModel.map(_.toPensionSavingsTaxCharges(priorData.pensions)),
         pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
         pensionSchemeUnauthorisedPayments = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)),
-        pensionContributions = viewModel.map(_.toPensionContributions),
+        pensionContributions = viewModel.map(_.toPensionContributions(priorData.pensions)),
         overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
       )
     }

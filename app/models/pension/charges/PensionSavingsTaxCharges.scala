@@ -20,12 +20,10 @@ import models.pension.PensionChargesSubRequestModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
+// Minimum of one of these fields are required.
 case class PensionSavingsTaxCharges(pensionSchemeTaxReference: Option[Seq[String]],
                                     lumpSumBenefitTakenInExcessOfLifetimeAllowance: Option[LifetimeAllowance],
-                                    benefitInExcessOfLifetimeAllowance: Option[LifetimeAllowance],
-                                    isAnnualAllowanceReduced: Option[Boolean],
-                                    taperedAnnualAllowance: Option[Boolean],
-                                    moneyPurchasedAllowance: Option[Boolean]) extends PensionChargesSubRequestModel {
+                                    benefitInExcessOfLifetimeAllowance: Option[LifetimeAllowance]) extends PensionChargesSubRequestModel {
   override def isEmpty: Boolean = this.productIterator.forall(_ == None)
 }
 
@@ -35,10 +33,7 @@ object PensionSavingsTaxCharges {
 
 case class EncryptedPensionSavingsTaxCharges(pensionSchemeTaxReference: Option[Seq[EncryptedValue]],
                                              lumpSumBenefitTakenInExcessOfLifetimeAllowance: Option[EncryptedLifetimeAllowance],
-                                             benefitInExcessOfLifetimeAllowance: Option[EncryptedLifetimeAllowance],
-                                             isAnnualAllowanceReduced: Option[EncryptedValue],
-                                             taperedAnnualAllowance: Option[EncryptedValue],
-                                             moneyPurchasedAllowance: Option[EncryptedValue])
+                                             benefitInExcessOfLifetimeAllowance: Option[EncryptedLifetimeAllowance])
 
 object EncryptedPensionSavingsTaxCharges {
   implicit val format: OFormat[EncryptedPensionSavingsTaxCharges] = Json.format[EncryptedPensionSavingsTaxCharges]

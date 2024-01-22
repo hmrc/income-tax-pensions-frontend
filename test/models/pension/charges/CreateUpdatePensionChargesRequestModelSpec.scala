@@ -57,7 +57,7 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
 
       s"be true when ${subModel.get.getClass.getName} subModel is non empty and the other models are either empty or have empty contents" in {
         val actualResult = CreateUpdatePensionChargesRequestModel(
-          anPensionCharges.pensionSavingsTaxCharges.map(_.copy(None, None, None, None, None, None)),
+          anPensionCharges.pensionSavingsTaxCharges.map(_.copy(None, None, None)),
           None,
           anPensionCharges.pensionSchemeUnauthorisedPayments.map(_.copy(None, None, None)),
           None,
@@ -69,7 +69,7 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
 
       s"be false when ${subModel.get.getClass.getName} subModel is non empty and some other models have non-empty contents" in {
         val actualResult = CreateUpdatePensionChargesRequestModel(
-          anPensionCharges.pensionSavingsTaxCharges.map(_.copy(None, None, None, None, None)),
+          anPensionCharges.pensionSavingsTaxCharges.map(_.copy(None, None, None)),
           None,
           anPensionCharges.pensionSchemeUnauthorisedPayments.map(_.copy(Some(Seq("PSTR")), None, None)),
           None,
