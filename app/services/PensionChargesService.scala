@@ -191,9 +191,8 @@ object PensionChargesService {
     def getLifetimeAllowanceUserData(userData: Option[PensionsUserData],
                                      user: User, taxYear: Int, clock: Clock): PensionsUserData = {
       userData match {
-        case Some(value) => value.copy(pensions = value.pensions.copy(
-          pensionLifetimeAllowances = PensionLifetimeAllowancesViewModel()
-        ))
+        case Some(value) => value
+
         case None => PensionsUserData(
           user.sessionId, user.mtditid,
           user.nino, taxYear,
