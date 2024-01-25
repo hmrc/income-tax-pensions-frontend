@@ -17,6 +17,7 @@
 package connectors.httpParsers
 
 import models.APIErrorModel
+import models.logging.ConnectorResponseInfo
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object PensionChargesSessionHttpParser extends APIParser {
@@ -26,7 +27,10 @@ object PensionChargesSessionHttpParser extends APIParser {
   override val service: String = "income-tax-pensions"
 
   implicit object PensionChargesSessionHttpReads extends HttpReads[PensionChargesSessionResponse] {
-    override def read(method: String, url: String, response: HttpResponse): PensionChargesSessionResponse =
+    override def read(method: String, url: String, response: HttpResponse): PensionChargesSessionResponse = {
+      ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
+
       SessionHttpReads.read(method, url, response)
+    }
   }
 }

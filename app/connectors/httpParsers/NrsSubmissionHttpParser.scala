@@ -17,6 +17,7 @@
 package connectors.httpParsers
 
 import models.APIErrorModel
+import models.logging.ConnectorResponseInfo
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys.{FOURXX_RESPONSE_FROM_API, INTERNAL_SERVER_ERROR_FROM_API, UNEXPECTED_RESPONSE_FROM_API}
@@ -29,6 +30,8 @@ object NrsSubmissionHttpParser extends APIParser {
 
   implicit object NrsSubmissionHttpReads extends HttpReads[NrsSubmissionResponse] {
     override def read(method: String, url: String, response: HttpResponse): NrsSubmissionResponse = {
+      ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
+
       response.status match {
         case ACCEPTED => Right(())
         case NOT_FOUND | BAD_REQUEST | UNAUTHORIZED =>

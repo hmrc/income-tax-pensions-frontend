@@ -17,6 +17,7 @@
 package connectors.httpParsers
 
 import models.APIErrorModel
+import models.logging.ConnectorResponseInfo
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
@@ -28,6 +29,8 @@ object RefreshIncomeSourceHttpParser extends APIParser {
   
   implicit object RefreshIncomeSourceHttpReads extends HttpReads[RefreshIncomeSourceResponse] {
     override def read(method: String, url: String, response: HttpResponse): RefreshIncomeSourceResponse = {
+      ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
+
       response.status match {
         case NOT_FOUND => Right(())
         case _ => SessionHttpReads.read(method, url, response)
