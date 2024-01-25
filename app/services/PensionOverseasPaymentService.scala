@@ -92,6 +92,7 @@ class PensionOverseasPaymentService @Inject() (pensionUserDataRepository: Pensio
             pensionIncomeConnectorHelper
               .sendDownstream(user.nino, taxYear, incomeSubModel, viewModelOverseas, updatedIncomeData)(hcWithExtras, ec))
         }
+
       updatedCYA = getPensionsUserData(sessionData, user, taxYear)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
     } yield result).value
