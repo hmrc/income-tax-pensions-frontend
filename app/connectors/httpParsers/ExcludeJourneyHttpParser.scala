@@ -17,6 +17,7 @@
 package connectors.httpParsers
 
 import models.APIErrorModel
+import models.logging.ConnectorResponseInfo
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
@@ -29,6 +30,8 @@ object ExcludeJourneyHttpParser extends APIParser {
 
   implicit object ExcludeJourneyResponseReads extends HttpReads[ExcludeJourneyResponse] {
     override def read(method: String, url: String, response: HttpResponse): ExcludeJourneyResponse = {
+      ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
+
       response.status match  {
         case NO_CONTENT => Right(NO_CONTENT)
         case BAD_REQUEST => handleAPIError(response)

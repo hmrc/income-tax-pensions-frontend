@@ -16,13 +16,15 @@
 
 package connectors.httpParsers
 
+import models.logging.ConnectorResponseInfo
 import models.{APIErrorBodyModel, APIErrorModel, APIErrorsBodyModel}
+import play.api.Logging
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
 import utils.PagerDutyHelper.pagerDutyLog
 
-trait APIParser {
+trait APIParser extends Logging {
 
   val parserName: String
   val service: String

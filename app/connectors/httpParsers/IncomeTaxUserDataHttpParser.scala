@@ -16,13 +16,15 @@
 
 package connectors.httpParsers
 
+import models.logging.ConnectorResponseInfo
 import models.{APIErrorModel, IncomeTaxUserData}
+import play.api.Logging
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT, OK, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys.{INTERNAL_SERVER_ERROR_FROM_API, SERVICE_UNAVAILABLE_FROM_API, UNEXPECTED_RESPONSE_FROM_API}
 import utils.PagerDutyHelper.pagerDutyLog
 
-object IncomeTaxUserDataHttpParser extends APIParser {
+object IncomeTaxUserDataHttpParser extends APIParser with Logging {
   type IncomeTaxUserDataResponse = Either[APIErrorModel, IncomeTaxUserData]
 
   override val parserName: String = "IncomeTaxUserDataHttpParser"
@@ -30,6 +32,8 @@ object IncomeTaxUserDataHttpParser extends APIParser {
 
   implicit object IncomeTaxUserDataHttpReads extends HttpReads[IncomeTaxUserDataResponse] {
     override def read(method: String, url: String, response: HttpResponse): IncomeTaxUserDataResponse = {
+      ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
+
       response.status match {
         case OK => response.json.validate[IncomeTaxUserData].fold[IncomeTaxUserDataResponse](
           _ => badSuccessJsonFromAPI,
@@ -48,4 +52,5 @@ object IncomeTaxUserDataHttpParser extends APIParser {
       }
     }
   }
+
 }

@@ -17,6 +17,7 @@
 package connectors.httpParsers
 
 import models.APIErrorModel
+import models.logging.ConnectorResponseInfo
 import models.pension.employmentPensions.CreateUpdateEmploymentRequest.CreatedEmployment
 import play.api.http.Status.CREATED
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -28,12 +29,15 @@ object EmploymentSessionHttpParser extends APIParser {
   override val service: String = "income-tax-employment"
   
   implicit object EmploymentSessionHttpReads extends HttpReads[EmploymentSessionResponse] {
-    override def read(method: String, url: String, response: HttpResponse): EmploymentSessionResponse =
+    override def read(method: String, url: String, response: HttpResponse): EmploymentSessionResponse = {
+      ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
+
       response.status match {
         case CREATED => response.json.validate[CreatedEmployment].fold[EmploymentSessionResponse](
           _ => badSuccessJsonFromAPI, _ => Right(()))
         case _ =>
           SessionHttpReads.read(method, url, response)
       }
+    }
   }
 }

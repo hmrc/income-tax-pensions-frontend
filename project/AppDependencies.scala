@@ -27,7 +27,8 @@ object AppDependencies {
     "uk.gov.hmrc"                   %% "bootstrap-frontend-play-28" % bootstrapPlay28Version,
     "uk.gov.hmrc"                   %% "play-frontend-hmrc"         % hmrcPlayVersion,
     "uk.gov.hmrc.mongo"             %% "hmrc-mongo-play-28"         % hmrcMongoPlayVersion,
-    "com.fasterxml.jackson.module"  %% "jackson-module-scala"       % "2.14.2"
+    "com.fasterxml.jackson.module"  %% "jackson-module-scala"       % "2.14.2",
+    "org.codehaus.janino"            % "janino"                     % "3.1.11" // it's required by logback for conditional logging
   )
 
   val test: Seq[ModuleID] = Seq(
