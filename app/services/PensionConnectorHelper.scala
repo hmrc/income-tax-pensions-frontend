@@ -58,9 +58,6 @@ trait PensionConnectorHelper[SubRequestModel <: PensionSubRequestModel, RequestM
           saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[RequestModel])
       }
     } else {
-      println()
-      println("CreateSubmModel: " + requestModel.createSubModel.asInstanceOf[RequestModel])
-      println()
       saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[RequestModel])
     }
   }
