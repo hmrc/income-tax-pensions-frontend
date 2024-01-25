@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package models.logging
 
 import models.logging.ConnectorResponseInfo.LevelLogging._
@@ -24,17 +25,17 @@ class ConnectorResponseInfoSpec extends AnyWordSpecLike {
 
   "logMessageWarnOn4xx" should {
     "return info on success" in {
-      assert(connectorInfo.logResponseWarnOn4xx === Info("Call from connector GET /someurl. Response status: 200"))
+      assert(connectorInfo.logResponseWarnOn4xx === Info("Connector: Response Received for GET /someurl. Response status: 200"))
     }
 
     "return warn on 4xx error with body" in {
       val badRequest = connectorInfo.copy(response = HttpResponse(400, "some error"))
-      assert(badRequest.logResponseWarnOn4xx === Warn("Call from connector GET /someurl. Response status: 400 Body: some error"))
+      assert(badRequest.logResponseWarnOn4xx === Warn("Connector: Response Received for GET /someurl. Response status: 400 Body: some error"))
     }
 
     "return error on 5xx error with body" in {
       val errorRequest = connectorInfo.copy(response = HttpResponse(500, "some error"))
-      assert(errorRequest.logResponseWarnOn4xx === Error("Call from connector GET /someurl. Response status: 500 Body: some error"))
+      assert(errorRequest.logResponseWarnOn4xx === Error("Connector: Response Received for GET /someurl. Response status: 500 Body: some error"))
     }
   }
 
