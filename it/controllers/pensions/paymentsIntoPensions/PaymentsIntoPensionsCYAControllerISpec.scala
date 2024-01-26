@@ -186,8 +186,8 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
             aReliefs.retirementAnnuityPayments, Some(true), aReliefs.paymentToEmployersSchemeNoTaxRelief)
 
         val unchangedAllowances = PensionAnnualAllowancesViewModel(
-          aPensionSavingsTaxCharges.isAnnualAllowanceReduced,
-          aPensionSavingsTaxCharges.moneyPurchasedAllowance, aPensionSavingsTaxCharges.taperedAnnualAllowance,
+          anPensionContributions.isAnnualAllowanceReduced,
+          anPensionContributions.moneyPurchasedAllowance, anPensionContributions.taperedAnnualAllowance,
           Some(true), Some(anPensionContributions.inExcessOfTheAnnualAllowance), Some(true),
           Some(anPensionContributions.annualAllowanceTaxPaid),
           Some(anPensionContributions.pensionSchemeTaxReference))

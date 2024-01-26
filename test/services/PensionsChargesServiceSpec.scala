@@ -227,7 +227,7 @@ class PensionsChargesServiceSpec extends UnitTest
       mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
 
       mockSavePensionChargesSessionData(nino, taxYear, annualAllowanceRequestModel, Right(()))
-      mockCreateOrUpdate(userWithEmptyCya, Right(()))
+      mockCreateOrUpdate(annualAllowanceSessionUserData, Right(()))
 
       val result = await(pensionChargesService.saveAnnualAllowanceViewModel(aUser, taxYear))
       result shouldBe Right(())
@@ -257,7 +257,7 @@ class PensionsChargesServiceSpec extends UnitTest
       mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
 
       mockSavePensionChargesSessionData(nino, taxYear, annualAllowanceRequestModel, Right(()))
-      mockCreateOrUpdate(userWithEmptyCya, Left(DataNotUpdated))
+      mockCreateOrUpdate(annualAllowanceSessionUserData, Left(DataNotUpdated))
 
       val result = await(pensionChargesService.saveAnnualAllowanceViewModel(aUser, taxYear))
       result shouldBe Left(DataNotUpdated)
