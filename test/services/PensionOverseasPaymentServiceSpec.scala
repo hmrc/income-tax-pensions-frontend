@@ -61,12 +61,11 @@ class PensionOverseasPaymentServiceSpec extends UnitTest
           overseasPensionSchemeContributions = sessionUserData.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount
         )
       )
-      val userWithEmptySavePaymentsIntoOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
       mockDeletePensionReliefSessionData(nino, taxYear, Right(()))
       mockSavePensionIncomeSessionData(nino, taxYear, model1, Right(()))
       mockSavePensionReliefSessionData(nino, taxYear, model2, Right(()))
-      mockCreateOrUpdate(userWithEmptySavePaymentsIntoOverseasCya, Right(()))
+      mockCreateOrUpdate(sessionUserData, Right(()))
 
       val result = await(overseasPaymentPensionService.savePaymentsFromOverseasPensionsViewModel(aUser, taxYear))
       result shouldBe Right(())
@@ -132,12 +131,11 @@ class PensionOverseasPaymentServiceSpec extends UnitTest
           overseasPensionSchemeContributions = sessionUserData.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount
         )
       )
-      val userWithEmptySavePaymentsIntoOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
       mockDeletePensionReliefSessionData(nino, taxYear, Right(()))
       mockSavePensionIncomeSessionData(nino, taxYear, model1, Right(()))
       mockSavePensionReliefSessionData(nino, taxYear, model2, Right(()))
-      mockCreateOrUpdate(userWithEmptySavePaymentsIntoOverseasCya, Left(DataNotUpdated))
+      mockCreateOrUpdate(sessionUserData, Left(DataNotUpdated))
 
       val result = await(overseasPaymentPensionService.savePaymentsFromOverseasPensionsViewModel(aUser, taxYear))
       result shouldBe Left(DataNotUpdated)
