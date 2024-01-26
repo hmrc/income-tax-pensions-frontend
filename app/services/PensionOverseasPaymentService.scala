@@ -18,6 +18,7 @@ package services
 
 import connectors.IncomeTaxUserDataConnector
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
+import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import models.pension.income.{CreateUpdatePensionIncomeModel, ForeignPensionContainer, OverseasPensionContributionContainer}
 import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}
 import models.{IncomeTaxUserData, User}
@@ -36,7 +37,9 @@ class PensionOverseasPaymentService @Inject() (pensionUserDataRepository: Pensio
 
   private def getPensionsUserData(userData: Option[PensionsUserData], user: User, taxYear: Int)(implicit clock: Clock): PensionsUserData =
     userData match {
-      case Some(value) => value // Why was the `paymentsIntoOverseasPensions` field being updated to empty?
+      // TODO: Do we want to clear down the journey from the session everytime we save and continue?
+      // This is done in other journeys in this repository.
+      case Some(value) => value
       case None =>
         PensionsUserData(
           user.sessionId,
