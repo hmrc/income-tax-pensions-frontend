@@ -15,15 +15,14 @@
  *@
 
 @import forms.Countries
+@import forms.Country
 @import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accessibleautocomplete.AccessibleAutocomplete
 
 
 @this(govukSelect : GovukSelect)
 
-@(form: Form[_])(implicit messages: Messages)
-
-@countries = @{Countries.overseasCountries}
+@(form: Form[_], countries: List[Country])(implicit messages: Messages)
 
         @govukSelect(Select(
             id = "countryId",
