@@ -31,24 +31,26 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.annualAllowances.PstrSummaryView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PstrSummaryController @Inject()(implicit val cc: MessagesControllerComponents,
-                                      authAction: AuthorisedAction,
-                                      pstrSummaryView: PstrSummaryView,
-                                      appConfig: AppConfig,
-                                      pensionSessionService: PensionSessionService) extends FrontendController(cc) with I18nSupport {
+class PstrSummaryController @Inject() (implicit
+    val cc: MessagesControllerComponents,
+    authAction: AuthorisedAction,
+    pstrSummaryView: PstrSummaryView,
+    appConfig: AppConfig,
+    pensionSessionService: PensionSessionService,
+    ec: ExecutionContext)
+    extends FrontendController(cc)
+    with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         val checkRedirect = journeyCheck(PSTRSummaryPage, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-          data =>
-            val pstrList = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences
-            Future(Ok(pstrSummaryView(taxYear, pstrList.getOrElse(Nil))))
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data =>
+          val pstrList = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences
+          Future(Ok(pstrSummaryView(taxYear, pstrList.getOrElse(Nil))))
         }
       case None => Future(Redirect(PensionsSummaryController.show(taxYear)))
     }

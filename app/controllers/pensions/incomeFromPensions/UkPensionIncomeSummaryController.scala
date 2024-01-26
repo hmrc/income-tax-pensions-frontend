@@ -32,36 +32,37 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.incomeFromPensions.UkPensionIncomeSummary
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class UkPensionIncomeSummaryController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                 authAction: AuthorisedAction,
-                                                 ukPensionIncomeSummary: UkPensionIncomeSummary,
-                                                 appConfig: AppConfig,
-                                                 pensionSessionService: PensionSessionService) extends FrontendController(cc) with I18nSupport {
-
+class UkPensionIncomeSummaryController @Inject() (implicit
+    val cc: MessagesControllerComponents,
+    authAction: AuthorisedAction,
+    ukPensionIncomeSummary: UkPensionIncomeSummary,
+    appConfig: AppConfig,
+    pensionSessionService: PensionSessionService,
+    ec: ExecutionContext)
+    extends FrontendController(cc)
+    with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         val updatedUserData = cleanUpSchemes(data)
-        val checkRedirect = journeyCheck(UkPensionIncomePage, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) {
-          data =>
-            val incomeFromPensionList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
-            Future(Ok(ukPensionIncomeSummary(taxYear, incomeFromPensionList)))
+        val checkRedirect   = journeyCheck(UkPensionIncomePage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+          val incomeFromPensionList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
+          Future(Ok(ukPensionIncomeSummary(taxYear, incomeFromPensionList)))
         }
       case None => Future(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
 
   private def cleanUpSchemes(pensionsUserData: PensionsUserData): PensionsUserData = {
-    val schemes = pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
-    val filteredSchemes = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
-    val updatedViewModel = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = filteredSchemes)
+    val schemes            = pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+    val filteredSchemes    = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
+    val updatedViewModel   = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = filteredSchemes)
     val updatedPensionData = pensionsUserData.pensions.copy(incomeFromPensions = updatedViewModel)
-    val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
+    val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
     pensionSessionService.createOrUpdateSessionData(updatedUserData)
     updatedUserData
   }
