@@ -16,7 +16,6 @@
 
 package controllers.pensions.unauthorisedPayments
 
-
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.unauthorisedPayments.routes.UnauthorisedPensionSchemeTaxReferenceController
 import controllers.predicates.actions.AuthorisedAction
@@ -36,18 +35,20 @@ import utils.Clock
 import views.html.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                           authAction: AuthorisedAction,
-                                                           view: WereAnyOfTheUnauthorisedPaymentsView,
-                                                           appConfig: AppConfig,
-                                                           pensionSessionService: PensionSessionService,
-                                                           errorHandler: ErrorHandler,
-                                                           clock: Clock) extends FrontendController(cc) with I18nSupport {
-
+class WereAnyOfTheUnauthorisedPaymentsController @Inject() (implicit
+    val cc: MessagesControllerComponents,
+    authAction: AuthorisedAction,
+    view: WereAnyOfTheUnauthorisedPaymentsView,
+    appConfig: AppConfig,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    clock: Clock,
+    ec: ExecutionContext)
+    extends FrontendController(cc)
+    with I18nSupport {
 
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry.${if (user.isAgent) "agent" else "individual"}"
@@ -59,43 +60,42 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject()(implicit val cc: Mess
       case Right(optData) =>
         val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
-
           data.pensions.unauthorisedPayments.ukPensionSchemesQuestion match {
             case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
-            case None => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
+            case None        => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
           }
         }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    yesNoForm(request.user).bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-      yesNo => {
-        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-          case Right(optData) =>
-            val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _: PensionsCYAModel, taxYear)
-            redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+    yesNoForm(request.user)
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+        yesNo =>
+          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+            case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+            case Right(optData) =>
+              val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _: PensionsCYAModel, taxYear)
+              redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+                val pensionsCYAModel: PensionsCYAModel       = data.pensions
+                val viewModel: UnauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
+                val updatedCyaModel: PensionsCYAModel =
+                  pensionsCYAModel.copy(unauthorisedPayments =
+                    if (yesNo) viewModel.copy(ukPensionSchemesQuestion = Some(true))
+                    else viewModel.copy(ukPensionSchemesQuestion = Some(false), pensionSchemeTaxReference = None))
 
-              val pensionsCYAModel: PensionsCYAModel = data.pensions
-              val viewModel: UnauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
-              val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(unauthorisedPayments =
-                  if (yesNo) viewModel.copy(ukPensionSchemesQuestion = Some(true))
-                  else viewModel.copy(ukPensionSchemesQuestion = Some(false), pensionSchemeTaxReference = None))
+                pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                  errorHandler.internalServerError()) {
+                  isFinishedCheck(
+                    updatedCyaModel.unauthorisedPayments,
+                    taxYear,
+                    UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None),
+                    cyaPageCall)
+                }
               }
-
-              pensionSessionService.createOrUpdateSessionData(
-                request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                isFinishedCheck(
-                  updatedCyaModel.unauthorisedPayments, taxYear,
-                  UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None),
-                  cyaPageCall)
-              }
-            }
-        }
-      }
-    )
+          }
+      )
   }
 }
