@@ -40,21 +40,21 @@ class PensionsConnector @Inject()(val http: HttpClient,
   def savePensionChargesSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionChargesSessionResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-charges/session-data/nino/$nino/taxYear/${taxYear.toString}"
-    ConnectorRequestInfo("PUT", url).logRequestWithBody(logger, model)
+    ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, model)
     http.PUT[CreateUpdatePensionChargesRequestModel, PensionChargesSessionResponse](url,
       model)(CreateUpdatePensionChargesRequestModel.format, PensionChargesSessionHttpReads, hc, ec)
   }
 
   def deletePensionCharges(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DeletePensionChargesResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-charges/session-data/nino/$nino/taxYear/${taxYear.toString}"
-    ConnectorRequestInfo("DELETE", url).logRequest(logger)
+    ConnectorRequestInfo("DELETE", url, "income-tax-pensions").logRequest(logger)
     http.DELETE[DeletePensionChargesResponse](url)(DeletePensionChargesHttpReads, hc, ec)
   }
 
   def savePensionIncomeSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionIncomeModel)
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionIncomeSessionResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-income/session-data/nino/$nino/taxYear/${taxYear.toString}"
-    ConnectorRequestInfo("PUT", url).logRequestWithBody(logger, model)
+    ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, model)
     http.PUT[CreateUpdatePensionIncomeModel, PensionIncomeSessionResponse](url, model)(
       CreateUpdatePensionIncomeModel.writes, PensionIncomeSessionHttpReads, hc, ec)
   }
@@ -62,14 +62,14 @@ class PensionsConnector @Inject()(val http: HttpClient,
   def deletePensionIncomeData(nino: String, taxYear: Int)
                              (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DeletePensionIncomeResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-income/session-data/nino/$nino/taxYear/${taxYear.toString}"
-    ConnectorRequestInfo("DELETE", url).logRequest(logger)
+    ConnectorRequestInfo("DELETE", url, "income-tax-pensions").logRequest(logger)
     http.DELETE[DeletePensionIncomeResponse](url)(DeletePensionIncomeHttpReads, hc, ec)
   }
 
   def savePensionReliefSessionData(nino: String, taxYear: Int, model: CreateOrUpdatePensionReliefsModel)
                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PensionReliefsSessionResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-reliefs/nino/$nino/taxYear/${taxYear.toString}"
-    ConnectorRequestInfo("PUT", url).logRequestWithBody(logger, model)
+    ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, model)
     http.PUT[CreateOrUpdatePensionReliefsModel, PensionReliefsSessionResponse](url,
       model)(CreateOrUpdatePensionReliefsModel.format, PensionReliefsSessionHttpReads, hc, ec)
   }
@@ -77,7 +77,7 @@ class PensionsConnector @Inject()(val http: HttpClient,
   def deletePensionReliefData(nino: String, taxYear: Int)
                              (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DeletePensionReliefsResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-reliefs/session-data/nino/$nino/taxYear/${taxYear.toString}"
-    ConnectorRequestInfo("DELETE", url).logRequest(logger)
+    ConnectorRequestInfo("DELETE", url, "income-tax-pensions").logRequest(logger)
     http.DELETE[DeletePensionReliefsResponse](url)(DeletePensionReliefsHttpReads, hc, ec)
   }
 }

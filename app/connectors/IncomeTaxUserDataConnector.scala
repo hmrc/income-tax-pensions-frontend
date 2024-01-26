@@ -32,7 +32,7 @@ class IncomeTaxUserDataConnector @Inject()(val http: HttpClient,
 
   def getUserData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] = {
     val incomeTaxUserDataUrl: String = config.incomeTaxSubmissionBEBaseUrl + s"/income-tax/nino/$nino/sources/session?taxYear=$taxYear"
-    ConnectorRequestInfo("GET", incomeTaxUserDataUrl).logRequest(logger)
+    ConnectorRequestInfo("GET", incomeTaxUserDataUrl, "income-tax-submission").logRequest(logger)
     http.GET[IncomeTaxUserDataResponse](incomeTaxUserDataUrl)
   }
 
