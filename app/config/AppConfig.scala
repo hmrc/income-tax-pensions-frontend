@@ -16,6 +16,8 @@
 
 package config
 
+import play.api.Logging
+
 import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
 import play.api.mvc.{Call, RequestHeader}
@@ -25,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import scala.concurrent.duration.Duration
 
 @Singleton
-class AppConfig @Inject()(servicesConfig: ServicesConfig) {
+class AppConfig @Inject()(servicesConfig: ServicesConfig) extends Logging {
 
   private lazy val signInBaseUrl: String = servicesConfig.getString(ConfigKeys.signInUrl)
 
@@ -109,6 +111,9 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig) {
 
   lazy val nrsEnabled: Boolean = servicesConfig.getBoolean("feature-switch.nrsEnabled")
 
-  lazy val useEncryption: Boolean = servicesConfig.getBoolean("useEncryption")
+  lazy val useEncryption: Boolean = {
+    logger.warn("[SecureGCMCipher][decrypt] Encryption is turned off")
+    servicesConfig.getBoolean("useEncryption")
+  }
 
 }

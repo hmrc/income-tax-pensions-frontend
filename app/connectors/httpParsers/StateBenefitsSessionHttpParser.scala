@@ -17,6 +17,7 @@
 package connectors.httpParsers
 
 import models.APIErrorModel
+import models.logging.ConnectorResponseInfo
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys.FAILED_TO_FIND_PENSIONS_DATA
@@ -31,6 +32,8 @@ object StateBenefitsSessionHttpParser extends APIParser {
   implicit object StateBenefitsSessionHttpReads extends HttpReads[StateBenefitsSessionResponse] {
 
     override def read(method: String, url: String, response: HttpResponse): StateBenefitsSessionResponse = {
+      ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
+
       response.status match {
         case NOT_FOUND =>
           pagerDutyLog(FAILED_TO_FIND_PENSIONS_DATA, logMessage(response))

@@ -17,18 +17,21 @@
 package connectors
 
 import config.AppConfig
-import connectors.httpParsers.RefreshIncomeSourceHttpParser.{SessionHttpReads, RefreshIncomeSourceResponse}
+import connectors.httpParsers.RefreshIncomeSourceHttpParser.{RefreshIncomeSourceResponse, SessionHttpReads}
 import models.RefreshIncomeSourceRequest
+import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceConnector @Inject()(val http: HttpClient,
-                                      val config: AppConfig)(implicit ec: ExecutionContext) {
+                                      val config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   def put(taxYear: Int, nino: String, incomeSource: String)(implicit hc: HeaderCarrier): Future[RefreshIncomeSourceResponse] = {
     val targetUrl = config.incomeTaxSubmissionBEBaseUrl + s"/income-tax/nino/$nino/sources/session?taxYear=$taxYear"
-    http.PUT[RefreshIncomeSourceRequest, RefreshIncomeSourceResponse](targetUrl, RefreshIncomeSourceRequest(incomeSource))
+    val body = RefreshIncomeSourceRequest(incomeSource)
+    logger.debug(s"Call from Connector, body: ${RefreshIncomeSourceRequest.formats.writes(body)}")
+    http.PUT[RefreshIncomeSourceRequest, RefreshIncomeSourceResponse](targetUrl, body)
   }
 }

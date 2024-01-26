@@ -17,6 +17,8 @@
 package connectors.httpParsers
 
 import models.APIErrorModel
+import models.logging.ConnectorResponseInfo
+import play.api.Logging
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object PensionReliefsSessionHttpParser extends APIParser {
@@ -28,6 +30,8 @@ object PensionReliefsSessionHttpParser extends APIParser {
   implicit object PensionReliefsSessionHttpReads extends HttpReads[PensionReliefsSessionResponse] {
 
     override def read(method: String, url: String, response: HttpResponse): PensionReliefsSessionResponse = {
+      ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
+
       SessionHttpReads.read(method, url, response)
     }
   }

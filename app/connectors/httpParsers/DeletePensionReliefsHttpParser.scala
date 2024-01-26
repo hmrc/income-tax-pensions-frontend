@@ -17,6 +17,7 @@
 package connectors.httpParsers
 
 import models.APIErrorModel
+import models.logging.ConnectorResponseInfo
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object DeletePensionReliefsHttpParser extends APIParser {
@@ -28,7 +29,10 @@ object DeletePensionReliefsHttpParser extends APIParser {
 
   implicit object DeletePensionReliefsHttpReads extends HttpReads[DeletePensionReliefsResponse] {
 
-    override def read(method: String, url: String, response: HttpResponse): DeletePensionReliefsResponse =
+    override def read(method: String, url: String, response: HttpResponse): DeletePensionReliefsResponse = {
+      ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
+
       SessionHttpReads.read(method, url, response)
+    }
   }
 }

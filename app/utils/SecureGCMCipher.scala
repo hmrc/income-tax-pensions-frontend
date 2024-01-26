@@ -63,7 +63,6 @@ class SecureGCMCipher @Inject()(implicit private val appConfig: AppConfig) exten
         validateAssociatedText(textAndKey.associatedText, METHOD_ENCRYPT), gcmParameterSpec, secretKey)
       EncryptedValue(cipherText, nonce)
     } else {
-      logger.info("[SecureGCMCipher][encrypt] Encryption is turned off")
       EncryptedValue(valueToEncrypt.toString, s"${valueToEncrypt.toString}-Nonce")
     }
   }
@@ -81,7 +80,6 @@ class SecureGCMCipher @Inject()(implicit private val appConfig: AppConfig) exten
         case Right(value) => converter.convert(value)
       }
     } else {
-      logger.info("[SecureGCMCipher][decrypt] Encryption is turned off")
       converter.convert(valueToDecrypt)
     }
   }
