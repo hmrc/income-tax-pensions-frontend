@@ -39,9 +39,9 @@ class TaxYearAction @Inject()(taxYear: Int, missingTaxYearReset: Boolean)(
     implicit val implicitUser: AuthorisationRequest[A] = request
 
     val validClientTaxYears = request.session.get(VALID_TAX_YEARS)
-    lazy val validTaxYears = validClientTaxYears.get.split(",").toSeq.map(_.toInt)
 
     if (validClientTaxYears.isDefined) {
+      val validTaxYears = validClientTaxYears.get.split(",").toSeq.map(_.toInt)
       if (!appConfig.taxYearErrorFeature || validTaxYears.contains(taxYear)) {
         val sameTaxYear = request.session.get(TAX_YEAR).exists(_.toInt == taxYear)
         if (sameTaxYear || !missingTaxYearReset) {
@@ -54,7 +54,7 @@ class TaxYearAction @Inject()(taxYear: Int, missingTaxYearReset: Boolean)(
           ))
         }
       } else {
-        logger.info(s"[TaxYearAction][refine] Invalid tax year, redirecting to error page")
+        logger.warn(s"[TaxYearAction][refine] Invalid tax year, redirecting to error page. Valid Tax Years: $validClientTaxYears")
         Future.successful(Left(Redirect(controllers.errors.routes.TaxYearErrorController.show)))
       }
     } else {
