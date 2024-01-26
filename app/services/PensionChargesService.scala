@@ -24,7 +24,6 @@ import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
 import services.PensionChargesService.AnnualAllowance._
-import services.PensionChargesService.LifetimeAllowance._
 import services.PensionChargesService.OverseasTransferCharge._
 import services.PensionChargesService.ShortServiceRefund._
 import services.PensionChargesService.UnauthorisedPayments._
@@ -39,32 +38,6 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
                                       pensionChargesHelper: PensionChargesConnectorHelper,
                                       incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
 
-
-  def saveLifetimeAllowancesViewModel(user: User, taxYear: Int)(implicit hc: HeaderCarrier,
-                                                                ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
-
-    (for {
-      sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
-      priorData <-
-        FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector
-          .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
-
-      viewModel: Option[PensionLifetimeAllowancesViewModel] = sessionData.map(_.pensions.pensionLifetimeAllowances)
-      savingsTaxChargesModel: Option[PensionSavingsTaxCharges] = viewModel.map(_.toPensionSavingsTaxChargesModel)
-
-      result <-
-        FutureEitherOps[ServiceError, Unit](savePensionChargesData(
-          user = user,
-          taxYear = taxYear,
-          subModel = savingsTaxChargesModel,
-          cya = viewModel,
-          submissionModel = createLifetimeAllowanceChargesModel(viewModel, priorData),
-          updatedCYA = getLifetimeAllowanceUserData(sessionData, user, taxYear, clock)
-        ))
-    } yield {
-      result
-    }).value
-  }
 
   def saveUnauthorisedViewModel(user: User, taxYear: Int)(implicit hc: HeaderCarrier,
                                                           ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
@@ -185,38 +158,6 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
 }
 
 object PensionChargesService {
-
-  object LifetimeAllowance {
-
-    def getLifetimeAllowanceUserData(userData: Option[PensionsUserData],
-                                     user: User, taxYear: Int, clock: Clock): PensionsUserData = {
-      userData match {
-        case Some(value) => value.copy(pensions = value.pensions.copy(
-          pensionLifetimeAllowances = PensionLifetimeAllowancesViewModel()
-        ))
-        case None => PensionsUserData(
-          user.sessionId, user.mtditid,
-          user.nino, taxYear,
-          isPriorSubmission = false,
-          PensionsCYAModel.emptyModels,
-          clock.now(DateTimeZone.UTC)
-        )
-      }
-    }
-
-    def createLifetimeAllowanceChargesModel(viewModel: Option[PensionLifetimeAllowancesViewModel],
-                                            priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel = {
-      CreateUpdatePensionChargesRequestModel(
-        pensionSavingsTaxCharges = viewModel.map(_.toPensionSavingsTaxChargesModel),
-        pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
-        pensionSchemeUnauthorisedPayments = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)),
-        pensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
-        overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
-      )
-    }
-
-
-  }
 
   object AnnualAllowance {
     def createAnnualAllowanceChargesModel(viewModel: Option[PensionAnnualAllowancesViewModel],

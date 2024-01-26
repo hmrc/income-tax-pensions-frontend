@@ -16,7 +16,6 @@
 
 package connectors.httpParsers
 
-import models.logging.ConnectorResponseInfo
 import models.{APIErrorBodyModel, APIErrorModel, APIErrorsBodyModel}
 import play.api.Logging
 import play.api.http.Status._

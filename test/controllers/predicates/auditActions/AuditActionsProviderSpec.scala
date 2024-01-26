@@ -20,7 +20,7 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import common.SessionValues.{TAX_YEAR, VALID_TAX_YEARS}
-import controllers.errors.routes.UnauthorisedUserErrorController
+import controllers.errors
 import models.audit.UkPensionIncomeAudit.AuditUkPensionIncome
 import models.audit._
 import models.pension.AllPensionsData.{generateCyaFromPrior, generateUkPensionCyaFromPrior}
@@ -75,8 +75,6 @@ class AuditActionsProviderSpec extends ControllerUnitTest
     ("incomeFromStatePensionsUpdateAuditing", auditProvider.incomeFromStatePensionsUpdateAuditing: ActionType),
     ("ukPensionIncomeViewAuditing", auditProvider.ukPensionIncomeViewAuditing: ActionType),
     ("ukPensionIncomeUpdateAuditing", auditProvider.ukPensionIncomeUpdateAuditing: ActionType),
-    ("lifetimeAllowancesViewAuditing", auditProvider.lifetimeAllowancesViewAuditing: ActionType),
-    ("lifetimeAllowancesUpdateAuditing", auditProvider.lifetimeAllowancesUpdateAuditing: ActionType),
     ("annualAllowancesViewAuditing", auditProvider.annualAllowancesViewAuditing: ActionType),
     ("annualAllowancesUpdateAuditing", auditProvider.annualAllowancesUpdateAuditing: ActionType),
     ("transfersIntoOverseasPensionsViewAuditing", auditProvider.transfersIntoOverseasPensionsViewAuditing: ActionType),
@@ -89,7 +87,7 @@ class AuditActionsProviderSpec extends ControllerUnitTest
         mockFailToAuthenticate()
 
         val underTest = action(taxYearEOY)(block = anyBlock)
-        await(underTest(fakeIndividualRequest)) shouldBe Redirect(UnauthorisedUserErrorController.show)
+        await(underTest(fakeIndividualRequest)) shouldBe Redirect(errors.routes.UnauthorisedUserErrorController.show)
       }
 
       "handle internal server error when getUserSessionData result in error" in {
@@ -198,15 +196,6 @@ class AuditActionsProviderSpec extends ControllerUnitTest
                 ),
                 None
               ).toAuditModelView
-
-            case "lifetimeAllowancesUpdateAuditing" =>
-              val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
-              mockGetPriorData(taxYearEOY, aUser, Right(priorData))
-              val audModel = LifetimeAllowancesAudit(taxYearEOY, aUser, aPensionsUserData.pensions.pensionLifetimeAllowances,
-                priorData.pensions.map(generateCyaFromPrior).map(_.pensionLifetimeAllowances))
-              if (audModel.priorLifetimeAllowances.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
-            case "lifetimeAllowancesViewAuditing" =>
-              LifetimeAllowancesAudit(taxYearEOY, aUser, aPensionsUserData.pensions.pensionLifetimeAllowances, None).toAuditModelView
 
             case "annualAllowancesUpdateAuditing" =>
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)

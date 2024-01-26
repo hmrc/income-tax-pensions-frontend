@@ -17,7 +17,7 @@
 package services
 
 import config.{AppConfig, ErrorHandler}
-import connectors.{IncomeSourceConnector, IncomeTaxUserDataConnector}
+import connectors.IncomeTaxUserDataConnector
 import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
 import models.User
 import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData}
@@ -37,7 +37,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
                                       incomeTaxUserDataConnector: IncomeTaxUserDataConnector,
-                                      incomeSourceConnector: IncomeSourceConnector,
                                       implicit private val appConfig: AppConfig,
                                       errorHandler: ErrorHandler,
                                       implicit val ec: ExecutionContext) extends Logging {
@@ -51,17 +50,6 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
     pensionUserDataRepository.find(taxYear, user).map {
       case Left(_) => Left(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(value) => Right(value)
-    }
-  }
-
-  def clear[R](taxYear: Int)(onFail: R)(onSuccess: R)(implicit user: User, ec: ExecutionContext, hc: HeaderCarrier): Future[R] = {
-    incomeSourceConnector.put(taxYear, user.nino, "pensions")(hc.withExtraHeaders("mtditid" -> user.mtditid)).flatMap {
-      case Left(_) => Future.successful(onFail)
-      case _ =>
-        pensionUserDataRepository.clear(taxYear, user).map {
-          case true => onSuccess
-          case false => onFail
-        }
     }
   }
 

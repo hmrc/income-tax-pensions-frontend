@@ -35,7 +35,6 @@ import utils.CommonUtils
 import utils.PageUrls.IncomeFromPensionsPages.pensionIncomeSummaryUrl
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, reliefAtSourcePensionsUrl}
 import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, reducedAnnualAllowanceUrl}
-import utils.PageUrls.PensionLifetimeAllowance.{lifetimeAllowanceCYA, pensionAboveAnnualLifetimeAllowanceUrl}
 import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
 import utils.PageUrls._
 
@@ -45,7 +44,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
     val paymentsIntoPensionsLink = "#payments-into-pensions-link"
     val incomeFromPensionsLink = "#income-from-pensions-link"
     val pensionAnnualAllowanceLink = "#pension-annual-allowance-link"
-    val pensionLifetimeAllowanceLink = "#pension-lifetime-allowance-link"
     val unauthorisedPaymentsFromPensionsLink = "#unauthorised-payments-from-pensions-link"
     val paymentsToOverseasPensionsLink = "#payments-to-overseas-pensions-link"
     val insetTextSelector = "#main-content > div > div > div.govuk-inset-text"
@@ -64,7 +62,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
     val incomeLinkText: String
     val unauthLinkText: String
     val annualAllowance: String
-    val lifetimeAllowance: String
     val buttonText: String
     val updated: String
     val cannotUpdate: String
@@ -78,7 +75,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
     val incomeLinkText = "Income from pensions"
     val unauthLinkText = "Unauthorised payments from pensions"
     val annualAllowance = "Pension annual allowance"
-    val lifetimeAllowance = "Pension lifetime allowance"
     val buttonText = "Return to overview"
     val updated = "Updated"
     val cannotUpdate = "Cannot update"
@@ -92,7 +88,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
     val incomeLinkText = "Incwm o bensiynau"
     val unauthLinkText = "Taliadau heb awdurdod o bensiynau"
     val annualAllowance = "Lwfans blynyddol pensiwn"
-    val lifetimeAllowance = "Lwfans oes pensiwn"
     val buttonText = "Yn ôl i’r trosolwg"
     val updated = "Wedi diweddaru"
     val cannotUpdate = "Cannot update"
@@ -149,11 +144,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
             textOnPageCheck(updated, summaryListStatusTagSelector(3))
           }
 
-          "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, lifetimeAllowanceCYA(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(4))
-          }
-
           "has an unauthorised payments from pensions section" which {
             linkCheck(unauthLinkText, unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(5))
@@ -196,11 +186,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
             textOnPageCheck(updated, summaryListStatusTagSelector(3))
           }
 
-          "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, lifetimeAllowanceCYA(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(4))
-          }
-
           "has an unauthorised payments from pensions section" which {
             linkCheck(unauthLinkText, unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(5))
@@ -236,11 +221,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           "has an pension annual allowance section" which {
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
             textOnPageCheck(notStarted, summaryListStatusTagSelector(3))
-          }
-
-          "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY))
-            textOnPageCheck(notStarted, summaryListStatusTagSelector(4))
           }
 
           "has an unauthorised payments from pensions section" which {
@@ -279,11 +259,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           "has an pension annual allowance section" which {
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
             textOnPageCheck(notStarted, summaryListStatusTagSelector(3))
-          }
-
-          "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY))
-            textOnPageCheck(notStarted, summaryListStatusTagSelector(4))
           }
 
           "has an unauthorised payments from pensions section" which {
@@ -325,11 +300,6 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, annualAllowancesCYAUrl(taxYearEOY))
 //            linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(3))
-          }
-
-          "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, lifetimeAllowanceCYA(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(4))
           }
 
           "has an unauthorised payments from pensions section" which {

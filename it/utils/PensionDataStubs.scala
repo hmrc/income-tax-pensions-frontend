@@ -21,7 +21,6 @@ import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasP
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionIncomeViewModelBuilder.aPensionIncome
-import builders.PensionLifetimeAllowancesViewModelBuilder.aPensionLifetimeAllowancesViewModel
 import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsViewModel
 import builders.StateBenefitsModelBuilder.aStateBenefitsModel
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
@@ -131,7 +130,7 @@ object PensionUserDataStub extends IntegrationTest {
                        taxyear: Int = taxYear,
                        isPriorSubmission: Boolean = true,
                        cya: PensionsCYAModel = PensionsCYAModel(paymentsIntoPensionViewModel, pensionsAnnualAllowancesViewModel,
-                         aPensionLifetimeAllowancesViewModel, anIncomeFromPensionsViewModel,
+                         anIncomeFromPensionsViewModel,
                          anUnauthorisedPaymentsViewModel, aPaymentsIntoOverseasPensionsViewModel,
                          anIncomeFromOverseasPensionsViewModel, aTransfersIntoOverseasPensionsViewModel,
                          aShortServiceRefundsViewModel)

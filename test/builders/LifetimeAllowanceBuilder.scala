@@ -20,16 +20,9 @@ import models.pension.charges.LifetimeAllowance
 
 object LifetimeAllowanceBuilder {
 
-  val aLifetimeAllowance1: LifetimeAllowance = LifetimeAllowance(
-    amount = Some(50),
-    taxPaid = Some(20)
-  )
-
   val aLifetimeAllowance2: LifetimeAllowance = LifetimeAllowance(
     amount = Some(22.22),
     taxPaid = Some(11.11)
   )
-
-  val anEmptyLifetimeAllowance: LifetimeAllowance = LifetimeAllowance()
 
 }

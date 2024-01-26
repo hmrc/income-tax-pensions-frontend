@@ -39,16 +39,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PensionTakenAnotherWayAmountController @Inject() (implicit
-    val mcc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    pensionTakenAnotherWayAmountView: PensionTakenAnotherWayAmountView,
-    appConfig: AppConfig,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    formsProvider: FormsProvider,
-    clock: Clock,
-    ec: ExecutionContext)
-    extends FrontendController(mcc)
+                                                        val mcc: MessagesControllerComponents,
+                                                        authAction: AuthorisedAction,
+                                                        pensionTakenAnotherWayAmountView: PensionTakenAnotherWayAmountView,
+                                                        appConfig: AppConfig,
+                                                        pensionSessionService: PensionSessionService,
+                                                        errorHandler: ErrorHandler,
+                                                        formsProvider: FormsProvider,
+                                                        clock: Clock,
+                                                        ec: ExecutionContext)
+  extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper
     with FormUtils {

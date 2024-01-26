@@ -17,7 +17,6 @@
 @import controllers.pensions.{routes => pRoutes}
 @import controllers.pensions.annualAllowances.{routes => aaRoutes}
 @import controllers.pensions.incomeFromPensions.{routes => ifpRoutes}
-@import controllers.pensions.lifetimeAllowances.{routes => laRoutes}
 @import controllers.pensions.paymentsIntoPensions.{routes => pipRoutes}
 @import controllers.pensions.unauthorisedPayments.{routes => upRoutes}
 @import views.html.templates.Layout
@@ -61,13 +60,6 @@
     aaRoutes.AnnualAllowanceCYAController.show(taxYear).url
   else
     aaRoutes.ReducedAnnualAllowanceController.show(taxYear).url
-}
-
-@lifetimeAllowanceUrlRedirect() = @{
-  if(lifetimeAllowanceHasPriorData(prior))
-   laRoutes.LifetimeAllowanceCYAController.show(taxYear).url
-  else
-    laRoutes.AboveAnnualLifetimeAllowanceController.show(taxYear).url
 }
 
 @overseasPensionsSummaryUrlRedirect() = @{
@@ -125,19 +117,6 @@
                 }
                 </dd>
 
-            </div>
-
-            <div class="govuk-summary-list__row" id="pension-lifetime-allowance-row">
-                <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(lifetimeAllowanceUrlRedirect(), "pensions.pensionSummary.pensionLifetimeAllowance", Some("pension-lifetime-allowance-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(lifetimeAllowanceIsUpdated(cya)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.notStarted")</strong>
-                }
-                </dd>
             </div>
 
             <div class="govuk-summary-list__row" id="unauthorised-payments-from-pensions">

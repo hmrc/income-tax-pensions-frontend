@@ -117,17 +117,6 @@ class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
       .andThen(AnnualAllowancesUpdateAuditAction(auditService))
   }
 
-  def lifetimeAllowancesViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
-    userSessionDataFor(taxYear)
-      .andThen(LifetimeAllowancesViewAuditAction(auditService))
-  }
-
-  def lifetimeAllowancesUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
-    userPriorAndSessionDataFor(taxYear)
-      .andThen(LifetimeAllowancesUpdateAuditAction(auditService))
-  }
-
-
   def transfersIntoOverseasPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
     userSessionDataFor(taxYear)
       .andThen(TransfersIntoOverseasPensionsViewAuditAction(auditService))

@@ -57,13 +57,6 @@ object PensionsUserDataBuilder extends UnitTest {
     )
   }
 
-  def pensionsUserDataWithLifetimeAllowance(pensionLifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel,
-                                            isPriorSubmission: Boolean = true): PensionsUserData = {
-    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
-      pensions = aPensionsCYAModel.copy(pensionLifetimeAllowances = pensionLifetimeAllowancesViewModel)
-    )
-  }
-
   def pensionsUserDataWithUnauthorisedPayments(unauthorisedPaymentViewModel: UnauthorisedPaymentsViewModel,
                                                isPriorSubmission: Boolean = true): PensionsUserData = {
     aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
@@ -84,16 +77,6 @@ object PensionsUserDataBuilder extends UnitTest {
   }
   
   
-
-  def pensionsUserDataWithAnnualAndLifetimeAllowance(pensionsAnnualAllowances: PensionAnnualAllowancesViewModel,
-                                                     pensionLifetimeAllowancesViewModel: PensionLifetimeAllowancesViewModel,
-                                            isPriorSubmission: Boolean = true): PensionsUserData = {
-    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
-      pensions = aPensionsCYAModel.copy(
-        pensionsAnnualAllowances = pensionsAnnualAllowances,
-        pensionLifetimeAllowances = pensionLifetimeAllowancesViewModel)
-    )
-  }
 
   def pensionUserDataWithIncomeOverseasPension(incomeOverseasPensions: IncomeFromOverseasPensionsViewModel,
                                           isPriorSubmission: Boolean = true): PensionsUserData = {
