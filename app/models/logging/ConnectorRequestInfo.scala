@@ -19,9 +19,12 @@ package models.logging
 import play.api.Logger
 import play.api.libs.json.Writes
 
-final case class ConnectorRequestInfo(method: String, url: String) {
+final case class ConnectorRequestInfo(method: String, url: String, apiId: String) {
+  private def apiIdStr = s"API#${apiId}"
+
   def logRequestWithBody[A: Writes](logger: Logger, body: A): Unit =
-    logger.debug(s"Connector: Sending Request $method $url\nRequest Body: ${implicitly[Writes[A]].writes(body)}")
+    logger.debug(s"Connector: $apiIdStr $method $url\nRequest Body: ${implicitly[Writes[A]].writes(body)}")
+
 
   def logRequest(logger: Logger): Unit =
     logger.debug(s"Connector: Sending Request $method $url")

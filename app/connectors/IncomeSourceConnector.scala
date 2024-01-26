@@ -19,6 +19,7 @@ package connectors
 import config.AppConfig
 import connectors.httpParsers.RefreshIncomeSourceHttpParser.{RefreshIncomeSourceResponse, SessionHttpReads}
 import models.RefreshIncomeSourceRequest
+import models.logging.ConnectorRequestInfo
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -31,7 +32,7 @@ class IncomeSourceConnector @Inject()(val http: HttpClient,
   def put(taxYear: Int, nino: String, incomeSource: String)(implicit hc: HeaderCarrier): Future[RefreshIncomeSourceResponse] = {
     val targetUrl = config.incomeTaxSubmissionBEBaseUrl + s"/income-tax/nino/$nino/sources/session?taxYear=$taxYear"
     val body = RefreshIncomeSourceRequest(incomeSource)
-    logger.debug(s"Call from Connector, body: ${RefreshIncomeSourceRequest.formats.writes(body)}")
+    ConnectorRequestInfo("PUT", targetUrl, "income-tax-submission").logRequestWithBody(logger, body)
     http.PUT[RefreshIncomeSourceRequest, RefreshIncomeSourceResponse](targetUrl, body)
   }
 }
