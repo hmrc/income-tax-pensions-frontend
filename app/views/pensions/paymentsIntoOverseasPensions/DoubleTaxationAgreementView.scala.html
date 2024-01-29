@@ -22,6 +22,7 @@
 @import views.html.templates.Layout
 @import views.html.templates.helpers.{Button, Details, ErrorSummary, Heading, InputTextAlt, InputTextareaAlt}
 @import views.html.templates.partials.CountryPartial
+@import viewsupport.pensions.paymentsIntoOverseasPensions.DoubleTaxationAgreementCountries
 
 @this(
         layout: Layout,
@@ -65,7 +66,7 @@
 
         @formWithCsrf(action = DoubleTaxationAgreementController.submit(taxYear, index)) {
             <div style="width: 300px;">
-            @countryPartial(form)
+            @countryPartial(form, DoubleTaxationAgreementCountries.countries)
             </div>
 
             @inputText(
