@@ -21,7 +21,7 @@ import builders.ReliefBuilder.{aDoubleTaxationRelief, aMigrantMemberRelief, aNoT
 import models.pension.income.OverseasPensionContribution
 import utils.UnitTest
 
-class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {  //scalastyle:off magic.number
+class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest { // scalastyle:off magic.number
 
   "isEmpty" should {
     "return true when all the ViewModel's arguments are 'None'" in {
@@ -41,17 +41,21 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {  //scalastyle
       }
       "all required questions are answered" in {
         aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(false)).isFinished shouldBe true
-        aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
-          paymentsIntoOverseasPensionsQuestions = Some(true),
-          paymentsIntoOverseasPensionsAmount = Some(10),
-          employerPaymentsQuestion = Some(false)
-        ).isFinished shouldBe true
-        aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
-          paymentsIntoOverseasPensionsQuestions = Some(true),
-          paymentsIntoOverseasPensionsAmount = Some(10),
-          employerPaymentsQuestion = Some(true),
-          taxPaidOnEmployerPaymentsQuestion = Some(true)
-        ).isFinished shouldBe true
+        aPaymentsIntoOverseasPensionsEmptyViewModel
+          .copy(
+            paymentsIntoOverseasPensionsQuestions = Some(true),
+            paymentsIntoOverseasPensionsAmount = Some(10),
+            employerPaymentsQuestion = Some(false)
+          )
+          .isFinished shouldBe true
+        aPaymentsIntoOverseasPensionsEmptyViewModel
+          .copy(
+            paymentsIntoOverseasPensionsQuestions = Some(true),
+            paymentsIntoOverseasPensionsAmount = Some(10),
+            employerPaymentsQuestion = Some(true),
+            taxPaidOnEmployerPaymentsQuestion = Some(true)
+          )
+          .isFinished shouldBe true
         aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aNoTaxRelief)).isFinished shouldBe true
       }
     }
@@ -59,22 +63,28 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {  //scalastyle
     "return false" when {
       "not all necessary questions have been populated" in {
         aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(true)).isFinished shouldBe false
-        aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
-          paymentsIntoOverseasPensionsQuestions = Some(true), taxPaidOnEmployerPaymentsQuestion = Some(true)
-        ).isFinished shouldBe false
-        aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(
-          Relief(
-            reliefType = Some(TaxReliefQuestion.DoubleTaxationRelief),
-            customerReference = None,
-            employerPaymentsAmount = None,
-            qopsReference = None,
-            alphaTwoCountryCode = None,
-            alphaThreeCountryCode = None,
-            doubleTaxationArticle = None,
-            doubleTaxationTreaty = None,
-            doubleTaxationReliefAmount = None,
-            sf74Reference = None)
-        )).isFinished shouldBe false
+        aPaymentsIntoOverseasPensionsEmptyViewModel
+          .copy(
+            paymentsIntoOverseasPensionsQuestions = Some(true),
+            taxPaidOnEmployerPaymentsQuestion = Some(true)
+          )
+          .isFinished shouldBe false
+        aPaymentsIntoOverseasPensionsViewModel
+          .copy(reliefs = Seq(
+            Relief(
+              reliefType = Some(TaxReliefQuestion.DoubleTaxationRelief),
+              customerReference = None,
+              employerPaymentsAmount = None,
+              qopsReference = None,
+              alphaTwoCountryCode = None,
+              alphaThreeCountryCode = None,
+              doubleTaxationArticle = None,
+              doubleTaxationTreaty = None,
+              doubleTaxationReliefAmount = None,
+              sf74Reference = None
+            )
+          ))
+          .isFinished shouldBe false
       }
     }
   }
@@ -113,7 +123,8 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {  //scalastyle
       aPaymentsIntoOverseasPensionsViewModel.toPensionContributions shouldBe expectedResult
     }
     "be empty when there are no Reliefs" in {
-      val viewModel: PaymentsIntoOverseasPensionsViewModel = aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(true))
+      val viewModel: PaymentsIntoOverseasPensionsViewModel =
+        aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(true))
       val expectedResult: Seq[OverseasPensionContribution] = Seq.empty
 
       viewModel.toPensionContributions shouldBe expectedResult
@@ -125,13 +136,18 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest {  //scalastyle
       Seq(aTransitionalCorrespondingRelief, aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief).forall(_.isFinished)
     }
     "return false when all not relevant questions are answered" in {
-      aTransitionalCorrespondingRelief.copy(employerPaymentsAmount = None).isFinished shouldBe false
-      aMigrantMemberRelief.copy(qopsReference = None).isFinished shouldBe false
-      aDoubleTaxationRelief.copy(alphaThreeCountryCode = None).isFinished shouldBe false
-      aNoTaxRelief.copy(reliefType = None).isFinished shouldBe false
+      List(
+        aTransitionalCorrespondingRelief.copy(employerPaymentsAmount = None),
+        aNoTaxRelief.copy(reliefType = None),
+        aMigrantMemberRelief.copy(customerReference = None),
+        aDoubleTaxationRelief.copy(alphaThreeCountryCode = None)
+      ).zipWithIndex
+        .foreach { case (relief, i) =>
+          withClue(s"Relief at index $i: ") {
+            relief.isFinished shouldBe false
+          }
+        }
     }
   }
 
 }
-
-

@@ -95,7 +95,7 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest {  //scalastyle
       "redirect to the relief summary page" when {
         "previous relief questions are unanswered" in {
           val incompleteJourney = cyaData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(
-            reliefs = Seq(aTransitionalCorrespondingRelief, aMigrantMemberRelief.copy(qopsReference = None))
+            reliefs = Seq(aTransitionalCorrespondingRelief)
           ))
           val result = indexCheckThenJourneyCheck(
             data = aPensionsUserData.copy(pensions = incompleteJourney),
