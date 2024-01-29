@@ -23,6 +23,9 @@ object PensionContributionsBuilder {
   val anPensionContributions: PensionContributions = PensionContributions(
     pensionSchemeTaxReference = Seq("00123456RA", "00123456RB"),
     inExcessOfTheAnnualAllowance = 321.71,
-    annualAllowanceTaxPaid = 888.67
+    annualAllowanceTaxPaid = 888.67,
+    isAnnualAllowanceReduced = Some(true),
+    taperedAnnualAllowance = Some(true),
+    moneyPurchasedAllowance = Some(true)
   )
 }

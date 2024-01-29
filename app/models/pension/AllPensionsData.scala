@@ -67,9 +67,9 @@ object AllPensionsData {
 
   def generateAnnualAllowanceCyaFromPrior(prior: AllPensionsData): PensionAnnualAllowancesViewModel =
     PensionAnnualAllowancesViewModel(
-      reducedAnnualAllowanceQuestion = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.isAnnualAllowanceReduced),
-      moneyPurchaseAnnualAllowance = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.moneyPurchasedAllowance),
-      taperedAnnualAllowance = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.taperedAnnualAllowance),
+      reducedAnnualAllowanceQuestion = prior.pensionCharges.flatMap(_.pensionContributions).flatMap(_.isAnnualAllowanceReduced),
+      moneyPurchaseAnnualAllowance = prior.pensionCharges.flatMap(_.pensionContributions).flatMap(_.moneyPurchasedAllowance),
+      taperedAnnualAllowance = prior.pensionCharges.flatMap(_.pensionContributions).flatMap(_.taperedAnnualAllowance),
       aboveAnnualAllowanceQuestion = prior.pensionCharges.flatMap(_.pensionContributions).map(_.annualAllowanceTaxPaid > 0),
       aboveAnnualAllowance = prior.pensionCharges.flatMap(_.pensionContributions).map(_.inExcessOfTheAnnualAllowance),
       pensionProvidePaidAnnualAllowanceQuestion = prior.pensionCharges.flatMap(_.pensionContributions).map(_.annualAllowanceTaxPaid > 0),

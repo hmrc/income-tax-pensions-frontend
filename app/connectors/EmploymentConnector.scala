@@ -18,6 +18,7 @@ package connectors
 
 import config.AppConfig
 import connectors.httpParsers.EmploymentSessionHttpParser.{EmploymentSessionHttpReads, EmploymentSessionResponse}
+import models.logging.ConnectorRequestInfo
 import models.pension.employmentPensions.CreateUpdateEmploymentRequest
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
@@ -31,7 +32,7 @@ class EmploymentConnector @Inject()(val http: HttpClient,
                                 (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmploymentSessionResponse] = {
     
     val url = s"${config.employmentBEBaseUrl}/income-tax/nino/$nino/sources?taxYear=$taxYear"
-    logger.debug(s"Call from Connector, body: ${CreateUpdateEmploymentRequest.format.writes(model)}")
+    ConnectorRequestInfo("POST", url, "income-tax-employment").logRequestWithBody(logger, model)
 
     http.POST[CreateUpdateEmploymentRequest, EmploymentSessionResponse](url,model)(
       CreateUpdateEmploymentRequest.format.writes, EmploymentSessionHttpReads, hc, ec)

@@ -22,7 +22,10 @@ import utils.EncryptedValue
 
 case class PensionContributions(pensionSchemeTaxReference: Seq[String],
                                 inExcessOfTheAnnualAllowance: BigDecimal,
-                                annualAllowanceTaxPaid: BigDecimal) extends PensionChargesSubRequestModel {
+                                annualAllowanceTaxPaid: BigDecimal,
+                                isAnnualAllowanceReduced: Option[Boolean],
+                                taperedAnnualAllowance: Option[Boolean],
+                                moneyPurchasedAllowance: Option[Boolean]) extends PensionChargesSubRequestModel {
   override def isEmpty: Boolean = false
 }
 
@@ -32,7 +35,10 @@ object PensionContributions {
 
 case class EncryptedPensionContributions(pensionSchemeTaxReference: Seq[EncryptedValue],
                                          inExcessOfTheAnnualAllowance: EncryptedValue,
-                                         annualAllowanceTaxPaid: EncryptedValue)
+                                         annualAllowanceTaxPaid: EncryptedValue,
+                                         isAnnualAllowanceReduced: Option[EncryptedValue],
+                                         taperedAnnualAllowance: Option[EncryptedValue],
+                                         moneyPurchasedAllowance: Option[EncryptedValue])
 
 object EncryptedPensionContributions {
   implicit val format: OFormat[EncryptedPensionContributions] = Json.format[EncryptedPensionContributions]

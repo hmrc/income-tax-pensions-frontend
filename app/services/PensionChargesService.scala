@@ -50,7 +50,7 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
           .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
 
       viewModel: Option[PensionLifetimeAllowancesViewModel] = sessionData.map(_.pensions.pensionLifetimeAllowances)
-      savingsTaxChargesModel: Option[PensionSavingsTaxCharges] = viewModel.map(_.toPensionSavingsTaxChargesModel(priorData.pensions))
+      savingsTaxChargesModel: Option[PensionSavingsTaxCharges] = viewModel.map(_.toPensionSavingsTaxChargesModel)
 
       result <-
         FutureEitherOps[ServiceError, Unit](savePensionChargesData(
@@ -148,8 +148,11 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
     (for {
       priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector
         .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
+
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
+
       viewModel = sessionData.map(_.pensions.pensionsAnnualAllowances)
+
       annualAllowanceSubModel = viewModel.map(_.toAnnualAllowanceChargesModel(priorData.pensions))
 
       result <-
@@ -204,7 +207,7 @@ object PensionChargesService {
     def createLifetimeAllowanceChargesModel(viewModel: Option[PensionLifetimeAllowancesViewModel],
                                             priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel = {
       CreateUpdatePensionChargesRequestModel(
-        pensionSavingsTaxCharges = viewModel.map(_.toPensionSavingsTaxChargesModel(priorData.pensions)),
+        pensionSavingsTaxCharges = viewModel.map(_.toPensionSavingsTaxChargesModel),
         pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
         pensionSchemeUnauthorisedPayments = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)),
         pensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
@@ -230,9 +233,8 @@ object PensionChargesService {
     def getAnnualAllowanceUserData(userData: Option[PensionsUserData],
                                    user: User, taxYear: Int, clock: Clock): PensionsUserData = {
       userData match {
-        case Some(value) => value.copy(pensions = value.pensions.copy(
-          pensionsAnnualAllowances = PensionAnnualAllowancesViewModel()
-        ))
+        case Some(value) => value
+
         case None => PensionsUserData(
           user.sessionId, user.mtditid,
           user.nino, taxYear,

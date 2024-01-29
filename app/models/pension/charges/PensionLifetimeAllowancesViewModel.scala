@@ -54,14 +54,11 @@ case class PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion: Op
       pensionPaidAnotherWay.isEmpty &&
       pensionSchemeTaxReferences.isEmpty
   
-  def toPensionSavingsTaxChargesModel(priorData: Option[AllPensionsData]): PensionSavingsTaxCharges = {
+  def toPensionSavingsTaxChargesModel: PensionSavingsTaxCharges = {
     PensionSavingsTaxCharges(
       lumpSumBenefitTakenInExcessOfLifetimeAllowance = this.pensionAsLumpSum,
       benefitInExcessOfLifetimeAllowance = this.pensionPaidAnotherWay,
-      pensionSchemeTaxReference = this.pensionSchemeTaxReferences,
-      isAnnualAllowanceReduced = priorData.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges.flatMap(_.isAnnualAllowanceReduced))),
-      taperedAnnualAllowance = priorData.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges.flatMap(_.taperedAnnualAllowance))),
-      moneyPurchasedAllowance = priorData.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges.flatMap(_.moneyPurchasedAllowance)))
+      pensionSchemeTaxReference = this.pensionSchemeTaxReferences
     )
   }
 

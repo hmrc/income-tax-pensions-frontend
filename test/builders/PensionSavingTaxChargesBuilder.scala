@@ -24,9 +24,6 @@ object PensionSavingTaxChargesBuilder {
   val aPensionSavingsTaxCharges: PensionSavingsTaxCharges = PensionSavingsTaxCharges(
     lumpSumBenefitTakenInExcessOfLifetimeAllowance = Some(aLifetimeAllowance2),
     benefitInExcessOfLifetimeAllowance = Some(aLifetimeAllowance2),
-    pensionSchemeTaxReference = Some(Seq("00123456RA", "00123456RB")),
-    isAnnualAllowanceReduced = Some(true),
-    taperedAnnualAllowance = Some(true),
-    moneyPurchasedAllowance = Some(true)
+    pensionSchemeTaxReference = Some(Seq("00123456RA", "00123456RB"))
   )
 }
