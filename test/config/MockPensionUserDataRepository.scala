@@ -45,6 +45,14 @@ trait MockPensionUserDataRepository extends MockFactory {
       .anyNumberOfTimes()
   }
 
+  def mockCreateOrUpdate(response: Either[DatabaseError, Unit]): CallHandler1[PensionsUserData, Future[Either[DatabaseError, Unit]]] = {
+    (mockPensionUserDataRepository.createOrUpdate(_: PensionsUserData))
+      .expects(*)
+      .returns(Future.successful(response))
+      .anyNumberOfTimes()
+  }
+
+
   def mockClear(taxYear: Int, user: User, response: Boolean): Unit = {
     (mockPensionUserDataRepository.clear(_: Int, _: User))
       .expects(taxYear, user)

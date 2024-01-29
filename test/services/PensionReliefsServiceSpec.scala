@@ -35,7 +35,7 @@ class PensionReliefsServiceSpec extends UnitTest
   val pensionReliefsService = new PensionReliefsService(mockPensionUserDataRepository, mockPensionReliefsConnectorHelper)
 
   ".persistPaymentIntoPensionViewModel" should {
-    "return Right(Unit) when model is saved successfully and payment into pensions cya is cleared from DB" in {
+    "return Right when model is saved successfully and payment into pensions cya is cleared from DB" in {
       val sessionCya = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
@@ -51,10 +51,8 @@ class PensionReliefsServiceSpec extends UnitTest
           overseasPensionSchemeContributions = None
         )
       )
-      val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
-
       mockSavePensionReliefSessionData(nino, taxYear, model, Right(()))
-      mockCreateOrUpdate(userWithEmptySavePaymentsIntoPensionCya, Right(()))
+      mockCreateOrUpdate(Right(()))
 
       val result = await(pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, taxYear))
       result shouldBe Right(())
@@ -106,10 +104,8 @@ class PensionReliefsServiceSpec extends UnitTest
           overseasPensionSchemeContributions = None
         )
       )
-      val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
-
       mockSavePensionReliefSessionData(nino, taxYear, model, Right(()))
-      mockCreateOrUpdate(userWithEmptySavePaymentsIntoPensionCya, Left(DataNotUpdated))
+      mockCreateOrUpdate(Left(DataNotUpdated))
 
       val result = await(pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, taxYear))
       result shouldBe Left(DataNotUpdated)
