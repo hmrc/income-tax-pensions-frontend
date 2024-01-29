@@ -80,10 +80,9 @@ object Countries {
       .foldLeft(List[(String, String)]()) { (acc, item) =>
         val lineArray = item.split("=")
         val (countryCode, countryName) =
-          try
-            (lineArray.head, lineArray.last)
-          catch {
-            case _: Throwable => throw new RuntimeException("Could not read country data from : location-autocomplete-canonical-list.json ")
+          (lineArray.headOption, lineArray.lastOption) match {
+            case (Some(cc), Some(cn)) => (cc, cn)
+            case _                    => throw new RuntimeException("Could not read country data from : location-autocomplete-canonical-list.json ")
           }
         (countryCode -> countryName) :: acc
       }
