@@ -78,8 +78,9 @@ class ReducedAnnualAllowanceController @Inject() (implicit
     val pensionsCYAModel: PensionsCYAModel          = pensionUserData.pensions
     val viewModel: PensionAnnualAllowancesViewModel = pensionsCYAModel.pensionsAnnualAllowances
     val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(
-      pensionsAnnualAllowances = if (reducedAnnualAllowanceQ) viewModel.copy(reducedAnnualAllowanceQuestion = Some(true))
-      else PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(false))
+      pensionsAnnualAllowances =
+        if (reducedAnnualAllowanceQ) viewModel.copy(reducedAnnualAllowanceQuestion = Some(true))
+        else PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(false))
     )
     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
       errorHandler.internalServerError()) {

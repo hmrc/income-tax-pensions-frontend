@@ -83,16 +83,17 @@ class AboveReducedAnnualAllowanceController @Inject() (
       request: UserSessionDataRequest[T]): Future[Result] = {
 
     val viewModel: PensionAnnualAllowancesViewModel = pensionUserData.pensions.pensionsAnnualAllowances
-    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(pensionsAnnualAllowances = if (yesNo)
-      viewModel.copy(aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = amount)
-    else
-      viewModel.copy(
-        aboveAnnualAllowanceQuestion = Some(false),
-        aboveAnnualAllowance = None,
-        pensionProvidePaidAnnualAllowanceQuestion = None,
-        taxPaidByPensionProvider = None,
-        pensionSchemeTaxReferences = None
-      ))
+    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(pensionsAnnualAllowances =
+      if (yesNo)
+        viewModel.copy(aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = amount)
+      else
+        viewModel.copy(
+          aboveAnnualAllowanceQuestion = Some(false),
+          aboveAnnualAllowance = None,
+          pensionProvidePaidAnnualAllowanceQuestion = None,
+          taxPaidByPensionProvider = None,
+          pensionSchemeTaxReferences = None
+        ))
 
     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
       errorHandler.internalServerError()) {

@@ -71,7 +71,8 @@ class PaymentsIntoPensionsCYAController @Inject() (
 
     if (!pIP.rasPensionPaymentQuestion.exists(x => x) && !pIP.pensionTaxReliefNotClaimedQuestion.exists(x => x))
       // TODO: check conditions for excluding Pensions from submission without gateway
-      excludeJourneyService.excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)
+      excludeJourneyService
+        .excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)
         .flatMap {
           case Right(_) => performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest, clock)
           case Left(_)  => errorHandler.futureInternalServerError()
