@@ -182,6 +182,10 @@ object PageUrls extends IntegrationTest {
     def checkUnauthorisedPaymentsCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments"
   }
 
+  //  *****************     Overseas pensions      ******************************
+  object OverseasPensions {
+    def overseasPensionsUrl(taxYear: Int) = s"$appUrl/$taxYear/overseas-pensions"
+  }
   //  *****************     Payments into overseas pensions pages      ******************************
 
   object PaymentIntoOverseasPensions {
