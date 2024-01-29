@@ -18,8 +18,8 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
-import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithPaymentsIntoOverseasPensions, pensionUserDataWithOverseasPensions}
-import builders.ReliefBuilder.aMigrantMemberRelief
+import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOverseasPensions, pensionUserDataWithPaymentsIntoOverseasPensions}
+import builders.ReliefBuilder.{aMigrantMemberRelief, aTransitionalCorrespondingRelief}
 import builders.UserBuilder.aUserRequest
 import forms.QOPSReferenceNumberForm
 import models.pension.charges.Relief
@@ -254,7 +254,8 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
         }
 
         "Redirect to the customer reference page if an out of bounds index is provided and there are no complete relief schemes" should {
-          val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aMigrantMemberRelief.copy(qopsReference = None)))
+          val pensionsViewModel =
+            aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aTransitionalCorrespondingRelief.copy(employerPaymentsAmount = None)))
 
           implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrlWithIndex(taxYear, 100)
           val pensionUserData = pensionUserDataWithPaymentsIntoOverseasPensions(pensionsViewModel)
@@ -363,7 +364,8 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
 
     "redirect when user passes an out of bounds index and there are no complete relief schemes" which {
       lazy val form: Map[String, String] = Map(QOPSReferenceNumberForm.qopsReferenceId -> "123456")
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aMigrantMemberRelief.copy(qopsReference = None)))
+      val pensionsViewModel =
+        aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aTransitionalCorrespondingRelief.copy(employerPaymentsAmount = None)))
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrlWithIndex(taxYear, 100)

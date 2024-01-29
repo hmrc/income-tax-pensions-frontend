@@ -65,9 +65,10 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
         referenceForm.bindFromRequest().fold(
           formWithErrors => Future.successful(BadRequest(qopsReferenceView(formWithErrors, taxYear, index))),
           referenceNumber => {
+            val maybeRef = if (referenceNumber.isEmpty) None else Some(referenceNumber)
+
             val updatedCyaModel: PensionsCYAModel = request.pensionsUserData.pensions.copy(
-              paymentsIntoOverseasPensions = piops.copy(
-                reliefs = piops.reliefs.updated(index.get, relief.copy(qopsReference = Some(referenceNumber))))
+              paymentsIntoOverseasPensions = piops.copy(reliefs = piops.reliefs.updated(index.get, relief.copy(qopsReference = maybeRef)))
             )
             pensionSessionService.createOrUpdateSessionData(request.user,
               updatedCyaModel, taxYear, request.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {

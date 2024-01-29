@@ -54,7 +54,7 @@ case class Relief(
       employerPaymentsAmount.isDefined &&
       reliefType.exists { reliefType =>
         reliefType match {
-          case TaxReliefQuestion.MigrantMemberRelief => qopsReference.isDefined
+          case TaxReliefQuestion.MigrantMemberRelief => true // As the only question in the Migrant Member Relief sub-journey is optional.
           case TaxReliefQuestion.DoubleTaxationRelief =>
             alphaTwoCountryCode.isDefined &&
               alphaThreeCountryCode.isDefined &&
