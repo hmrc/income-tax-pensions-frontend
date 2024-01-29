@@ -61,7 +61,6 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
 
   private val paymentsIntoPension = PaymentsIntoPensionsViewModel().copy(rasPensionPaymentQuestion = Some(true))
   private val pensionAnnualAllowances = PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(true))
-  private val pensionLifetimeAllowances = PensionLifetimeAllowancesViewModel(aboveLifetimeAllowanceQuestion = Some(true))
   private val incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(anStateBenefitViewModelOne))
   private val unauthorisedPayments = UnauthorisedPaymentsViewModel()
   private val paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions = Some(true))
@@ -69,7 +68,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
   private val transferIntoOverseasPensionsViewModel = TransfersIntoOverseasPensionsViewModel()
   private val shortServiceRefundsViewModel = ShortServiceRefundsViewModel()
 
-  private val pensionCYAModel = PensionsCYAModel(paymentsIntoPension, pensionAnnualAllowances, pensionLifetimeAllowances,
+  private val pensionCYAModel = PensionsCYAModel(paymentsIntoPension, pensionAnnualAllowances,
     incomeFromPensions, unauthorisedPayments, paymentsIntoOverseasPensions, incomeFromOverseasPensionsViewModel,
     transferIntoOverseasPensionsViewModel, shortServiceRefundsViewModel)
 

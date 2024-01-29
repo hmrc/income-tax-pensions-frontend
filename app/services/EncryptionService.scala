@@ -77,7 +77,6 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
     EncryptedPensionCYAModel(
       encryptedPaymentsIntoPension = encryptPaymentsIntoPension(pension.paymentsIntoPension),
       encryptedPensionAnnualAllowances = encryptedPensionAnnualAllowances(pension.pensionsAnnualAllowances),
-      pensionLifetimeAllowances = pension.pensionLifetimeAllowances.encrypted(),
       incomeFromPensions = pension.incomeFromPensions.encrypted(),
       unauthorisedPayments = pension.unauthorisedPayments.encrypted(),
       paymentsIntoOverseasPensions = pension.paymentsIntoOverseasPensions.encrypted(),
@@ -124,7 +123,6 @@ class EncryptionService @Inject()(secureGCMCipher: SecureGCMCipher, appConfig: A
     PensionsCYAModel(
       paymentsIntoPension = decryptPaymentsIntoPensionViewModel(pension.encryptedPaymentsIntoPension),
       pensionsAnnualAllowances = decryptPensionAnnualAllowanceViewModel(pension.encryptedPensionAnnualAllowances),
-      pensionLifetimeAllowances = pension.pensionLifetimeAllowances.decrypted(),
       incomeFromPensions = pension.incomeFromPensions.decrypted(),
       unauthorisedPayments = pension.unauthorisedPayments.decrypted(),
       paymentsIntoOverseasPensions = pension.paymentsIntoOverseasPensions.decrypted(),

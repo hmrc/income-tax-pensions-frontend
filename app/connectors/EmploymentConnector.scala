@@ -35,6 +35,6 @@ class EmploymentConnector @Inject()(val http: HttpClient,
     ConnectorRequestInfo("POST", url, "income-tax-employment").logRequestWithBody(logger, model)
 
     http.POST[CreateUpdateEmploymentRequest, EmploymentSessionResponse](url,model)(
-      CreateUpdateEmploymentRequest.format.writes, EmploymentSessionHttpReads, hc, ec)
+      CreateUpdateEmploymentRequest.format, EmploymentSessionHttpReads, hc, ec)
   }
 }

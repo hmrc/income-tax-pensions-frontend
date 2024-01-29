@@ -35,18 +35,20 @@ import utils.CommonUtils
 import utils.PageUrls.IncomeFromPensionsPages.pensionIncomeSummaryUrl
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, reliefAtSourcePensionsUrl}
 import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, reducedAnnualAllowanceUrl}
-import utils.PageUrls.PensionLifetimeAllowance.{lifetimeAllowanceCYA, pensionAboveAnnualLifetimeAllowanceUrl}
 import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
 import utils.PageUrls._
+import PensionsSummaryControllerISpec._
+import utils.PageUrls.OverseasPensions.overseasPensionsUrl
+import utils.PageUrls.PaymentIntoOverseasPensions.paymentsIntoOverseasPensionsCyaUrl
 
-class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach with Injecting { // scalastyle:off magic.number
+class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach with Injecting {
 
   object Selectors {
     val paymentsIntoPensionsLink = "#payments-into-pensions-link"
     val incomeFromPensionsLink = "#income-from-pensions-link"
     val pensionAnnualAllowanceLink = "#pension-annual-allowance-link"
-    val pensionLifetimeAllowanceLink = "#pension-lifetime-allowance-link"
     val unauthorisedPaymentsFromPensionsLink = "#unauthorised-payments-from-pensions-link"
+    val overseasPensionsLink = "#overseas-pensions-summary-link"
     val paymentsToOverseasPensionsLink = "#payments-to-overseas-pensions-link"
     val insetTextSelector = "#main-content > div > div > div.govuk-inset-text"
     val buttonSelector = "#returnToOverviewPageBtn"
@@ -63,8 +65,8 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
     val paymentsLinkText: String
     val incomeLinkText: String
     val unauthLinkText: String
+    val overseasPensionsLinkText: String
     val annualAllowance: String
-    val lifetimeAllowance: String
     val buttonText: String
     val updated: String
     val cannotUpdate: String
@@ -77,8 +79,8 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
     val paymentsLinkText = "Payments into pensions"
     val incomeLinkText = "Income from pensions"
     val unauthLinkText = "Unauthorised payments from pensions"
+    val overseasPensionsLinkText = "Overseas pensions"
     val annualAllowance = "Pension annual allowance"
-    val lifetimeAllowance = "Pension lifetime allowance"
     val buttonText = "Return to overview"
     val updated = "Updated"
     val cannotUpdate = "Cannot update"
@@ -91,8 +93,8 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
     val paymentsLinkText = "Taliadau i bensiynau"
     val incomeLinkText = "Incwm o bensiynau"
     val unauthLinkText = "Taliadau heb awdurdod o bensiynau"
+    val overseasPensionsLinkText = "Pensiynau tramor"
     val annualAllowance = "Lwfans blynyddol pensiwn"
-    val lifetimeAllowance = "Lwfans oes pensiwn"
     val buttonText = "Yn ôl i’r trosolwg"
     val updated = "Wedi diweddaru"
     val cannotUpdate = "Cannot update"
@@ -136,27 +138,27 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
 
           "has an payment into pensions section" which {
             linkCheck(paymentsLinkText, paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(1))
+            textOnPageCheck(updated, summaryListStatusTagSelector(PaymentsIntoPensionIndex))
           }
 
           "has an income from pensions section" which {
             linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(2))
+            textOnPageCheck(updated, summaryListStatusTagSelector(IncomeFromPensionsIndex))
           }
 
           "has an pension annual allowance section" which {
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, annualAllowancesCYAUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(3))
-          }
-
-          "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, lifetimeAllowanceCYA(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(4))
+            textOnPageCheck(updated, summaryListStatusTagSelector(PensionAnnualAllowanceIndex))
           }
 
           "has an unauthorised payments from pensions section" which {
             linkCheck(unauthLinkText, unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(5))
+            textOnPageCheck(updated, summaryListStatusTagSelector(UnauthorisedPaymentsFromPensionsIndex))
+          }
+
+          "has an overseas pensions section" which {
+            linkCheck(overseasPensionsLinkText, overseasPensionsLink, overseasPensionsUrl(taxYearEOY))
+            textOnPageCheck(updated, summaryListStatusTagSelector(OverseasPensionsIndex))
           }
 
           buttonCheck(buttonText, buttonSelector)
@@ -181,29 +183,29 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
 
           "has an payment into pensions section" which {
             linkCheck(paymentsLinkText, paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(1))
+            textOnPageCheck(updated, summaryListStatusTagSelector(PaymentsIntoPensionIndex))
           }
 
           "has an income from pensions section" which {
             //TODO: Change to use the href below when income From Pensions cya page available
             //linkCheck(incomeLinkText, incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYearEOY))
             linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(2))
+            textOnPageCheck(updated, summaryListStatusTagSelector(IncomeFromPensionsIndex))
           }
 
           "has an pension annual allowance section" which {
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, annualAllowancesCYAUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(3))
-          }
-
-          "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, lifetimeAllowanceCYA(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(4))
+            textOnPageCheck(updated, summaryListStatusTagSelector(PensionAnnualAllowanceIndex))
           }
 
           "has an unauthorised payments from pensions section" which {
             linkCheck(unauthLinkText, unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(5))
+            textOnPageCheck(updated, summaryListStatusTagSelector(UnauthorisedPaymentsFromPensionsIndex))
+          }
+
+          "has an overseas pensions section" which {
+            linkCheck(overseasPensionsLinkText, overseasPensionsLink, overseasPensionsUrl(taxYearEOY))
+            textOnPageCheck(updated, summaryListStatusTagSelector(OverseasPensionsIndex))
           }
 
           buttonCheck(buttonText, buttonSelector)
@@ -225,29 +227,28 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
 
           "has an payment into pensions section" which {
             linkCheck(paymentsLinkText, paymentsIntoPensionsLink, reliefAtSourcePensionsUrl(taxYearEOY))
-            textOnPageCheck(notStarted, summaryListStatusTagSelector(1))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(PaymentsIntoPensionIndex))
           }
 
           "has an income from pensions section" which {
             linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYearEOY))
-            textOnPageCheck(notStarted, summaryListStatusTagSelector(2))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(IncomeFromPensionsIndex))
           }
 
           "has an pension annual allowance section" which {
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
-            textOnPageCheck(notStarted, summaryListStatusTagSelector(3))
-          }
-
-          "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY))
-            textOnPageCheck(notStarted, summaryListStatusTagSelector(4))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(PensionAnnualAllowanceIndex))
           }
 
           "has an unauthorised payments from pensions section" which {
             linkCheck(unauthLinkText, unauthorisedPaymentsFromPensionsLink, unauthorisedPaymentsUrl(taxYearEOY))
-            textOnPageCheck(notStarted, summaryListStatusTagSelector(5))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(UnauthorisedPaymentsFromPensionsIndex))
           }
 
+          "has an overseas pensions section" which {
+            linkCheck(overseasPensionsLinkText, overseasPensionsLink, overseasPensionsUrl(taxYearEOY))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(OverseasPensionsIndex))
+          }
           buttonCheck(buttonText, buttonSelector)
 
           welshToggleCheck(userScenario.isWelsh)
@@ -268,27 +269,27 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
 
           "has an payment into pensions section" which {
             linkCheck(paymentsLinkText, paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(1))
+            textOnPageCheck(updated, summaryListStatusTagSelector(PaymentsIntoPensionIndex))
           }
 
           "has an income from pensions section" which {
             linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(2))
+            textOnPageCheck(updated, summaryListStatusTagSelector(IncomeFromPensionsIndex))
           }
 
           "has an pension annual allowance section" which {
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
-            textOnPageCheck(notStarted, summaryListStatusTagSelector(3))
-          }
-
-          "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, pensionAboveAnnualLifetimeAllowanceUrl(taxYearEOY))
-            textOnPageCheck(notStarted, summaryListStatusTagSelector(4))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(PensionAnnualAllowanceIndex))
           }
 
           "has an unauthorised payments from pensions section" which {
             linkCheck(unauthLinkText, unauthorisedPaymentsFromPensionsLink, checkUnauthorisedPaymentsCyaUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(5))
+            textOnPageCheck(updated, summaryListStatusTagSelector(UnauthorisedPaymentsFromPensionsIndex))
+          }
+
+          "has an overseas pensions section" which {
+            linkCheck(overseasPensionsLinkText, overseasPensionsLink, overseasPensionsUrl(taxYearEOY))
+            textOnPageCheck(updated, summaryListStatusTagSelector(OverseasPensionsIndex))
           }
 
           buttonCheck(buttonText, buttonSelector)
@@ -312,29 +313,29 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
 
           "has an payment into pensions section" which {
             linkCheck(paymentsLinkText, paymentsIntoPensionsLink, checkPaymentsIntoPensionCyaUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(1))
+            textOnPageCheck(updated, summaryListStatusTagSelector(PaymentsIntoPensionIndex))
           }
 
           "has an income from pensions section" which {
             linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(2))
+            textOnPageCheck(updated, summaryListStatusTagSelector(IncomeFromPensionsIndex))
           }
 
           "has an pension annual allowance section" which {
             //TODO: Change to use the href below when pension annual allowance cya page available
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, annualAllowancesCYAUrl(taxYearEOY))
 //            linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(3))
-          }
-
-          "has an pension lifetime allowance section" which {
-            linkCheck(lifetimeAllowance, pensionLifetimeAllowanceLink, lifetimeAllowanceCYA(taxYearEOY))
-            textOnPageCheck(updated, summaryListStatusTagSelector(4))
+            textOnPageCheck(updated, summaryListStatusTagSelector(PensionAnnualAllowanceIndex))
           }
 
           "has an unauthorised payments from pensions section" which {
             linkCheck(unauthLinkText, unauthorisedPaymentsFromPensionsLink, unauthorisedPaymentsUrl(taxYearEOY))
-            textOnPageCheck(notStarted, summaryListStatusTagSelector(5))
+            textOnPageCheck(notStarted, summaryListStatusTagSelector(UnauthorisedPaymentsFromPensionsIndex))
+          }
+
+          "has an overseas pensions section" which {
+            linkCheck(overseasPensionsLinkText, overseasPensionsLink, overseasPensionsUrl(taxYearEOY))
+            textOnPageCheck(updated, summaryListStatusTagSelector(OverseasPensionsIndex))
           }
 
           buttonCheck(buttonText, buttonSelector)
@@ -373,7 +374,12 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
         case Left(_) => fail("An unexpected failure to retrieve  user session data")
       }
     }
+}
 
-
-  // scalastyle:on magic.number
+object PensionsSummaryControllerISpec {
+  val PaymentsIntoPensionIndex = 1
+  val IncomeFromPensionsIndex = 2
+  val PensionAnnualAllowanceIndex = 3
+  val UnauthorisedPaymentsFromPensionsIndex = 4
+  val OverseasPensionsIndex = 5
 }

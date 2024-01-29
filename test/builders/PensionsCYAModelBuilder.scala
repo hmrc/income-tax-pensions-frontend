@@ -21,12 +21,11 @@ import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyView
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.{aPaymentsIntoOverseasPensionsEmptyViewModel, aPaymentsIntoOverseasPensionsViewModel}
 import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
 import builders.PensionAnnualAllowanceViewModelBuilder.{aPensionAnnualAllowanceEmptyViewModel, aPensionAnnualAllowanceViewModel}
-import builders.PensionLifetimeAllowancesViewModelBuilder.{aPensionLifetimeAllowancesViewModel, aPensionLifetimeAllowancesEmptyViewModel}
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, PensionLifetimeAllowancesViewModel, ShortServiceRefundsViewModel, TransfersIntoOverseasPensionsViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, ShortServiceRefundsViewModel, TransfersIntoOverseasPensionsViewModel, UnauthorisedPaymentsViewModel}
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 
@@ -35,7 +34,6 @@ object PensionsCYAModelBuilder {
   val aPensionsCYAModel: PensionsCYAModel = PensionsCYAModel(
     paymentsIntoPension = aPaymentsIntoPensionViewModel,
     pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel,
-    pensionLifetimeAllowances = aPensionLifetimeAllowancesViewModel,
     incomeFromPensions = anIncomeFromPensionsViewModel,
     unauthorisedPayments = anUnauthorisedPaymentsViewModel,
     paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel,
@@ -47,7 +45,6 @@ object PensionsCYAModelBuilder {
   val aPensionsCYAEmptyModel: PensionsCYAModel = PensionsCYAModel(
     paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel,
     pensionsAnnualAllowances = aPensionAnnualAllowanceEmptyViewModel,
-    pensionLifetimeAllowances = aPensionLifetimeAllowancesEmptyViewModel,
     incomeFromPensions = anIncomeFromPensionEmptyViewModel,
     unauthorisedPayments = anUnauthorisedPaymentsEmptyViewModel,
     paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsEmptyViewModel,
@@ -59,7 +56,6 @@ object PensionsCYAModelBuilder {
   val aPensionsCYAGeneratedFromPriorEmpty:PensionsCYAModel = PensionsCYAModel(
     paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel.copy(totalPaymentsIntoRASQuestion = Some(true)),
     pensionsAnnualAllowances = aPensionAnnualAllowanceEmptyViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = None),
-    pensionLifetimeAllowances = aPensionLifetimeAllowancesEmptyViewModel,
     incomeFromPensions = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = None),
     unauthorisedPayments = anUnauthorisedPaymentsEmptyViewModel,
     paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsEmptyViewModel,
@@ -69,10 +65,14 @@ object PensionsCYAModelBuilder {
   )
 
   def paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionViewModel: PaymentsIntoPensionsViewModel): PensionsCYAModel = {
-    PensionsCYAModel(paymentsIntoPensionViewModel, PensionAnnualAllowancesViewModel(),
-      PensionLifetimeAllowancesViewModel(), IncomeFromPensionsViewModel(),
-      UnauthorisedPaymentsViewModel(), PaymentsIntoOverseasPensionsViewModel(),
-      IncomeFromOverseasPensionsViewModel(), TransfersIntoOverseasPensionsViewModel(),
+    PensionsCYAModel(
+      paymentsIntoPensionViewModel,
+      PensionAnnualAllowancesViewModel(),
+      IncomeFromPensionsViewModel(),
+      UnauthorisedPaymentsViewModel(),
+      PaymentsIntoOverseasPensionsViewModel(),
+      IncomeFromOverseasPensionsViewModel(),
+      TransfersIntoOverseasPensionsViewModel(),
       ShortServiceRefundsViewModel()
     )
   }

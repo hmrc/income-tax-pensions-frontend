@@ -148,34 +148,6 @@ object PageUrls extends IntegrationTest {
     def annualAllowancesCYAUrl(taxYear: Int): String = s"$appUrl/$taxYear/annual-allowance/check-annual-allowance"
   }
 
-  //  *****************     Pension lifetime allowance pages      ******************************
-
-  object PensionLifetimeAllowance {
-
-    def pensionAboveAnnualLifetimeAllowanceUrl(taxYear: Int): String = s"$appUrl/$taxYear/lifetime-allowance/above-annual-allowance"
-
-    def pensionLumpSumUrl(taxYear: Int): String = s"$appUrl/$taxYear/lifetime-allowance/pension-lump-sum"
-
-    def pensionLumpSumDetails(taxYear: Int): String = s"$appUrl/$taxYear/lifetime-allowance/lump-sum-details"
-
-    def pensionLifeTimeAllowanceAnotherWayUrl(taxYear: Int): String = s"$appUrl/$taxYear/lifetime-allowance/pension-another-way"
-
-    def pensionTakenAnotherWayAmountUrl(taxYear: Int): String = s"$appUrl/$taxYear/lifetime-allowance/pension-another-way-details"
-
-    def pensionTaxReferenceNumberLifetimeAllowanceUrl(taxYear: Int): String = s"$appUrl/$taxYear/lifetime-allowance/pension-scheme-tax-reference"
-
-    def pensionTaxReferenceNumberLifetimeAllowanceUrlIndex: Int => Int => String = (pensionSchemeTaxReference: Int) =>
-      (taxYear: Int) => s"$appUrl/$taxYear/lifetime-allowance/pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$pensionSchemeTaxReference"
-
-    def lifetimeAllowancePstrSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/lifetime-allowance/pension-scheme-tax-reference-summary"
-
-    def removePstrUrl(taxYear: Int, pensionSchemeTaxReference: Int): String =
-      s"$appUrl/$taxYear/lifetime-allowance/remove-pension-scheme-tax-reference?pensionSchemeTaxReferenceIndex=$pensionSchemeTaxReference"
-
-    def lifetimeAllowanceCYA(taxYear: Int): String = s"$appUrl/$taxYear/lifetime-allowance/lifetime-allowance-summary"
-
-  }
-
   //  *****************     Unauthorised payments pages      ******************************
 
   object UnauthorisedPaymentsPages {
@@ -210,6 +182,10 @@ object PageUrls extends IntegrationTest {
     def checkUnauthorisedPaymentsCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/unauthorised-payments-from-pensions/check-unauthorised-payments"
   }
 
+  //  *****************     Overseas pensions      ******************************
+  object OverseasPensions {
+    def overseasPensionsUrl(taxYear: Int) = s"$appUrl/$taxYear/overseas-pensions"
+  }
   //  *****************     Payments into overseas pensions pages      ******************************
 
   object PaymentIntoOverseasPensions {

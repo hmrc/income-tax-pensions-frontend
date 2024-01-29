@@ -20,7 +20,6 @@ import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasP
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceEmptyViewModel
-import builders.PensionLifetimeAllowancesViewModelBuilder.aPensionLifetimeAllowancesEmptyViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.aPensionsUserData
@@ -52,7 +51,6 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
     PensionsUserDataBuilder.aPensionsUserData.copy(
       pensions = PensionsCYAModel(paymentsIntoPensionViewModel,
         aPensionAnnualAllowanceEmptyViewModel,
-        aPensionLifetimeAllowancesEmptyViewModel,
         anIncomeFromPensionEmptyViewModel,
         anUnauthorisedPaymentsViewModel,
         aPaymentsIntoOverseasPensionsViewModel,

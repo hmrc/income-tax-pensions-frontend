@@ -19,7 +19,6 @@ package services
 import builders.AllPensionsDataBuilder.anAllPensionDataEmpty
 import builders.PensionsCYAModelBuilder._
 import config._
-import connectors.IncomeSourceConnector
 import models.mongo._
 import models.pension.AllPensionsData.generateCyaFromPrior
 import org.scalatest.concurrent.ScalaFutures
@@ -47,10 +46,8 @@ class PensionSessionServiceSpec extends UnitTest
 
   val messages: MessagesApi = app.injector.instanceOf[MessagesApi]
 
-  val mockIncomeSourceConnector = app.injector.instanceOf[IncomeSourceConnector]
-
   val service: PensionSessionService =
-    new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, mockIncomeSourceConnector, mockAppConfig,
+    new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, mockAppConfig,
       errorHandler, mockExecutionContext)
 
   private val user = authorisationRequest.user

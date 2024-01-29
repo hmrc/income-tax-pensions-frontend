@@ -39,7 +39,6 @@ object AllPensionsData {
     PensionsCYAModel(
       paymentsIntoPension = generatePaymentsIntoPensionsCyaFromPrior(prior),
       pensionsAnnualAllowances = generateAnnualAllowanceCyaFromPrior(prior),
-      pensionLifetimeAllowances = generateLifetimeAllowanceCyaFromPrior(prior),
       incomeFromPensions = generateIncomeFromPensionsModelFromPrior(prior),
       unauthorisedPayments = generateUnauthorisedPaymentsCysFromPrior(prior),
       paymentsIntoOverseasPensions = generatePaymentsIntoOverseasPensionsFromPrior(prior),
@@ -76,30 +75,6 @@ object AllPensionsData {
       taxPaidByPensionProvider = prior.pensionCharges.flatMap(_.pensionContributions).map(_.annualAllowanceTaxPaid),
       pensionSchemeTaxReferences = prior.pensionCharges.flatMap(_.pensionContributions).map(_.pensionSchemeTaxReference)
     )
-
-  def generateLifetimeAllowanceCyaFromPrior(prior: AllPensionsData): PensionLifetimeAllowancesViewModel = {
-    def getAboveLifetimeAllowanceQuestion(prior: AllPensionsData): Option[Boolean] = {
-      if (prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).map(
-        _.benefitInExcessOfLifetimeAllowance).isDefined || prior.pensionCharges.flatMap(
-        _.pensionSavingsTaxCharges).map(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).isDefined) {
-        Some(true)
-      } else {
-        None
-      }
-    }
-    
-    PensionLifetimeAllowancesViewModel(
-      aboveLifetimeAllowanceQuestion = getAboveLifetimeAllowanceQuestion(prior),
-      pensionAsLumpSumQuestion = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges)
-        .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance).flatMap(_.amount).map(_ > 0),
-      pensionAsLumpSum = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges)
-        .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
-      pensionPaidAnotherWayQuestion = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges)
-        .flatMap(_.benefitInExcessOfLifetimeAllowance).flatMap(_.amount).map(_ > 0),
-      pensionPaidAnotherWay = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges).flatMap(_.benefitInExcessOfLifetimeAllowance),
-      pensionSchemeTaxReferences = prior.pensionCharges.flatMap(_.pensionSavingsTaxCharges.flatMap(_.pensionSchemeTaxReference))
-    )
-  }
 
   def generateIncomeFromPensionsModelFromPrior(prior: AllPensionsData): IncomeFromPensionsViewModel = {
     val (statePen, statePenLumpSum) = generateStatePensionCyaFromPrior(prior)

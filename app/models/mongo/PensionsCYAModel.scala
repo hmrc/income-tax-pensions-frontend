@@ -23,7 +23,6 @@ import play.api.libs.json.{Json, OFormat}
 
 case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
                             pensionsAnnualAllowances: PensionAnnualAllowancesViewModel,
-                            pensionLifetimeAllowances: PensionLifetimeAllowancesViewModel,
                             incomeFromPensions: IncomeFromPensionsViewModel,
                             unauthorisedPayments: UnauthorisedPaymentsViewModel,
                             paymentsIntoOverseasPensions: PaymentsIntoOverseasPensionsViewModel,
@@ -31,7 +30,7 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
                             transfersIntoOverseasPensions: TransfersIntoOverseasPensionsViewModel,
                             shortServiceRefunds: ShortServiceRefundsViewModel) {
   
-  def isEmpty: Boolean = paymentsIntoPension.isEmpty && pensionsAnnualAllowances.isEmpty && pensionLifetimeAllowances.isEmpty &&
+  def isEmpty: Boolean = paymentsIntoPension.isEmpty && pensionsAnnualAllowances.isEmpty &&
     incomeFromPensions.isEmpty && paymentsIntoOverseasPensions.isEmpty &&
       incomeFromOverseasPensions.isEmpty && transfersIntoOverseasPensions.isEmpty && shortServiceRefunds.isEmpty
 }
@@ -42,7 +41,6 @@ object PensionsCYAModel {
   def emptyModels: PensionsCYAModel = PensionsCYAModel(
     PaymentsIntoPensionsViewModel(),
     PensionAnnualAllowancesViewModel(),
-    PensionLifetimeAllowancesViewModel(),
     IncomeFromPensionsViewModel(),
     UnauthorisedPaymentsViewModel(),
     PaymentsIntoOverseasPensionsViewModel(),
@@ -54,7 +52,6 @@ object PensionsCYAModel {
 
 case class EncryptedPensionCYAModel(encryptedPaymentsIntoPension: EncryptedPaymentsIntoPensionViewModel,
                                     encryptedPensionAnnualAllowances: EncryptedPensionAnnualAllowancesViewModel,
-                                    pensionLifetimeAllowances: EncryptedPensionLifetimeAllowancesViewModel,
                                     incomeFromPensions: EncryptedIncomeFromPensionsViewModel,
                                     unauthorisedPayments: EncryptedUnauthorisedPaymentsViewModel,
                                     paymentsIntoOverseasPensions: EncryptedPaymentsIntoOverseasPensionsViewModel,
