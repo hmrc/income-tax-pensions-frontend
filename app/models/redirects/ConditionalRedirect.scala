@@ -22,7 +22,6 @@ case class ConditionalRedirect(condition: Boolean, redirect: Call, journeyNo: Op
 
 object ConditionalRedirect {
 
-  def apply(call: Call): ConditionalRedirect = {
+  def apply(call: Call): ConditionalRedirect =
     ConditionalRedirect(condition = true, call)
-  }
 }

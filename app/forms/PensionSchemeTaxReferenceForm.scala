@@ -27,7 +27,7 @@ import play.api.data.validation.Constraints.nonEmpty
 object PensionSchemeTaxReferenceForm extends InputFilters {
 
   val taxReferenceId: String = "taxReferenceId"
-  val regex: String = "^\\d{8}[R]{1}[a-zA-Z]{1}$"
+  val regex: String          = "^\\d{8}[R]{1}[a-zA-Z]{1}$"
 
   def notEmpty(message: String): Constraint[String] = nonEmpty(message)
 
@@ -36,8 +36,10 @@ object PensionSchemeTaxReferenceForm extends InputFilters {
   def filterAndUpperCase(input: String): String = filter(input).toUpperCase
 
   def pensionSchemeTaxReferenceForm(noEntryMsg: String, incorrectFormatMsg: String): Form[String] = Form(
-    taxReferenceId -> trimmedText.transform[String](filterAndUpperCase, identity).verifying(
-      notEmpty(noEntryMsg) andThen validateFormat(incorrectFormatMsg)
-    )
+    taxReferenceId -> trimmedText
+      .transform[String](filterAndUpperCase, identity)
+      .verifying(
+        notEmpty(noEntryMsg) andThen validateFormat(incorrectFormatMsg)
+      )
   )
 }

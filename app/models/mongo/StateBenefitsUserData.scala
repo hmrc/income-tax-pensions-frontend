@@ -36,10 +36,10 @@ case class StateBenefitsUserData(benefitType: String,
                                  claim: Option[ClaimCYAModel],
                                  lastUpdated: Instant = Instant.ofEpochMilli(Instant.now().toEpochMilli)) {
 
-  lazy val isPriorSubmission: Boolean = claim.exists(_.benefitId.isDefined)
-  lazy val isNewClaim: Boolean = !isPriorSubmission
-  lazy val isHmrcData: Boolean = benefitDataType == "hmrcData"
-  lazy val isCustomerAdded: Boolean = benefitDataType == "customerAdded"
+  lazy val isPriorSubmission: Boolean  = claim.exists(_.benefitId.isDefined)
+  lazy val isNewClaim: Boolean         = !isPriorSubmission
+  lazy val isHmrcData: Boolean         = benefitDataType == "hmrcData"
+  lazy val isCustomerAdded: Boolean    = benefitDataType == "customerAdded"
   lazy val isCustomerOverride: Boolean = benefitDataType == "customerOverride"
 
   def encrypted(implicit aesGcmAdCrypto: AesGcmAdCrypto, associatedText: String): EncryptedStateBenefitsUserData = EncryptedStateBenefitsUserData(
@@ -58,19 +58,18 @@ case class StateBenefitsUserData(benefitType: String,
 object StateBenefitsUserData {
   implicit val mongoLocalDateTimeFormats: Format[Instant] = MongoJavatimeFormats.instantFormat
 
-  implicit val stateBenefitsUserDataWrites: OWrites[StateBenefitsUserData] = (data: StateBenefitsUserData) => {
+  implicit val stateBenefitsUserDataWrites: OWrites[StateBenefitsUserData] = (data: StateBenefitsUserData) =>
     jsonObjNoNulls(
-      "benefitType" -> data.benefitType,
-      "sessionDataId" -> data.sessionDataId,
-      "sessionId" -> data.sessionId,
-      "mtdItId" -> data.mtdItId,
-      "nino" -> data.nino,
-      "taxYear" -> data.taxYear,
+      "benefitType"     -> data.benefitType,
+      "sessionDataId"   -> data.sessionDataId,
+      "sessionId"       -> data.sessionId,
+      "mtdItId"         -> data.mtdItId,
+      "nino"            -> data.nino,
+      "taxYear"         -> data.taxYear,
       "benefitDataType" -> data.benefitDataType,
-      "claim" -> data.claim,
-      "lastUpdated" -> data.lastUpdated
+      "claim"           -> data.claim,
+      "lastUpdated"     -> data.lastUpdated
     )
-  }
 
   implicit val stateBenefitsUserDataReads: Reads[StateBenefitsUserData] = (
     (JsPath \ "benefitType").read[String] and
@@ -82,7 +81,7 @@ object StateBenefitsUserData {
       (JsPath \ "benefitDataType").read[String] and
       (JsPath \ "claim").readNullable[ClaimCYAModel] and
       (JsPath \ "lastUpdated").readWithDefault[Instant](Instant.now())
-    )(StateBenefitsUserData.apply _)
+  )(StateBenefitsUserData.apply _)
 }
 
 case class EncryptedStateBenefitsUserData(benefitType: String,
@@ -109,6 +108,6 @@ case class EncryptedStateBenefitsUserData(benefitType: String,
 }
 
 object EncryptedStateBenefitsUserData {
-  implicit val mongoLocalDateTimeFormats: Format[Instant] = MongoJavatimeFormats.instantFormat
+  implicit val mongoLocalDateTimeFormats: Format[Instant]      = MongoJavatimeFormats.instantFormat
   implicit val format: OFormat[EncryptedStateBenefitsUserData] = Json.format[EncryptedStateBenefitsUserData]
 }

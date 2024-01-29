@@ -24,8 +24,7 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.bigDecimalEncryptor
 import utils.{EncryptedValue, SecureGCMCipher}
 
-case class LifetimeAllowance(amount: Option[BigDecimal] = None,
-                             taxPaid: Option[BigDecimal] = None) {
+case class LifetimeAllowance(amount: Option[BigDecimal] = None, taxPaid: Option[BigDecimal] = None) {
 
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
@@ -42,8 +41,7 @@ object LifetimeAllowance {
   implicit val format: OFormat[LifetimeAllowance] = Json.format[LifetimeAllowance]
 }
 
-case class EncryptedLifetimeAllowance(amount: Option[EncryptedValue] = None,
-                                      taxPaid: Option[EncryptedValue] = None) {
+case class EncryptedLifetimeAllowance(amount: Option[EncryptedValue] = None, taxPaid: Option[EncryptedValue] = None) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): LifetimeAllowance = LifetimeAllowance(
     amount = amount.map(_.decrypted[BigDecimal]),

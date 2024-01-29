@@ -19,7 +19,12 @@ package services
 import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.StateBenefitViewModelBuilder.{aPriorStatePensionLumpSumViewModel, aPriorStatePensionViewModel}
-import builders.StateBenefitsUserDataBuilder.{aCreateStatePensionBenefitsUD, aCreateStatePensionLumpSumBenefitsUD, anUpdateStatePensionBenefitsUD, anUpdateStatePensionLumpSumBenefitsUD}
+import builders.StateBenefitsUserDataBuilder.{
+  aCreateStatePensionBenefitsUD,
+  aCreateStatePensionLumpSumBenefitsUD,
+  anUpdateStatePensionBenefitsUD,
+  anUpdateStatePensionLumpSumBenefitsUD
+}
 import builders.UserBuilder.aUser
 import config.{MockIncomeTaxUserDataConnector, MockPensionUserDataRepository, MockStateBenefitsConnector}
 import models.mongo.{DataNotFound, DataNotUpdated, PensionsCYAModel, PensionsUserData}
@@ -28,15 +33,16 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.BAD_REQUEST
 import utils.UnitTest
 
-class StatePensionServiceSpec extends UnitTest
-  with MockPensionUserDataRepository
-  with MockStateBenefitsConnector
-  with MockIncomeTaxUserDataConnector
-  with ScalaFutures {
+class StatePensionServiceSpec
+    extends UnitTest
+    with MockPensionUserDataRepository
+    with MockStateBenefitsConnector
+    with MockIncomeTaxUserDataConnector
+    with ScalaFutures {
 
   val statePensionService = new StatePensionService(mockPensionUserDataRepository, mockStateBenefitsConnector)
 
-  val sessionCya: PensionsCYAModel = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions)
+  val sessionCya: PensionsCYAModel      = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions)
   val sessionUserData: PensionsUserData = aPensionsUserData.copy(pensions = sessionCya)
   val userWithEmptySaveIncomeFromPensionsCya: PensionsUserData = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
@@ -58,8 +64,7 @@ class StatePensionServiceSpec extends UnitTest
       "only StatePension model is submitted, updating a prior submission" in {
         val statePensionOnlySessionData: PensionsUserData =
           sessionUserData.copy(pensions = sessionUserData.pensions.copy(
-            incomeFromPensions = sessionCya.incomeFromPensions.copy(
-              statePension = Some(aPriorStatePensionViewModel), statePensionLumpSum = None)
+            incomeFromPensions = sessionCya.incomeFromPensions.copy(statePension = Some(aPriorStatePensionViewModel), statePensionLumpSum = None)
           ))
 
         mockFind(taxYear, aUser, Right(Option(statePensionOnlySessionData)))
@@ -74,8 +79,8 @@ class StatePensionServiceSpec extends UnitTest
       "only StatePensionLumpSum model is submitted, updating a prior submission" in {
         val statePensionLumpSumOnlySessionData: PensionsUserData =
           sessionUserData.copy(pensions = sessionUserData.pensions.copy(
-            incomeFromPensions = sessionCya.incomeFromPensions.copy(
-              statePension = None, statePensionLumpSum = Some(aPriorStatePensionLumpSumViewModel))
+            incomeFromPensions =
+              sessionCya.incomeFromPensions.copy(statePension = None, statePensionLumpSum = Some(aPriorStatePensionLumpSumViewModel))
           ))
 
         mockFind(taxYear, aUser, Right(Option(statePensionLumpSumOnlySessionData)))

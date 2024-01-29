@@ -17,7 +17,12 @@
 package services.redirects
 
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
-import controllers.pensions.annualAllowances.routes.{AnnualAllowanceCYAController, PensionSchemeTaxReferenceController, PstrSummaryController, ReducedAnnualAllowanceController}
+import controllers.pensions.annualAllowances.routes.{
+  AnnualAllowanceCYAController,
+  PensionSchemeTaxReferenceController,
+  PstrSummaryController,
+  ReducedAnnualAllowanceController
+}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import play.api.http.Status.SEE_OTHER
@@ -29,9 +34,9 @@ import utils.UnitTest
 
 class AnnualAllowancesRedirectsSpec extends UnitTest {
 
-  private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
-  private val schemeDetailsCall: Call = PensionSchemeTaxReferenceController.show(taxYear, None)
-  private val schemeSummaryCall: Call = PstrSummaryController.show(taxYear)
+  private val cyaData: PensionsCYAModel            = PensionsCYAModel.emptyModels
+  private val schemeDetailsCall: Call              = PensionSchemeTaxReferenceController.show(taxYear, None)
+  private val schemeSummaryCall: Call              = PstrSummaryController.show(taxYear)
   private val journeyStartRedirect: Option[Result] = Some(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
 
   ".cyaPageCall" should {
@@ -43,13 +48,13 @@ class AnnualAllowancesRedirectsSpec extends UnitTest {
   ".redirectForSchemeLoop" should {
     "filter empty schemes and return a Call to the scheme summary page when other schemes exist" in {
       val existingSchemes: Seq[String] = Seq("1234567CRC", "12345678RB", "", "1234567DRD", "   ")
-      val result = redirectForSchemeLoop(existingSchemes, taxYear)
+      val result                       = redirectForSchemeLoop(existingSchemes, taxYear)
 
       result shouldBe schemeSummaryCall
     }
     "filter empty schemes and return a Call to the scheme details page when schemes is then empty" in {
       val emptySchemes: Seq[String] = Seq("", "   ")
-      val result = redirectForSchemeLoop(emptySchemes, taxYear)
+      val result                    = redirectForSchemeLoop(emptySchemes, taxYear)
 
       result shouldBe schemeDetailsCall
     }
@@ -77,7 +82,7 @@ class AnnualAllowancesRedirectsSpec extends UnitTest {
             pensionSchemeTaxReferences = None
           )
         )
-        val data2 = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
+        val data2   = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
         val result1 = journeyCheck(AboveAnnualAllowancePage, data1, taxYear)
         val result2 = journeyCheck(CYAPage, data2, taxYear)
 
@@ -85,7 +90,7 @@ class AnnualAllowancesRedirectsSpec extends UnitTest {
         result2 shouldBe None
       }
       "current page is pre-filled and mid-journey" in {
-        val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
+        val data   = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
         val result = journeyCheck(PensionProviderPaidTaxPage, data, taxYear)
 
         result shouldBe None
@@ -120,8 +125,7 @@ class AnnualAllowancesRedirectsSpec extends UnitTest {
         result2 shouldBe journeyStartRedirect
       }
       "current page is invalid in journey" in {
-        val data = cyaData.copy(pensionsAnnualAllowances = PensionAnnualAllowancesViewModel(
-          reducedAnnualAllowanceQuestion = Some(false)))
+        val data   = cyaData.copy(pensionsAnnualAllowances = PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(false)))
         val result = journeyCheck(ReducedAnnualAllowanceTypePage, data, taxYear)
 
         result shouldBe journeyStartRedirect
@@ -130,19 +134,18 @@ class AnnualAllowancesRedirectsSpec extends UnitTest {
 
     "return Some(redirect) with redirect to scheme summary page" when {
       "trying to remove a scheme with an invalid index and existing schemes" in {
-        val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
-        val result = journeyCheck(RemovePSTRPage, data, taxYear, Some(5))
-        val statusHeader = result.map(_.header.status)
+        val data           = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
+        val result         = journeyCheck(RemovePSTRPage, data, taxYear, Some(5))
+        val statusHeader   = result.map(_.header.status)
         val locationHeader = result.map(_.header.headers).map(_.get("Location"))
 
         statusHeader shouldBe Some(SEE_OTHER)
         locationHeader.get shouldBe Some(schemeSummaryCall.url)
       }
       "trying to remove a scheme with an invalid index and no schemes" in {
-        val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel.copy(
-          pensionSchemeTaxReferences = Some(Seq.empty)))
+        val data   = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq.empty)))
         val result = journeyCheck(RemovePSTRPage, data, taxYear, Some(-5))
-        val statusHeader = result.map(_.header.status)
+        val statusHeader   = result.map(_.header.status)
         val locationHeader = result.map(_.header.headers).map(_.get("Location"))
 
         statusHeader shouldBe Some(SEE_OTHER)
@@ -154,27 +157,25 @@ class AnnualAllowancesRedirectsSpec extends UnitTest {
 
       "return None" when {
         "using a valid index to an existing scheme" in {
-          val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
+          val data   = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
           val result = journeyCheck(PSTRPage, data, taxYear, Some(0))
 
           result shouldBe None
         }
         "index is None and there are no existing schemes" in {
-          val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel.copy(
-            pensionSchemeTaxReferences = None))
+          val data   = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = None))
           val result = journeyCheck(PSTRPage, data, taxYear)
 
           result shouldBe None
         }
         "index is None and there are existing schemes" in {
-          val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
+          val data   = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
           val result = journeyCheck(PSTRPage, data, taxYear)
 
           result shouldBe None
         }
         "index is invalid but there are no existing schemes" in {
-          val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel.copy(
-            pensionSchemeTaxReferences = None))
+          val data   = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = None))
           val result = journeyCheck(PSTRPage, data, taxYear, Some(-5))
 
           result shouldBe None
@@ -182,9 +183,9 @@ class AnnualAllowancesRedirectsSpec extends UnitTest {
       }
 
       "return Some(redirect) to PSTR summary page when index is invalid and there are existing schemes" in {
-        val data = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
-        val result = journeyCheck(PSTRPage, data, taxYear, Some(12))
-        val statusHeader = result.map(_.header.status)
+        val data           = cyaData.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)
+        val result         = journeyCheck(PSTRPage, data, taxYear, Some(12))
+        val statusHeader   = result.map(_.header.status)
         val locationHeader = result.map(_.header.headers).map(_.get("Location"))
 
         statusHeader shouldBe Some(SEE_OTHER)

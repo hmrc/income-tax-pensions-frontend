@@ -36,58 +36,60 @@ import scala.collection.immutable.Seq
 
 class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-  private val dayInputName = "pensionStartDate-day"
+  private val dayInputName   = "pensionStartDate-day"
   private val monthInputName = "pensionStartDate-month"
-  private val yearInputName = "pensionStartDate-year"
-  private val validDay = "27"
-  private val validMonth = "10"
-  private val validYear = "2021"
+  private val yearInputName  = "pensionStartDate-year"
+  private val validDay       = "27"
+  private val validMonth     = "10"
+  private val validYear      = "2021"
 
   def startDateForm(day: String, month: String, year: String): Map[String, String] = Map(
-    dayInputName -> day,
+    dayInputName   -> day,
     monthInputName -> month,
-    yearInputName -> year
+    yearInputName  -> year
   )
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
   object Selectors {
-    val dayInputSelector = "#day"
+    val dayInputSelector   = "#day"
     val monthInputSelector = "#month"
-    val yearInputSelector = "#year"
-    val dayInputHref = "#day"
-    val monthInputHref = "#month"
-    val yearInputHref = "#year"
+    val yearInputSelector  = "#year"
+    val dayInputHref       = "#day"
+    val monthInputHref     = "#month"
+    val yearInputHref      = "#year"
 
     def labelSelector(index: Int): String = s"#pensionStartDate > div:nth-child($index) > div > label"
   }
 
-  val dateInFutureErrorText = "The pension start date must be in the past"
-  val realDateErrorText = "The pension start date must be a real date"
-  val tooLongAgoErrorText = "The pension start date must be after 1 January 1900"
-  val emptyAllErrorText = "Enter the pension start date"
-  val emptyDayErrorText = "The pension start date must include a day"
-  val emptyDayMonthErrorText = "The pension start date must include a day and month"
-  val emptyDayYearErrorText = "The pension start date must include a day and year"
-  val emptyMonthErrorText = "The pension start date must include a month"
+  val dateInFutureErrorText   = "The pension start date must be in the past"
+  val realDateErrorText       = "The pension start date must be a real date"
+  val tooLongAgoErrorText     = "The pension start date must be after 1 January 1900"
+  val emptyAllErrorText       = "Enter the pension start date"
+  val emptyDayErrorText       = "The pension start date must include a day"
+  val emptyDayMonthErrorText  = "The pension start date must include a day and month"
+  val emptyDayYearErrorText   = "The pension start date must include a day and year"
+  val emptyMonthErrorText     = "The pension start date must include a month"
   val emptyMonthYearErrorText = "The pension start date must include a month and year"
-  val emptyYearErrorText = "The pension start date must include a year"
-  val expectedErrorTitle = "Error: When did you start getting payments from this scheme?"
+  val emptyYearErrorText      = "The pension start date must include a year"
+  val expectedErrorTitle      = "Error: When did you start getting payments from this scheme?"
 
   val schemeIndex0 = 0
 
-  ".show" should { //scalastyle:off magic.number
+  ".show" should { // scalastyle:off magic.number
 
     "return Ok response with PensionSchemeStartDate page" when {
       "no previous scheme data" in {
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
-          val viewModel = anIncomeFromPensionsViewModel.copy(
-            uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(startDate = None)))
+          val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(startDate = None)))
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
-          urlGet(fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))), follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlGet(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))),
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         result.status shouldBe OK
@@ -99,8 +101,11 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
           insertCyaData(aPensionsUserData)
-          urlGet(fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))), follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlGet(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))),
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         result.status shouldBe OK
@@ -115,7 +120,9 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(invalidJourney))
-          urlGet(fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))), follow = false,
+          urlGet(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -126,13 +133,14 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
       }
 
       "previous questions are unanswered" which {
-        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(
-          uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(amount = None)))
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(amount = None)))
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(incompleteJourney))
-          urlGet(fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))), follow = false,
+          urlGet(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -146,9 +154,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          val viewModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
+          val viewModel =
+            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
-          urlGet(fullUrl(pensionStartDateUrl(taxYearEOY, Some(8))), follow = false,
+          urlGet(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(8))),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -162,9 +173,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          val viewModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
+          val viewModel =
+            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
-          urlGet(fullUrl(pensionStartDateUrl(taxYearEOY, None)), follow = false,
+          urlGet(
+            fullUrl(pensionStartDateUrl(taxYearEOY, None)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -179,8 +193,11 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -192,17 +209,21 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
     "redirect to UkPensionIncomesSummary page and update scheme data when valid form is submitted" in {
       // todo redirect to Check Scheme Details page when created
-      lazy val form = startDateForm(validDay, validMonth, validYear)
+      lazy val form    = startDateForm(validDay, validMonth, validYear)
       val schemeIndex1 = 1
 
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val viewModel: IncomeFromPensionsViewModel = anIncomeFromPensionsViewModel.copy(
-          uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo))
+        val viewModel: IncomeFromPensionsViewModel =
+          anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
-        urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex1))), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex1))),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -219,8 +240,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -243,8 +268,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -267,8 +296,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
         "has the correct status" in {
           result.status shouldBe BAD_REQUEST
@@ -291,8 +324,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -317,8 +354,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -342,8 +383,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -367,8 +412,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -387,14 +436,18 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
 
       "the date submitted is in the future" which {
         val futureYear: Int = LocalDate.now().getYear + 1
-        lazy val form = startDateForm(validDay, validMonth, s"$futureYear")
+        lazy val form       = startDateForm(validDay, validMonth, s"$futureYear")
 
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -418,8 +471,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -443,8 +500,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -468,8 +529,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has an SEE_OTHER(303) status" in {
@@ -487,8 +552,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(invalidJourney))
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))), body = form,
-            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has an SEE_OTHER(303) status" in {
@@ -498,14 +567,17 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
       }
 
       "previous questions are unanswered" which {
-        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(
-          uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(amount = None)))
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(amount = None)))
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(incompleteJourney))
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))), body = form,
-            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has an SEE_OTHER(303) status" in {
@@ -519,8 +591,12 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(aUKIncomeFromPensionsViewModel))
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, Some(4))), body = form,
-            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, Some(4))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has an SEE_OTHER status" in {
@@ -534,8 +610,11 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(aUKIncomeFromPensionsViewModel))
-          urlPost(fullUrl(pensionStartDateUrl(taxYearEOY, None)), body = form,
-            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionStartDateUrl(taxYearEOY, None)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
         "has an SEE_OTHER status" in {

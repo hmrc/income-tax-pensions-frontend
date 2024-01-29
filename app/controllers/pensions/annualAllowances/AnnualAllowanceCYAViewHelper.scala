@@ -22,11 +22,9 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.CYABaseHelper
 
-
 object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
 
-  def summaryListRows(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)
-                     (implicit messages: Messages): Seq[SummaryListRow] =
+  def summaryListRows(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       summaryRowForReducedAnnualAllowanceQuestion(annualAllowancesViewModel, taxYear),
       summaryRowTypeOfReducedAnnualAllowanceQuestion(annualAllowancesViewModel, taxYear),
@@ -35,83 +33,90 @@ object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
       summaryRowForAnnualAllowanceTax(annualAllowancesViewModel, taxYear),
       summaryRowForAnnualAllowanceSchemeTaxReferences(annualAllowancesViewModel, taxYear)
     ).flatten
-  
-  private def summaryRowForReducedAnnualAllowanceQuestion(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)
-                                                         (implicit messages: Messages): Option[SummaryListRow] = {
+
+  private def summaryRowForReducedAnnualAllowanceQuestion(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     annualAllowancesViewModel.reducedAnnualAllowanceQuestion
       .map(_ =>
         summaryListRowWithBooleanValue(
           "lifetimeAllowance.cya.reducedAnnualAllowance",
           annualAllowancesViewModel.reducedAnnualAllowanceQuestion,
-          annualRoutes.ReducedAnnualAllowanceController.show(taxYear))(messages)
-      )
-  }
-  
-  private def summaryRowTypeOfReducedAnnualAllowanceQuestion(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)
-                                                            (implicit messages: Messages): Option[SummaryListRow] = {
-    annualAllowancesViewModel.reducedAnnualAllowanceQuestion.filter(x => x)
+          annualRoutes.ReducedAnnualAllowanceController.show(taxYear)
+        )(messages))
+
+  private def summaryRowTypeOfReducedAnnualAllowanceQuestion(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
+    annualAllowancesViewModel.reducedAnnualAllowanceQuestion
+      .filter(x => x)
       .map { _ =>
         summaryListRowWithStrings(
           "lifetimeAllowance.cya.typeOfReducedAnnualAllowance",
           annualAllowancesViewModel.typeOfAllowance,
-          annualRoutes.ReducedAnnualAllowanceTypeController.show(taxYear))(messages)
+          annualRoutes.ReducedAnnualAllowanceTypeController.show(taxYear)
+        )(messages)
       }
-  }
-  
-  private def summaryRowForAboveAnnualAllowance(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)
-                                               (implicit messages: Messages): Option[SummaryListRow] = {
-    annualAllowancesViewModel.reducedAnnualAllowanceQuestion.filter(x => x)
+
+  private def summaryRowForAboveAnnualAllowance(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
+    annualAllowancesViewModel.reducedAnnualAllowanceQuestion
+      .filter(x => x)
       .map(_ =>
         summaryListRowWithBooleanValue(
           "lifetimeAllowance.cya.aboveAnnualAllowance",
           annualAllowancesViewModel.aboveAnnualAllowanceQuestion,
-          annualRoutes.AboveReducedAnnualAllowanceController.show(taxYear))(messages)
-      )
-  }
+          annualRoutes.AboveReducedAnnualAllowanceController.show(taxYear)
+        )(messages))
 
-  private def summaryRowForAmountAboveAnnualAllowance(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)
-                                               (implicit messages: Messages): Option[SummaryListRow] = {
-    annualAllowancesViewModel.reducedAnnualAllowanceQuestion.filter(x => x)
-      .flatMap(_ => annualAllowancesViewModel.aboveAnnualAllowanceQuestion.filter(x => x)
-        .map(_ =>
-          summaryListRowWithOptionalAmountValue(
-            "annualAllowance.cya.amountAboveAnnualAllowance",
-            annualAllowancesViewModel.aboveAnnualAllowance,
-            annualRoutes.AboveReducedAnnualAllowanceController.show(taxYear))(messages)
-        )
-      )
-  }
+  private def summaryRowForAmountAboveAnnualAllowance(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
+    annualAllowancesViewModel.reducedAnnualAllowanceQuestion
+      .filter(x => x)
+      .flatMap(_ =>
+        annualAllowancesViewModel.aboveAnnualAllowanceQuestion
+          .filter(x => x)
+          .map(_ =>
+            summaryListRowWithOptionalAmountValue(
+              "annualAllowance.cya.amountAboveAnnualAllowance",
+              annualAllowancesViewModel.aboveAnnualAllowance,
+              annualRoutes.AboveReducedAnnualAllowanceController.show(taxYear)
+            )(messages)))
 
-  private def summaryRowForAnnualAllowanceTax(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)
-                                             (implicit messages: Messages): Option[SummaryListRow] = {
-      annualAllowancesViewModel.reducedAnnualAllowanceQuestion.filter(x => x)
-        .flatMap(_ => annualAllowancesViewModel.aboveAnnualAllowanceQuestion.filter(x => x)
-        .map(_ =>
-          annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion match {
-            case Some(true) if annualAllowancesViewModel.taxPaidByPensionProvider.isDefined =>
-              summaryListRowWithOptionalAmountValue(
-                "lifetimeAllowance.cya.annualAllowanceTax",
-                annualAllowancesViewModel.taxPaidByPensionProvider,
-                routes.PensionProviderPaidTaxController.show(taxYear))(messages)
-            case _ =>
-              summaryListRowWithBooleanValue(
-                "lifetimeAllowance.cya.annualAllowanceTax",
-                annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion,
-                routes.PensionProviderPaidTaxController.show(taxYear))(messages)
-          }
-        )
-    )
-  }
-  
-  private def summaryRowForAnnualAllowanceSchemeTaxReferences(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)
-                                                             (implicit messages: Messages): Option[SummaryListRow] = {
-    annualAllowancesViewModel.reducedAnnualAllowanceQuestion.filter(x => x).flatMap(_ =>
-      annualAllowancesViewModel.aboveAnnualAllowanceQuestion.filter(x => x).flatMap(_ =>
-        annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion.filter(x => x).map(_ =>
-          summaryListRowWithStrings(
-            "lifetimeAllowance.cya.annualPensionSchemeTaxReferences",
-            annualAllowancesViewModel.pensionSchemeTaxReferences,
-            annualRoutes.PstrSummaryController.show(taxYear))(messages)
-        )))
-  }
+  private def summaryRowForAnnualAllowanceTax(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
+    annualAllowancesViewModel.reducedAnnualAllowanceQuestion
+      .filter(x => x)
+      .flatMap(_ =>
+        annualAllowancesViewModel.aboveAnnualAllowanceQuestion
+          .filter(x => x)
+          .map(_ =>
+            annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion match {
+              case Some(true) if annualAllowancesViewModel.taxPaidByPensionProvider.isDefined =>
+                summaryListRowWithOptionalAmountValue(
+                  "lifetimeAllowance.cya.annualAllowanceTax",
+                  annualAllowancesViewModel.taxPaidByPensionProvider,
+                  routes.PensionProviderPaidTaxController.show(taxYear))(messages)
+              case _ =>
+                summaryListRowWithBooleanValue(
+                  "lifetimeAllowance.cya.annualAllowanceTax",
+                  annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion,
+                  routes.PensionProviderPaidTaxController.show(taxYear)
+                )(messages)
+            }))
+
+  private def summaryRowForAnnualAllowanceSchemeTaxReferences(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
+    annualAllowancesViewModel.reducedAnnualAllowanceQuestion
+      .filter(x => x)
+      .flatMap(_ =>
+        annualAllowancesViewModel.aboveAnnualAllowanceQuestion
+          .filter(x => x)
+          .flatMap(_ =>
+            annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion
+              .filter(x => x)
+              .map(_ =>
+                summaryListRowWithStrings(
+                  "lifetimeAllowance.cya.annualPensionSchemeTaxReferences",
+                  annualAllowancesViewModel.pensionSchemeTaxReferences,
+                  annualRoutes.PstrSummaryController.show(taxYear)
+                )(messages))))
 }

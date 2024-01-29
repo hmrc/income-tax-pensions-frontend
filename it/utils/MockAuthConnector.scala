@@ -24,7 +24,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 class MockAuthConnector(stubbedRetrievalResult: Future[_], acceptedConfidenceLevels: Seq[ConfidenceLevel]) extends AuthConnector {
-  def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] = {
+  def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
     stubbedRetrievalResult.map(_.asInstanceOf[A])
-  }
 }

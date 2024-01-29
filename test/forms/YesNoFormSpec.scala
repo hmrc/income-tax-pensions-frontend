@@ -31,7 +31,7 @@ class YesNoFormSpec extends UnitTest {
       "the answer is yes" in {
 
         val expectedResult = true
-        val result = yesNoForm.bind(Map(yesNo -> yes)).get
+        val result         = yesNoForm.bind(Map(yesNo -> yes)).get
 
         result shouldBe expectedResult
       }
@@ -39,7 +39,7 @@ class YesNoFormSpec extends UnitTest {
       "the answer is no" in {
 
         val expectedResult = false
-        val result = yesNoForm.bind(Map(yesNo -> nope)).get
+        val result         = yesNoForm.bind(Map(yesNo -> nope)).get
 
         result shouldBe expectedResult
       }
@@ -50,14 +50,14 @@ class YesNoFormSpec extends UnitTest {
 
       "no option is returned" in {
         val expectedResult = Seq(FormError(yesNo, Seq("someError")))
-        val result = yesNoForm.bind(Map[String, String]()).errors
+        val result         = yesNoForm.bind(Map[String, String]()).errors
 
         result shouldBe expectedResult
       }
 
       "an option that isn't yes or no is returned" in {
         val expectedResult = Seq(FormError(yesNo, Seq("someError")))
-        val result = yesNoForm.bind(Map[String, String](yesNo -> "asdf")).errors
+        val result         = yesNoForm.bind(Map[String, String](yesNo -> "asdf")).errors
 
         result shouldBe expectedResult
       }

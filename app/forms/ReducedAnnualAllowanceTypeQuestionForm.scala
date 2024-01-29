@@ -24,20 +24,19 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 object ReducedAnnualAllowanceTypeQuestionForm {
 
   val moneyPurchaseCheckboxValue = "moneyPurchaseType"
-  val taperedCheckboxValue = "taperedCheckboxType"
+  val taperedCheckboxValue       = "taperedCheckboxType"
 
   case class ReducedAnnualAllowanceTypeQuestionModel(reducedAllowanceTypes: Seq[String]) {
     val containsMoneyPurchase: Boolean = reducedAllowanceTypes.contains(moneyPurchaseCheckboxValue)
-    val containsTapered: Boolean = reducedAllowanceTypes.contains(taperedCheckboxValue)
+    val containsTapered: Boolean       = reducedAllowanceTypes.contains(taperedCheckboxValue)
   }
 
   val reducedAnnualAllowanceType: String = "reducedAnnualAllowanceType"
 
-  val allEmpty: String => Constraint[ReducedAnnualAllowanceTypeQuestionModel] = msgKey => constraint[ReducedAnnualAllowanceTypeQuestionModel](
-    reducedAnnualAllowanceType => {
+  val allEmpty: String => Constraint[ReducedAnnualAllowanceTypeQuestionModel] = msgKey =>
+    constraint[ReducedAnnualAllowanceTypeQuestionModel] { reducedAnnualAllowanceType =>
       if (!reducedAnnualAllowanceType.containsMoneyPurchase & !reducedAnnualAllowanceType.containsTapered) Invalid(msgKey) else Valid
     }
-  )
 
   def reducedAnnualAllowanceTypeForm(isAgent: Boolean): Form[ReducedAnnualAllowanceTypeQuestionModel] = Form[ReducedAnnualAllowanceTypeQuestionModel](
     mapping(

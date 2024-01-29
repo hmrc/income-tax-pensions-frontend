@@ -39,13 +39,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                                  appConfig: AppConfig,
-                                                  authAction: AuthorisedAction,
-                                                  pensionSessionService: PensionSessionService,
-                                                  errorHandler: ErrorHandler,
-                                                  view: UkPensionSchemePaymentsView,
-                                                  clock: Clock, ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+class UkPensionSchemePaymentsController @Inject() (implicit
+    val mcc: MessagesControllerComponents,
+    appConfig: AppConfig,
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    view: UkPensionSchemePaymentsView,
+    clock: Clock,
+    ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   private def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"pensions.ukPensionSchemePayments.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
@@ -54,56 +58,52 @@ class UkPensionSchemePaymentsController @Inject()(implicit val mcc: MessagesCont
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        cleanUpSchemes(data).flatMap({
-          case Right(updatedUserData) =>
-            val checkRedirect = journeyCheck(DoYouGetUkPensionSchemePaymentsPage, _: PensionsCYAModel, taxYear)
-            redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) {
-              data =>
-                data.pensions.incomeFromPensions.uKPensionIncomesQuestion match {
-                  case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
-                  case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
-                }
+        cleanUpSchemes(data).flatMap { case Right(updatedUserData) =>
+          val checkRedirect = journeyCheck(DoYouGetUkPensionSchemePaymentsPage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+            data.pensions.incomeFromPensions.uKPensionIncomesQuestion match {
+              case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
+              case _           => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
             }
-        })
+          }
+        }
 
       case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    yesNoForm(request.user).bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-      yesNo => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-          optData =>
+    yesNoForm(request.user)
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+        yesNo =>
+          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
             val checkRedirect = journeyCheck(DoYouGetUkPensionSchemePaymentsPage, _: PensionsCYAModel, taxYear)
             redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { _ =>
-              val pensionsCYAModel: PensionsCYAModel = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
+              val pensionsCYAModel: PensionsCYAModel     = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
               val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions
-              val updatedCyaModel: PensionsCYAModel = {
-                pensionsCYAModel.copy(
-                  incomeFromPensions = viewModel.copy(uKPensionIncomesQuestion = Some(yesNo),
-                    uKPensionIncomes = if (yesNo) viewModel.uKPensionIncomes else Seq.empty))
-              }
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(errorHandler.internalServerError()) {
+              val updatedCyaModel: PensionsCYAModel =
+                pensionsCYAModel.copy(incomeFromPensions =
+                  viewModel.copy(uKPensionIncomesQuestion = Some(yesNo), uKPensionIncomes = if (yesNo) viewModel.uKPensionIncomes else Seq.empty))
+              pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(
+                errorHandler.internalServerError()) {
                 Redirect(
                   if (yesNo) redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear)
                   else UkPensionIncomeCYAController.show(taxYear)
                 )
               }
             }
-        }
-      }
-    )
+          }
+      )
   }
 
   private def cleanUpSchemes(pensionsUserData: PensionsUserData)(implicit ec: ExecutionContext): Future[Either[DatabaseError, PensionsUserData]] = {
-    val schemes = pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
-    val filteredSchemes = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
-    val updatedViewModel = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = filteredSchemes)
+    val schemes            = pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+    val filteredSchemes    = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
+    val updatedViewModel   = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = filteredSchemes)
     val updatedPensionData = pensionsUserData.pensions.copy(incomeFromPensions = updatedViewModel)
-    val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
+    val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
     pensionSessionService.createOrUpdateSessionData(updatedUserData).map(_.map(_ => updatedUserData))
   }
 }

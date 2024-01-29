@@ -38,17 +38,15 @@ import views.pensions.paymentsIntoPensions.ReliefAtSourceOneOffPaymentsSpec.Sele
 import views.pensions.paymentsIntoPensions.ReliefAtSourceOneOffPaymentsSpec.Selectors._
 
 class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
-  private val someRasAmount: BigDecimal = 33.33
+  private val someRasAmount: BigDecimal         = 33.33
   private val validFormYes: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-  private val validFormNo: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
+  private val validFormNo: Map[String, String]  = Map(YesNoForm.yesNo -> YesNoForm.no)
 
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData =
     PensionsUserDataBuilder.aPensionsUserData.copy(
       isPriorSubmission = false,
       pensions = pensionsCyaModel
     )
-  }
-
 
   val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
@@ -58,13 +56,13 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          totalRASPaymentsAndTaxRelief = Some(someRasAmount),
-          oneOffRasPaymentPlusTaxReliefQuestion = None)
+        val pensionsViewModel =
+          aPaymentsIntoPensionViewModel.copy(totalRASPaymentsAndTaxRelief = Some(someRasAmount), oneOffRasPaymentPlusTaxReliefQuestion = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(
-          fullUrl(
-            reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an OK status" in {
@@ -89,13 +87,13 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          totalRASPaymentsAndTaxRelief = Some(someRasAmount),
-          oneOffRasPaymentPlusTaxReliefQuestion = Some(true))
+        val pensionsViewModel =
+          aPaymentsIntoPensionViewModel.copy(totalRASPaymentsAndTaxRelief = Some(someRasAmount), oneOffRasPaymentPlusTaxReliefQuestion = Some(true))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(
-          fullUrl(
-            reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an OK status" in {
@@ -120,13 +118,13 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          totalRASPaymentsAndTaxRelief = Some(someRasAmount),
-          oneOffRasPaymentPlusTaxReliefQuestion = Some(false))
+        val pensionsViewModel =
+          aPaymentsIntoPensionViewModel.copy(totalRASPaymentsAndTaxRelief = Some(someRasAmount), oneOffRasPaymentPlusTaxReliefQuestion = Some(false))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(
-          fullUrl(
-            reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an OK status" in {
@@ -151,13 +149,12 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          totalRASPaymentsAndTaxRelief = None,
-          oneOffRasPaymentPlusTaxReliefQuestion = None)
+        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(totalRASPaymentsAndTaxRelief = None, oneOffRasPaymentPlusTaxReliefQuestion = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         urlGet(
-          fullUrl(
-            reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -172,7 +169,9 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         dropPensionsDB()
         authoriseAgentOrIndividual()
         // no cya insert
-        urlGet(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -191,13 +190,16 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          totalRASPaymentsAndTaxRelief = Some(someRasAmount),
-          oneOffRasPaymentPlusTaxReliefQuestion = None)
+        val pensionsViewModel =
+          aPaymentsIntoPensionViewModel.copy(totalRASPaymentsAndTaxRelief = Some(someRasAmount), oneOffRasPaymentPlusTaxReliefQuestion = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = invalidForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
+          body = invalidForm,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has the correct status" in {
@@ -228,11 +230,16 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
           totalOneOffRasPaymentPlusTaxRelief = Some(someRasAmount),
           totalRASPaymentsAndTaxRelief = Some(someRasAmount),
           oneOffRasPaymentPlusTaxReliefQuestion = None,
-          workplacePensionPaymentsQuestion = None)
+          workplacePensionPaymentsQuestion = None
+        )
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
 
-        urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormYes, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
+          body = validFormYes,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
 
       }
 
@@ -251,15 +258,19 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
     }
 
     "redirect to correct page when user submits a 'no' answer and updates the session value to no" which {
-      val pensionsViewModel = aPaymentsIntoPensionsEmptyViewModel.copy(
-        rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = Some(189.01))
+      val pensionsViewModel =
+        aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(true), totalRASPaymentsAndTaxRelief = Some(189.01))
 
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithPaymentsIntoPensions(pensionsViewModel))
-        urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormNo, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
+          body = validFormNo,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -278,8 +289,12 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormNo, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
+          body = validFormNo,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -290,7 +305,8 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       "updates OffRasPaymentPlusTaxReliefQuestion question to Some(false) and clear the totalOneOffRasPaymentPlusTaxRelief amount" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.paymentsIntoPension shouldBe aPaymentsIntoPensionViewModel.copy(
-          oneOffRasPaymentPlusTaxReliefQuestion = Some(false), totalOneOffRasPaymentPlusTaxRelief = None)
+          oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
+          totalOneOffRasPaymentPlusTaxRelief = None)
       }
     }
 
@@ -300,8 +316,12 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
         dropPensionsDB()
         authoriseAgentOrIndividual()
         // no cya insert
-        urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormYes, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
+          body = validFormYes,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has an SEE_OTHER status" in {
@@ -316,14 +336,16 @@ class ReliefAtSourceOneOffPaymentsControllerISpec extends IntegrationTest with V
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val pensionsViewModel = aPaymentsIntoPensionViewModel.copy(
-          totalRASPaymentsAndTaxRelief = None,
-          oneOffRasPaymentPlusTaxReliefQuestion = Some(true))
+        val pensionsViewModel =
+          aPaymentsIntoPensionViewModel.copy(totalRASPaymentsAndTaxRelief = None, oneOffRasPaymentPlusTaxReliefQuestion = Some(true))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(paymentsIntoPension = pensionsViewModel)))
-        urlPost(fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)), body = validFormYes, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reliefAtSourceOneOffPaymentsUrl(taxYearEOY)),
+          body = validFormYes,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
-
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER

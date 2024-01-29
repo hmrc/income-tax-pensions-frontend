@@ -26,10 +26,10 @@ import utils.{IntegrationTest, ViewHelpers}
 class TaxYearErrorControllerISpec extends IntegrationTest with ViewHelpers {
 
   object Selectors {
-    val h1Selector = "#main-content > div > div > header > h1"
-    val p1Selector = "#main-content > div > div > div.govuk-body > p:nth-child(1)"
-    val p2Selector = "#main-content > div > div > div.govuk-body > p:nth-child(2)"
-    val p3Selector = "#main-content > div > div > div.govuk-body > p:nth-child(3)"
+    val h1Selector   = "#main-content > div > div > header > h1"
+    val p1Selector   = "#main-content > div > div > div.govuk-body > p:nth-child(1)"
+    val p2Selector   = "#main-content > div > div > div.govuk-body > p:nth-child(2)"
+    val p3Selector   = "#main-content > div > div > div.govuk-body > p:nth-child(3)"
     val linkSelector = "#govuk-self-assessment-link"
   }
 
@@ -46,31 +46,29 @@ class TaxYearErrorControllerISpec extends IntegrationTest with ViewHelpers {
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val h1Expected = "Page not found"
-    val p1Expected = s"You can only enter information for the tax years $taxYearEndOfYearMinusOne to $taxYear."
+    val h1Expected       = "Page not found"
+    val p1Expected       = s"You can only enter information for the tax years $taxYearEndOfYearMinusOne to $taxYear."
     val p1ExpectedSingle = "You can only enter information for a valid tax year."
-    val p2Expected = "Check that you’ve entered the correct web address."
+    val p2Expected       = "Check that you’ve entered the correct web address."
     val p3Expected: String = "If the web address is correct or you selected a link or button, you can use Self Assessment: " +
       "general enquiries (opens in new tab) to speak to someone about your income tax."
-    val p3ExpectedLink = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
+    val p3ExpectedLink     = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
     val p3ExpectedLinkText = "Self Assessment: general enquiries (opens in new tab)"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val h1Expected = "Heb ddod o hyd i’r dudalen"
-    val p1Expected = s"Gallwch nodi gwybodaeth ar gyfer blynyddoedd treth $taxYearEndOfYearMinusOne i $taxYear yn unig."
+    val h1Expected       = "Heb ddod o hyd i’r dudalen"
+    val p1Expected       = s"Gallwch nodi gwybodaeth ar gyfer blynyddoedd treth $taxYearEndOfYearMinusOne i $taxYear yn unig."
     val p1ExpectedSingle = "Gallwch nodi gwybodaeth ar gyfer blwyddyn dreth ddilys yn unig."
-    val p2Expected = "Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir."
+    val p2Expected       = "Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir."
     val p3Expected: String = "Os yw’r cyfeiriad gwe yn gywir neu os ydych wedi dewis cysylltiad neu fotwm, gallwch ddefnyddio Treth Incwm, " +
       "Hunanasesiad a mwy (yn agor tab newydd) i siarad â rhywun am eich treth incwm."
-    val p3ExpectedLink = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
+    val p3ExpectedLink     = "https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
     val p3ExpectedLinkText = "Treth Incwm, Hunanasesiad a mwy (yn agor tab newydd)"
   }
 
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, CommonExpectedResults]] = {
-    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN),
-      UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY))
-  }
+  val userScenarios: Seq[UserScenario[CommonExpectedResults, CommonExpectedResults]] =
+    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN), UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY))
 
   ".show" when {
     import Selectors._

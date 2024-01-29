@@ -28,20 +28,19 @@ import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.RetirementAnnuityAmountView
 import views.pensions.paymentsIntoPensions.RetirementAnnuityAmountSpec._
 
-
 object RetirementAnnuityAmountSpec {
   val poundPrefixText = "£"
   val amountInputName = "amount"
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val hintTextSelector = "#amount-hint"
-    val poundPrefixSelector = ".govuk-input__prefix"
-    val inputSelector = "#amount"
-    val expectedErrorHref = "#amount"
-    val paragraphSelector: String = "#main-content > div > div > p"
+    val formSelector: String           = "#main-content > div > div > form"
+    val hintTextSelector               = "#amount-hint"
+    val poundPrefixSelector            = ".govuk-input__prefix"
+    val inputSelector                  = "#amount"
+    val expectedErrorHref              = "#amount"
+    val paragraphSelector: String      = "#main-content > div > div > p"
   }
 
   trait CommonExpectedResults {
@@ -62,49 +61,51 @@ object RetirementAnnuityAmountSpec {
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText = "For example, £193.52"
-    val emptyErrorText = "Enter the amount paid into retirement annuity contracts"
-    val invalidFormatErrorText = "Enter the amount paid into retirement annuity contracts in pounds"
-    val maxAmountErrorText = "The amount paid into retirement annuity contracts must be less than £100,000,000,000"
-    val buttonText = "Continue"
+    val hintText                       = "For example, £193.52"
+    val emptyErrorText                 = "Enter the amount paid into retirement annuity contracts"
+    val invalidFormatErrorText         = "Enter the amount paid into retirement annuity contracts in pounds"
+    val maxAmountErrorText             = "The amount paid into retirement annuity contracts must be less than £100,000,000,000"
+    val buttonText                     = "Continue"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val hintText = "Er enghraifft, £193.52"
-    val emptyErrorText = "Nodwch y swm a dalwyd i mewn i gontractau blwydd-dal ymddeol"
-    val invalidFormatErrorText = "Nodwch y swm a dalwyd i mewn i gontractau blwydd-dal ymddeol yn y fformat cywir"
-    val maxAmountErrorText = "Mae’n rhaid i’r swm a dalwyd i mewn i gontractau blwydd-dal ymddeol fod yn llai na £100,000,000,000"
-    val buttonText = "Yn eich blaen"
+    val hintText                       = "Er enghraifft, £193.52"
+    val emptyErrorText                 = "Nodwch y swm a dalwyd i mewn i gontractau blwydd-dal ymddeol"
+    val invalidFormatErrorText         = "Nodwch y swm a dalwyd i mewn i gontractau blwydd-dal ymddeol yn y fformat cywir"
+    val maxAmountErrorText             = "Mae’n rhaid i’r swm a dalwyd i mewn i gontractau blwydd-dal ymddeol fod yn llai na £100,000,000,000"
+    val buttonText                     = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val onlyIncludePayment = "Only include payments your pension provider will not claim tax relief for. You can find this out from your pension provider."
-    val expectedTitle = "How much did you pay into your retirement annuity contracts?"
-    val expectedHeading = "How much did you pay into your retirement annuity contracts?"
+    val onlyIncludePayment =
+      "Only include payments your pension provider will not claim tax relief for. You can find this out from your pension provider."
+    val expectedTitle      = "How much did you pay into your retirement annuity contracts?"
+    val expectedHeading    = "How much did you pay into your retirement annuity contracts?"
     val expectedErrorTitle = s"Error: $expectedTitle"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val onlyIncludePayment = "Dim ond taliadau na fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu hyn oddi wrth ddarparwr eich pensiwn."
-    val expectedTitle = "Faint y gwnaethoch ei dalu i mewn i’ch contractau blwydd-dal ymddeol?"
-    val expectedHeading = "Faint y gwnaethoch ei dalu i mewn i’ch contractau blwydd-dal ymddeol?"
+    val onlyIncludePayment =
+      "Dim ond taliadau na fydd darparwr eich pensiwn yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu hyn oddi wrth ddarparwr eich pensiwn."
+    val expectedTitle      = "Faint y gwnaethoch ei dalu i mewn i’ch contractau blwydd-dal ymddeol?"
+    val expectedHeading    = "Faint y gwnaethoch ei dalu i mewn i’ch contractau blwydd-dal ymddeol?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val onlyIncludePayment =
       "Only include payments your client’s pension provider will not claim tax relief for. You can find this out from your client’s pension provider."
-    val expectedTitle = "How much did your client pay into their retirement annuity contracts?"
-    val expectedHeading = "How much did your client pay into their retirement annuity contracts?"
+    val expectedTitle      = "How much did your client pay into their retirement annuity contracts?"
+    val expectedHeading    = "How much did your client pay into their retirement annuity contracts?"
     val expectedErrorTitle = s"Error: $expectedTitle"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val onlyIncludePayment =
       "Dim ond taliadau na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth ar eu cyfer y dylech eu cynnwys. Gallwch ddysgu hyn oddi wrth ddarparwr pensiwn eich cleient."
-    val expectedTitle = "Faint y gwnaeth eich cleient ei dalu i mewn i’w gontractau blwydd-dal ymddeol?"
-    val expectedHeading = "Faint y gwnaeth eich cleient ei dalu i mewn i’w gontractau blwydd-dal ymddeol?"
+    val expectedTitle      = "Faint y gwnaeth eich cleient ei dalu i mewn i’w gontractau blwydd-dal ymddeol?"
+    val expectedHeading    = "Faint y gwnaeth eich cleient ei dalu i mewn i’w gontractau blwydd-dal ymddeol?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 }
@@ -115,18 +116,18 @@ class RetirementAnnuityAmountSpec extends ViewUnitTest {
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
+    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
+  )
 
   private def form: Form[BigDecimal] = new PaymentsIntoPensionFormProvider().retirementAnnuityAmountForm
 
   private lazy val underTest = inject[RetirementAnnuityAmountView]
 
-
   userScenarios.foreach { userScenario =>
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render How much did you pay into your retirement annuity contracts page with no value when no cya data" which {
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(form, taxYearEOY)
 
@@ -152,7 +153,7 @@ class RetirementAnnuityAmountSpec extends ViewUnitTest {
         val existingAmount: String = "999.88"
 
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(form.fill(999.88), taxYearEOY)
 
@@ -177,8 +178,8 @@ class RetirementAnnuityAmountSpec extends ViewUnitTest {
         val emptyForm: Map[String, String] = Map(AmountForm.amount -> "")
 
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val htmlFormat = underTest(form.bind(emptyForm), taxYearEOY)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
+        val htmlFormat                                             = underTest(form.bind(emptyForm), taxYearEOY)
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
@@ -203,7 +204,7 @@ class RetirementAnnuityAmountSpec extends ViewUnitTest {
         val invalidFormatForm: Map[String, String] = Map(AmountForm.amount -> "invalid")
 
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(form.bind(invalidFormatForm), taxYearEOY)
 
@@ -228,11 +229,11 @@ class RetirementAnnuityAmountSpec extends ViewUnitTest {
 
       "return an error when form is submitted with input over maximum allowed value" which {
 
-        val amountOverMaximum = "100,000,000,000"
+        val amountOverMaximum                    = "100,000,000,000"
         val overMaximumForm: Map[String, String] = Map(AmountForm.amount -> amountOverMaximum)
 
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(form.bind(overMaximumForm), taxYearEOY)
 

@@ -31,33 +31,35 @@ import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, Serv
 
 import scala.concurrent.Future
 
-class PensionSessionServiceSpec extends UnitTest
-  with MockPensionUserDataRepository
-  with MockIncomeTaxUserDataConnector
-  with ScalaFutures {
+class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataRepository with MockIncomeTaxUserDataConnector with ScalaFutures {
 
-  val serviceUnavailableTemplate: ServiceUnavailableTemplate = app.injector.instanceOf[ServiceUnavailableTemplate]
-  val notFoundTemplate: NotFoundTemplate = app.injector.instanceOf[NotFoundTemplate]
+  val serviceUnavailableTemplate: ServiceUnavailableTemplate   = app.injector.instanceOf[ServiceUnavailableTemplate]
+  val notFoundTemplate: NotFoundTemplate                       = app.injector.instanceOf[NotFoundTemplate]
   val internalServerErrorTemplate: InternalServerErrorTemplate = app.injector.instanceOf[InternalServerErrorTemplate]
-  val mockMessagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  val mockFrontendAppConfig: AppConfig = app.injector.instanceOf[AppConfig]
+  val mockMessagesApi: MessagesApi                             = app.injector.instanceOf[MessagesApi]
+  val mockFrontendAppConfig: AppConfig                         = app.injector.instanceOf[AppConfig]
 
-  val errorHandler = new ErrorHandler(internalServerErrorTemplate, serviceUnavailableTemplate, mockMessagesApi, notFoundTemplate)(mockFrontendAppConfig)
+  val errorHandler = new ErrorHandler(internalServerErrorTemplate, serviceUnavailableTemplate, mockMessagesApi, notFoundTemplate)(
+    mockFrontendAppConfig)
 
   val messages: MessagesApi = app.injector.instanceOf[MessagesApi]
 
   val service: PensionSessionService =
-    new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, mockAppConfig,
-      errorHandler, mockExecutionContext)
+    new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, mockAppConfig, errorHandler, mockExecutionContext)
 
   private val user = authorisationRequest.user
-  
-  //TODO add view models
+
+  // TODO add view models
   val pensionCYA: PensionsCYAModel = aPensionsCYAEmptyModel
 
   val pensionDataFull: PensionsUserData = PensionsUserData(
-    sessionId, "1234567890", nino, taxYear, isPriorSubmission = true,
-    pensionCYA, testClock.now()
+    sessionId,
+    "1234567890",
+    nino,
+    taxYear,
+    isPriorSubmission = true,
+    pensionCYA,
+    testClock.now()
   )
 
   "getAndHandle" should {
@@ -89,9 +91,7 @@ class PensionSessionServiceSpec extends UnitTest
   ".createOrUpdateSessionData" should {
     "return SEE_OTHER(303) status when createOrUpdate succeeds" in {
       mockCreateOrUpdate(pensionDataFull, Right(()))
-      val response = service.createOrUpdateSessionData(user,
-        pensionCYA, taxYear, isPriorSubmission = true,
-      )(Redirect("400"))(Redirect("303"))
+      val response = service.createOrUpdateSessionData(user, pensionCYA, taxYear, isPriorSubmission = true)(Redirect("400"))(Redirect("303"))
 
       status(response) shouldBe SEE_OTHER
       redirectUrl(response) shouldBe "303"
@@ -99,9 +99,8 @@ class PensionSessionServiceSpec extends UnitTest
 
     "return BAD_REQUEST(400) status when createOrUpdate fails" in {
       mockCreateOrUpdate(pensionDataFull, Left(DataNotUpdated))
-      val response: Future[Result] = service.createOrUpdateSessionData(user,
-        pensionCYA, taxYear, isPriorSubmission = true
-      )(Redirect("400"))(Redirect("303"))
+      val response: Future[Result] =
+        service.createOrUpdateSessionData(user, pensionCYA, taxYear, isPriorSubmission = true)(Redirect("400"))(Redirect("303"))
 
       status(response) shouldBe SEE_OTHER
       redirectUrl(response) shouldBe "400"
@@ -115,7 +114,6 @@ class PensionSessionServiceSpec extends UnitTest
       response shouldBe aPensionsCYAGeneratedFromPriorEmpty
     }
   }
-
 
   ".createOrUpdateSessionData" should {
     "return Right(unit) when createOrUpdate succeeds" in {

@@ -27,16 +27,13 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.BAD_REQUEST
 import utils.UnitTest
 
-class PensionReliefsServiceSpec extends UnitTest
-  with MockPensionUserDataRepository
-  with MockPensionsConnector
-  with ScalaFutures {
+class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataRepository with MockPensionsConnector with ScalaFutures {
 
   val pensionReliefsService = new PensionReliefsService(mockPensionUserDataRepository, mockPensionReliefsConnectorHelper)
 
   ".persistPaymentIntoPensionViewModel" should {
     "return Right when model is saved successfully and payment into pensions cya is cleared from DB" in {
-      val sessionCya = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
+      val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
@@ -66,7 +63,7 @@ class PensionReliefsServiceSpec extends UnitTest
     }
 
     "return Left(APIErrorModel) when pension connector could not be connected" in {
-      val sessionCya = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
+      val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
@@ -89,7 +86,7 @@ class PensionReliefsServiceSpec extends UnitTest
     }
 
     "return Left(DataNotUpdated) when data could not be updated" in {
-      val sessionCya = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
+      val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))

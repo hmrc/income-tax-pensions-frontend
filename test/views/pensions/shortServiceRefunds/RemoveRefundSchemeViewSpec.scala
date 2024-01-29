@@ -30,10 +30,10 @@ class RemoveRefundSchemeViewSpec extends ViewUnitTest {
   private val pensionName: String = "pension name 1"
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > header > p"
-    val cancelLinkSelector: String = "#cancel-link-id"
+    val captionSelector: String               = "#main-content > div > div > form > header > p"
+    val cancelLinkSelector: String            = "#cancel-link-id"
     def paragraphSelector(index: Int): String = s"#main-content > div > div > form > p:nth-of-type($index)"
-    def bulletSelector(index: Int): String = s"#main-content > div > div > form > ul > li:nth-child($index)"
+    def bulletSelector(index: Int): String    = s"#main-content > div > div > form > ul > li:nth-child($index)"
   }
 
   trait CommonExpectedResults {
@@ -41,35 +41,35 @@ class RemoveRefundSchemeViewSpec extends ViewUnitTest {
     val expectedHeading: String
     val expectedCaption: Int => String
     val expectedParagraph1: String
-    val expectedBullet1:String
-    val expectedBullet2:String
-    val expectedBullet3:String
+    val expectedBullet1: String
+    val expectedBullet2: String
+    val expectedBullet3: String
     val buttonText: String
     val cancelText: String
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedTitle = s"Are you sure you want to remove $pensionName?"
-    val expectedHeading = expectedTitle
+    val expectedTitle                  = s"Are you sure you want to remove $pensionName?"
+    val expectedHeading                = expectedTitle
     val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedParagraph1 = "This will remove:"
-    val expectedBullet1 = "The name of the pension scheme"
-    val expectedBullet2 = "Pensions scheme tax reference"
-    val expectedBullet3 = "Pensions provider address"
-    val buttonText = "Remove"
-    val cancelText = "Cancel"
+    val expectedParagraph1             = "This will remove:"
+    val expectedBullet1                = "The name of the pension scheme"
+    val expectedBullet2                = "Pensions scheme tax reference"
+    val expectedBullet3                = "Pensions provider address"
+    val buttonText                     = "Remove"
+    val cancelText                     = "Cancel"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = s"A ydych yn siŵr eich bod am dynnu $pensionName?"
-    val expectedHeading = expectedTitle
+    val expectedTitle                  = s"A ydych yn siŵr eich bod am dynnu $pensionName?"
+    val expectedHeading                = expectedTitle
     val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedParagraph1 = "Bydd hyn yn tynnu:"
-    val expectedBullet1 = "Enw’r cynllun pensiwn"
-    val expectedBullet2 = "Cyfeirnod treth y cynllun pensiwn"
-    val expectedBullet3 = "Cyfeiriad y darparwr pensiwn"
-    val buttonText = "Tynnu"
-    val cancelText = "Canslo"
+    val expectedParagraph1             = "Bydd hyn yn tynnu:"
+    val expectedBullet1                = "Enw’r cynllun pensiwn"
+    val expectedBullet2                = "Cyfeirnod treth y cynllun pensiwn"
+    val expectedBullet3                = "Cyfeiriad y darparwr pensiwn"
+    val buttonText                     = "Tynnu"
+    val cancelText                     = "Canslo"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
@@ -81,34 +81,31 @@ class RemoveRefundSchemeViewSpec extends ViewUnitTest {
 
   private lazy val underTest = inject[RemoveRefundSchemeView]
   "on show" should {
-    userScenarios.foreach {
-      userScenario =>
+    userScenarios.foreach { userScenario =>
+      import Selectors._
+      import userScenario.commonExpectedResults._
 
-        import Selectors._
-        import userScenario.commonExpectedResults._
+      implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
+      implicit val messages: Messages                                         = getMessages(userScenario.isWelsh)
+      s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" which {
+        "render the remove short service refund pension scheme page" which {
 
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" which {
-          "render the remove short service refund pension scheme page" which {
+          val htmlFormat                  = underTest(taxYearEOY, pensionName, Some(1))
+          implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-            val htmlFormat = underTest(taxYearEOY, pensionName, Some(1))
-            implicit val document: Document = Jsoup.parse(htmlFormat.body)
+          val url = RefundSummaryController.show(taxYearEOY).url
 
-            val url = RefundSummaryController.show(taxYearEOY).url
-
-            titleCheck(expectedTitle, userScenario.isWelsh)
-            h1Check(expectedHeading)
-            captionCheck(expectedCaption(taxYearEOY), captionSelector)
-            textOnPageCheck(expectedParagraph1, paragraphSelector(1))
-            textOnPageCheck(expectedBullet1, bulletSelector(1))
-            textOnPageCheck(expectedBullet2, bulletSelector(2))
-            textOnPageCheck(expectedBullet3, bulletSelector(3))
-            buttonCheck(buttonText)
-            linkCheck(cancelText, cancelLinkSelector, s"$url")
-          }
+          titleCheck(expectedTitle, userScenario.isWelsh)
+          h1Check(expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(expectedParagraph1, paragraphSelector(1))
+          textOnPageCheck(expectedBullet1, bulletSelector(1))
+          textOnPageCheck(expectedBullet2, bulletSelector(2))
+          textOnPageCheck(expectedBullet3, bulletSelector(3))
+          buttonCheck(buttonText)
+          linkCheck(cancelText, cancelLinkSelector, s"$url")
         }
+      }
     }
   }
 }
-

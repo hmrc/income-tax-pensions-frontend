@@ -27,18 +27,17 @@ import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourceOneOffPaymentsView
 
-
 object ReliefAtSourceOneOffPaymentsSpec {
 
   private val someRasAmount: BigDecimal = 33.33
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
-    val paragraphSelector: String = "#this-includes"
+    val formSelector: String           = "#main-content > div > div > form"
+    val yesSelector                    = "#value"
+    val noSelector                     = "#value-no"
+    val paragraphSelector: String      = "#this-includes"
   }
 
   trait CommonExpectedResults {
@@ -58,21 +57,21 @@ object ReliefAtSourceOneOffPaymentsSpec {
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
+    val yesText                        = "Yes"
+    val noText                         = "No"
+    val buttonText                     = "Continue"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val yesText = "Iawn"
-    val noText = "Na"
-    val buttonText = "Yn eich blaen"
+    val yesText                        = "Iawn"
+    val noText                         = "Na"
+    val buttonText                     = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedHeading = "Did you make any one-off payments into relief at source (RAS) pensions?"
-    val expectedTitle = "Did you make any one-off payments into relief at source (RAS) pensions?"
+    val expectedHeading    = "Did you make any one-off payments into relief at source (RAS) pensions?"
+    val expectedTitle      = "Did you make any one-off payments into relief at source (RAS) pensions?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val thisIncludes: String =
       s"You told us the total amount you paid plus tax relief was £$someRasAmount. " +
@@ -81,8 +80,8 @@ object ReliefAtSourceOneOffPaymentsSpec {
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedHeading = "A wnaethoch unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
-    val expectedTitle = "A wnaethoch unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
+    val expectedHeading    = "A wnaethoch unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
+    val expectedTitle      = "A wnaethoch unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val thisIncludes: String =
       s"Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gennych, ynghyd â rhyddhad treth, oedd £$someRasAmount. " +
@@ -91,8 +90,8 @@ object ReliefAtSourceOneOffPaymentsSpec {
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedHeading = "Did your client make any one-off payments into relief at source (RAS) pensions?"
-    val expectedTitle = "Did your client make any one-off payments into relief at source (RAS) pensions?"
+    val expectedHeading    = "Did your client make any one-off payments into relief at source (RAS) pensions?"
+    val expectedTitle      = "Did your client make any one-off payments into relief at source (RAS) pensions?"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val thisIncludes: String =
       s"You told us the total amount your client paid plus tax relief was £$someRasAmount. " +
@@ -101,8 +100,8 @@ object ReliefAtSourceOneOffPaymentsSpec {
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedHeading = "A wnaeth eich cleient unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
-    val expectedTitle = "A wnaeth eich cleient unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
+    val expectedHeading    = "A wnaeth eich cleient unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
+    val expectedTitle      = "A wnaeth eich cleient unrhyw daliadau untro i mewn i bensiynau rhyddhad wrth y ffynhonnell (RAS)?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val thisIncludes: String =
       s"Rydych wedi rhoi gwybod i ni mai’r cyfanswm a dalwyd gan eich cleient, ynghyd â rhyddhad treth, oedd £$someRasAmount. " +
@@ -130,7 +129,7 @@ class ReliefAtSourceOneOffPaymentsSpec extends ViewUnitTest {
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render the one-off payments into relief at source (RAS) pensions question page with no pre-filled radio buttons if no CYA question data" which {
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(yesNoForm(userScenario.isAgent), taxYearEOY, someRasAmount)
 
@@ -153,7 +152,7 @@ class ReliefAtSourceOneOffPaymentsSpec extends ViewUnitTest {
       "render the one-off payments into relief at source (RAS) pensions question page with 'Yes' pre-filled when CYA data exists" which {
 
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(yesNoForm(userScenario.isAgent).fill(true), taxYearEOY, someRasAmount)
 
@@ -176,7 +175,7 @@ class ReliefAtSourceOneOffPaymentsSpec extends ViewUnitTest {
 
       "render the one-off payments into relief at source (RAS) pensions question page with 'No' pre-filled when CYA data exists" which {
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(yesNoForm(userScenario.isAgent).fill(false), taxYearEOY, someRasAmount)
 
@@ -200,7 +199,7 @@ class ReliefAtSourceOneOffPaymentsSpec extends ViewUnitTest {
         lazy val invalidForm: Map[String, String] = Map(YesNoForm.yesNo -> "")
 
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(yesNoForm(userScenario.isAgent).bind(invalidForm), taxYearEOY, someRasAmount)
 

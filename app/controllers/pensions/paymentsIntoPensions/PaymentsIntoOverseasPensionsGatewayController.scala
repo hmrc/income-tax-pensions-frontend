@@ -32,31 +32,34 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentsIntoOverseasPensionsGatewayController @Inject()(authAction: AuthorisedAction,
-                                                    form: PaymentsIntoOverseasPensionsFormProvider,
-                                                    view: PaymentsIntoOverseasPensionsView,
-                                                    pensionSessionService: PensionSessionService,
-                                                    errorHandler: ErrorHandler)
-                                                   (implicit cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
-  extends FrontendController(cc) with I18nSupport with SessionHelper {
+class PaymentsIntoOverseasPensionsGatewayController @Inject() (
+    authAction: AuthorisedAction,
+    form: PaymentsIntoOverseasPensionsFormProvider,
+    view: PaymentsIntoOverseasPensionsView,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler)(implicit cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
+    extends FrontendController(cc)
+    with I18nSupport
+    with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
-    implicit request => {
-      Future.successful(
-        Ok(view(taxYear, form.paymentsIntoOverseasPensionsForm(request.user.isAgent)))
-      )
-    }
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+    Future.successful(
+      Ok(view(taxYear, form.paymentsIntoOverseasPensionsForm(request.user.isAgent)))
+    )
   }
 
   def submit(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    form.paymentsIntoOverseasPensionsForm(request.user.isAgent).bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(view(taxYear, formWithErrors))),
-      yesNoAnswer =>
-        if (yesNoAnswer) {
-          Future(Redirect(PensionsSummaryController.show(taxYear)))
-        } else {
-          Future(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
-        }
-    )
+    form
+      .paymentsIntoOverseasPensionsForm(request.user.isAgent)
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(taxYear, formWithErrors))),
+        yesNoAnswer =>
+          if (yesNoAnswer) {
+            Future(Redirect(PensionsSummaryController.show(taxYear)))
+          } else {
+            Future(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
+          }
+      )
   }
 }

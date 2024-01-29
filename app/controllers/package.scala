@@ -17,21 +17,19 @@
 package object controllers {
 
   def validatedIndex(index: Option[Int], collectionSize: Int): Option[Int] =
-    index.filter(i => i >= 0 && i <  collectionSize)
+    index.filter(i => i >= 0 && i < collectionSize)
 
-  def validatedSchemes[T](index: Option[Int], listItem: Seq[T]): Either[Unit, Option[T]] = {
+  def validatedSchemes[T](index: Option[Int], listItem: Seq[T]): Either[Unit, Option[T]] =
     index match {
       case Some(value) if listItem.indices contains value => Right(Some(listItem(value)))
-      case None => Right(None)
-      case _ => Left(())
+      case None                                           => Right(None)
+      case _                                              => Left(())
     }
-  }
 
-  def validateOptionalIndex(index: Option[Int], collectionSize: Int): Boolean = {
+  def validateOptionalIndex(index: Option[Int], collectionSize: Int): Boolean =
     index match {
       case Some(index) if index < 0 => false
-      case Some(index) => index < collectionSize
-      case _ => true
+      case Some(index)              => index < collectionSize
+      case _                        => true
     }
-  }
 }

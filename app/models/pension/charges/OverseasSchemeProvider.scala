@@ -23,8 +23,7 @@ case class OverseasSchemeProvider(providerName: String,
                                   providerAddress: String,
                                   providerCountryCode: String,
                                   qualifyingRecognisedOverseasPensionScheme: Option[Seq[String]],
-                                  pensionSchemeTaxReference: Option[Seq[String]]
-                                 )
+                                  pensionSchemeTaxReference: Option[Seq[String]])
 
 object OverseasSchemeProvider {
   implicit val format: OFormat[OverseasSchemeProvider] = Json.format[OverseasSchemeProvider]
@@ -34,8 +33,7 @@ case class EncryptedOverseasSchemeProvider(providerName: EncryptedValue,
                                            providerAddress: EncryptedValue,
                                            providerCountryCode: EncryptedValue,
                                            qualifyingRecognisedOverseasPensionScheme: Option[Seq[EncryptedValue]],
-                                           pensionSchemeTaxReference: Option[Seq[EncryptedValue]]
-                                          )
+                                           pensionSchemeTaxReference: Option[Seq[EncryptedValue]])
 
 object EncryptedOverseasSchemeProvider {
   implicit val format: OFormat[EncryptedOverseasSchemeProvider] = Json.format[EncryptedOverseasSchemeProvider]

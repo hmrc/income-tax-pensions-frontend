@@ -34,12 +34,12 @@ import views.html.pensions.incomeFromPensions.StatePensionLumpSumStartDateView
 
 class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequestProvider {
 
-  private val dayInputName = "statePensionLumpSumStartDate-day"
+  private val dayInputName   = "statePensionLumpSumStartDate-day"
   private val monthInputName = "statePensionLumpSumStartDate-month"
-  private val yearInputName = "statePensionLumpSumStartDate-year"
-  private val validDay = "27"
-  private val validMonth = "10"
-  private val validYear = "2021"
+  private val yearInputName  = "statePensionLumpSumStartDate-year"
+  private val validDay       = "27"
+  private val validMonth     = "10"
+  private val validYear      = "2021"
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
@@ -57,36 +57,36 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val buttonText = "Continue"
-    val expectedDayLabel = "Day"
-    val expectedMonthLabel = "Month"
-    val expectedYearLabel = "Year"
+    val buttonText                     = "Continue"
+    val expectedDayLabel               = "Day"
+    val expectedMonthLabel             = "Month"
+    val expectedYearLabel              = "Year"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val buttonText = "Yn eich blaen"
-    val expectedDayLabel = "Diwrnod"
-    val expectedMonthLabel = "Mis"
-    val expectedYearLabel = "Blwyddyn"
+    val buttonText                     = "Yn eich blaen"
+    val expectedDayLabel               = "Diwrnod"
+    val expectedMonthLabel             = "Mis"
+    val expectedYearLabel              = "Blwyddyn"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedTitle = "When did you get your State Pension lump sum?"
-    val expectedHint = "You can find this in your P60."
+    val expectedHint  = "You can find this in your P60."
   }
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedTitle = "Pryd cawsoch eich cyfandaliad Pensiwn y Wladwriaeth?"
-    val expectedHint = "Mae hwn i’w weld ar eich P60."
+    val expectedHint  = "Mae hwn i’w weld ar eich P60."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedTitle = "When did your client get their State Pension lump sum?"
-    val expectedHint = "They can find this on their P60."
+    val expectedHint  = "They can find this on their P60."
   }
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedTitle = "Pryd cafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth?"
-    val expectedHint = "Mae hwn i’w weld ar ei P60."
+    val expectedHint  = "Mae hwn i’w weld ar ei P60."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -97,13 +97,13 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
   )
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val hintSelector = "#statePensionLumpSumStartDate-hint"
-    val dayInputSelector = "#day"
-    val monthInputSelector = "#month"
-    val yearInputSelector = "#year"
+    val formSelector: String           = "#main-content > div > div > form"
+    val hintSelector                   = "#statePensionLumpSumStartDate-hint"
+    val dayInputSelector               = "#day"
+    val monthInputSelector             = "#month"
+    val yearInputSelector              = "#year"
 
     def labelSelector(index: Int): String = s"#statePensionLumpSumStartDate > div:nth-child($index) > div > label"
   }
@@ -113,7 +113,6 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
   private lazy val underTest = inject[StatePensionLumpSumStartDateView]
 
   userScenarios.foreach { userScenario =>
-
     import Selectors._
     def form: Form[DateForm.DateModel] = new FormsProvider().statePensionLumpSumStartDateForm
 
@@ -121,16 +120,15 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
       "render page with no pre-filled data" which {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = {
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAModel.copy(
-              incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-                statePensionLumpSum = None))),
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(
+            aPensionsUserData.copy(
+              pensions = aPensionsCYAModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel.copy(statePensionLumpSum = None))),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        }
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
-        val htmlFormat = underTest(form, taxYearEOY)
+        val htmlFormat                  = underTest(form, taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
@@ -151,13 +149,13 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
       "render page with pre-filled data" which {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = {
-          UserSessionDataRequest(aPensionsUserData,
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(
+            aPensionsUserData,
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        }
 
-        val htmlFormat = underTest(form.fill(DateModel(validDay, validMonth, validYear)), taxYearEOY)
+        val htmlFormat                  = underTest(form.fill(DateModel(validDay, validMonth, validYear)), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)

@@ -31,12 +31,12 @@ import views.pensions.paymentsIntoPensions.RetirementAnnuitySpec._
 object RetirementAnnuitySpec {
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
-    val detailsSelector: String = s"#main-content > div > div > form > details > summary > span"
+    val formSelector: String           = "#main-content > div > div > form"
+    val yesSelector                    = "#value"
+    val noSelector                     = "#value-no"
+    val detailsSelector: String        = s"#main-content > div > div > form > details > summary > span"
 
     def h3Selector(index: Int): String = s"#main-content > div > div > form > details > div > h3:nth-child($index)"
 
@@ -69,10 +69,10 @@ object RetirementAnnuitySpec {
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
-    val expectedDetailsTitle = "What is a retirement annuity contract?"
+    val yesText                        = "Yes"
+    val noText                         = "No"
+    val buttonText                     = "Continue"
+    val expectedDetailsTitle           = "What is a retirement annuity contract?"
     val expectedDetails: String =
       "Retirement annuity contracts are a type of pension scheme. " +
         "They were available before 1988 to the self-employed and to workers not offered a workplace pension."
@@ -80,48 +80,49 @@ object RetirementAnnuitySpec {
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val yesText = "Iawn"
-    val noText = "Na"
-    val buttonText = "Yn eich blaen"
-    val expectedDetailsTitle = "Beth yw contract blwydd-dal ymddeol?"
+    val yesText                        = "Iawn"
+    val noText                         = "Na"
+    val buttonText                     = "Yn eich blaen"
+    val expectedDetailsTitle           = "Beth yw contract blwydd-dal ymddeol?"
     val expectedDetails: String =
       "Math o gynllun pensiwn yw contractau blwydd-dal ymddeol. " +
         "Roeddent ar gael cyn 1988 i’r hunangyflogedig ac i weithwyr na chynigiwyd pensiwn gweithle iddynt."
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "Did you pay into a retirement annuity contract?"
-    val expectedHeading = "Did you pay into a retirement annuity contract?"
-    val expectedParagraphText = "We only need to know about payments if your pension provider will not claim tax relief (opens in new tab)."
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedErrorMessage = "Select yes if you paid into a retirement annuity contract"
+    val expectedTitle             = "Did you pay into a retirement annuity contract?"
+    val expectedHeading           = "Did you pay into a retirement annuity contract?"
+    val expectedParagraphText     = "We only need to know about payments if your pension provider will not claim tax relief (opens in new tab)."
+    val expectedErrorTitle        = s"Error: $expectedTitle"
+    val expectedErrorMessage      = "Select yes if you paid into a retirement annuity contract"
     val expectedYouCanFindThisOut = "You can find this out from your pension provider."
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "A wnaethoch chi dalu i mewn i gontract blwydd-dal ymddeol?"
-    val expectedHeading = "A wnaethoch chi dalu i mewn i gontract blwydd-dal ymddeol?"
+    val expectedTitle         = "A wnaethoch chi dalu i mewn i gontract blwydd-dal ymddeol?"
+    val expectedHeading       = "A wnaethoch chi dalu i mewn i gontract blwydd-dal ymddeol?"
     val expectedParagraphText = "Rydym ond angen gwybod am daliadau os na fydd darparwr eich pensiwn yn hawlio rhyddhad treth (yn agor tab newydd)."
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i gontract blwydd-dal ymddeol"
+    val expectedErrorTitle    = s"Gwall: $expectedTitle"
+    val expectedErrorMessage  = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i gontract blwydd-dal ymddeol"
     val expectedYouCanFindThisOut = "Gallwch ddysgu hyn oddi wrth eich darparwr pensiwn."
-}
+  }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "Did your client pay into a retirement annuity contract?"
-    val expectedHeading = "Did your client pay into a retirement annuity contract?"
+    val expectedTitle         = "Did your client pay into a retirement annuity contract?"
+    val expectedHeading       = "Did your client pay into a retirement annuity contract?"
     val expectedParagraphText = "We only need to know about payments if your client’s pension provider will not claim tax relief (opens in new tab)."
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedErrorMessage = "Select yes if your client paid into a retirement annuity contract"
+    val expectedErrorTitle    = s"Error: $expectedTitle"
+    val expectedErrorMessage  = "Select yes if your client paid into a retirement annuity contract"
     val expectedYouCanFindThisOut = "You can find this out from your client’s pension provider."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "A wnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol?"
+    val expectedTitle   = "A wnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol?"
     val expectedHeading = "A wnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol?"
-    val expectedParagraphText = "Rydym ond angen gwybod am daliadau os na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth (yn agor tab newydd)."
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedErrorMessage = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol"
+    val expectedParagraphText =
+      "Rydym ond angen gwybod am daliadau os na fydd darparwr pensiwn eich cleient yn hawlio rhyddhad treth (yn agor tab newydd)."
+    val expectedErrorTitle        = s"Gwall: $expectedTitle"
+    val expectedErrorMessage      = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu i mewn i gontract blwydd-dal ymddeol"
     val expectedYouCanFindThisOut = "Gallwch ddysgu hyn oddi wrth ddarparwr pensiwn eich cleient."
   }
 }
@@ -138,13 +139,12 @@ class RetirementAnnuitySpec extends ViewUnitTest {
 
   private lazy val underTest: PayIntoRetirementAnnuityContractView = inject[PayIntoRetirementAnnuityContractView]
 
-
   userScenarios.foreach { userScenario =>
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render the retirement annuity contract question page with no pre-filled radio buttons" which {
 
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(yesNoForm(userScenario.isAgent), taxYearEOY)
 
@@ -170,7 +170,7 @@ class RetirementAnnuitySpec extends ViewUnitTest {
 
       "render the retirement annuity contract question page with 'Yes' pre-filled when CYA data exists" which {
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(yesNoForm(userScenario.isAgent).fill(true), taxYearEOY)
 
@@ -196,7 +196,7 @@ class RetirementAnnuitySpec extends ViewUnitTest {
 
       "render the retirement annuity contract question page with 'No' pre-filled and not a prior submission" which {
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(yesNoForm(userScenario.isAgent).fill(false), taxYearEOY)
 
@@ -222,7 +222,7 @@ class RetirementAnnuitySpec extends ViewUnitTest {
 
       "return an error when form is submitted with no entry" which {
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(yesNoForm(userScenario.isAgent).bind(Map(YesNoForm.yesNo -> "")), taxYearEOY)
 

@@ -39,14 +39,17 @@ class PensionAnnualAllowancesViewModelSpec extends UnitTest {
       }
       "all required questions are answered" in {
         aPensionAnnualAllowanceEmptyViewModel.copy(reducedAnnualAllowanceQuestion = Some(false)).isFinished shouldBe true
-        aPensionAnnualAllowanceEmptyViewModel.copy(
-          reducedAnnualAllowanceQuestion = Some(true),
-          moneyPurchaseAnnualAllowance = Some(true),
-          taperedAnnualAllowance = None,
-          aboveAnnualAllowanceQuestion = Some(false)).isFinished shouldBe true
-        aPensionAnnualAllowanceViewModel.copy(
-          pensionProvidePaidAnnualAllowanceQuestion = Some(false),
-          taxPaidByPensionProvider = None).isFinished shouldBe true
+        aPensionAnnualAllowanceEmptyViewModel
+          .copy(
+            reducedAnnualAllowanceQuestion = Some(true),
+            moneyPurchaseAnnualAllowance = Some(true),
+            taperedAnnualAllowance = None,
+            aboveAnnualAllowanceQuestion = Some(false)
+          )
+          .isFinished shouldBe true
+        aPensionAnnualAllowanceViewModel
+          .copy(pensionProvidePaidAnnualAllowanceQuestion = Some(false), taxPaidByPensionProvider = None)
+          .isFinished shouldBe true
       }
     }
 
@@ -56,9 +59,9 @@ class PensionAnnualAllowancesViewModelSpec extends UnitTest {
         aPensionAnnualAllowanceEmptyViewModel.copy(reducedAnnualAllowanceQuestion = Some(true)).isFinished shouldBe false
         aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq.empty)).isFinished shouldBe false
         aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowance = None).isFinished shouldBe false
-        aPensionAnnualAllowanceViewModel.copy(
-          moneyPurchaseAnnualAllowance = Some(false),
-          taperedAnnualAllowance = Some(false)).isFinished shouldBe false
+        aPensionAnnualAllowanceViewModel
+          .copy(moneyPurchaseAnnualAllowance = Some(false), taperedAnnualAllowance = Some(false))
+          .isFinished shouldBe false
       }
     }
   }

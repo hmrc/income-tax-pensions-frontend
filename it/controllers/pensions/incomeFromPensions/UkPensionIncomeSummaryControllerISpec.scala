@@ -33,16 +33,15 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val addAnotherLinkSelector = "#add-another-pension-link"
-    val addLinkSelector = "#add-pension-income-link"
-    val continueButtonSelector: String = "#continue"
-    val addSchemeButtonSelector: String = "#AddAScheme"
-    val overviewButtonSelector: String = "#ReturnToOverview"
-    val summaryListTableSelector = "#pensionIncomeSummaryList"
-    val needToAddSchemeTextSelector: String = "#youNeedToAddOneOrMorePensionScheme1"
+    val captionSelector: String              = "#main-content > div > div > header > p"
+    val addAnotherLinkSelector               = "#add-another-pension-link"
+    val addLinkSelector                      = "#add-pension-income-link"
+    val continueButtonSelector: String       = "#continue"
+    val addSchemeButtonSelector: String      = "#AddAScheme"
+    val overviewButtonSelector: String       = "#ReturnToOverview"
+    val summaryListTableSelector             = "#pensionIncomeSummaryList"
+    val needToAddSchemeTextSelector: String  = "#youNeedToAddOneOrMorePensionScheme1"
     val returnToOverviewTextSelector: String = "#youNeedToAddOneOrMorePensionScheme2"
-
 
     def changeLinkSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
 
@@ -66,30 +65,31 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedContinueButtonText = "Continue"
-    val expectedAddSchemeButtonText = "Add a scheme"
-    val expectedOverviewButtonText = "Return to overview"
-    val expectedTitle = "UK pension income"
-    val expectedHeading = "UK pension income"
-    val change = "Change"
-    val remove = "Remove"
-    val expectedAddAnotherText = "Add another pension scheme"
-    val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
+    val expectedCaption: Int => String     = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedContinueButtonText         = "Continue"
+    val expectedAddSchemeButtonText        = "Add a scheme"
+    val expectedOverviewButtonText         = "Return to overview"
+    val expectedTitle                      = "UK pension income"
+    val expectedHeading                    = "UK pension income"
+    val change                             = "Change"
+    val remove                             = "Remove"
+    val expectedAddAnotherText             = "Add another pension scheme"
+    val expectedReturnToOverviewPageText   = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
     val expectedNeedToAddPensionSchemeText = "You need to add one or more pension scheme."
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedContinueButtonText = "Yn eich blaen"
-    val expectedAddSchemeButtonText = "Ychwanegu cynllun"
-    val expectedOverviewButtonText = "Yn ôl i’r trosolwg"
-    val expectedTitle = "Incwm o bensiynau’r DU"
-    val expectedHeading = expectedTitle
-    val change = "Newid"
-    val remove = "Tynnu"
-    val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
-    val expectedReturnToOverviewPageText = "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
+    val expectedContinueButtonText     = "Yn eich blaen"
+    val expectedAddSchemeButtonText    = "Ychwanegu cynllun"
+    val expectedOverviewButtonText     = "Yn ôl i’r trosolwg"
+    val expectedTitle                  = "Incwm o bensiynau’r DU"
+    val expectedHeading                = expectedTitle
+    val change                         = "Newid"
+    val remove                         = "Tynnu"
+    val expectedAddAnotherText         = "Ychwanegu cynllun pensiwn arall"
+    val expectedReturnToOverviewPageText =
+      "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
     val expectedNeedToAddPensionSchemeText = "Bydd angen i chi ychwanegu un cynllun pensiwn neu fwy."
   }
 
@@ -118,10 +118,15 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
                 anUkPensionIncomeViewModelOne.copy(pensionId = None),
                 anUkPensionIncomeViewModelOne,
                 anUkPensionIncomeViewModelTwo.copy(pensionSchemeRef = None),
-                anUkPensionIncomeViewModelTwo))
+                anUkPensionIncomeViewModelTwo
+              ))
               insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
-              urlGet(fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)), user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlGet(
+                fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)),
+                user.isWelsh,
+                follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              )
             }
 
             "has an OK status" in {
@@ -149,12 +154,15 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
             implicit lazy val result: WSResponse = {
               authoriseAgentOrIndividual(user.isAgent)
               dropPensionsDB()
-              val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(
-                anUkPensionIncomeViewModelOne.copy(pensionId = None),
-                anUkPensionIncomeViewModelTwo.copy(pensionSchemeRef = None)))
+              val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes =
+                Seq(anUkPensionIncomeViewModelOne.copy(pensionId = None), anUkPensionIncomeViewModelTwo.copy(pensionSchemeRef = None)))
               insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
-              urlGet(fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)), user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlGet(
+                fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)),
+                user.isWelsh,
+                follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              )
             }
 
             "has an OK status" in {
@@ -182,7 +190,9 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -199,7 +209,9 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(invalidJourney))
-          urlGet(fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -215,7 +227,9 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(incompleteJourney))
-          urlGet(fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 

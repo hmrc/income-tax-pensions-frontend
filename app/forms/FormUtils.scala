@@ -20,7 +20,6 @@ import play.api.data.Form
 
 trait FormUtils {
 
-  def fillForm(form: Form[BigDecimal], prior: Option[BigDecimal], cya: Option[BigDecimal]): Form[BigDecimal] ={
-    cya.fold(form)(cya => if(prior.contains(cya)) form else form.fill(cya))
-  }
+  def fillForm(form: Form[BigDecimal], prior: Option[BigDecimal], cya: Option[BigDecimal]): Form[BigDecimal] =
+    cya.fold(form)(cya => if (prior.contains(cya)) form else form.fill(cya))
 }

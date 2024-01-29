@@ -27,51 +27,53 @@ import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionSchem
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.{WSClient, WSResponse}
 
-class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr") {
-  val selectorForSummaryText = "#main-content > div > div > details > summary"
-  val selectorForSummaryPara1 = "#main-content > div > div > details > div > p:nth-child(1)"
-  val selectorForSummaryPara2 = "#main-content > div > div > details > div > p:nth-child(2)"
-  val selectorForSummaryPara3 = "#main-content > div > div > details > div > p:nth-child(3)"
-  val selectorForSummaryPara4 = "#main-content > div > div > details > div > p:nth-child(4)"
+class ForeignTaxCreditReliefControllerISpec
+    extends YesNoControllerSpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr") {
+  val selectorForSummaryText         = "#main-content > div > div > details > summary"
+  val selectorForSummaryPara1        = "#main-content > div > div > details > div > p:nth-child(1)"
+  val selectorForSummaryPara2        = "#main-content > div > div > details > div > p:nth-child(2)"
+  val selectorForSummaryPara3        = "#main-content > div > div > details > div > p:nth-child(3)"
+  val selectorForSummaryPara4        = "#main-content > div > div > details > div > p:nth-child(4)"
   val selectorForSummaryPara4Bullet1 = "#main-content > div > div > details > div > #para4bullets > li:nth-child(1)"
   val selectorForSummaryPara4Bullet2 = "#main-content > div > div > details > div > #para4bullets > li:nth-child(2)"
-  val selectorForSummaryPara5 = "#main-content > div > div > details > div > #para5"
+  val selectorForSummaryPara5        = "#main-content > div > div > details > div > #para5"
   val selectorForSummaryPara5Bullet1 = "#main-content > div > div > details > div > #para5bullets > li:nth-child(1)"
   val selectorForSummaryPara5Bullet2 = "#main-content > div > div > details > div > #para5bullets > li:nth-child(2)"
   val selectorForSummaryPara5Bullet3 = "#main-content > div > div > details > div > #para5bullets > li:nth-child(3)"
-  val selectorForSummaryPara6 = "#main-content > div > div > details > div > #para6"
-  val selectorForSummaryPara7 = "#main-content > div > div > details > div > #para7"
+  val selectorForSummaryPara6        = "#main-content > div > div > details > div > #para6"
+  val selectorForSummaryPara7        = "#main-content > div > div > details > div > #para7"
 
   "show" should {
     "redirect to the summary page when the user has no stored session data at all" in {
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-      implicit val response: WSResponse = getPageWithIndex()
+      implicit val response: WSResponse   = getPageWithIndex()
 
       assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
     }
 
     "redirect to the the first page of the journey when current page is invalid and user has no previous schemes" in {
-      val emptySchemesIFOPViewModel: IncomeFromOverseasPensionsViewModel = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = Seq.empty)
-      val cyaModel = aPensionsCYAModel.copy(incomeFromOverseasPensions = emptySchemesIFOPViewModel)
-      val sessionData = pensionsUserData(cyaModel)
+      val emptySchemesIFOPViewModel: IncomeFromOverseasPensionsViewModel =
+        aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = Seq.empty)
+      val cyaModel                        = aPensionsCYAModel.copy(incomeFromOverseasPensions = emptySchemesIFOPViewModel)
+      val sessionData                     = pensionsUserData(cyaModel)
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-      implicit val response: WSResponse = getPageWithIndex()
+      implicit val response: WSResponse   = getPageWithIndex()
 
       assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsStatus)
     }
 
     "redirect to the the IFOP scheme summary page" when {
       "an incorrect index is provided" in {
-        val sessionData = pensionsUserData(aPensionsCYAModel)
+        val sessionData                     = pensionsUserData(aPensionsCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse = getPageWithIndex(7)
+        implicit val response: WSResponse   = getPageWithIndex(7)
 
         assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsCountrySummary)
       }
       "the user provides a negative index number" in {
-        val sessionData = pensionsUserData(aPensionsCYAModel)
+        val sessionData                     = pensionsUserData(aPensionsCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse = getPageWithIndex(-1)
+        implicit val response: WSResponse   = getPageWithIndex(-1)
 
         assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsCountrySummary)
       }
@@ -90,13 +92,17 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
           ExpectedLink(
             "tax-foreign-income-taxed-twice-link",
             "Foreign Tax Credit Relief at GOV.uk (opens in new tab)",
-            "https://www.gov.uk/tax-foreign-income/taxed-twice"),
+            "https://www.gov.uk/tax-foreign-income/taxed-twice")
         ),
         text = Set(
           ExpectedText(selectorForSummaryText, "Understanding Foreign Tax Credit Relief (FTCR)"),
-          ExpectedText(selectorForSummaryPara1, "You can claim Foreign Tax Credit Relief if you’ve already paid foreign tax on income that’s normally taxed in the UK."),
+          ExpectedText(
+            selectorForSummaryPara1,
+            "You can claim Foreign Tax Credit Relief if you’ve already paid foreign tax on income that’s normally taxed in the UK."),
           ExpectedText(selectorForSummaryPara2, "You may also be taxed on this income by the UK."),
-          ExpectedText(selectorForSummaryPara3, "However, you may not have to pay twice if the country you live in has a ‘double-taxation agreement’ with the UK."),
+          ExpectedText(
+            selectorForSummaryPara3,
+            "However, you may not have to pay twice if the country you live in has a ‘double-taxation agreement’ with the UK."),
           ExpectedText(selectorForSummaryPara4, "Depending on the agreement, you can apply for either:"),
           ExpectedText(selectorForSummaryPara4Bullet1, "partial or full relief before you’ve been taxed"),
           ExpectedText(selectorForSummaryPara4Bullet2, "a refund after you’ve been taxed"),
@@ -110,7 +116,8 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
         formUrl = formUrl()
       )
       val expectedYesNoPageContentsAgent = expectedYesNoPageContentsIndividual
-        .copy(title = "Is your client claiming Foreign Tax Credit Relief (FTCR)?",
+        .copy(
+          title = "Is your client claiming Foreign Tax Credit Relief (FTCR)?",
           header = "Is your client claiming Foreign Tax Credit Relief (FTCR)?")
 
       "the user has relevant session data with neither option selected" when {
@@ -122,31 +129,30 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
 
         val sessionData = pensionsUserData(updatedUserData)
 
-
         scenarioNameForIndividualAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expectedYesNoPageContentsIndividual)
         }
 
         scenarioNameForIndividualAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expectedYesNoPageContentsIndividual)
         }
 
         scenarioNameForAgentAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expectedYesNoPageContentsAgent)
         }
 
         scenarioNameForAgentAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expectedYesNoPageContentsAgent)
         }
@@ -162,34 +168,42 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
 
         scenarioNameForIndividualAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
-          assertPageAsExpected(OK, expectedYesNoPageContentsIndividual
-            .copy(radioButtonForYes = checkedExpectedRadioButton("Yes")))
+          assertPageAsExpected(
+            OK,
+            expectedYesNoPageContentsIndividual
+              .copy(radioButtonForYes = checkedExpectedRadioButton("Yes")))
         }
 
         scenarioNameForIndividualAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
-          assertPageAsExpected(OK, expectedYesNoPageContentsIndividual
-            .copy(radioButtonForYes = checkedExpectedRadioButton("Yes")))
+          assertPageAsExpected(
+            OK,
+            expectedYesNoPageContentsIndividual
+              .copy(radioButtonForYes = checkedExpectedRadioButton("Yes")))
         }
 
         scenarioNameForAgentAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
-          assertPageAsExpected(OK, expectedYesNoPageContentsAgent
-            .copy(radioButtonForYes = checkedExpectedRadioButton("Yes")))
+          assertPageAsExpected(
+            OK,
+            expectedYesNoPageContentsAgent
+              .copy(radioButtonForYes = checkedExpectedRadioButton("Yes")))
         }
 
         scenarioNameForAgentAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
-          assertPageAsExpected(OK, expectedYesNoPageContentsAgent
-            .copy(radioButtonForYes = checkedExpectedRadioButton("Yes")))
+          assertPageAsExpected(
+            OK,
+            expectedYesNoPageContentsAgent
+              .copy(radioButtonForYes = checkedExpectedRadioButton("Yes")))
         }
       }
 
@@ -204,34 +218,42 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
 
         scenarioNameForIndividualAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
-          assertPageAsExpected(OK, expectedYesNoPageContentsIndividual
-            .copy(radioButtonForNo = checkedExpectedRadioButton("No")))
+          assertPageAsExpected(
+            OK,
+            expectedYesNoPageContentsIndividual
+              .copy(radioButtonForNo = checkedExpectedRadioButton("No")))
         }
 
         scenarioNameForIndividualAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
-          assertPageAsExpected(OK, expectedYesNoPageContentsIndividual
-            .copy(radioButtonForNo = checkedExpectedRadioButton("No")))
+          assertPageAsExpected(
+            OK,
+            expectedYesNoPageContentsIndividual
+              .copy(radioButtonForNo = checkedExpectedRadioButton("No")))
         }
 
         scenarioNameForAgentAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
-          assertPageAsExpected(OK, expectedYesNoPageContentsAgent
-            .copy(radioButtonForNo = checkedExpectedRadioButton("No")))
+          assertPageAsExpected(
+            OK,
+            expectedYesNoPageContentsAgent
+              .copy(radioButtonForNo = checkedExpectedRadioButton("No")))
         }
 
         scenarioNameForAgentAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
-          assertPageAsExpected(OK, expectedYesNoPageContentsAgent
-            .copy(radioButtonForNo = checkedExpectedRadioButton("No")))
+          assertPageAsExpected(
+            OK,
+            expectedYesNoPageContentsAgent
+              .copy(radioButtonForNo = checkedExpectedRadioButton("No")))
         }
       }
     }
@@ -241,7 +263,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
 
     "redirect to the Overseas Summary page when there is no session data" in {
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-      implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
+      implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
 
       assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
       getViewModel mustBe None
@@ -253,20 +275,19 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
 
         "selected 'Yes', redirecting to the Taxable Amount page" in {
           val ifopViewModel: IncomeFromOverseasPensionsViewModel = anIncomeFromOverseasPensionsViewModel.copy(
-            overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2.copy(
-              foreignTaxCreditReliefQuestion = None, taxableAmount = None)))
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData.copy(pensions = sessionData.pensions.copy(
-            incomeFromOverseasPensions = ifopViewModel))))
+            overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2.copy(foreignTaxCreditReliefQuestion = None, taxableAmount = None)))
+          implicit val userConfig: UserConfig =
+            userConfigWhenIrrelevant(Some(sessionData.copy(pensions = sessionData.pensions.copy(incomeFromOverseasPensions = ifopViewModel))))
           implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(true)), 1)
 
           assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionstaxable + "?index=1")
-          getViewModel mustBe Some(ifopViewModel.copy(overseasIncomePensionSchemes = Seq(
-            aPensionScheme1, aPensionScheme2.copy(taxableAmount = None))))
+          getViewModel mustBe Some(
+            ifopViewModel.copy(overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2.copy(taxableAmount = None))))
         }
 
         "selected 'Yes', redirecting to the scheme summary page when scheme is now complete" in {
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(true)))
+          implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(true)))
 
           val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
             anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
@@ -278,9 +299,9 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
       }
 
       "the user has relevant session data and selected 'No'" in {
-        val sessionData = getSessionData
+        val sessionData                     = getSessionData
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(false)))
+        implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(false)))
 
         val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
           anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
@@ -320,10 +341,15 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
         val expectedYesNoPageContentsAgent = expectedYesNoPageContentsIndividual.copy(
           title = "Error: Is your client claiming Foreign Tax Credit Relief (FTCR)?",
           header = "Is your client claiming Foreign Tax Credit Relief (FTCR)?",
-          errorSummarySectionOpt = Some(ErrorSummarySection(
-            title = "There is a problem", body = "Enter yes if your client is claiming Foreign Tax Credit Relief (FTCR)", link = "#value")),
-          errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-            title = "Error: Enter yes if your client is claiming Foreign Tax Credit Relief (FTCR)", idOpt = Some("value"))),
+          errorSummarySectionOpt = Some(
+            ErrorSummarySection(
+              title = "There is a problem",
+              body = "Enter yes if your client is claiming Foreign Tax Credit Relief (FTCR)",
+              link = "#value")),
+          errorAboveElementCheckSectionOpt = Some(
+            ErrorAboveElementCheckSection(
+              title = "Error: Enter yes if your client is claiming Foreign Tax Credit Relief (FTCR)",
+              idOpt = Some("value")))
         )
 
         def welshTitle(epc: ExpectedYesNoPageContents): Option[ErrorSummarySection] =
@@ -332,7 +358,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
         scenarioNameForIndividualAndEnglish in {
 
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
+          implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
 
           assertPageAsExpected(BAD_REQUEST, expectedYesNoPageContentsIndividual)
         }
@@ -340,16 +366,17 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
         scenarioNameForIndividualAndWelsh ignore {
 
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
+          implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
 
-          assertPageAsExpected(BAD_REQUEST,
+          assertPageAsExpected(
+            BAD_REQUEST,
             expectedYesNoPageContentsIndividual.copy(errorSummarySectionOpt = welshTitle(expectedYesNoPageContentsIndividual)))
         }
 
         scenarioNameForAgentAndEnglish in {
 
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
+          implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
 
           response must haveStatus(BAD_REQUEST)
           assertPageAsExpected(BAD_REQUEST, expectedYesNoPageContentsAgent)
@@ -358,7 +385,7 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
         scenarioNameForAgentAndWelsh ignore {
 
           implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
+          implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForYesNoPage(None))
 
           response must haveStatus(BAD_REQUEST)
           assertPageAsExpected(BAD_REQUEST, expectedYesNoPageContentsAgent.copy(errorSummarySectionOpt = welshTitle(expectedYesNoPageContentsAgent)))
@@ -367,37 +394,35 @@ class ForeignTaxCreditReliefControllerISpec extends YesNoControllerSpec("/overse
     }
   }
 
-
-  private def getSessionData = {
-    pensionsUserData(aPensionsCYAModel.copy(incomeFromOverseasPensions = anIncomeFromOverseasPensionsViewModel.copy(
-      paymentsFromOverseasPensionsQuestion = Some(true),
-      overseasIncomePensionSchemes = Seq(
-        PensionScheme(
-          alphaTwoCode = Some("FR"),
-          alphaThreeCode = None,
-          pensionPaymentAmount = Some(1999.99),
-          pensionPaymentTaxPaid = Some(1999.99),
-          specialWithholdingTaxQuestion = Some(true),
-          specialWithholdingTaxAmount = Some(1999.99),
-          foreignTaxCreditReliefQuestion = None,
-          taxableAmount = Some(1999.99)
+  private def getSessionData =
+    pensionsUserData(
+      aPensionsCYAModel.copy(incomeFromOverseasPensions = anIncomeFromOverseasPensionsViewModel.copy(
+        paymentsFromOverseasPensionsQuestion = Some(true),
+        overseasIncomePensionSchemes = Seq(
+          PensionScheme(
+            alphaTwoCode = Some("FR"),
+            alphaThreeCode = None,
+            pensionPaymentAmount = Some(1999.99),
+            pensionPaymentTaxPaid = Some(1999.99),
+            specialWithholdingTaxQuestion = Some(true),
+            specialWithholdingTaxAmount = Some(1999.99),
+            foreignTaxCreditReliefQuestion = None,
+            taxableAmount = Some(1999.99)
+          )
         )
-      )
-    )))
-  }
+      )))
 
   private def getViewModel(implicit userConfig: UserConfig): Option[IncomeFromOverseasPensionsViewModel] =
     loadPensionUserData.map(_.pensions.incomeFromOverseasPensions)
 
-
   private def formUrl(index: Int = 0): Option[String] =
     Some(relativeUrlForThisPage + "?index=" + index)
 
-  private def submitFormWithIndex(submittedFormData: SubmittedFormData, index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+  private def submitFormWithIndex(submittedFormData: SubmittedFormData, index: Int = 0)(implicit
+      userConfig: UserConfig,
+      wsClient: WSClient): WSResponse =
     submitForm(submittedFormData, getMap(index))
-  }
 
-  private def getMap(index: Int): Map[String, String] = {
+  private def getMap(index: Int): Map[String, String] =
     Map("index" -> index.toString)
-  }
 }

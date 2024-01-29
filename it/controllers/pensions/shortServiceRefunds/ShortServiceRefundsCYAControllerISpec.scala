@@ -35,13 +35,11 @@ import utils.PageUrls.ShortServiceRefunds.{shortServiceRefundsCYAUrl, shortServi
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHelpers
-  with PensionsDatabaseHelper {
+class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
-  }
-  
+
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
   ".show" should {
@@ -51,7 +49,9 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
         authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData.copy(taxYear = taxYear))
         userDataStub(anIncomeTaxUserData, nino, taxYear)
-        urlGet(fullUrl(shortServiceRefundsCYAUrl(taxYear)), follow = false,
+        urlGet(
+          fullUrl(shortServiceRefundsCYAUrl(taxYear)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
       result.status shouldBe OK
@@ -62,23 +62,28 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-        urlGet(fullUrl(shortServiceRefundsCYAUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(shortServiceRefundsCYAUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe OK
     }
 
     "return an OK status that continues to the first page of journey if journey is incomplete" in {
       val incompleteViewModel = aShortServiceRefundsViewModel.copy(
-        refundPensionScheme = Seq(OverseasRefundPensionScheme(
-          ukRefundCharge = Some(true),
-          name = Some("Scheme Name with UK charge"),
-          pensionSchemeTaxReference = None,
-          qualifyingRecognisedOverseasPensionScheme = None,
-          providerAddress = Some("Scheme Address 1"),
-          alphaTwoCountryCode = None,
-          alphaThreeCountryCode = None
-        ))
+        refundPensionScheme = Seq(
+          OverseasRefundPensionScheme(
+            ukRefundCharge = Some(true),
+            name = Some("Scheme Name with UK charge"),
+            pensionSchemeTaxReference = None,
+            qualifyingRecognisedOverseasPensionScheme = None,
+            providerAddress = Some("Scheme Address 1"),
+            alphaTwoCountryCode = None,
+            alphaThreeCountryCode = None
+          ))
       )
       implicit lazy val result: WSResponse = {
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -86,8 +91,12 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         insertCyaData(pensionUserDataWithShortServiceViewModel(incompleteViewModel))
 
-        urlGet(fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY)), aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY)),
+          aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       result.status shouldBe OK // proven this works correctly but can't test OK's location
@@ -148,15 +157,16 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
 
     "redirect to the first page in the journey if journey is incomplete" in {
       val incompleteViewModel = aShortServiceRefundsViewModel.copy(
-        refundPensionScheme = Seq(OverseasRefundPensionScheme(
-          ukRefundCharge = Some(true),
-          name = Some("Scheme Name with UK charge"),
-          pensionSchemeTaxReference = None,
-          qualifyingRecognisedOverseasPensionScheme = None,
-          providerAddress = Some("Scheme Address 1"),
-          alphaTwoCountryCode = None,
-          alphaThreeCountryCode = None
-        ))
+        refundPensionScheme = Seq(
+          OverseasRefundPensionScheme(
+            ukRefundCharge = Some(true),
+            name = Some("Scheme Name with UK charge"),
+            pensionSchemeTaxReference = None,
+            qualifyingRecognisedOverseasPensionScheme = None,
+            providerAddress = Some("Scheme Address 1"),
+            alphaTwoCountryCode = None,
+            alphaThreeCountryCode = None
+          ))
       )
       implicit lazy val result: WSResponse = {
         dropPensionsDB()

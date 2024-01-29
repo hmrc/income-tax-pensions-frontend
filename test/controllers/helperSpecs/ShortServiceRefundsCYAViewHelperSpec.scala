@@ -69,63 +69,79 @@ class ShortServiceRefundsCYAViewHelperSpec extends AnyWordSpec with Matchers {
     }
   }
 
+  private def assertRowForRefundBoolean(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Short service refunds",
+        expectedValue,
+        "Change",
+        "/2022/overseas-pensions/short-service-refunds/taxable-short-service-refunds",
+        "Change short service refunds"
+      )
+    )
 
-  private def assertRowForRefundBoolean(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Short service refunds",
-      expectedValue,
-      "Change",
-      "/2022/overseas-pensions/short-service-refunds/taxable-short-service-refunds",
-      "Change short service refunds"))
-  }
+  private def assertRowForRefundAmount(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Refund amount",
+        expectedValue,
+        "Change",
+        "/2022/overseas-pensions/short-service-refunds/taxable-short-service-refunds",
+        "Change refund amount")
+    )
 
-  private def assertRowForRefundAmount(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Refund amount",
-      expectedValue,
-      "Change",
-      "/2022/overseas-pensions/short-service-refunds/taxable-short-service-refunds",
-      "Change refund amount"))
-  }
+  private def assertRowForNonUKBoolean(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Paid non-UK tax",
+        expectedValue,
+        "Change",
+        "/2022/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax",
+        "Change paid non-UK tax")
+    )
 
-  private def assertRowForNonUKBoolean(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Paid non-UK tax",
-      expectedValue,
-      "Change",
-      "/2022/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax",
-      "Change paid non-UK tax"))
-  }
+  private def assertRowForNonUKAmount(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Amount of non-UK tax",
+        expectedValue,
+        "Change",
+        "/2022/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax",
+        "Change amount of non-UK tax"
+      )
+    )
 
-  private def assertRowForNonUKAmount(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Amount of non-UK tax",
-      expectedValue,
-      "Change",
-      "/2022/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax",
-      "Change amount of non-UK tax"))
-  }
-
-  private def assertRowForSchemes(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Pension schemes paying tax",
-      expectedValue,
-      "Change",
-      "/2022/overseas-pensions/short-service-refunds/short-service-refund-summary",
-      "Change pension schemes paying tax"))
-  }
+  private def assertRowForSchemes(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Pension schemes paying tax",
+        expectedValue,
+        "Change",
+        "/2022/overseas-pensions/short-service-refunds/short-service-refund-summary",
+        "Change pension schemes paying tax"
+      )
+    )
 
   private def assertSummaryListRow(summaryListRow: SummaryListRow, expectedSummaryRowContents: ExpectedSummaryRowContents): Unit = {
     assertLabel(summaryListRow, expectedSummaryRowContents.label)
     assertValue(summaryListRow, expectedSummaryRowContents.value)
-    assertAction(summaryListRow, expectedSummaryRowContents.linkLabel, expectedSummaryRowContents.linkPathEnding, expectedSummaryRowContents.hiddenText)
+    assertAction(
+      summaryListRow,
+      expectedSummaryRowContents.linkLabel,
+      expectedSummaryRowContents.linkPathEnding,
+      expectedSummaryRowContents.hiddenText)
   }
 
   private def assertAction(summaryListRow: SummaryListRow, expectedLabel: String, expectedPath: String, expectedHiddenText: String): Unit = {
 
     summaryListRow.actions shouldBe defined
     val actionsForFirstSummaryRow = summaryListRow.actions.get
-    val firstAction: ActionItem = actionsForFirstSummaryRow.items.head
+    val firstAction: ActionItem   = actionsForFirstSummaryRow.items.head
     firstAction.content shouldBe HtmlContent("<span aria-hidden=\"true\">" + expectedLabel + "</span>")
     withClue(s"We had expected the link path to end with '$expectedPath':") {
       firstAction.href should endWith(expectedPath)
@@ -134,17 +150,15 @@ class ShortServiceRefundsCYAViewHelperSpec extends AnyWordSpec with Matchers {
     firstAction.visuallyHiddenText.get shouldBe expectedHiddenText
   }
 
-  private def assertLabel(summaryListRow: SummaryListRow, expectedLabel: String) = {
+  private def assertLabel(summaryListRow: SummaryListRow, expectedLabel: String) =
     withClue(s"We had expected the label to be '$expectedLabel':") {
       summaryListRow.key.content shouldBe HtmlContent(expectedLabel)
     }
-  }
 
-  private def assertValue(summaryListRow: SummaryListRow, expectedValue: String): Assertion = {
+  private def assertValue(summaryListRow: SummaryListRow, expectedValue: String): Assertion =
     withClue(s"We had expected the value to be '$expectedValue':") {
       summaryListRow.value shouldBe Value(HtmlContent(expectedValue), "govuk-!-width-one-third")
     }
-  }
 
   private def stubbedMessages() = {
     import scala.jdk.CollectionConverters._
@@ -153,24 +167,25 @@ class ShortServiceRefundsCYAViewHelperSpec extends AnyWordSpec with Matchers {
       Map(
         Lang.defaultLang.code ->
           Map(
-            "unauthorisedPayments.common.title" -> "Unauthorised payments",
-            "common.yes" -> "Yes",
-            "common.no" -> "No",
-            "common.change" -> "Change",
-            "common.noTaxPaid" -> "No tax paid",
-            "shortServiceRefunds.cya.refund" -> "Short service refunds",
-            "shortServiceRefunds.cya.refundAmount" -> "Refund amount",
-            "shortServiceRefunds.cya.nonUk" -> "Paid non-UK tax",
-            "shortServiceRefunds.cya.nonUkAmount" -> "Amount of non-UK tax",
-            "shortServiceRefunds.cya.schemesPayingTax" -> "Pension schemes paying tax",
-            "shortServiceRefunds.cya.refund.hidden" -> "Change short service refunds",
-            "shortServiceRefunds.cya.refundAmount.hidden" -> "Change refund amount",
-            "shortServiceRefunds.cya.nonUk.hidden" -> "Change paid non-UK tax",
-            "shortServiceRefunds.cya.nonUkAmount.hidden" -> "Change amount of non-UK tax",
-            "shortServiceRefunds.cya.schemesPayingTax.hidden" -> "Change pension schemes paying tax",
+            "unauthorisedPayments.common.title"               -> "Unauthorised payments",
+            "common.yes"                                      -> "Yes",
+            "common.no"                                       -> "No",
+            "common.change"                                   -> "Change",
+            "common.noTaxPaid"                                -> "No tax paid",
+            "shortServiceRefunds.cya.refund"                  -> "Short service refunds",
+            "shortServiceRefunds.cya.refundAmount"            -> "Refund amount",
+            "shortServiceRefunds.cya.nonUk"                   -> "Paid non-UK tax",
+            "shortServiceRefunds.cya.nonUkAmount"             -> "Amount of non-UK tax",
+            "shortServiceRefunds.cya.schemesPayingTax"        -> "Pension schemes paying tax",
+            "shortServiceRefunds.cya.refund.hidden"           -> "Change short service refunds",
+            "shortServiceRefunds.cya.refundAmount.hidden"     -> "Change refund amount",
+            "shortServiceRefunds.cya.nonUk.hidden"            -> "Change paid non-UK tax",
+            "shortServiceRefunds.cya.nonUkAmount.hidden"      -> "Change amount of non-UK tax",
+            "shortServiceRefunds.cya.schemesPayingTax.hidden" -> "Change pension schemes paying tax"
           ).asJava
       ).asJava,
-      new Langs(new play.api.i18n.DefaultLangs()))
+      new Langs(new play.api.i18n.DefaultLangs())
+    )
     messagesApi.preferred(new Langs(new play.api.i18n.DefaultLangs()).availables())
   }
 

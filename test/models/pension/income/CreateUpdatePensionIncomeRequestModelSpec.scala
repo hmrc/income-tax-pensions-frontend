@@ -25,13 +25,12 @@ class CreateUpdatePensionIncomeRequestModelSpec extends UnitTest {
 
     Seq(
       aCreateUpdatePensionIncomeModel.foreignPension,
-      aCreateUpdatePensionIncomeModel.overseasPensionContribution,
+      aCreateUpdatePensionIncomeModel.overseasPensionContribution
     ).foreach { subModel =>
-
       s"be false when subModel is non empty ${subModel.get.getClass.getName} and other models are not empty" in {
         val actualResult = CreateUpdatePensionIncomeModel(
           aCreateUpdatePensionIncomeModel.foreignPension,
-          aCreateUpdatePensionIncomeModel.overseasPensionContribution,
+          aCreateUpdatePensionIncomeModel.overseasPensionContribution
         ).otherSubRequestModelsEmpty(subModel)
         actualResult shouldBe false
       }
@@ -39,7 +38,7 @@ class CreateUpdatePensionIncomeRequestModelSpec extends UnitTest {
       s"be true when subModel is non empty ${subModel.get.getClass.getName} and other models are empty" in {
         val actualResult = CreateUpdatePensionIncomeModel(
           None,
-          None,
+          None
         ).otherSubRequestModelsEmpty(subModel)
         actualResult shouldBe true
       }
@@ -49,7 +48,6 @@ class CreateUpdatePensionIncomeRequestModelSpec extends UnitTest {
           aCreateUpdatePensionIncomeModel.foreignPension.map(_.copy(Seq.empty)),
           aCreateUpdatePensionIncomeModel.overseasPensionContribution
         ).otherSubRequestModelsEmpty(subModel)
-
 
         actualResult shouldBe (if (subModel.get.isInstanceOf[ForeignPensionContainer]) false else true)
       }

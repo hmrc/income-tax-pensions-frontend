@@ -26,26 +26,24 @@ import play.api.data.{Form, Mapping}
 object CountryForm extends InputFilters {
 
   val countryId: String = "countryId"
-  
 
   def notEmpty(message: String): Constraint[String] = nonEmpty(message)
 
+  def validateCountry(): String => Constraint[String] = msgKey =>
+    constraint[String](x => if (Countries.allCountries.map(_.alphaTwoCode).contains(x)) Valid else Invalid(msgKey))
 
-  def validateCountry(): String => Constraint[String] = msgKey => constraint[String](
-    x => if (Countries.allCountries.map(_.alphaTwoCode).contains(x)) Valid else Invalid(msgKey)
-  )
-
-  def countryMapping(agentOrIndividual: String, noEntryMsg: String): (String, Mapping[String]) = {
-    countryId -> trimmedText.transform[String](filter, identity).verifying(
+  def countryMapping(agentOrIndividual: String, noEntryMsg: String): (String, Mapping[String]) =
+    countryId -> trimmedText
+      .transform[String](filter, identity)
+      .verifying(
         notEmpty(noEntryMsg) andThen validateCountry()(noEntryMsg)
-    )
-  }
+      )
   def countryMapping(agentOrIndividual: String): (String, Mapping[String]) = {
     val noEntryMsg: String = s"incomeFromOverseasPensions.pensionOverseasIncomeCountry.error.noEntry.$agentOrIndividual"
     countryMapping(agentOrIndividual, noEntryMsg)
   }
-  
+
   def countryForm(agentOrIndividual: String): Form[String] =
-    Form( countryMapping(agentOrIndividual)  )
-  
+    Form(countryMapping(agentOrIndividual))
+
 }

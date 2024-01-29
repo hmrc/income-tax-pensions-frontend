@@ -35,43 +35,45 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class RemovePensionSchemeController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                              authAction: AuthorisedAction,
-                                              removePensionSchemeView: RemovePensionSchemeView,
-                                              appConfig: AppConfig,
-                                              pensionSessionService: PensionSessionService,
-                                              errorHandler: ErrorHandler,
-                                              clock: Clock
-                                             ) extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class RemovePensionSchemeController @Inject() (implicit
+    val mcc: MessagesControllerComponents,
+    authAction: AuthorisedAction,
+    removePensionSchemeView: RemovePensionSchemeView,
+    appConfig: AppConfig,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        indexCheckThenJourneyCheck(data, pensionSchemeIndex, RemovePensionIncomePage, taxYear) {
-          data =>
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
+    implicit request =>
+      pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
+        case Some(data) =>
+          indexCheckThenJourneyCheck(data, pensionSchemeIndex, RemovePensionIncomePage, taxYear) { data =>
             val scheme: UkPensionIncomeViewModel = data.pensions.incomeFromPensions.uKPensionIncomes(pensionSchemeIndex.getOrElse(0))
             Future.successful(Ok(removePensionSchemeView(taxYear, scheme.pensionSchemeName.getOrElse(""), pensionSchemeIndex)))
-        }
-      case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-    }
+          }
+        case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      }
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        indexCheckThenJourneyCheck(data, pensionSchemeIndex, RemovePensionIncomePage, taxYear) {
-          data =>
-            val pensionsCYAModel = data.pensions
-            val viewModel = pensionsCYAModel.incomeFromPensions
-            val pensionIncomesList: Seq[UkPensionIncomeViewModel] = viewModel.uKPensionIncomes
+        indexCheckThenJourneyCheck(data, pensionSchemeIndex, RemovePensionIncomePage, taxYear) { data =>
+          val pensionsCYAModel                                  = data.pensions
+          val viewModel                                         = pensionsCYAModel.incomeFromPensions
+          val pensionIncomesList: Seq[UkPensionIncomeViewModel] = viewModel.uKPensionIncomes
 
-            val updatedPensionIncomesList: Seq[UkPensionIncomeViewModel] = pensionIncomesList.patch(pensionSchemeIndex.get, Nil, 1)
-            val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedPensionIncomesList))
+          val updatedPensionIncomesList: Seq[UkPensionIncomeViewModel] = pensionIncomesList.patch(pensionSchemeIndex.get, Nil, 1)
+          val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedPensionIncomesList))
 
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              Redirect(UkPensionIncomeSummaryController.show(taxYear))
-            }
+          pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+            errorHandler.internalServerError()) {
+            Redirect(UkPensionIncomeSummaryController.show(taxYear))
+          }
         }
       case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }

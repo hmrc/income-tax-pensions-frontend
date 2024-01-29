@@ -45,7 +45,9 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         authoriseAgentOrIndividual()
         dropPensionsDB()
         insertCyaData(anPensionsUserDataEmptyCya)
-        urlGet(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -149,8 +151,12 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         dropPensionsDB()
         insertCyaData(anPensionsUserDataEmptyCya)
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       "has the correct status" in {
         result.status shouldBe BAD_REQUEST
@@ -184,8 +190,12 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         dropPensionsDB()
         insertCyaData(anPensionsUserDataEmptyCya)
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -204,11 +214,16 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        insertCyaData(pensionsUserDataWithPaymentsIntoPensions(aPaymentsIntoPensionViewModel.copy(
-          rasPensionPaymentQuestion = Some(false), totalRASPaymentsAndTaxRelief = None)))
+        insertCyaData(
+          pensionsUserDataWithPaymentsIntoPensions(
+            aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(false), totalRASPaymentsAndTaxRelief = None)))
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -229,8 +244,12 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         dropPensionsDB()
         insertCyaData(anPensionsUserDataEmptyCya)
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -252,8 +271,12 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
         dropPensionsDB()
         insertCyaData(pensionsUserDataWithPaymentsIntoPensions(aPaymentsIntoPensionViewModel))
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reliefAtSourcePensionsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {

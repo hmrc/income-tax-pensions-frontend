@@ -28,29 +28,31 @@ import play.api.test.Injecting
 import uk.gov.hmrc.auth.core.AffinityGroup
 import utils.{FakeRequestProvider, TestTaxYearHelper}
 
-trait ViewUnitTest extends UnitTest
-  with UserScenarios
-  with ViewHelper
-  with GuiceOneAppPerSuite
-  with Injecting
-  with PageUrlsHelpers
-  with TestTaxYearHelper
-  with FakeRequestProvider {
+trait ViewUnitTest
+    extends UnitTest
+    with UserScenarios
+    with ViewHelper
+    with GuiceOneAppPerSuite
+    with Injecting
+    with PageUrlsHelpers
+    with TestTaxYearHelper
+    with FakeRequestProvider {
 
-  //private val fakeRequest = FakeRequest().withHeaders("X-Session-ID" -> aUser.sessionId)
+  // private val fakeRequest = FakeRequest().withHeaders("X-Session-ID" -> aUser.sessionId)
 
-  protected implicit val mockAppConfig: AppConfig = new MockAppConfig().config()
+  protected implicit val mockAppConfig: AppConfig      = new MockAppConfig().config()
   protected implicit lazy val messagesApi: MessagesApi = inject[MessagesApi]
 
   protected lazy val defaultMessages: Messages = messagesApi.preferred(fakeRequest.withHeaders())
-  protected lazy val welshMessages: Messages = messagesApi.preferred(Seq(Lang("cy")))
+  protected lazy val welshMessages: Messages   = messagesApi.preferred(Seq(Lang("cy")))
 
   protected lazy val individualUserRequest = new AuthorisationRequest[AnyContent](aUser, fakeRequest)
   protected lazy val agentUserRequest =
     new AuthorisationRequest[AnyContent](aUser.copy(arn = Some("arn"), affinityGroup = AffinityGroup.Agent.toString), fakeRequest)
 
   protected lazy val individualUserDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser, fakeRequest)
-  protected lazy val agentUserDataRequest: UserSessionDataRequest[AnyContent] = new UserSessionDataRequest(aPensionsUserData, aUser.copy(arn = Some("arn"), affinityGroup = AffinityGroup.Agent.toString), fakeRequest)
+  protected lazy val agentUserDataRequest: UserSessionDataRequest[AnyContent] =
+    new UserSessionDataRequest(aPensionsUserData, aUser.copy(arn = Some("arn"), affinityGroup = AffinityGroup.Agent.toString), fakeRequest)
 
   protected def getMessages(isWelsh: Boolean): Messages = if (isWelsh) welshMessages else defaultMessages
 

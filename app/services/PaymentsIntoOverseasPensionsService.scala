@@ -23,33 +23,31 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentsIntoOverseasPensionsService @Inject()(pensionSessionService: PensionSessionService)
-                                                   (implicit ec: ExecutionContext) {
+class PaymentsIntoOverseasPensionsService @Inject() (pensionSessionService: PensionSessionService)(implicit ec: ExecutionContext) {
 
-
-  def updateUntaxedEmployerPayments(userData: PensionsUserData, amount: BigDecimal, pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
-
+  def updateUntaxedEmployerPayments(userData: PensionsUserData,
+                                    amount: BigDecimal,
+                                    pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
 
     val currentRelief = userData.pensions.paymentsIntoOverseasPensions.reliefs(pensionIndex.get)
-    val updatedReliefs = userData.pensions.paymentsIntoOverseasPensions.reliefs.updated(pensionIndex.get, currentRelief.copy(employerPaymentsAmount = Some(amount)))
+    val updatedReliefs =
+      userData.pensions.paymentsIntoOverseasPensions.reliefs.updated(pensionIndex.get, currentRelief.copy(employerPaymentsAmount = Some(amount)))
 
     val updatedModel: PaymentsIntoOverseasPensionsViewModel = userData.pensions.paymentsIntoOverseasPensions.copy(reliefs = updatedReliefs)
 
     createOrUpdateModel(userData, updatedModel)
   }
 
-  private def createOrUpdateModel(originalUserData: PensionsUserData, updatedModel: PaymentsIntoOverseasPensionsViewModel)
-  : Future[Either[Unit, PensionsUserData]] = {
+  private def createOrUpdateModel(originalUserData: PensionsUserData,
+                                  updatedModel: PaymentsIntoOverseasPensionsViewModel): Future[Either[Unit, PensionsUserData]] = {
 
-    val updatedCYA = originalUserData.pensions.copy(paymentsIntoOverseasPensions = updatedModel)
+    val updatedCYA      = originalUserData.pensions.copy(paymentsIntoOverseasPensions = updatedModel)
     val updatedUserData = originalUserData.copy(pensions = updatedCYA)
 
     pensionSessionService.createOrUpdateSessionData(updatedUserData).map {
-      case Left(_) => Left(())
+      case Left(_)  => Left(())
       case Right(_) => Right(updatedUserData)
     }
   }
 
-
 }
-

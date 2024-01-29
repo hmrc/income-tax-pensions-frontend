@@ -31,14 +31,14 @@ import views.pensions.paymentsIntoPensions.ReliefAtSourcePensionsSpec._
 object ReliefAtSourcePensionsSpec {
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
-    val h2Selector = "#main-content > div > div > form > div > fieldset > legend"
-    val example1TextSelector = "#main-content > div > div > ul > li:nth-child(1)"
-    val example2TextSelector = "#main-content > div > div > ul > li:nth-child(2)"
+    val formSelector: String           = "#main-content > div > div > form"
+    val yesSelector                    = "#value"
+    val noSelector                     = "#value-no"
+    val h2Selector                     = "#main-content > div > div > form > div > fieldset > legend"
+    val example1TextSelector           = "#main-content > div > div > ul > li:nth-child(1)"
+    val example2TextSelector           = "#main-content > div > div > ul > li:nth-child(2)"
 
     def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
@@ -64,63 +64,63 @@ object ReliefAtSourcePensionsSpec {
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedH2 = "Did you pay into a RAS pension?"
-    val expectedError = "Select yes if you paid into a RAS pension"
-    val expectedParagraph = "These are pensions you pay into from:"
-    val expectedExample1 = "your net income (after tax has been deducted), if you’re employed"
-    val expectedExample2 = "your taxable income, if you’re self-employed"
+    val expectedH2                  = "Did you pay into a RAS pension?"
+    val expectedError               = "Select yes if you paid into a RAS pension"
+    val expectedParagraph           = "These are pensions you pay into from:"
+    val expectedExample1            = "your net income (after tax has been deducted), if you’re employed"
+    val expectedExample2            = "your taxable income, if you’re self-employed"
     val expectedPensionProviderText = "Your pension provider then claims tax relief for you."
-    val expectedCheckProviderText = "You can check with your pension provider whether this applies to you."
+    val expectedCheckProviderText   = "You can check with your pension provider whether this applies to you."
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedH2 = "A wnaethoch chi dalu i mewn i bensiwn RAS?"
-    val expectedError = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn RAS"
-    val expectedParagraph = "Dyma bensiynau rydych yn talu i mewn iddynt o:"
-    val expectedExample1 = "eich incwm net (ar ôl i dreth gael ei didynnu), os ydych yn gyflogedig"
-    val expectedExample2 = "eich incwm trethadwy, os ydych yn hunangyflogedig"
+    val expectedH2                  = "A wnaethoch chi dalu i mewn i bensiwn RAS?"
+    val expectedError               = "Dewiswch ‘Iawn’ os gwnaethoch dalu i mewn i bensiwn RAS"
+    val expectedParagraph           = "Dyma bensiynau rydych yn talu i mewn iddynt o:"
+    val expectedExample1            = "eich incwm net (ar ôl i dreth gael ei didynnu), os ydych yn gyflogedig"
+    val expectedExample2            = "eich incwm trethadwy, os ydych yn hunangyflogedig"
     val expectedPensionProviderText = "Yna, bydd eich darparwr pensiwn yn hawlio rhyddhad treth ar eich cyfer."
-    val expectedCheckProviderText = "Gallwch wirio gyda’ch darparwr pensiwn a yw hyn yn berthnasol i chi."
+    val expectedCheckProviderText   = "Gallwch wirio gyda’ch darparwr pensiwn a yw hyn yn berthnasol i chi."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedH2 = "Did your client pay into a RAS pension?"
-    val expectedError = "Select yes if your client paid into a RAS pension"
-    val expectedParagraph = "These are pensions your client pays into from:"
-    val expectedExample1 = "your client’s net income (after tax has been deducted), if they’re employed"
-    val expectedExample2 = "your client’s taxable income, if they’re self-employed"
+    val expectedH2                  = "Did your client pay into a RAS pension?"
+    val expectedError               = "Select yes if your client paid into a RAS pension"
+    val expectedParagraph           = "These are pensions your client pays into from:"
+    val expectedExample1            = "your client’s net income (after tax has been deducted), if they’re employed"
+    val expectedExample2            = "your client’s taxable income, if they’re self-employed"
     val expectedPensionProviderText = "Your client’s pension provider then claims tax relief for your client."
-    val expectedCheckProviderText = "You can check with your client’s pension provider whether this applies to your client."
+    val expectedCheckProviderText   = "You can check with your client’s pension provider whether this applies to your client."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedH2 = "A wnaeth eich cleient dalu i mewn i bensiwn RAS?"
-    val expectedError = "Dewiswch ‘Iawn’ os talodd eich cleient i mewn i bensiwn RAS"
-    val expectedParagraph = "Dyma bensiynau y mae eich cleient yn talu i mewn iddynt o:"
-    val expectedExample1 = "incwm net eich cleient (ar ôl didynnu treth), os yw’n gyflogedig"
-    val expectedExample2 = "incwm trethadwy eich cleient, os yw’n hunangyflogedig"
+    val expectedH2                  = "A wnaeth eich cleient dalu i mewn i bensiwn RAS?"
+    val expectedError               = "Dewiswch ‘Iawn’ os talodd eich cleient i mewn i bensiwn RAS"
+    val expectedParagraph           = "Dyma bensiynau y mae eich cleient yn talu i mewn iddynt o:"
+    val expectedExample1            = "incwm net eich cleient (ar ôl didynnu treth), os yw’n gyflogedig"
+    val expectedExample2            = "incwm trethadwy eich cleient, os yw’n hunangyflogedig"
     val expectedPensionProviderText = "Yna, bydd y darparwr pensiwn yn hawlio rhyddhad treth ar gyfer eich cleient."
-    val expectedCheckProviderText = "Gallwch wirio gyda’r darparwr pensiwn a yw hyn yn berthnasol i’ch cleient."
+    val expectedCheckProviderText   = "Gallwch wirio gyda’r darparwr pensiwn a yw hyn yn berthnasol i’ch cleient."
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle = "Relief at source (RAS) pensions"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedHeading = "Relief at source (RAS) pensions"
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
+    val expectedTitle                  = "Relief at source (RAS) pensions"
+    val expectedErrorTitle             = s"Error: $expectedTitle"
+    val expectedHeading                = "Relief at source (RAS) pensions"
+    val expectedButtonText             = "Continue"
+    val yesText                        = "Yes"
+    val noText                         = "No"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle = "Pensiynau rhyddhad wrth y ffynhonnell (RAS)"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedHeading = "Pensiynau rhyddhad wrth y ffynhonnell (RAS)"
-    val expectedButtonText = "Yn eich blaen"
-    val yesText = "Iawn"
-    val noText = "Na"
+    val expectedTitle                  = "Pensiynau rhyddhad wrth y ffynhonnell (RAS)"
+    val expectedErrorTitle             = s"Gwall: $expectedTitle"
+    val expectedHeading                = "Pensiynau rhyddhad wrth y ffynhonnell (RAS)"
+    val expectedButtonText             = "Yn eich blaen"
+    val yesText                        = "Iawn"
+    val noText                         = "Na"
   }
 }
 
@@ -137,13 +137,12 @@ class ReliefAtSourcePensionsSpec extends ViewUnitTest {
 
   private lazy val underTest = inject[ReliefAtSourcePensionsView]
 
-
   userScenarios.foreach { userScenario =>
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
 
       "render 'Relief at source (RAS) pensions' page with correct content and no pre-filling" which {
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(yesNoForm(userScenario.isAgent), taxYearEOY)
 
@@ -171,7 +170,7 @@ class ReliefAtSourcePensionsSpec extends ViewUnitTest {
 
       "render 'Relief at source (RAS) pensions' page with correct content and yes pre-filled" which {
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(yesNoForm(userScenario.isAgent).fill(true), taxYearEOY)
 
@@ -199,7 +198,7 @@ class ReliefAtSourcePensionsSpec extends ViewUnitTest {
 
       "render 'Relief at source (RAS) pensions' page with correct content and no pre-filled" which {
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(yesNoForm(userScenario.isAgent).fill(false), taxYearEOY)
 
@@ -229,7 +228,7 @@ class ReliefAtSourcePensionsSpec extends ViewUnitTest {
       "render with empty form validation error" which {
 
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest(yesNoForm(userScenario.isAgent).bind(Map(YesNoForm.yesNo -> "")), taxYearEOY)
 

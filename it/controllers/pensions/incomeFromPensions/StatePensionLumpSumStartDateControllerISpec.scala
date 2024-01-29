@@ -36,42 +36,42 @@ import java.time.LocalDate
 class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   def startDateForm(day: String, month: String, year: String): Map[String, String] = Map(
-    dayInputName -> day,
+    dayInputName   -> day,
     monthInputName -> month,
-    yearInputName -> year
+    yearInputName  -> year
   )
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
-  val dayInputName = "statePensionLumpSumStartDate-day"
+  val dayInputName   = "statePensionLumpSumStartDate-day"
   val monthInputName = "statePensionLumpSumStartDate-month"
-  val yearInputName = "statePensionLumpSumStartDate-year"
-  val validDay = "27"
-  val validMonth = "10"
-  val validYear = "2021"
+  val yearInputName  = "statePensionLumpSumStartDate-year"
+  val validDay       = "27"
+  val validMonth     = "10"
+  val validYear      = "2021"
 
   object Selectors {
-    val dayInputSelector = "#day"
+    val dayInputSelector   = "#day"
     val monthInputSelector = "#month"
-    val yearInputSelector = "#year"
-    val dayInputHref = "#day"
-    val monthInputHref = "#month"
-    val yearInputHref = "#year"
+    val yearInputSelector  = "#year"
+    val dayInputHref       = "#day"
+    val monthInputHref     = "#month"
+    val yearInputHref      = "#year"
 
     def labelSelector(index: Int): String = s"#statePensionLumpSumStartDate > div:nth-child($index) > div > label"
   }
 
-  val dateInFutureErrorText = "The pension lump sum start date must be in the past"
-  val realDateErrorText = "The day, month and year must be valid"
-  val tooLongAgoErrorText = "The date must be after 1 January 1900"
-  val emptyAllErrorText = "Enter the pension lump sum start date"
-  val emptyDayErrorText = "The pension lump sum start date must include a day"
-  val emptyDayMonthErrorText = "The pension lump sum start date must include a day and month"
-  val emptyDayYearErrorText = "The pension lump sum start date must include a day and year"
-  val emptyMonthErrorText = "The pension lump sum start date must include a month"
+  val dateInFutureErrorText   = "The pension lump sum start date must be in the past"
+  val realDateErrorText       = "The day, month and year must be valid"
+  val tooLongAgoErrorText     = "The date must be after 1 January 1900"
+  val emptyAllErrorText       = "Enter the pension lump sum start date"
+  val emptyDayErrorText       = "The pension lump sum start date must include a day"
+  val emptyDayMonthErrorText  = "The pension lump sum start date must include a day and month"
+  val emptyDayYearErrorText   = "The pension lump sum start date must include a day and year"
+  val emptyMonthErrorText     = "The pension lump sum start date must include a month"
   val emptyMonthYearErrorText = "The pension lump sum start date must include a month and year"
-  val emptyYearErrorText = "The pension lump sum start date must include a year"
-  val expectedErrorTitle = "Error: When did you get your State Pension lump sum?"
+  val emptyYearErrorText      = "The pension lump sum start date must include a year"
+  val expectedErrorTitle      = "Error: When did you get your State Pension lump sum?"
 
   ".show" should {
     "show page when EOY" in {
@@ -79,8 +79,12 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(aPensionsUserData)
-        urlGet(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       result.status shouldBe OK
@@ -99,8 +103,12 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(data)
-        urlGet(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe SEE_OTHER
       result.header("location").contains(statePension(taxYearEOY))
@@ -118,7 +126,8 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
           fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -135,7 +144,8 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
           fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -151,8 +161,12 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -175,8 +189,12 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -200,8 +218,12 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -225,8 +247,12 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
         "has the correct status" in {
           result.status shouldBe BAD_REQUEST
@@ -249,8 +275,12 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -274,8 +304,12 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -295,14 +329,18 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
 
       "the date submitted is in the future" which {
         val futureYear: Int = LocalDate.now().getYear + 1
-        lazy val form = startDateForm(validDay, validMonth, s"$futureYear")
+        lazy val form       = startDateForm(validDay, validMonth, s"$futureYear")
 
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -326,8 +364,12 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {
@@ -351,8 +393,12 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(statePensionLumpSumStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has the correct status" in {

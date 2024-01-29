@@ -22,11 +22,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 trait PensionConnectorHelper[SubRequestModel <: PensionSubRequestModel, RequestModel <: PensionRequestModel] {
 
-  def saveData(nino: String, taxYear: Int, model: RequestModel)
-              (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]]
+  def saveData(nino: String, taxYear: Int, model: RequestModel)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]]
 
   def deleteData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]]
 
@@ -38,23 +36,22 @@ trait PensionConnectorHelper[SubRequestModel <: PensionSubRequestModel, RequestM
 
     val otherModels = requestModel.otherSubRequestModelsEmpty(subRequestModel)
 
-    def isSubModelEmpty(subModel: Option[SubRequestModel]): Boolean = {
+    def isSubModelEmpty(subModel: Option[SubRequestModel]): Boolean =
       subModel.exists(_.isEmpty)
-    }
 
     if (cya.exists(_.journeyIsNo) || cya.exists(_.journeyIsUnanswered)) {
       (otherModels, subRequestModel.isEmpty || isSubModelEmpty(subRequestModel)) match {
         case (true, true) =>
-          //Do nothing or delete
+          // Do nothing or delete
           deleteData(nino, taxYear)
         case (true, false) =>
-          //delete
+          // delete
           deleteData(nino, taxYear)
         case (false, true) =>
           // Put or do nothing
           saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[RequestModel])
         case (false, false) =>
-          //Put
+          // Put
           saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[RequestModel])
       }
     } else {

@@ -22,7 +22,8 @@ import utils.EncryptedValue
 
 case class OverseasPensionContributions(overseasSchemeProvider: Seq[OverseasSchemeProvider],
                                         shortServiceRefund: BigDecimal,
-                                        shortServiceRefundTaxPaid: BigDecimal) extends PensionChargesSubRequestModel {
+                                        shortServiceRefundTaxPaid: BigDecimal)
+    extends PensionChargesSubRequestModel {
   override def isEmpty: Boolean = false
 }
 

@@ -16,7 +16,6 @@
 
 package models.pension.pages
 
-
 import forms.Countries.getCountryFromCodeWithDefault
 import models.mongo.PensionsUserData
 import play.api.i18n.Messages
@@ -32,33 +31,62 @@ object OverseasPensionSchemeSummaryPage {
   def apply(taxYear: Int, pensionsUserData: PensionsUserData, index: Option[Int])(implicit messages: Messages): OverseasPensionSchemeSummaryPage = {
     val overSeasPensions = pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index.getOrElse(0))
 
-    OverseasPensionSchemeSummaryPage(taxYear, Seq(   //scalastyle:off line.size.limit
-      Some(summaryListRow(
-        HtmlContent(Messages("incomeFromOverseasPensions.summary.country")),
-        HtmlContent(getCountryFromCodeWithDefault(overSeasPensions.alphaTwoCode)),
-        actions = Seq((Call("GET", controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeCountryController.show(taxYear, index).url),
-          Messages("common.change"), Some(Messages("incomeFromOverseasPensions.summary.country.hidden")))))),
-      Some(summaryListRow(
-        HtmlContent(Messages("incomeFromOverseasPensions.summary.pension.payments")),
-        HtmlContent(s"${Messages("incomeFromOverseasPensions.summary.amount", bigDecimalCurrency(overSeasPensions.pensionPaymentAmount.getOrElse(BigDecimal(0)).toString))} " +
-          s"${overSeasPensions.pensionPaymentTaxPaid.map(taxPaid =>  s"<br> ${Messages("incomeFromOverseasPensions.summary.nonUk.amount",bigDecimalCurrency(taxPaid.toString))}").getOrElse("")}"),
-        actions = Seq((Call("GET", controllers.pensions.incomeFromOverseasPensions.routes.PensionPaymentsController.show(taxYear, index).url),
-          Messages("common.change"), Some(Messages("incomeFromOverseasPensions.summary.pension.payments.hidden")))))),
-      Some(summaryListRow(
-        HtmlContent(Messages("incomeFromOverseasPensions.summary.swt")),
-        overSeasPensions.specialWithholdingTaxAmount.fold{HtmlContent(Messages("common.no"))}{swt => HtmlContent(bigDecimalCurrency(swt.toString()))},
-        actions = Seq((Call("GET", controllers.pensions.incomeFromOverseasPensions.routes.SpecialWithholdingTaxController.show(taxYear, index).url),
-          Messages("common.change"), Some(Messages("incomeFromOverseasPensions.summary.swt.hidden")))))),
-      Some(summaryListRow(
-        HtmlContent(Messages("incomeFromOverseasPensions.summary.ftc")),
-        HtmlContent(convertBoolToYesOrNo(overSeasPensions.foreignTaxCreditReliefQuestion).getOrElse("No")),
-        actions = Seq((Call("GET", controllers.pensions.incomeFromOverseasPensions.routes.ForeignTaxCreditReliefController.show(taxYear, index).url),
-          Messages("common.change"), Some(Messages("incomeFromOverseasPensions.summary.ftc.hidden")))))),
-      overSeasPensions.taxableAmount.map(
-        amount => summaryListRow(
-          HtmlContent(Messages("incomeFromOverseasPensions.summary.tax.amount")),
-          HtmlContent(bigDecimalCurrency(amount.toString)),
-          actions = Seq.empty))
-    ).flatten, Some(index.getOrElse(0)))
+    OverseasPensionSchemeSummaryPage(
+      taxYear,
+      Seq( // scalastyle:off line.size.limit
+        Some(
+          summaryListRow(
+            HtmlContent(Messages("incomeFromOverseasPensions.summary.country")),
+            HtmlContent(getCountryFromCodeWithDefault(overSeasPensions.alphaTwoCode)),
+            actions = Seq(
+              (
+                Call("GET", controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeCountryController.show(taxYear, index).url),
+                Messages("common.change"),
+                Some(Messages("incomeFromOverseasPensions.summary.country.hidden"))))
+          )),
+        Some(
+          summaryListRow(
+            HtmlContent(Messages("incomeFromOverseasPensions.summary.pension.payments")),
+            HtmlContent(
+              s"${Messages("incomeFromOverseasPensions.summary.amount", bigDecimalCurrency(overSeasPensions.pensionPaymentAmount.getOrElse(BigDecimal(0)).toString))} " +
+                s"${overSeasPensions.pensionPaymentTaxPaid
+                    .map(taxPaid => s"<br> ${Messages("incomeFromOverseasPensions.summary.nonUk.amount", bigDecimalCurrency(taxPaid.toString))}")
+                    .getOrElse("")}"),
+            actions = Seq(
+              (
+                Call("GET", controllers.pensions.incomeFromOverseasPensions.routes.PensionPaymentsController.show(taxYear, index).url),
+                Messages("common.change"),
+                Some(Messages("incomeFromOverseasPensions.summary.pension.payments.hidden"))))
+          )),
+        Some(
+          summaryListRow(
+            HtmlContent(Messages("incomeFromOverseasPensions.summary.swt")),
+            overSeasPensions.specialWithholdingTaxAmount.fold(HtmlContent(Messages("common.no"))) { swt =>
+              HtmlContent(bigDecimalCurrency(swt.toString()))
+            },
+            actions = Seq(
+              (
+                Call("GET", controllers.pensions.incomeFromOverseasPensions.routes.SpecialWithholdingTaxController.show(taxYear, index).url),
+                Messages("common.change"),
+                Some(Messages("incomeFromOverseasPensions.summary.swt.hidden"))))
+          )),
+        Some(
+          summaryListRow(
+            HtmlContent(Messages("incomeFromOverseasPensions.summary.ftc")),
+            HtmlContent(convertBoolToYesOrNo(overSeasPensions.foreignTaxCreditReliefQuestion).getOrElse("No")),
+            actions = Seq(
+              (
+                Call("GET", controllers.pensions.incomeFromOverseasPensions.routes.ForeignTaxCreditReliefController.show(taxYear, index).url),
+                Messages("common.change"),
+                Some(Messages("incomeFromOverseasPensions.summary.ftc.hidden"))))
+          )),
+        overSeasPensions.taxableAmount.map(amount =>
+          summaryListRow(
+            HtmlContent(Messages("incomeFromOverseasPensions.summary.tax.amount")),
+            HtmlContent(bigDecimalCurrency(amount.toString)),
+            actions = Seq.empty))
+      ).flatten,
+      Some(index.getOrElse(0))
+    )
   }
 }

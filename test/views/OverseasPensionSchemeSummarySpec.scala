@@ -29,12 +29,11 @@ import models.pension.pages.OverseasPensionSchemeSummaryPage
 import org.jsoup.Jsoup
 import views.html.pensions.incomeFromOverseasPensions.PensionsSchemeSummary
 
-
 class OverseasPensionSchemeSummarySpec extends ViewUnitTest {
 
   object selectors {
-    def getRowKey(index: Int) = s"#main-content > div > div > dl > div:nth-child($index) > dt"
-    def getRowValue(index: Int) = s"#main-content > div > div > dl > div:nth-child($index) > dd.govuk-summary-list__value"
+    def getRowKey(index: Int)    = s"#main-content > div > div > dl > div:nth-child($index) > dt"
+    def getRowValue(index: Int)  = s"#main-content > div > div > dl > div:nth-child($index) > dd.govuk-summary-list__value"
     def getRowChange(index: Int) = s"#main-content > div > div > dl > div:nth-child($index) > dd.govuk-summary-list__actions > a"
   }
 
@@ -61,47 +60,47 @@ class OverseasPensionSchemeSummarySpec extends ViewUnitTest {
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle: String = "Pension scheme summary"
-    val alphaTwoCode: String = "Country"
-    val countryCodeValue: String = "France"
-    val pensionPayments: String = "Pensions payments"
-    val pensionPaymentsValue: String = "Amount: £1,999.99 Non-uk tax: £1,999.99"
-    val specialWithholdingTax: String = "Special Withholding Tax"
-    val specialWithholdingTaxValue: String = "£1,999.99"
-    val foreignTaxCredit: String = "Foreign Tax Credit"
-    val yes: String = "Yes"
-    val no: String = "No"
-    val taxableAmount: String = "Taxable amount"
-    val taxableAmountValue: String = "£1,999.99"
-    val change: String = "Change"
-    val changeCountry: String = " Change country"
-    val changePensionPayments: String = " Change pensions payments"
+    val expectedCaption: Int => String      = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedTitle: String               = "Pension scheme summary"
+    val alphaTwoCode: String                = "Country"
+    val countryCodeValue: String            = "France"
+    val pensionPayments: String             = "Pensions payments"
+    val pensionPaymentsValue: String        = "Amount: £1,999.99 Non-uk tax: £1,999.99"
+    val specialWithholdingTax: String       = "Special Withholding Tax"
+    val specialWithholdingTaxValue: String  = "£1,999.99"
+    val foreignTaxCredit: String            = "Foreign Tax Credit"
+    val yes: String                         = "Yes"
+    val no: String                          = "No"
+    val taxableAmount: String               = "Taxable amount"
+    val taxableAmountValue: String          = "£1,999.99"
+    val change: String                      = "Change"
+    val changeCountry: String               = " Change country"
+    val changePensionPayments: String       = " Change pensions payments"
     val changeSpecialWithholdingTax: String = " Change Special Withholding Tax"
-    val changeForeignTaxCredit: String = " Change foreign tax credit"
-    val buttonText = "Continue"
+    val changeForeignTaxCredit: String      = " Change foreign tax credit"
+    val buttonText                          = "Continue"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "Crynodeb o’r cynllun pensiwn"
-    val alphaTwoCode: String = "Gwlad"
-    val countryCodeValue: String = "France"
-    val pensionPayments: String = "Taliadau pensiwn"
-    val pensionPaymentsValue: String = "Swm: £1,999.99 Treth y tu allan i’r DU: £1,999.99"
-    val specialWithholdingTax: String = "Treth Ataliedig Arbennig"
-    val specialWithholdingTaxValue: String = "£1,999.99"
-    val foreignTaxCredit: String = "Credyd Treth Tramor"
-    val yes: String = "Iawn"
-    val no: String = "Na"
-    val taxableAmount: String = "Swm trethadwy"
-    val taxableAmountValue: String = "£1,999.99"
-    val change: String = "Newid"
-    val changeCountry: String = " Newid Gwlad"
-    val changePensionPayments: String = " Newid Taliadau pensiwn"
+    val expectedCaption: Int => String      = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedTitle: String               = "Crynodeb o’r cynllun pensiwn"
+    val alphaTwoCode: String                = "Gwlad"
+    val countryCodeValue: String            = "France"
+    val pensionPayments: String             = "Taliadau pensiwn"
+    val pensionPaymentsValue: String        = "Swm: £1,999.99 Treth y tu allan i’r DU: £1,999.99"
+    val specialWithholdingTax: String       = "Treth Ataliedig Arbennig"
+    val specialWithholdingTaxValue: String  = "£1,999.99"
+    val foreignTaxCredit: String            = "Credyd Treth Tramor"
+    val yes: String                         = "Iawn"
+    val no: String                          = "Na"
+    val taxableAmount: String               = "Swm trethadwy"
+    val taxableAmountValue: String          = "£1,999.99"
+    val change: String                      = "Newid"
+    val changeCountry: String               = " Newid Gwlad"
+    val changePensionPayments: String       = " Newid Taliadau pensiwn"
     val changeSpecialWithholdingTax: String = " Newid Treth Ataliedig Arbennig"
-    val changeForeignTaxCredit: String = " Newid Credyd Treth Tramor"
-    val buttonText = "Yn eich blaen"
+    val changeForeignTaxCredit: String      = " Newid Credyd Treth Tramor"
+    val buttonText                          = "Yn eich blaen"
   }
 
   trait SpecificExpectedResults {
@@ -116,29 +115,34 @@ class OverseasPensionSchemeSummarySpec extends ViewUnitTest {
     val expectedChangeText: String = "Newid"
   }
 
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, Unit]] = Seq(
-    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN),
-    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY))
+  val userScenarios: Seq[UserScenario[CommonExpectedResults, Unit]] =
+    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN), UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY))
 
   private lazy val underTest = inject[PensionsSchemeSummary]
 
   userScenarios.foreach { userScenario =>
-
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render the overseas summary page with full maxdata" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val overseasIncomePensionSchemes = IncomeFromOverseasPensionsViewModel(Some(true), Seq(
-          PensionScheme(
-            alphaTwoCode = Some("FR"),
-            pensionPaymentAmount = Some(1999.99),
-            pensionPaymentTaxPaid = Some(1999.99),
-            specialWithholdingTaxQuestion = Some(true),
-            specialWithholdingTaxAmount = Some(1999.99),
-            foreignTaxCreditReliefQuestion = Some(true),
-            taxableAmount = Some(1999.99)
-          )))
-        val htmlFormat = underTest(OverseasPensionSchemeSummaryPage(taxYearEOY, aPensionsUserData.copy(pensions = aPensionsUserData.pensions.copy(incomeFromOverseasPensions = overseasIncomePensionSchemes)), None))
+        implicit val messages: Messages                                         = getMessages(userScenario.isWelsh)
+        val overseasIncomePensionSchemes = IncomeFromOverseasPensionsViewModel(
+          Some(true),
+          Seq(
+            PensionScheme(
+              alphaTwoCode = Some("FR"),
+              pensionPaymentAmount = Some(1999.99),
+              pensionPaymentTaxPaid = Some(1999.99),
+              specialWithholdingTaxQuestion = Some(true),
+              specialWithholdingTaxAmount = Some(1999.99),
+              foreignTaxCreditReliefQuestion = Some(true),
+              taxableAmount = Some(1999.99)
+            ))
+        )
+        val htmlFormat = underTest(
+          OverseasPensionSchemeSummaryPage(
+            taxYearEOY,
+            aPensionsUserData.copy(pensions = aPensionsUserData.pensions.copy(incomeFromOverseasPensions = overseasIncomePensionSchemes)),
+            None))
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
@@ -151,23 +155,35 @@ class OverseasPensionSchemeSummarySpec extends ViewUnitTest {
 
         textOnPageCheck(userScenario.commonExpectedResults.alphaTwoCode, selectors.getRowKey(1))
         textOnPageCheck(userScenario.commonExpectedResults.countryCodeValue, selectors.getRowValue(1))
-        linkCheck(userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changeCountry,
-          selectors.getRowChange(1), controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeCountryController.show(taxYearEOY, None).url)
+        linkCheck(
+          userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changeCountry,
+          selectors.getRowChange(1),
+          controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeCountryController.show(taxYearEOY, None).url
+        )
 
         textOnPageCheck(userScenario.commonExpectedResults.pensionPayments, selectors.getRowKey(2))
         textOnPageCheck(userScenario.commonExpectedResults.pensionPaymentsValue, selectors.getRowValue(2))
-        linkCheck(userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changePensionPayments,
-          selectors.getRowChange(2), routes.PensionPaymentsController.show(taxYearEOY, None).url)
+        linkCheck(
+          userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changePensionPayments,
+          selectors.getRowChange(2),
+          routes.PensionPaymentsController.show(taxYearEOY, None).url
+        )
 
         textOnPageCheck(userScenario.commonExpectedResults.specialWithholdingTax, selectors.getRowKey(3))
         textOnPageCheck(userScenario.commonExpectedResults.specialWithholdingTaxValue, selectors.getRowValue(3), "for swt value")
-        linkCheck(userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changeSpecialWithholdingTax,
-          selectors.getRowChange(3), routes.SpecialWithholdingTaxController.show(taxYearEOY, None).url)
+        linkCheck(
+          userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changeSpecialWithholdingTax,
+          selectors.getRowChange(3),
+          routes.SpecialWithholdingTaxController.show(taxYearEOY, None).url
+        )
 
         textOnPageCheck(userScenario.commonExpectedResults.foreignTaxCredit, selectors.getRowKey(4))
         textOnPageCheck(userScenario.commonExpectedResults.yes, selectors.getRowValue(4))
-        linkCheck(userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changeForeignTaxCredit,
-          selectors.getRowChange(4), routes.ForeignTaxCreditReliefController.show(taxYearEOY, None).url)
+        linkCheck(
+          userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changeForeignTaxCredit,
+          selectors.getRowChange(4),
+          routes.ForeignTaxCreditReliefController.show(taxYearEOY, None).url
+        )
 
         textOnPageCheck(userScenario.commonExpectedResults.taxableAmount, selectors.getRowKey(5))
         textOnPageCheck(userScenario.commonExpectedResults.taxableAmountValue, selectors.getRowValue(5))
@@ -178,17 +194,25 @@ class OverseasPensionSchemeSummarySpec extends ViewUnitTest {
 
       "render the overseas summary page with minimum data" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val minPensionScheme = IncomeFromOverseasPensionsViewModel(Some(true), Seq(PensionScheme(
-          alphaTwoCode = Some("FR"),
-          pensionPaymentAmount = Some(1999.99),
-          pensionPaymentTaxPaid = Some(1999.99),
-          specialWithholdingTaxQuestion = Some(false),
-          specialWithholdingTaxAmount = None,
-          foreignTaxCreditReliefQuestion = Some(false),
-          taxableAmount = None
-        )))
-        val htmlFormat = underTest(OverseasPensionSchemeSummaryPage(taxYearEOY, aPensionsUserData.copy(pensions = aPensionsUserData.pensions.copy(incomeFromOverseasPensions = minPensionScheme)), None))
+        implicit val messages: Messages                                         = getMessages(userScenario.isWelsh)
+        val minPensionScheme = IncomeFromOverseasPensionsViewModel(
+          Some(true),
+          Seq(
+            PensionScheme(
+              alphaTwoCode = Some("FR"),
+              pensionPaymentAmount = Some(1999.99),
+              pensionPaymentTaxPaid = Some(1999.99),
+              specialWithholdingTaxQuestion = Some(false),
+              specialWithholdingTaxAmount = None,
+              foreignTaxCreditReliefQuestion = Some(false),
+              taxableAmount = None
+            ))
+        )
+        val htmlFormat = underTest(
+          OverseasPensionSchemeSummaryPage(
+            taxYearEOY,
+            aPensionsUserData.copy(pensions = aPensionsUserData.pensions.copy(incomeFromOverseasPensions = minPensionScheme)),
+            None))
 
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
@@ -201,23 +225,35 @@ class OverseasPensionSchemeSummarySpec extends ViewUnitTest {
 
         textOnPageCheck(userScenario.commonExpectedResults.alphaTwoCode, selectors.getRowKey(1))
         textOnPageCheck(userScenario.commonExpectedResults.countryCodeValue, selectors.getRowValue(1))
-        linkCheck(userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changeCountry,
-          selectors.getRowChange(1), controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeCountryController.show(taxYearEOY, None).url)
+        linkCheck(
+          userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changeCountry,
+          selectors.getRowChange(1),
+          controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeCountryController.show(taxYearEOY, None).url
+        )
 
         textOnPageCheck(userScenario.commonExpectedResults.pensionPayments, selectors.getRowKey(2))
         textOnPageCheck(userScenario.commonExpectedResults.pensionPaymentsValue, selectors.getRowValue(2))
-        linkCheck(userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changePensionPayments,
-          selectors.getRowChange(2), routes.PensionPaymentsController.show(taxYearEOY, None).url)
+        linkCheck(
+          userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changePensionPayments,
+          selectors.getRowChange(2),
+          routes.PensionPaymentsController.show(taxYearEOY, None).url
+        )
 
         textOnPageCheck(userScenario.commonExpectedResults.specialWithholdingTax, selectors.getRowKey(3))
         textOnPageCheck(userScenario.commonExpectedResults.no, selectors.getRowValue(3), "for special withholding tax")
-        linkCheck(userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changeSpecialWithholdingTax,
-          selectors.getRowChange(3), routes.SpecialWithholdingTaxController.show(taxYearEOY, None).url)
+        linkCheck(
+          userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changeSpecialWithholdingTax,
+          selectors.getRowChange(3),
+          routes.SpecialWithholdingTaxController.show(taxYearEOY, None).url
+        )
 
         textOnPageCheck(userScenario.commonExpectedResults.foreignTaxCredit, selectors.getRowKey(4))
         textOnPageCheck(userScenario.commonExpectedResults.no, selectors.getRowValue(4), "for foreign tax credits")
-        linkCheck(userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changeForeignTaxCredit,
-          selectors.getRowChange(4), routes.ForeignTaxCreditReliefController.show(taxYearEOY, None).url)
+        linkCheck(
+          userScenario.commonExpectedResults.change + userScenario.commonExpectedResults.changeForeignTaxCredit,
+          selectors.getRowChange(4),
+          routes.ForeignTaxCreditReliefController.show(taxYearEOY, None).url
+        )
 
         buttonCheck(buttonText, continueButtonSelector)
         welshToggleCheck(userScenario.isWelsh)

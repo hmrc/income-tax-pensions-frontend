@@ -18,19 +18,19 @@ package config
 
 object ConfigKeys {
 
-  val incomeTaxSubmissionUrl = "microservice.services.income-tax-submission.url"
-  val incomeTaxPensionsUrl = "microservice.services.income-tax-pensions.url"
+  val incomeTaxSubmissionUrl    = "microservice.services.income-tax-submission.url"
+  val incomeTaxPensionsUrl      = "microservice.services.income-tax-pensions.url"
   val incomeTaxStateBenefitsUrl = "microservice.services.income-tax-state-benefits.url"
 
-  val contactFrontendUrl = "microservice.services.contact-frontend.url"
+  val contactFrontendUrl             = "microservice.services.contact-frontend.url"
   val incomeTaxSubmissionFrontendUrl = "microservice.services.income-tax-submission-frontend.url"
-  val incomeTaxEmploymentUrl = "microservice.services.income-tax-employment.url"
-  val incomeTaxExpensesUrl = "microservice.services.income-tax-expenses.url"
-  val basGatewayFrontendUrl = "microservice.services.bas-gateway-frontend.url"
-  val feedbackFrontendUrl = "microservice.services.feedback-frontend.url"
-  val viewAndChangeUrl = "microservice.services.view-and-change.url"
-  val signInUrl = "microservice.services.sign-in.url"
-  val signInContinueUrl = "microservice.services.sign-in.continueUrl"
+  val incomeTaxEmploymentUrl         = "microservice.services.income-tax-employment.url"
+  val incomeTaxExpensesUrl           = "microservice.services.income-tax-expenses.url"
+  val basGatewayFrontendUrl          = "microservice.services.bas-gateway-frontend.url"
+  val feedbackFrontendUrl            = "microservice.services.feedback-frontend.url"
+  val viewAndChangeUrl               = "microservice.services.view-and-change.url"
+  val signInUrl                      = "microservice.services.sign-in.url"
+  val signInContinueUrl              = "microservice.services.sign-in.continueUrl"
 
   val defaultTaxYear = "defaultTaxYear"
 

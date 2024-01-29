@@ -39,30 +39,25 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
   private val externalHref = "https://www.tax.service.gov.uk/pension-annual-allowance-calculator"
 
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
-    PensionsUserDataBuilder.aPensionsUserData.copy(
-      isPriorSubmission = false, pensions = pensionsCyaModel)
-  }
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData =
+    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
 
   private def pensionsUserDataWithAnnualAllowances(annualAllowances: PensionAnnualAllowancesViewModel,
-                                                   isPriorSubmission: Boolean = true): PensionsUserData = {
-    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
-      pensions = aPensionsCYAModel.copy(pensionsAnnualAllowances = annualAllowances)
-    )
-  }
+                                                   isPriorSubmission: Boolean = true): PensionsUserData =
+    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission, pensions = aPensionsCYAModel.copy(pensionsAnnualAllowances = annualAllowances))
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
-    val amountHeadingSelector = "#conditional-value > div > label"
-    val amountValueSelector = "#amount-2"
-    val hintTextSelector: String = "#amount-2-hint"
+    val formSelector: String           = "#main-content > div > div > form"
+    val yesSelector                    = "#value"
+    val noSelector                     = "#value-no"
+    val amountHeadingSelector          = "#conditional-value > div > label"
+    val amountValueSelector            = "#amount-2"
+    val hintTextSelector: String       = "#amount-2-hint"
     lazy val expectedErrorHref: String = amountValueSelector
-    val paragraphSelector: String = s"#main-content > div > div > p"
-    val expectedLinkSelector = "#above-reduced-annual-allowance-link"
+    val paragraphSelector: String      = s"#main-content > div > div > p"
+    val expectedLinkSelector           = "#above-reduced-annual-allowance-link"
   }
 
   trait CommonExpectedResults {
@@ -88,60 +83,60 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
-    val expectedLinkText = "if you need to work this out (opens in new tab)"
+    val yesText                        = "Yes"
+    val noText                         = "No"
+    val buttonText                     = "Continue"
+    val expectedLinkText               = "if you need to work this out (opens in new tab)"
     val expectedUseACalculator: String = s"Use a calculator $expectedLinkText."
-    val expectedAmountHeadingText = "Amount above the reduced annual allowance, in pounds"
-    val amountHintText = "For example, £193.54"
+    val expectedAmountHeadingText      = "Amount above the reduced annual allowance, in pounds"
+    val amountHintText                 = "For example, £193.54"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val yesText = "Iawn"
-    val noText = "Na"
-    val buttonText = "Yn eich blaen"
-    val expectedLinkText = "os bydd angen i chi gyfrifo hyn (yn agor tab newydd)"
+    val yesText                        = "Iawn"
+    val noText                         = "Na"
+    val buttonText                     = "Yn eich blaen"
+    val expectedLinkText               = "os bydd angen i chi gyfrifo hyn (yn agor tab newydd)"
     val expectedUseACalculator: String = s"Defnyddiwch gyfrifiannell $expectedLinkText."
-    val expectedAmountHeadingText = "Swm uwchlaw’r lwfans blynyddol gostyngol, mewn punnoedd"
-    val amountHintText = "Er enghraifft, £193.54"
+    val expectedAmountHeadingText      = "Swm uwchlaw’r lwfans blynyddol gostyngol, mewn punnoedd"
+    val amountHintText                 = "Er enghraifft, £193.54"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedReducedTitle = "Have you gone above your annual allowance?"
-    val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
-    val expectedNoEntryError = "Select yes if you have gone above your reduced annual allowance"
-    val expectedNoAmountEntryError = "Enter the amount above your reduced annual allowance"
+    val expectedReducedTitle         = "Have you gone above your annual allowance?"
+    val expectedReducedErrorTitle    = s"Error: $expectedReducedTitle"
+    val expectedNoEntryError         = "Select yes if you have gone above your reduced annual allowance"
+    val expectedNoAmountEntryError   = "Enter the amount above your reduced annual allowance"
     val expectedIncorrectFormatError = "Enter the amount above your reduced annual allowance in pounds and pence"
-    val expectedOverMaxError = "The amount above your reduced annual allowance must be less than £100,000,000,000"
+    val expectedOverMaxError         = "The amount above your reduced annual allowance must be less than £100,000,000,000"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedReducedTitle = "A ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i?"
-    val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
-    val expectedNoEntryError = "Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng"
-    val expectedNoAmountEntryError = "Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng"
+    val expectedReducedTitle         = "A ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i?"
+    val expectedReducedErrorTitle    = s"Gwall: $expectedReducedTitle"
+    val expectedNoEntryError         = "Dewiswch ‘Iawn’ os ydych wedi mynd yn uwch na’ch lwfans blynyddol wedi’i ostwng"
+    val expectedNoAmountEntryError   = "Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng"
     val expectedIncorrectFormatError = "Nodwch y swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng yn y fformat cywir"
-    val expectedOverMaxError = "Mae’n rhaid i’r swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng fod yn llai na £100,000,000,000"
+    val expectedOverMaxError         = "Mae’n rhaid i’r swm sydd uwchlaw’ch lwfans blynyddol wedi’i ostwng fod yn llai na £100,000,000,000"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedReducedTitle = "Has your client gone above their annual allowance?"
-    val expectedReducedErrorTitle = s"Error: $expectedReducedTitle"
-    val expectedNoEntryError = "Select yes if your client has gone above their reduced annual allowance"
-    val expectedNoAmountEntryError = "Enter the amount above your client’s reduced annual allowance"
+    val expectedReducedTitle         = "Has your client gone above their annual allowance?"
+    val expectedReducedErrorTitle    = s"Error: $expectedReducedTitle"
+    val expectedNoEntryError         = "Select yes if your client has gone above their reduced annual allowance"
+    val expectedNoAmountEntryError   = "Enter the amount above your client’s reduced annual allowance"
     val expectedIncorrectFormatError = "Enter the amount above your client’s reduced annual allowance in pounds and pence"
-    val expectedOverMaxError = "The amount above your client’s reduced annual allowance must be less than £100,000,000,000"
+    val expectedOverMaxError         = "The amount above your client’s reduced annual allowance must be less than £100,000,000,000"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedReducedTitle = "A yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i?"
-    val expectedReducedErrorTitle = s"Gwall: $expectedReducedTitle"
-    val expectedNoEntryError = "Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng"
-    val expectedNoAmountEntryError = "Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient"
+    val expectedReducedTitle         = "A yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i?"
+    val expectedReducedErrorTitle    = s"Gwall: $expectedReducedTitle"
+    val expectedNoEntryError         = "Dewiswch ‘Iawn’ os yw’ch cleient wedi mynd yn uwch na’i lwfans blynyddol wedi’i ostwng"
+    val expectedNoAmountEntryError   = "Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient"
     val expectedIncorrectFormatError = "Nodwch y swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient yn y fformat cywir"
-    val expectedOverMaxError = "Mae’n rhaid i’r swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient fod yn llai na £100,000,000,000"
+    val expectedOverMaxError         = "Mae’n rhaid i’r swm sydd uwchlaw lwfans blynyddol wedi’i ostwng eich cleient fod yn llai na £100,000,000,000"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -153,7 +148,6 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
   ".show" should {
     userScenarios.foreach { user =>
-
       import Selectors._
       import user.commonExpectedResults._
 
@@ -164,12 +158,14 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-              aboveAnnualAllowanceQuestion = None,
-              aboveAnnualAllowance = None)
+            val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = None, aboveAnnualAllowance = None)
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-            urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
-              user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -194,12 +190,15 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-              aboveAnnualAllowanceQuestion = Some(true),
-              aboveAnnualAllowance = Some(12.44))
+            val pensionsViewModel =
+              aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = Some(12.44))
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-            urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -227,12 +226,14 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
-            val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-              aboveAnnualAllowanceQuestion = Some(false),
-              aboveAnnualAllowance = None)
+            val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false), aboveAnnualAllowance = None)
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-            urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -259,13 +260,15 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has a SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect to annual CYA Page
+        // TODO redirect to annual CYA Page
         result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
       }
 
@@ -279,7 +282,9 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = None)
           insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
 
-          urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -296,7 +301,9 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
           insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
 
-          urlGet(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -310,7 +317,6 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
   ".submit" should {
     userScenarios.foreach { user =>
-
       import Selectors._
       import user.commonExpectedResults._
 
@@ -323,12 +329,16 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
             lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "")
             lazy val result: WSResponse = {
               dropPensionsDB()
-              val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-                aboveAnnualAllowanceQuestion = None, aboveAnnualAllowance = None)
+              val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = None, aboveAnnualAllowance = None)
               insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               authoriseAgentOrIndividual(user.isAgent)
-              urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlPost(
+                fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+                body = form,
+                welsh = user.isWelsh,
+                follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              )
             }
 
             "has the correct status" in {
@@ -359,8 +369,13 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowance = None)
               insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               authoriseAgentOrIndividual(user.isAgent)
-              urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlPost(
+                fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+                body = form,
+                welsh = user.isWelsh,
+                follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              )
             }
 
             "has the correct status" in {
@@ -387,14 +402,20 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
           "amount has an incorrect format" when {
 
-            lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> "wrongFormat")
+            lazy val form: Map[String, String] =
+              Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> "wrongFormat")
             lazy val result: WSResponse = {
               dropPensionsDB()
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowance = None)
               insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               authoriseAgentOrIndividual(user.isAgent)
-              urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlPost(
+                fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+                body = form,
+                welsh = user.isWelsh,
+                follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              )
             }
 
             "has the correct status" in {
@@ -413,14 +434,20 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
           "amount is greater than £100,000,000,000" when {
 
-            lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> "100000000001")
+            lazy val form: Map[String, String] =
+              Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> "100000000001")
             lazy val result: WSResponse = {
               dropPensionsDB()
               val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowance = None)
               insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
               authoriseAgentOrIndividual(user.isAgent)
-              urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlPost(
+                fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+                body = form,
+                welsh = user.isWelsh,
+                follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              )
             }
 
             "has the correct status" in {
@@ -443,15 +470,23 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
     "redirect to the Pension paid tax amount page when user selects 'yes' with an amount and is not a prior submission" which {
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.yes, RadioButtonAmountForm.amount2 -> "12.44")
       val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-        aboveAnnualAllowanceQuestion = None, aboveAnnualAllowance = None,
-        pensionProvidePaidAnnualAllowanceQuestion = None, taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
+        aboveAnnualAllowanceQuestion = None,
+        aboveAnnualAllowance = None,
+        pensionProvidePaidAnnualAllowanceQuestion = None,
+        taxPaidByPensionProvider = None,
+        pensionSchemeTaxReferences = None
+      )
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
-        urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER status" in {
@@ -461,7 +496,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
 
       "persists submission details" in {
         val expectedViewModel = pensionsViewModel.copy(aboveAnnualAllowanceQuestion = Some(true), aboveAnnualAllowance = Some(12.44))
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        lazy val cyaModel     = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedViewModel
       }
     }
@@ -473,8 +508,12 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
         authoriseAgentOrIndividual()
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)))
-        urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER status" in {
@@ -498,8 +537,12 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
-        urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER status" in {
@@ -519,8 +562,12 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = aPensionAnnualAllowanceViewModel)))
-        urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER status" in {
@@ -533,7 +580,8 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           reducedAnnualAllowanceQuestion = Some(true),
           moneyPurchaseAnnualAllowance = Some(true),
           taperedAnnualAllowance = Some(true),
-          aboveAnnualAllowanceQuestion = Some(false))
+          aboveAnnualAllowanceQuestion = Some(false)
+        )
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedModel
       }
@@ -548,8 +596,12 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = None)
           insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
 
-          urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has a SEE_OTHER status" in {
@@ -566,8 +618,12 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
           insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
 
-          urlPost(fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has a SEE_OTHER status" in {

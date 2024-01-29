@@ -35,22 +35,20 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData =
     PensionsUserDataBuilder.aPensionsUserData.copy(
       isPriorSubmission = false,
       pensions = pensionsCyaModel
     )
-  }
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
+    val captionSelector: String                = "#main-content > div > div > header > p"
+    val continueButtonSelector: String         = "#continue"
+    val formSelector: String                   = "#main-content > div > div > form"
+    val yesSelector                            = "#value"
+    val noSelector                             = "#value-no"
     val expectedDoesNotIncludeSelector: String = s"#main-content > div > div > p"
   }
-
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
@@ -68,44 +66,44 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
+    val yesText                        = "Yes"
+    val noText                         = "No"
+    val buttonText                     = "Continue"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val yesText = "Iawn"
-    val noText = "Na"
-    val buttonText = "Yn eich blaen"
+    val yesText                        = "Iawn"
+    val noText                         = "Na"
+    val buttonText                     = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "Do you get UK pension scheme payments?"
-    val expectedHeading = "Do you get UK pension scheme payments?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedTitle        = "Do you get UK pension scheme payments?"
+    val expectedHeading      = "Do you get UK pension scheme payments?"
+    val expectedErrorTitle   = s"Error: $expectedTitle"
     val expectedErrorMessage = "Select yes if you get UK pension schemes payments"
 
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "A ydych chi’n cael taliadau o gynlluniau pensiwn y DU?"
-    val expectedHeading = "A ydych chi’n cael taliadau o gynlluniau pensiwn y DU?"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val expectedTitle        = "A ydych chi’n cael taliadau o gynlluniau pensiwn y DU?"
+    val expectedHeading      = "A ydych chi’n cael taliadau o gynlluniau pensiwn y DU?"
+    val expectedErrorTitle   = s"Gwall: $expectedTitle"
     val expectedErrorMessage = "Select yes if you get UK pension schemes payments"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "Does your client get UK pension scheme payments?"
-    val expectedHeading = "Does your client get UK pension scheme payments?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedTitle        = "Does your client get UK pension scheme payments?"
+    val expectedHeading      = "Does your client get UK pension scheme payments?"
+    val expectedErrorTitle   = s"Error: $expectedTitle"
     val expectedErrorMessage = "Select yes if your client gets UK pension schemes payments"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "A yw eich cleient yn cael taliadau o gynlluniau pensiwn y DU?"
-    val expectedHeading = "A yw eich cleient yn cael taliadau o gynlluniau pensiwn y DU?"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val expectedTitle        = "A yw eich cleient yn cael taliadau o gynlluniau pensiwn y DU?"
+    val expectedHeading      = "A yw eich cleient yn cael taliadau o gynlluniau pensiwn y DU?"
+    val expectedErrorTitle   = s"Gwall: $expectedTitle"
     val expectedErrorMessage = "Select yes if your client gets UK pension schemes payments"
   }
 
@@ -118,7 +116,6 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
 
   ".show" should {
     userScenarios.foreach { user =>
-
       import Selectors._
       import user.commonExpectedResults._
 
@@ -129,8 +126,12 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
             authoriseAgentOrIndividual(user.isAgent)
             val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = None)
             insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)))
-            urlGet(fullUrl(ukPensionSchemePayments(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(ukPensionSchemePayments(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -153,8 +154,12 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(pensionsUsersData(aPensionsCYAModel))
-            urlGet(fullUrl(ukPensionSchemePayments(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(ukPensionSchemePayments(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -179,8 +184,12 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
             authoriseAgentOrIndividual(user.isAgent)
             val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(false))
             insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)))
-            urlGet(fullUrl(ukPensionSchemePayments(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(ukPensionSchemePayments(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -206,7 +215,9 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(ukPensionSchemePayments(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(ukPensionSchemePayments(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -218,7 +229,6 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
 
   ".submit" should {
     userScenarios.foreach { user =>
-
       import Selectors._
       import user.commonExpectedResults._
 
@@ -234,8 +244,13 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
             val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = None)
             insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)))
 
-            urlPost(fullUrl(ukPensionSchemePayments(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(ukPensionSchemePayments(taxYearEOY)),
+              body = form,
+              welsh = user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has the correct status" in {
@@ -266,7 +281,10 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
         authoriseAgentOrIndividual()
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = None)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)))
-        urlPost(fullUrl(ukPensionSchemePayments(taxYearEOY)), body = form, follow = false,
+        urlPost(
+          fullUrl(ukPensionSchemePayments(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -290,7 +308,10 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
         val pensionsViewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = Some(true))
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(incomeFromPensions = pensionsViewModel)))
 
-        urlPost(fullUrl(ukPensionSchemePayments(taxYearEOY)), body = form, follow = false,
+        urlPost(
+          fullUrl(ukPensionSchemePayments(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 

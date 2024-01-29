@@ -27,7 +27,7 @@ object StateBenefitsSessionHttpParser extends APIParser {
   type StateBenefitsSessionResponse = Either[APIErrorModel, Unit]
 
   override val parserName: String = "StateBenefitsSessionHttpParser"
-  override val service: String = "income-tax-state-benefits"
+  override val service: String    = "income-tax-state-benefits"
 
   implicit object StateBenefitsSessionHttpReads extends HttpReads[StateBenefitsSessionResponse] {
 

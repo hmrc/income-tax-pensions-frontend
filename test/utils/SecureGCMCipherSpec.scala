@@ -33,19 +33,21 @@ class SecureGCMCipherSpec extends UnitTest {
 
   private val underTest = new SecureGCMCipher
 
-  private val secretKey = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
-  private val secretKey2 = "cXo7u0HuJK8B/52xLwW7eQ=="
-  private val textToEncrypt = "textNotEncrypted"
+  private val secretKey      = "VqmXp7yigDFxbCUdDdNZVIvbW6RgPNJsliv6swQNCL8="
+  private val secretKey2     = "cXo7u0HuJK8B/52xLwW7eQ=="
+  private val textToEncrypt  = "textNotEncrypted"
   private val associatedText = "associatedText"
-  private val encryptedTextTest: EncryptedValue = EncryptedValue("jOrmajkEqb7Jbo1GvK4Mhc3E7UiOfKS3RCy3O/F6myQ=",
-    "WM1yMH4KBGdXe65vl8Gzd37Ob2Bf1bFUSaMqXk78sNeorPFOSWwwhOj0Lcebm5nWRhjNgL4K2SV3GWEXyyqeIhWQ4fJIVQRHM9VjWCTyf7/1/f/ckAaMHqkF1XC8bnW9")
+  private val encryptedTextTest: EncryptedValue = EncryptedValue(
+    "jOrmajkEqb7Jbo1GvK4Mhc3E7UiOfKS3RCy3O/F6myQ=",
+    "WM1yMH4KBGdXe65vl8Gzd37Ob2Bf1bFUSaMqXk78sNeorPFOSWwwhOj0Lcebm5nWRhjNgL4K2SV3GWEXyyqeIhWQ4fJIVQRHM9VjWCTyf7/1/f/ckAaMHqkF1XC8bnW9"
+  )
 
   implicit val textAndKey: TextAndKey = TextAndKey(associatedText, secretKey)
 
   "encrypt" should {
     "return plain text when turned off" in {
       val encrypterWithNoCrypt = new SecureGCMCipher()(new MockAppConfig().config(false))
-      val encryptedText = encrypterWithNoCrypt.encrypt(textToEncrypt)
+      val encryptedText        = encrypterWithNoCrypt.encrypt(textToEncrypt)
 
       encryptedText.value shouldBe textToEncrypt
     }
@@ -56,7 +58,7 @@ class SecureGCMCipherSpec extends UnitTest {
     }
 
     "return an EncryptionDecryptionError if the associated text is an empty string" in {
-      val emptyAssociatedText = ""
+      val emptyAssociatedText             = ""
       implicit val textAndKey: TextAndKey = TextAndKey(emptyAssociatedText, secretKey)
 
       val encryptedAttempt = intercept[EncryptionDecryptionException](underTest.encrypt(textToEncrypt))
@@ -65,7 +67,7 @@ class SecureGCMCipherSpec extends UnitTest {
     }
 
     "return an EncryptionDecryptionError if the key is empty" in {
-      val invalidSecretKey = ""
+      val invalidSecretKey                = ""
       implicit val textAndKey: TextAndKey = TextAndKey(associatedText, invalidSecretKey)
 
       val encryptedAttempt = intercept[EncryptionDecryptionException](underTest.encrypt(textToEncrypt))
@@ -80,22 +82,23 @@ class SecureGCMCipherSpec extends UnitTest {
 
       val encryptedAttempt = intercept[EncryptionDecryptionException](underTest.encrypt(textToEncrypt))
 
-      assert(encryptedAttempt.failureReason.contains("Key being used is not valid." +
-        " It could be due to invalid encoding, wrong length or uninitialized"))
+      assert(
+        encryptedAttempt.failureReason.contains("Key being used is not valid." +
+          " It could be due to invalid encoding, wrong length or uninitialized"))
     }
 
     "return an EncryptionDecryptionError if the secret key is an invalid type" in {
       val keyGen = KeyGenerator.getInstance("DES")
-      val key = keyGen.generateKey()
+      val key    = keyGen.generateKey()
       val secureGCMEncrypter = new SecureGCMCipher {
         override val ALGORITHM_KEY: String = "DES"
       }
       val encryptedAttempt = intercept[EncryptionDecryptionException](
-        secureGCMEncrypter.generateCipherText(textToEncrypt, associatedText.getBytes,
-          new GCMParameterSpec(96, "hjdfbhvbhvbvjvjfvb".getBytes), key)
+        secureGCMEncrypter.generateCipherText(textToEncrypt, associatedText.getBytes, new GCMParameterSpec(96, "hjdfbhvbhvbvjvjfvb".getBytes), key)
       )
-      assert(encryptedAttempt.failureReason.contains("Key being used is not valid." +
-        " It could be due to invalid encoding, wrong length or uninitialized"))
+      assert(
+        encryptedAttempt.failureReason.contains("Key being used is not valid." +
+          " It could be due to invalid encoding, wrong length or uninitialized"))
     }
 
     "return an EncryptionDecryptionError if the alg is invalid" in {
@@ -172,7 +175,7 @@ class SecureGCMCipherSpec extends UnitTest {
   "decrypt" should {
     "return plain text when turned off" in {
       val encrypterWithNoCrypt = new SecureGCMCipher()(new MockAppConfig().config(false))
-      val encryptedText = encrypterWithNoCrypt.decrypt(textToEncrypt, "nonce")
+      val encryptedText        = encrypterWithNoCrypt.decrypt(textToEncrypt, "nonce")
       encryptedText shouldBe textToEncrypt
     }
 
@@ -190,8 +193,7 @@ class SecureGCMCipherSpec extends UnitTest {
 
     "return a EncryptionDecryptionException if the nonce is different" in {
       val decryptedAttempt = intercept[EncryptionDecryptionException](
-        underTest.decrypt(encryptedTextTest.value,
-          Base64.getEncoder.encodeToString("jdbfjdgvcjksabcvajbvjkbvjbdvjbvjkabv".getBytes))
+        underTest.decrypt(encryptedTextTest.value, Base64.getEncoder.encodeToString("jdbfjdgvcjksabcvajbvjkbvjbdvjbvjkabv".getBytes))
       )
       assert(decryptedAttempt.failureReason.contains("Error occured due to padding scheme"))
     }
@@ -244,22 +246,27 @@ class SecureGCMCipherSpec extends UnitTest {
       val decryptedAttempt = intercept[EncryptionDecryptionException](
         underTest.decrypt(encryptedTextTest.value, encryptedTextTest.nonce)
       )
-      assert(decryptedAttempt.failureReason.contains("Key being used is not valid." +
-        " It could be due to invalid encoding, wrong length or uninitialized"))
+      assert(
+        decryptedAttempt.failureReason.contains("Key being used is not valid." +
+          " It could be due to invalid encoding, wrong length or uninitialized"))
     }
 
     "return an EncryptionDecryptionError if the secret key is an invalid type" in {
       val keyGen = KeyGenerator.getInstance("DES")
-      val key = keyGen.generateKey()
+      val key    = keyGen.generateKey()
       val secureGCMEncrypter = new SecureGCMCipher {
         override val ALGORITHM_KEY: String = "DES"
       }
       val decryptedAttempt = intercept[EncryptionDecryptionException](
-        secureGCMEncrypter.decryptCipherText(encryptedTextTest.value, associatedText.getBytes,
-          new GCMParameterSpec(96, "hjdfbhvbhvbvjvjfvb".getBytes), key)
+        secureGCMEncrypter.decryptCipherText(
+          encryptedTextTest.value,
+          associatedText.getBytes,
+          new GCMParameterSpec(96, "hjdfbhvbhvbvjvjfvb".getBytes),
+          key)
       )
-      assert(decryptedAttempt.failureReason.contains("Key being used is not valid." +
-        " It could be due to invalid encoding, wrong length or uninitialized"))
+      assert(
+        decryptedAttempt.failureReason.contains("Key being used is not valid." +
+          " It could be due to invalid encoding, wrong length or uninitialized"))
     }
 
     "return an EncryptionDecryptionError if the alg is invalid" in {

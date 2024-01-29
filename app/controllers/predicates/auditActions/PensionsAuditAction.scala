@@ -36,8 +36,9 @@ trait PensionsAuditAction extends FrontendHeaderCarrierProvider {
 
 object PensionsAuditAction {
 
-  case class PaymentsIntoPensionsViewAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserSessionDataRequest] with PensionsAuditAction {
+  case class PaymentsIntoPensionsViewAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = Future.successful {
       val auditModel = PaymentsIntoPensionsAudit.standardAudit(req.user, req.pensionsUserData)
@@ -46,13 +47,13 @@ object PensionsAuditAction {
     }
   }
 
-  case class PaymentsIntoPensionsUpdateAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserPriorAndSessionDataRequest] with PensionsAuditAction {
+  case class PaymentsIntoPensionsUpdateAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserPriorAndSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = Future.successful {
       val toAuditModel = {
-        val auditModel = PaymentsIntoPensionsAudit.amendAudit(
-          req.user, req.pensionsUserData, req.pensions)
+        val auditModel = PaymentsIntoPensionsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
         if (req.pensions.isEmpty) () => auditModel.toAuditModelCreate
         else () => auditModel.toAuditModelAmend
       }
@@ -61,8 +62,9 @@ object PensionsAuditAction {
     }
   }
 
-  case class UnauthorisedPaymentsViewAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserSessionDataRequest] with PensionsAuditAction {
+  case class UnauthorisedPaymentsViewAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = Future.successful {
       val auditModel = UnauthorisedPaymentsAudit.standardAudit(req.user, req.pensionsUserData)
@@ -71,13 +73,13 @@ object PensionsAuditAction {
     }
   }
 
-  case class UnauthorisedPaymentsUpdateAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserPriorAndSessionDataRequest] with PensionsAuditAction {
+  case class UnauthorisedPaymentsUpdateAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserPriorAndSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = Future.successful {
       val toAuditModel = {
-        val auditModel = UnauthorisedPaymentsAudit.amendAudit(
-          req.user, req.pensionsUserData, req.pensions)
+        val auditModel = UnauthorisedPaymentsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
         if (req.pensions.isEmpty) () => auditModel.toAuditModelCreate
         else () => auditModel.toAuditModelAmend
       }
@@ -86,8 +88,9 @@ object PensionsAuditAction {
     }
   }
 
-  case class IncomeFromOverseasPensionsViewAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserSessionDataRequest] with PensionsAuditAction {
+  case class IncomeFromOverseasPensionsViewAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
       val auditModel = IncomeFromOverseasPensionsAudit.standardAudit(req.user, req.pensionsUserData)
@@ -96,16 +99,16 @@ object PensionsAuditAction {
     }
   }
 
-  case class IncomeFromOverseasPensionsUpdateAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserPriorAndSessionDataRequest] with PensionsAuditAction {
+  case class IncomeFromOverseasPensionsUpdateAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserPriorAndSessionDataRequest]
+      with PensionsAuditAction {
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = IncomeFromOverseasPensionsAudit.amendAudit(
-          req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) {
-          () => auditModel.toAuditModelCreate
-        } else {
-          () => auditModel.toAuditModelAmend
+        val auditModel = IncomeFromOverseasPensionsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
+        if (req.pensions.isEmpty) { () =>
+          auditModel.toAuditModelCreate
+        } else { () =>
+          auditModel.toAuditModelAmend
         }
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, IncomeFromOverseasPensionsAudit.writes)
@@ -113,8 +116,9 @@ object PensionsAuditAction {
     }
   }
 
-  case class PaymentsIntoOverseasPensionsViewAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserSessionDataRequest] with PensionsAuditAction {
+  case class PaymentsIntoOverseasPensionsViewAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
       val auditModel = PaymentsIntoOverseasPensionsAudit.standardAudit(req.user, req.pensionsUserData)
@@ -123,17 +127,17 @@ object PensionsAuditAction {
     }
   }
 
-  case class PaymentsIntoOverseasPensionsUpdateAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserPriorAndSessionDataRequest] with PensionsAuditAction {
+  case class PaymentsIntoOverseasPensionsUpdateAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserPriorAndSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = PaymentsIntoOverseasPensionsAudit.amendAudit(
-          req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) {
-          () => auditModel.toAuditModelCreate
-        } else {
-          () => auditModel.toAuditModelAmend
+        val auditModel = PaymentsIntoOverseasPensionsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
+        if (req.pensions.isEmpty) { () =>
+          auditModel.toAuditModelCreate
+        } else { () =>
+          auditModel.toAuditModelAmend
         }
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, PaymentsIntoOverseasPensionsAudit.writes)
@@ -141,8 +145,9 @@ object PensionsAuditAction {
     }
   }
 
-  case class ShortServiceRefundsViewAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserSessionDataRequest] with PensionsAuditAction {
+  case class ShortServiceRefundsViewAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
       val auditModel = ShortServiceRefundsAudit.standardAudit(req.user, req.pensionsUserData)
@@ -151,17 +156,17 @@ object PensionsAuditAction {
     }
   }
 
-  case class ShortServiceRefundsUpdateAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserPriorAndSessionDataRequest] with PensionsAuditAction {
+  case class ShortServiceRefundsUpdateAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserPriorAndSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = ShortServiceRefundsAudit.amendAudit(
-          req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) {
-          () => auditModel.toAuditModelCreate
-        } else {
-          () => auditModel.toAuditModelAmend
+        val auditModel = ShortServiceRefundsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
+        if (req.pensions.isEmpty) { () =>
+          auditModel.toAuditModelCreate
+        } else { () =>
+          auditModel.toAuditModelAmend
         }
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, ShortServiceRefundsAudit.writes)
@@ -169,8 +174,9 @@ object PensionsAuditAction {
     }
   }
 
-  case class IncomeFromStatePensionsViewAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserSessionDataRequest] with PensionsAuditAction {
+  case class IncomeFromStatePensionsViewAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
       val auditModel = IncomeFromStatePensionsAudit.standardAudit(req.user, req.pensionsUserData)
@@ -179,17 +185,17 @@ object PensionsAuditAction {
     }
   }
 
-  case class IncomeFromStatePensionsUpdateAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserPriorAndSessionDataRequest] with PensionsAuditAction {
+  case class IncomeFromStatePensionsUpdateAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserPriorAndSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = IncomeFromStatePensionsAudit.amendAudit(
-          req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) {
-          () => auditModel.toAuditModelCreate
-        } else {
-          () => auditModel.toAuditModelAmend
+        val auditModel = IncomeFromStatePensionsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
+        if (req.pensions.isEmpty) { () =>
+          auditModel.toAuditModelCreate
+        } else { () =>
+          auditModel.toAuditModelAmend
         }
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, IncomeFromStatePensionsAudit.writes)
@@ -197,8 +203,9 @@ object PensionsAuditAction {
     }
   }
 
-  case class UkPensionIncomeViewAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserSessionDataRequest] with PensionsAuditAction {
+  case class UkPensionIncomeViewAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
       val auditModel = UkPensionIncomeAudit.standardAudit(req.user, req.pensionsUserData)
@@ -207,16 +214,16 @@ object PensionsAuditAction {
     }
   }
 
-  case class UkPensionIncomeUpdateAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserPriorAndSessionDataRequest] with PensionsAuditAction {
+  case class UkPensionIncomeUpdateAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserPriorAndSessionDataRequest]
+      with PensionsAuditAction {
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = UkPensionIncomeAudit.amendAudit(
-          req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) {
-          () => auditModel.toAuditModelCreate
-        } else {
-          () => auditModel.toAuditModelAmend
+        val auditModel = UkPensionIncomeAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
+        if (req.pensions.isEmpty) { () =>
+          auditModel.toAuditModelCreate
+        } else { () =>
+          auditModel.toAuditModelAmend
         }
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, UkPensionIncomeAudit.writes)
@@ -224,8 +231,9 @@ object PensionsAuditAction {
     }
   }
 
-  case class AnnualAllowancesViewAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserSessionDataRequest] with PensionsAuditAction {
+  case class AnnualAllowancesViewAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
       val auditModel = AnnualAllowancesAudit.standardAudit(req.user, req.pensionsUserData)
@@ -234,17 +242,17 @@ object PensionsAuditAction {
     }
   }
 
-  case class AnnualAllowancesUpdateAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserPriorAndSessionDataRequest] with PensionsAuditAction {
+  case class AnnualAllowancesUpdateAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserPriorAndSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = AnnualAllowancesAudit.amendAudit(
-          req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) {
-          () => auditModel.toAuditModelCreate
-        } else {
-          () => auditModel.toAuditModelAmend
+        val auditModel = AnnualAllowancesAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
+        if (req.pensions.isEmpty) { () =>
+          auditModel.toAuditModelCreate
+        } else { () =>
+          auditModel.toAuditModelAmend
         }
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, AnnualAllowancesAudit.writes)
@@ -252,8 +260,9 @@ object PensionsAuditAction {
     }
   }
 
-  case class TransfersIntoOverseasPensionsViewAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserSessionDataRequest] with PensionsAuditAction {
+  case class TransfersIntoOverseasPensionsViewAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
       val auditModel = TransfersIntoOverseasPensionsAudit.standardAudit(req.user, req.pensionsUserData)
@@ -262,17 +271,17 @@ object PensionsAuditAction {
     }
   }
 
-  case class TransfersIntoOverseasPensionsUpdateAuditAction @Inject()(auditService: AuditService)(implicit val ec: ExecutionContext)
-    extends ActionFilter[UserPriorAndSessionDataRequest] with PensionsAuditAction {
+  case class TransfersIntoOverseasPensionsUpdateAuditAction @Inject() (auditService: AuditService)(implicit val ec: ExecutionContext)
+      extends ActionFilter[UserPriorAndSessionDataRequest]
+      with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = TransfersIntoOverseasPensionsAudit.amendAudit(
-          req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) {
-          () => auditModel.toAuditModelCreate
-        } else {
-          () => auditModel.toAuditModelAmend
+        val auditModel = TransfersIntoOverseasPensionsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
+        if (req.pensions.isEmpty) { () =>
+          auditModel.toAuditModelCreate
+        } else { () =>
+          auditModel.toAuditModelAmend
         }
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, TransfersIntoOverseasPensionsAudit.writes)

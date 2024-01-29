@@ -16,7 +16,4 @@
 
 package models.audit
 
-case class AuditModel[T](auditType: String,
-                          transactionName: String,
-                          detail: T
-                        )
+case class AuditModel[T](auditType: String, transactionName: String, detail: T)

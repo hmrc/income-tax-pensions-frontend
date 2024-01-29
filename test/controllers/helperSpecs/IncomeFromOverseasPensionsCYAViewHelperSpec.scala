@@ -28,7 +28,7 @@ import play.test.Helpers.stubMessagesApi
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Key, SummaryListRow, Value}
 
-class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Matchers {  //scalastyle:off magic.number
+class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Matchers { // scalastyle:off magic.number
 
   val taxYear = 2022
 
@@ -50,16 +50,17 @@ class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Match
 
         val model = IncomeFromOverseasPensionsViewModel(
           paymentsFromOverseasPensionsQuestion = Some(true),
-          overseasIncomePensionSchemes = Seq(PensionScheme(
-            alphaThreeCode = Some("FRA"),
-            alphaTwoCode = Some("FR"),
-            pensionPaymentAmount = Some(100),
-            pensionPaymentTaxPaid = Some(100),
-            specialWithholdingTaxQuestion = Some(true),
-            specialWithholdingTaxAmount = Some(100),
-            foreignTaxCreditReliefQuestion = Some(true),
-            taxableAmount = Some(100)
-          ))
+          overseasIncomePensionSchemes = Seq(
+            PensionScheme(
+              alphaThreeCode = Some("FRA"),
+              alphaTwoCode = Some("FR"),
+              pensionPaymentAmount = Some(100),
+              pensionPaymentTaxPaid = Some(100),
+              specialWithholdingTaxQuestion = Some(true),
+              specialWithholdingTaxAmount = Some(100),
+              foreignTaxCreditReliefQuestion = Some(true),
+              taxableAmount = Some(100)
+            ))
         )
         val summaryListRows = IncomeFromOverseasPensionsCYAViewHelper.summaryListRows(model, taxYear)
 
@@ -72,16 +73,17 @@ class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Match
 
         val model = IncomeFromOverseasPensionsViewModel(
           paymentsFromOverseasPensionsQuestion = Some(true),
-          overseasIncomePensionSchemes = Seq(PensionScheme(
-            alphaThreeCode = Some("FRA"),
-            alphaTwoCode = Some("FR"),
-            pensionPaymentAmount = Some(100),
-            pensionPaymentTaxPaid = Some(100),
-            specialWithholdingTaxQuestion = Some(true),
-            specialWithholdingTaxAmount = Some(100),
-            foreignTaxCreditReliefQuestion = Some(true),
-            taxableAmount = Some(100)
-          ),
+          overseasIncomePensionSchemes = Seq(
+            PensionScheme(
+              alphaThreeCode = Some("FRA"),
+              alphaTwoCode = Some("FR"),
+              pensionPaymentAmount = Some(100),
+              pensionPaymentTaxPaid = Some(100),
+              specialWithholdingTaxQuestion = Some(true),
+              specialWithholdingTaxAmount = Some(100),
+              foreignTaxCreditReliefQuestion = Some(true),
+              taxableAmount = Some(100)
+            ),
             PensionScheme(
               alphaThreeCode = Some("IND"),
               alphaTwoCode = Some("IN"),
@@ -116,15 +118,16 @@ class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Match
 
         val model = IncomeFromOverseasPensionsViewModel(
           paymentsFromOverseasPensionsQuestion = Some(false),
-          overseasIncomePensionSchemes = Seq(PensionScheme(
-            alphaThreeCode = Some("FRA"),
-            pensionPaymentAmount = Some(100),
-            pensionPaymentTaxPaid = Some(100),
-            specialWithholdingTaxQuestion = Some(true),
-            specialWithholdingTaxAmount = Some(100),
-            foreignTaxCreditReliefQuestion = Some(true),
-            taxableAmount = Some(100)
-          ))
+          overseasIncomePensionSchemes = Seq(
+            PensionScheme(
+              alphaThreeCode = Some("FRA"),
+              pensionPaymentAmount = Some(100),
+              pensionPaymentTaxPaid = Some(100),
+              specialWithholdingTaxQuestion = Some(true),
+              specialWithholdingTaxAmount = Some(100),
+              foreignTaxCreditReliefQuestion = Some(true),
+              taxableAmount = Some(100)
+            ))
         )
         val summaryListRows = IncomeFromOverseasPensionsCYAViewHelper.summaryListRows(model, taxYear)
 
@@ -165,7 +168,8 @@ class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Match
             specialWithholdingTaxAmount = Some(400.00),
             foreignTaxCreditReliefQuestion = Some(false),
             taxableAmount = Some(1600.00)
-          ))
+          )
+        )
 
         val updatedModel = anIncomeFromOverseasPensionsViewModel.copy(
           overseasIncomePensionSchemes = wrongOverseasIncomePensionSchemes
@@ -192,28 +196,39 @@ class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Match
     }
   }
 
-  private def assertRowForPaymentsFromOverseasPensions(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Payments from overseas pensions",
-      expectedValue,
-      "Change",
-      "/2022/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status",
-      "incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden"))
-  }
+  private def assertRowForPaymentsFromOverseasPensions(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Payments from overseas pensions",
+        expectedValue,
+        "Change",
+        "/2022/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status",
+        "incomeFromOverseasPensions.cya.paymentsFromOverseasPensions.hidden"
+      )
+    )
 
   private def assertSummaryListRow(summaryListRow: SummaryListRow, expectedSummaryRowContents: ExpectedSummaryRowContents): Unit = {
     assertLabel(summaryListRow, expectedSummaryRowContents.label)
     assertValue(summaryListRow, expectedSummaryRowContents.value)
-    assertAction(summaryListRow, expectedSummaryRowContents.linkLabel, expectedSummaryRowContents.linkPathEnding, expectedSummaryRowContents.hiddenText)
+    assertAction(
+      summaryListRow,
+      expectedSummaryRowContents.linkLabel,
+      expectedSummaryRowContents.linkPathEnding,
+      expectedSummaryRowContents.hiddenText)
   }
 
   private def assertRowForOverseasPensionSchemes(summaryListRow: SummaryListRow, expectedValue: String): Unit =
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Overseas pension schemes",
-      expectedValue,
-      "Change",
-      s"/2022/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary",
-      "common.overseas.pension.schemes.hidden"))
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Overseas pension schemes",
+        expectedValue,
+        "Change",
+        s"/2022/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary",
+        "common.overseas.pension.schemes.hidden"
+      )
+    )
 
   private def assertAction(summaryListRow: SummaryListRow, expectedLabel: String, expectedPath: String, expectedHiddenText: String): Unit = {
 
@@ -229,17 +244,15 @@ class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Match
     firstAction.visuallyHiddenText.get shouldBe expectedHiddenText
   }
 
-  private def assertLabel(summaryListRow: SummaryListRow, expectedLabel: String) = {
+  private def assertLabel(summaryListRow: SummaryListRow, expectedLabel: String) =
     withClue(s"We had expected the label to be '$expectedLabel':") {
       summaryListRow.key shouldBe Key(HtmlContent(expectedLabel), "govuk-!-width-one-third")
     }
-  }
 
-  private def assertValue(summaryListRow: SummaryListRow, expectedValue: String): Assertion = {
+  private def assertValue(summaryListRow: SummaryListRow, expectedValue: String): Assertion =
     withClue(s"We had expected the value to be '$expectedValue':") {
       summaryListRow.value shouldBe Value(HtmlContent(expectedValue), "govuk-!-width-one-third")
     }
-  }
 
   private def stubbedMessages() = {
     import scala.jdk.CollectionConverters._
@@ -249,14 +262,14 @@ class IncomeFromOverseasPensionsCYAViewHelperSpec extends AnyWordSpec with Match
         Lang.defaultLang.code ->
           Map(
             "incomeFromOverseasPensions.cya.paymentsFromOverseasPensions" -> "Payments from overseas pensions",
-            "common.yes" -> "Yes",
-            "common.no" -> "No",
-            "common.change" -> "Change",
-            "common.overseas.pension.schemes" -> "Overseas pension schemes"
-          )
-            .asJava
+            "common.yes"                                                  -> "Yes",
+            "common.no"                                                   -> "No",
+            "common.change"                                               -> "Change",
+            "common.overseas.pension.schemes"                             -> "Overseas pension schemes"
+          ).asJava
       ).asJava,
-      new Langs(new play.api.i18n.DefaultLangs()))
+      new Langs(new play.api.i18n.DefaultLangs())
+    )
     messagesApi.preferred(new Langs(new play.api.i18n.DefaultLangs()).availables())
   }
 

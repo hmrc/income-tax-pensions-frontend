@@ -42,7 +42,7 @@ import scala.concurrent.Future
 class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits with DefaultAwaitTimeout {
 
   private val repo: PensionsUserDataRepositoryImpl = app.injector.instanceOf[PensionsUserDataRepositoryImpl]
-  private val encryptionService = app.injector.instanceOf[EncryptionService]
+  private val encryptionService                    = app.injector.instanceOf[EncryptionService]
 
   private def count = await(repo.collection.countDocuments().toFuture())
 
@@ -59,18 +59,25 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
 
   private val now = DateTime.now(DateTimeZone.UTC)
 
-  private val paymentsIntoPension = PaymentsIntoPensionsViewModel().copy(rasPensionPaymentQuestion = Some(true))
-  private val pensionAnnualAllowances = PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(true))
-  private val incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(anStateBenefitViewModelOne))
-  private val unauthorisedPayments = UnauthorisedPaymentsViewModel()
-  private val paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions = Some(true))
-  private val incomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel()
+  private val paymentsIntoPension                   = PaymentsIntoPensionsViewModel().copy(rasPensionPaymentQuestion = Some(true))
+  private val pensionAnnualAllowances               = PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(true))
+  private val incomeFromPensions                    = IncomeFromPensionsViewModel(statePension = Some(anStateBenefitViewModelOne))
+  private val unauthorisedPayments                  = UnauthorisedPaymentsViewModel()
+  private val paymentsIntoOverseasPensions          = PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions = Some(true))
+  private val incomeFromOverseasPensionsViewModel   = IncomeFromOverseasPensionsViewModel()
   private val transferIntoOverseasPensionsViewModel = TransfersIntoOverseasPensionsViewModel()
-  private val shortServiceRefundsViewModel = ShortServiceRefundsViewModel()
+  private val shortServiceRefundsViewModel          = ShortServiceRefundsViewModel()
 
-  private val pensionCYAModel = PensionsCYAModel(paymentsIntoPension, pensionAnnualAllowances,
-    incomeFromPensions, unauthorisedPayments, paymentsIntoOverseasPensions, incomeFromOverseasPensionsViewModel,
-    transferIntoOverseasPensionsViewModel, shortServiceRefundsViewModel)
+  private val pensionCYAModel = PensionsCYAModel(
+    paymentsIntoPension,
+    pensionAnnualAllowances,
+    incomeFromPensions,
+    unauthorisedPayments,
+    paymentsIntoOverseasPensions,
+    incomeFromOverseasPensionsViewModel,
+    transferIntoOverseasPensionsViewModel,
+    shortServiceRefundsViewModel
+  )
 
   val userDataOne: PensionsUserData = PensionsUserData(
     sessionIdOne,
@@ -199,7 +206,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
 
   "find" should {
     "get a document and update the TTL" in new EmptyDatabase {
-      private val now = DateTime.now(DateTimeZone.UTC)
+      private val now  = DateTime.now(DateTimeZone.UTC)
       private val data = userDataOne.copy(lastUpdated = now)
 
       await(repo.createOrUpdate(data)) mustBe Right(())
@@ -215,9 +222,8 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
       await(repo.createOrUpdate(userDataFull)) mustBe Right(())
       count mustBe 1
 
-      val findResult: Either[DatabaseError, Option[PensionsUserData]] = {
+      val findResult: Either[DatabaseError, Option[PensionsUserData]] =
         await(repo.find(userDataFull.taxYear, userOne))
-      }
 
       findResult mustBe Right(Some(userDataFull.copy(lastUpdated = findResult.toOption.get.get.lastUpdated)))
     }
@@ -245,7 +251,8 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
     Seq(new MongoTimeoutException(""), new MongoInternalException(""), new MongoException("")).foreach { exception =>
       s"recover when the exception is a MongoException or a subclass of MongoException - ${exception.getClass.getSimpleName}" in {
         val result =
-          Future.failed(exception)
+          Future
+            .failed(exception)
             .recover(repo.mongoRecover[Int]("CreateOrUpdate", FAILED_TO_CREATE_UPDATE_PENSIONS_DATA, userOne))
 
         await(result) mustBe None
@@ -255,7 +262,8 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
     Seq(new NullPointerException(""), new RuntimeException("")).foreach { exception =>
       s"not recover when the exception is not a subclass of MongoException - ${exception.getClass.getSimpleName}" in {
         val result =
-          Future.failed(exception)
+          Future
+            .failed(exception)
             .recover(repo.mongoRecover[Int]("CreateOrUpdate", FAILED_TO_CREATE_UPDATE_PENSIONS_DATA, userOne))
 
         assertThrows[RuntimeException] {

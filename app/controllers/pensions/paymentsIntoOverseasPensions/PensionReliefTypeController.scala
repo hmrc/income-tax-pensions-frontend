@@ -37,39 +37,40 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
-                                            pensionSessionService: PensionSessionService,
-                                            view: PensionReliefTypeView,
-                                            formsProvider: FormsProvider,
-                                            errorHandler: ErrorHandler)
-                                           (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class PensionReliefTypeController @Inject() (
+    actionsProvider: ActionsProvider,
+    pensionSessionService: PensionSessionService,
+    view: PensionReliefTypeView,
+    formsProvider: FormsProvider,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
-  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionData =>
-      indexCheckThenJourneyCheck(sessionData.pensionsUserData, reliefIndex, PensionReliefTypePage, taxYear) { relief: Relief =>
-        relief.reliefType.fold {
-          Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm(sessionData.user), taxYear, reliefIndex)))
-        } {
-          reliefType =>
-            Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm(sessionData.user).fill(reliefType), taxYear, reliefIndex)))
-        }
+  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+    indexCheckThenJourneyCheck(sessionData.pensionsUserData, reliefIndex, PensionReliefTypePage, taxYear) { relief: Relief =>
+      relief.reliefType.fold {
+        Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm(sessionData.user), taxYear, reliefIndex)))
+      } { reliefType =>
+        Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm(sessionData.user).fill(reliefType), taxYear, reliefIndex)))
       }
+    }
   }
 
-  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionData =>
-      indexCheckThenJourneyCheck(sessionData.pensionsUserData, reliefIndex, PensionReliefTypePage, taxYear) { _: Relief =>
-        formsProvider.overseasPensionsReliefTypeForm(sessionData.user).bindFromRequest().fold(
+  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+    indexCheckThenJourneyCheck(sessionData.pensionsUserData, reliefIndex, PensionReliefTypePage, taxYear) { _: Relief =>
+      formsProvider
+        .overseasPensionsReliefTypeForm(sessionData.user)
+        .bindFromRequest()
+        .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
           newTaxReliefQuestion => updateViewModel(newTaxReliefQuestion, reliefIndex, taxYear)(request = sessionData)
         )
-      }
+    }
   }
 
-  private def updateViewModel(taxReliefQuestion: String,
-                              indexOpt: Option[Int],
-                              taxYear: Int)(implicit request: UserSessionDataRequest[_]): Future[Result] = {
+  private def updateViewModel(taxReliefQuestion: String, indexOpt: Option[Int], taxYear: Int)(implicit
+      request: UserSessionDataRequest[_]): Future[Result] = {
 
     val piopReliefs = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
     validatedIndex(indexOpt, piopReliefs.size) match {
@@ -87,9 +88,8 @@ class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
           )
           pensionSessionService.createOrUpdateSessionData(
             request.user,
-            request.pensionsUserData.pensions.copy(
-              paymentsIntoOverseasPensions = request.pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(
-                reliefs = piopReliefs.updated(idx, updatedReliefs))),
+            request.pensionsUserData.pensions.copy(paymentsIntoOverseasPensions =
+              request.pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = piopReliefs.updated(idx, updatedReliefs))),
             taxYear,
             request.pensionsUserData.isPriorSubmission
           )(errorHandler.internalServerError()) {
@@ -103,10 +103,8 @@ class PensionReliefTypeController @Inject()(actionsProvider: ActionsProvider,
     }
   }
 
-  private def redirectBaseOnTaxReliefQuestion(taxReliefQuestion: String,
-                                              taxYear: Int, user: User,
-                                              reliefIndex: Option[Int]
-                                             )(implicit request: UserSessionDataRequest[_]): Result =
+  private def redirectBaseOnTaxReliefQuestion(taxReliefQuestion: String, taxYear: Int, user: User, reliefIndex: Option[Int])(implicit
+      request: UserSessionDataRequest[_]): Result =
     taxReliefQuestion match {
       case TaxReliefQuestion.DoubleTaxationRelief =>
         Redirect(DoubleTaxationAgreementController.show(taxYear, reliefIndex))

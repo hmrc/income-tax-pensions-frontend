@@ -24,7 +24,7 @@ class MockAppConfig extends MockFactory {
 
   def config(encrypt: Boolean = true): AppConfig = new AppConfig(mock[ServicesConfig]) {
     override lazy val signInContinueUrl: String = "/continue"
-    override lazy val signInUrl: String = "/signIn"
+    override lazy val signInUrl: String         = "/signIn"
 
     override lazy val defaultTaxYear: Int = 2022
 
@@ -40,7 +40,7 @@ class MockAppConfig extends MockFactory {
 
     override lazy val signOutUrl: String = "/sign-out-url"
 
-    override lazy val timeoutDialogTimeout: Int = 900
+    override lazy val timeoutDialogTimeout: Int   = 900
     override lazy val timeoutDialogCountdown: Int = 120
 
     override lazy val taxYearErrorFeature: Boolean = true
@@ -53,7 +53,7 @@ class MockAppConfig extends MockFactory {
 
     override def incomeTaxSubmissionIvRedirect: String = "/update-and-submit-income-tax-return/iv-uplift"
 
-    override lazy val encryptionKey: String = "encryptionKey12345"
+    override lazy val encryptionKey: String  = "encryptionKey12345"
     override lazy val useEncryption: Boolean = encrypt
   }
 }

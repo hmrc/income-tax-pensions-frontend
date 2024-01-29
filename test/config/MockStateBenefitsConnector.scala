@@ -30,11 +30,11 @@ trait MockStateBenefitsConnector extends MockFactory {
 
   val mockStateBenefitsConnector: StateBenefitsConnector = mock[StateBenefitsConnector]
 
-  def mockSaveClaimData(nino: String, model: StateBenefitsUserData, response: Either[APIErrorModel, Unit]):
-  CallHandler4[String, StateBenefitsUserData, HeaderCarrier, ExecutionContext, Future[StateBenefitsSessionResponse]] = {
-    (mockStateBenefitsConnector.saveClaimData(_: String, _: StateBenefitsUserData)(_: HeaderCarrier, _: ExecutionContext))
+  def mockSaveClaimData(nino: String, model: StateBenefitsUserData, response: Either[APIErrorModel, Unit])
+      : CallHandler4[String, StateBenefitsUserData, HeaderCarrier, ExecutionContext, Future[StateBenefitsSessionResponse]] =
+    (mockStateBenefitsConnector
+      .saveClaimData(_: String, _: StateBenefitsUserData)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, model, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
-  }
 }

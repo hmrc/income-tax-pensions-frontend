@@ -34,47 +34,46 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 import java.time.LocalDate
 
-
 class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   def startDateForm(day: String, month: String, year: String): Map[String, String] = Map(
-    dayInputName -> day,
+    dayInputName   -> day,
     monthInputName -> month,
-    yearInputName -> year
+    yearInputName  -> year
   )
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
-  private val dayInputName = "stateBenefitStartDate-day"
+  private val dayInputName   = "stateBenefitStartDate-day"
   private val monthInputName = "stateBenefitStartDate-month"
-  private val yearInputName = "stateBenefitStartDate-year"
-  private val validDay = "27"
-  private val validMonth = "10"
-  private val validYear = "2021"
+  private val yearInputName  = "stateBenefitStartDate-year"
+  private val validDay       = "27"
+  private val validMonth     = "10"
+  private val validYear      = "2021"
 
   object Selectors {
-    val dayInputSelector = "#day"
+    val dayInputSelector   = "#day"
     val monthInputSelector = "#month"
-    val yearInputSelector = "#year"
-    val dayInputHref = "#day"
-    val monthInputHref = "#month"
-    val yearInputHref = "#year"
+    val yearInputSelector  = "#year"
+    val dayInputHref       = "#day"
+    val monthInputHref     = "#month"
+    val yearInputHref      = "#year"
 
     def labelSelector(index: Int): String = s"#stateBenefitStartDate > div:nth-child($index) > div > label"
 
   }
 
-  val dateInFutureErrorText = "The pension start date must be in the past"
-  val realDateErrorText = "The day, month and year must be valid"
-  val tooLongAgoErrorText = "The pension start date must be after 1 January 1900"
-  val emptyAllErrorText = "Enter the pension start date"
-  val emptyDayErrorText = "The pension start date must include a day"
-  val emptyDayMonthErrorText = "The pension start date must include a day and month"
-  val emptyDayYearErrorText = "The pension start date must include a day and year"
-  val emptyMonthErrorText = "The pension start date must include a month"
+  val dateInFutureErrorText   = "The pension start date must be in the past"
+  val realDateErrorText       = "The day, month and year must be valid"
+  val tooLongAgoErrorText     = "The pension start date must be after 1 January 1900"
+  val emptyAllErrorText       = "Enter the pension start date"
+  val emptyDayErrorText       = "The pension start date must include a day"
+  val emptyDayMonthErrorText  = "The pension start date must include a day and month"
+  val emptyDayYearErrorText   = "The pension start date must include a day and year"
+  val emptyMonthErrorText     = "The pension start date must include a month"
   val emptyMonthYearErrorText = "The pension start date must include a month and year"
-  val emptyYearErrorText = "The pension start date must include a year"
-  val expectedErrorTitle = "Error: When did you start getting State Pension payments?"
+  val emptyYearErrorText      = "The pension start date must include a year"
+  val expectedErrorTitle      = "Error: When did you start getting State Pension payments?"
 
   ".show" should {
     "show page when EOY" in {
@@ -82,8 +81,12 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(aPensionsUserData)
-        urlGet(fullUrl(statePensionStartDateUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(statePensionStartDateUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe OK
     }
@@ -92,17 +95,19 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
       val data = aPensionsUserData.copy(
         pensions = aPensionsCYAModel.copy(
           incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-            statePension = Some(anStateBenefitViewModelOne.copy(
-              amountPaidQuestion = None,
-              amount = None))
+            statePension = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = None, amount = None))
           )))
 
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(data)
-        urlGet(fullUrl(statePensionStartDateUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(statePensionStartDateUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe SEE_OTHER
       result.header("location").contains(statePension(taxYearEOY))
@@ -112,10 +117,8 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
   ".submit" should {
     "persist amount and redirect to StatePensionLumpSum page" in {
       val formData = startDateForm(validDay, validMonth, validYear)
-      val viewModel = IncomeFromPensionsViewModel(statePension = Some(aStatePensionViewModel.copy(
-        startDate = Some(LocalDate.parse("2019-11-14")),
-        startDateQuestion = Some(true),
-        addToCalculation = Some(true))))
+      val viewModel = IncomeFromPensionsViewModel(statePension = Some(
+        aStatePensionViewModel.copy(startDate = Some(LocalDate.parse("2019-11-14")), startDateQuestion = Some(true), addToCalculation = Some(true))))
 
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -125,7 +128,8 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
           fullUrl(statePensionStartDateUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe statePensionLumpSumUrl(taxYearEOY)
@@ -142,7 +146,8 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
           fullUrl(statePensionStartDateUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe statePensionCyaUrl(taxYearEOY)
@@ -157,7 +162,10 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
+          urlPost(
+            fullUrl(statePensionStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -181,7 +189,10 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
+          urlPost(
+            fullUrl(statePensionStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -206,7 +217,10 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
+          urlPost(
+            fullUrl(statePensionStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -231,7 +245,10 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
+          urlPost(
+            fullUrl(statePensionStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -256,7 +273,10 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
+          urlPost(
+            fullUrl(statePensionStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -281,7 +301,10 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
+          urlPost(
+            fullUrl(statePensionStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -302,13 +325,16 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
 
       "the date submitted is in the future" which {
         val futureYear: Int = LocalDate.now().getYear + 1
-        lazy val form = startDateForm(validDay, validMonth, s"$futureYear")
+        lazy val form       = startDateForm(validDay, validMonth, s"$futureYear")
 
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
+          urlPost(
+            fullUrl(statePensionStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -333,7 +359,10 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
+          urlPost(
+            fullUrl(statePensionStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -358,7 +387,10 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(statePensionStartDateUrl(taxYearEOY)), body = form, follow = false,
+          urlPost(
+            fullUrl(statePensionStartDateUrl(taxYearEOY)),
+            body = form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 

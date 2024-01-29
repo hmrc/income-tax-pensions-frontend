@@ -29,16 +29,14 @@ import utils.PageUrls.PaymentIntoOverseasPensions._
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
-  with PensionsDatabaseHelper {
+class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) = {
+  private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
-  }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
-  val schemeIndex01 = 1
-  val schemeIndex100 = 100
+  val schemeIndex01                                   = 1
+  val schemeIndex100                                  = 100
 
   ".show" should {
 
@@ -47,8 +45,12 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
-        urlGet(fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex01)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex01)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe OK
     }
@@ -58,8 +60,12 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
-        urlGet(fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex100)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex100)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe SEE_OTHER
       result.headers("Location").head shouldBe pensionReliefSchemeSummaryUrl(taxYearEOY)
@@ -78,7 +84,8 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
           fullUrl(pensionReliefTypeUrl(taxYearEOY, 0)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -95,7 +102,8 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
           fullUrl(pensionReliefTypeUrl(taxYearEOY, 0)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -112,7 +120,8 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
           fullUrl(pensionReliefTypeUrl(taxYearEOY, 0)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe doubleTaxationAgreementUrl(0)(taxYearEOY)
@@ -128,7 +137,8 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
           fullUrl(pensionReliefTypeUrl(taxYearEOY, 0)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe pensionReliefSchemeDetailsUrl(taxYearEOY, 0)
@@ -144,7 +154,8 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
           fullUrl(pensionReliefTypeUrl(taxYearEOY, 1)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
       result.status shouldBe BAD_REQUEST
     }
@@ -159,7 +170,8 @@ class PensionsReliefTypeControllerISpec extends IntegrationTest with ViewHelpers
           fullUrl(pensionReliefTypeUrl(taxYearEOY, schemeIndex100)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
       result.status shouldBe SEE_OTHER
       result.headers("location").head shouldBe pensionReliefSchemeSummaryUrl(taxYearEOY)

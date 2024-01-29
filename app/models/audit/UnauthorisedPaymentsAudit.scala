@@ -29,9 +29,9 @@ case class UnauthorisedPaymentsAudit(taxYear: Int,
                                      unauthorisedPayments: UnauthorisedPaymentsViewModel,
                                      priorUnauthorisedPayments: Option[UnauthorisedPaymentsViewModel] = None) {
 
-  private val amend = "AmendUnauthorisedPayments"
+  private val amend  = "AmendUnauthorisedPayments"
   private val create = "CreateUnauthorisedPayments"
-  private val view = "ViewUnauthorisedPayments"
+  private val view   = "ViewUnauthorisedPayments"
 
   def toAuditModelAmend: AuditModel[UnauthorisedPaymentsAudit] = toAuditModel(amend)
 
@@ -47,12 +47,15 @@ object UnauthorisedPaymentsAudit {
   def apply(taxYear: Int,
             user: User,
             unauthorisedPayments: UnauthorisedPaymentsViewModel,
-            priorUnauthorisedPayments: Option[UnauthorisedPaymentsViewModel]): UnauthorisedPaymentsAudit = {
-
+            priorUnauthorisedPayments: Option[UnauthorisedPaymentsViewModel]): UnauthorisedPaymentsAudit =
     UnauthorisedPaymentsAudit(
-      taxYear, user.affinityGroup, user.nino, user.mtditid, unauthorisedPayments, priorUnauthorisedPayments
+      taxYear,
+      user.affinityGroup,
+      user.nino,
+      user.mtditid,
+      unauthorisedPayments,
+      priorUnauthorisedPayments
     )
-  }
 
   implicit val writes: OWrites[UnauthorisedPaymentsAudit] = Json.writes[UnauthorisedPaymentsAudit]
 

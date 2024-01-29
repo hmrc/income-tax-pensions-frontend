@@ -29,9 +29,10 @@ import scala.concurrent.{ExecutionContext, Future}
 trait MockAuditService extends MockFactory {
 
   val mockAuditService: AuditService = mock[AuditService]
-  
+
   def mockAuditResult[T](event: AuditModel[T], auditResult: Future[AuditResult]): CallHandler[Future[AuditResult]] =
-    (mockAuditService.sendAudit(_: AuditModel[T])(_: HeaderCarrier, _: ExecutionContext, _: Writes[T]))
+    (mockAuditService
+      .sendAudit(_: AuditModel[T])(_: HeaderCarrier, _: ExecutionContext, _: Writes[T]))
       .expects(event, *, *, *)
       .returns(auditResult)
 }

@@ -44,15 +44,15 @@ final case class ConnectorResponseInfo(method: String, url: String, response: Ht
 object ConnectorResponseInfo {
   sealed abstract class LevelLogging {
     def log(logger: Logger): Unit = this match {
-      case Info(msg) => logger.info(msg)
-      case Warn(msg) => logger.warn(msg)
+      case Info(msg)  => logger.info(msg)
+      case Warn(msg)  => logger.warn(msg)
       case Error(msg) => logger.error(msg)
     }
   }
 
   object LevelLogging {
-    final case class Info(value: String) extends LevelLogging
-    final case class Warn(value: String) extends LevelLogging
+    final case class Info(value: String)  extends LevelLogging
+    final case class Warn(value: String)  extends LevelLogging
     final case class Error(value: String) extends LevelLogging
   }
 }

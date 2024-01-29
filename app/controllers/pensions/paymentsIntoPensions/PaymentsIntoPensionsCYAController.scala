@@ -39,17 +39,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentsIntoPensionsCYAController @Inject()(auditProvider: AuditActionsProvider,
-                                                  view: PaymentsIntoPensionsCYAView,
-                                                  pensionSessionService: PensionSessionService,
-                                                  pensionReliefsService: PensionReliefsService,
-                                                  errorHandler: ErrorHandler,
-                                                  excludeJourneyService: ExcludeJourneyService)
-                                                 (implicit val mcc: MessagesControllerComponents,
-                                                  appConfig: AppConfig,
-                                                  clock: Clock) extends FrontendController(mcc) with I18nSupport {
+class PaymentsIntoPensionsCYAController @Inject() (
+    auditProvider: AuditActionsProvider,
+    view: PaymentsIntoPensionsCYAView,
+    pensionSessionService: PensionSessionService,
+    pensionReliefsService: PensionReliefsService,
+    errorHandler: ErrorHandler,
+    excludeJourneyService: ExcludeJourneyService)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
-  lazy val logger: Logger = Logger(this.getClass.getName)
+  lazy val logger: Logger                         = Logger(this.getClass.getName)
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
   def show(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsViewAuditing(taxYear) async { implicit sessionDataRequest =>
@@ -66,16 +66,16 @@ class PaymentsIntoPensionsCYAController @Inject()(auditProvider: AuditActionsPro
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsUpdateAuditing(taxYear) async { implicit priorAndSessionRequest =>
-    val (cya, prior, pIP) = (priorAndSessionRequest.pensionsUserData, priorAndSessionRequest.pensions,
-      priorAndSessionRequest.pensionsUserData.pensions.paymentsIntoPension)
+    val (cya, prior, pIP) =
+      (priorAndSessionRequest.pensionsUserData, priorAndSessionRequest.pensions, priorAndSessionRequest.pensionsUserData.pensions.paymentsIntoPension)
 
-    if (!pIP.rasPensionPaymentQuestion.exists(x => x) && !pIP.pensionTaxReliefNotClaimedQuestion.exists(x => x)) {
-      //TODO: check conditions for excluding Pensions from submission without gateway
+    if (!pIP.rasPensionPaymentQuestion.exists(x => x) && !pIP.pensionTaxReliefNotClaimedQuestion.exists(x => x))
+      // TODO: check conditions for excluding Pensions from submission without gateway
       excludeJourneyService.excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)
-    }.flatMap {
-      case Right(_) => performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest, clock)
-      case Left(_) => errorHandler.futureInternalServerError()
-    }
+        .flatMap {
+          case Right(_) => performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest, clock)
+          case Left(_)  => errorHandler.futureInternalServerError()
+        }
     if (!comparePriorData(cya.pensions, prior)) {
       Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
     } else {
@@ -83,11 +83,11 @@ class PaymentsIntoPensionsCYAController @Inject()(auditProvider: AuditActionsPro
     }
   }
 
-  private def performSubmission(taxYear: Int, cya: Option[PensionsUserData]
-                               )(implicit user: User,
-                                 hc: HeaderCarrier,
-                                 request: UserPriorAndSessionDataRequest[AnyContent],
-                                 clock: Clock): Future[Result] = {
+  private def performSubmission(taxYear: Int, cya: Option[PensionsUserData])(implicit
+      user: User,
+      hc: HeaderCarrier,
+      request: UserPriorAndSessionDataRequest[AnyContent],
+      clock: Clock): Future[Result] =
     (cya match {
       case Some(_) =>
         pensionReliefsService.persistPaymentIntoPensionViewModel(user, taxYear) map {
@@ -101,17 +101,15 @@ class PaymentsIntoPensionsCYAController @Inject()(auditProvider: AuditActionsPro
         logger.info("[PaymentIntoPensionsCYAController][submit] CYA data or NINO missing from session.")
         Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
     }).flatMap {
-      case Right(_) => //TODO: investigate  the use of the previously used pensionSessionService.clear
+      case Right(_) => // TODO: investigate  the use of the previously used pensionSessionService.clear
         Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
       case Left(error) => Future.successful(errorHandler.handleError(error.status))
     }
-  }
 
-  private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
+  private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData match {
-      case None => true
+      case None        => true
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
     }
-  }
 
 }

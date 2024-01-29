@@ -19,7 +19,7 @@ package utils
 //scalastyle:off number.of.methods
 object PageUrls extends IntegrationTest {
 
-  override val appUrl = "/update-and-submit-income-tax-return/pensions"
+  override val appUrl        = "/update-and-submit-income-tax-return/pensions"
   val tryAnotherExpectedHref = "http://localhost:11111/report-quarterly/income-and-expenses/view/agents/client-utr"
 
   //  *****************       Overview page      *****************************************
@@ -66,7 +66,6 @@ object PageUrls extends IntegrationTest {
 
     def totalPaymentsIntoRASUrl(taxYear: Int): String = s"$appUrl/$taxYear/payments-into-pensions/total-relief-at-source-check"
   }
-
 
   //  *****************     Income from pensions pages      ******************************
 
@@ -190,7 +189,8 @@ object PageUrls extends IntegrationTest {
 
   object PaymentIntoOverseasPensions {
 
-    def paymentsIntoPensionSchemeUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes"
+    def paymentsIntoPensionSchemeUrl(taxYear: Int): String =
+      s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes"
 
     def employerPayOverseasPensionUrl(taxYear: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes"
@@ -218,7 +218,8 @@ object PageUrls extends IntegrationTest {
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74?reliefIndex=$index"
 
     val doubleTaxationAgreementUrl: Int => Int => String =
-      (index: Int) => (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/double-taxation-agreement-details?index=$index"
+      (index: Int) =>
+        (taxYear: Int) => s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/double-taxation-agreement-details?index=$index"
 
     def pensionReliefSchemeDetailsUrl(taxYear: Int, index: Int): String =
       s"$appUrl/$taxYear/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-details-summary?reliefIndex=$index"
@@ -314,7 +315,8 @@ object PageUrls extends IntegrationTest {
     def shortServiceTaxableRefundUrl(taxYear: Int): String =
       s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/taxable-short-service-refunds"
 
-    def nonUkTaxRefundsUrl(taxYear: Int): String = s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax"
+    def nonUkTaxRefundsUrl(taxYear: Int): String =
+      s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/short-service-refund-non-uk-tax"
 
     def shortServiceRefundsCYAUrl(taxYear: Int): String =
       s"$appUrl/${taxYear.toString}/overseas-pensions/short-service-refunds/check-short-service-refund-details"

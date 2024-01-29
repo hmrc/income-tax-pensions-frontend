@@ -32,10 +32,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class PensionSchemeSummaryController @Inject()(actionsProvider: ActionsProvider,
-                                               pageView: PensionsSchemeSummary)
-                                              (implicit mcc: MessagesControllerComponents, appConfig: AppConfig)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class PensionSchemeSummaryController @Inject() (actionsProvider: ActionsProvider, pageView: PensionsSchemeSummary)(implicit
+    mcc: MessagesControllerComponents,
+    appConfig: AppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
     indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, index, PensionSchemeSummaryPage, taxYear) { data =>

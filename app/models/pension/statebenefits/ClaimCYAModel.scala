@@ -76,6 +76,5 @@ case class EncryptedClaimCYAModel(benefitId: Option[EncryptedValue],
 
 object EncryptedClaimCYAModel {
   implicit lazy val encryptedValueOFormat: OFormat[EncryptedValue] = Json.format[EncryptedValue]
-  implicit lazy val format: OFormat[EncryptedClaimCYAModel] = Json.format[EncryptedClaimCYAModel]
+  implicit lazy val format: OFormat[EncryptedClaimCYAModel]        = Json.format[EncryptedClaimCYAModel]
 }
-

@@ -31,24 +31,26 @@ import views.html.pensions.PensionsSummaryView
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
-
 @Singleton
-class PensionsSummaryController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                           appConfig: AppConfig,
-                                           authAction: AuthorisedAction,
-                                           pensionSessionService: PensionSessionService,
-                                           errorHandler: ErrorHandler,
-                                           clock: Clock,
-                                           pensionsSummaryView: PensionsSummaryView) extends FrontendController(mcc) with I18nSupport {
+class PensionsSummaryController @Inject() (implicit
+    val mcc: MessagesControllerComponents,
+    appConfig: AppConfig,
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    clock: Clock,
+    pensionsSummaryView: PensionsSummaryView)
+    extends FrontendController(mcc)
+    with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (pensionsUserData, prior) =>
-      if(pensionsUserData.exists(! _.pensions.isEmpty)) {
+      if (pensionsUserData.exists(!_.pensions.isEmpty)) {
         Future.successful(Ok(pensionsSummaryView(taxYear, pensionsUserData.map(_.pensions), prior)))
       } else {
         /* -- initialise pensions session date either with prior data or an empty model -- */
         val cya = prior.fold(PensionsCYAModel.emptyModels)(pr => AllPensionsData.generateCyaFromPrior(pr))
         pensionSessionService.createOrUpdateSessionData(request.user, cya, taxYear, isPriorSubmission = prior.isDefined)(
-          errorHandler.handleError(INTERNAL_SERVER_ERROR)) { Ok(pensionsSummaryView(taxYear, Some(cya), prior)) }
+          errorHandler.handleError(INTERNAL_SERVER_ERROR))(Ok(pensionsSummaryView(taxYear, Some(cya), prior)))
       }
     }
   }

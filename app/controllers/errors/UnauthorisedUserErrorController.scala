@@ -24,9 +24,11 @@ import views.html.templates.UnauthorisedUserErrorPageView
 
 import javax.inject.Inject
 
-class UnauthorisedUserErrorController @Inject()(val mcc: MessagesControllerComponents,
-                                                unauthorisedUserErrorPage: UnauthorisedUserErrorPageView,
-                                                implicit val appConfig: AppConfig) extends FrontendController(mcc) with I18nSupport {
+class UnauthorisedUserErrorController @Inject() (val mcc: MessagesControllerComponents,
+                                                 unauthorisedUserErrorPage: UnauthorisedUserErrorPageView,
+                                                 implicit val appConfig: AppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport {
   def show(): Action[AnyContent] = Action { implicit request =>
     Unauthorized(unauthorisedUserErrorPage())
   }

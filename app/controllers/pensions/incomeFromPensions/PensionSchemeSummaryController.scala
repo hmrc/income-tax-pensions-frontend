@@ -30,17 +30,18 @@ import views.html.pensions.incomeFromPensions.PensionSchemeSummaryView
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class PensionSchemeSummaryController @Inject()(view: PensionSchemeSummaryView,
-                                               actionsProvider: ActionsProvider)
-                                              (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class PensionSchemeSummaryController @Inject() (view: PensionSchemeSummaryView, actionsProvider: ActionsProvider)(implicit
+    val mcc: MessagesControllerComponents,
+    appConfig: AppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
-      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, pensionSchemeIndex, SchemeSummaryPage, taxYear) {
-        data =>
-          val scheme: UkPensionIncomeViewModel = data.pensions.incomeFromPensions.uKPensionIncomes(pensionSchemeIndex.getOrElse(0))
-          Future.successful(Ok(view(taxYear, scheme, pensionSchemeIndex)))
+      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, pensionSchemeIndex, SchemeSummaryPage, taxYear) { data =>
+        val scheme: UkPensionIncomeViewModel = data.pensions.incomeFromPensions.uKPensionIncomes(pensionSchemeIndex.getOrElse(0))
+        Future.successful(Ok(view(taxYear, scheme, pensionSchemeIndex)))
       }
   }
 }

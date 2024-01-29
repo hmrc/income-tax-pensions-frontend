@@ -23,13 +23,13 @@ import utils.UnitTest
 
 class PaymentsIntoPensionFormProviderSpec extends UnitTest {
 
-  private val anyBoolean = true
-  private val amount: String = 123.0.toString
-  private val correctBooleanData = Map(YesNoForm.yesNo -> anyBoolean.toString)
-  private val correctAmountData = Map(AmountForm.amount -> amount)
-  private val wrongKeyData = Map("wrongKey" -> amount)
+  private val anyBoolean                             = true
+  private val amount: String                         = 123.0.toString
+  private val correctBooleanData                     = Map(YesNoForm.yesNo -> anyBoolean.toString)
+  private val correctAmountData                      = Map(AmountForm.amount -> amount)
+  private val wrongKeyData                           = Map("wrongKey" -> amount)
   private val wrongAmountFormat: Map[String, String] = Map(AmountForm.amount -> "123.45.6")
-  private val emptyData: Map[String, String] = Map.empty
+  private val emptyData: Map[String, String]         = Map.empty
   private val overMaximumAmount: Map[String, String] = Map(AmountForm.amount -> "100,000,000,000")
 
   private val underTest = new PaymentsIntoPensionFormProvider()
@@ -366,6 +366,4 @@ class PaymentsIntoPensionFormProviderSpec extends UnitTest {
     }
   }
 
-
 }
-

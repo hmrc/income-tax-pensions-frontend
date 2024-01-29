@@ -37,63 +37,58 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class StatePensionLumpSumController @Inject()(
-                                               actionsProvider: ActionsProvider,
-                                               pensionSessionService: PensionSessionService,
-                                               view: StatePensionLumpSumView,
-                                               errorHandler: ErrorHandler,
-                                               formsProvider: FormsProvider
-                                             )(implicit val mcc: MessagesControllerComponents,
-                                               appConfig: AppConfig,
-                                               clock: Clock)
-  extends FrontendController(mcc) with SessionHelper with I18nSupport {
+class StatePensionLumpSumController @Inject() (
+    actionsProvider: ActionsProvider,
+    pensionSessionService: PensionSessionService,
+    view: StatePensionLumpSumView,
+    errorHandler: ErrorHandler,
+    formsProvider: FormsProvider
+)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with SessionHelper
+    with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionData =>
-      val checkRedirect = journeyCheck(StatePensionLumpSumPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+    val checkRedirect = journeyCheck(StatePensionLumpSumPage, _, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      val amountPaidQuestion = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amountPaidQuestion)
+      val amount             = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amount)
 
-        val amountPaidQuestion = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amountPaidQuestion)
-        val amount = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amount)
-
-        (amountPaidQuestion, amount) match {
-          case (Some(yesNo), amount) => Future.successful(Ok(view(formsProvider.statePensionLumpSum(sessionData.user).fill((yesNo, amount)), taxYear)))
-          case _ => Future.successful(Ok(view(formsProvider.statePensionLumpSum(sessionData.user), taxYear)))
-        }
+      (amountPaidQuestion, amount) match {
+        case (Some(yesNo), amount) => Future.successful(Ok(view(formsProvider.statePensionLumpSum(sessionData.user).fill((yesNo, amount)), taxYear)))
+        case _                     => Future.successful(Ok(view(formsProvider.statePensionLumpSum(sessionData.user), taxYear)))
       }
+    }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionData =>
-      val checkRedirect = journeyCheck(StatePensionLumpSumPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-
-        formsProvider.statePensionLumpSum(sessionData.user).bindFromRequest().fold(
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+    val checkRedirect = journeyCheck(StatePensionLumpSumPage, _, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      formsProvider
+        .statePensionLumpSum(sessionData.user)
+        .bindFromRequest()
+        .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-          yesNoAmount => {
+          yesNoAmount =>
             (yesNoAmount._1, yesNoAmount._2) match {
               case (true, amount) => updateSessionData(data, yesNo = true, amount, taxYear)
-              case (false, _) => updateSessionData(data, yesNo = false, None, taxYear)
+              case (false, _)     => updateSessionData(data, yesNo = false, None, taxYear)
             }
-          }
         )
-      }
+    }
   }
 
-  private def updateSessionData[T](pensionUserData: PensionsUserData,
-                                   yesNo: Boolean,
-                                   amount: Option[BigDecimal],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
+  private def updateSessionData[T](pensionUserData: PensionsUserData, yesNo: Boolean, amount: Option[BigDecimal], taxYear: Int)(implicit
+      request: UserSessionDataRequest[T]): Future[Result] = {
     val viewModel: IncomeFromPensionsViewModel = pensionUserData.pensions.incomeFromPensions
     val updateStatePensionLumpSum: StateBenefitViewModel =
       if (yesNo) viewModel.statePensionLumpSum match {
         case Some(value) => value.copy(amountPaidQuestion = Some(true), amount = amount)
-        case _ => StateBenefitViewModel(amountPaidQuestion = Some(true), amount = amount)
+        case _           => StateBenefitViewModel(amountPaidQuestion = Some(true), amount = amount)
       }
       else StateBenefitViewModel(amountPaidQuestion = Some(false))
 
-    val updatedCyaModel = pensionUserData.pensions.copy(incomeFromPensions = viewModel.copy(
-      statePensionLumpSum = Some(updateStatePensionLumpSum)))
+    val updatedCyaModel  = pensionUserData.pensions.copy(incomeFromPensions = viewModel.copy(statePensionLumpSum = Some(updateStatePensionLumpSum)))
     val redirectLocation = if (yesNo) TaxPaidOnStatePensionLumpSumController.show(taxYear) else StatePensionAddToCalculationController.show(taxYear)
     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
       errorHandler.internalServerError()) {

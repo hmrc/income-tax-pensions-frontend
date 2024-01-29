@@ -27,12 +27,9 @@ import support.mocks.{MockErrorHandler, MockPensionSessionService}
 
 import scala.concurrent.ExecutionContext
 
-class UserSessionDataRequestRefinerActionSpec extends UnitTest
-  with MockPensionSessionService
-  with MockErrorHandler {
-  
+class UserSessionDataRequestRefinerActionSpec extends UnitTest with MockPensionSessionService with MockErrorHandler {
+
   private val executionContext = ExecutionContext.global
- 
 
   private val underTest = UserSessionDataRequestRefinerAction(taxYear, mockPensionSessionService, mockErrorHandler)(executionContext)
 
@@ -44,8 +41,9 @@ class UserSessionDataRequestRefinerActionSpec extends UnitTest
 
   ".refine" should {
     "handle InternalServerError when when getting session data result in an error" in {
-      mockGetPensionSessionData(taxYear,
-        Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR","The service is currently facing issues."))))
+      mockGetPensionSessionData(
+        taxYear,
+        Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues."))))
       mockHandleError(INTERNAL_SERVER_ERROR, InternalServerError)
 
       await(underTest.refine(anAuthorisationRequest)) shouldBe Left(InternalServerError)

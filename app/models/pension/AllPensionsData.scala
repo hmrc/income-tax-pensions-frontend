@@ -29,13 +29,12 @@ case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
                            pensionCharges: Option[PensionCharges],
                            stateBenefits: Option[AllStateBenefitsData],
                            employmentPensions: Option[EmploymentPensions],
-                           pensionIncome: Option[PensionIncome]
-                          )
+                           pensionIncome: Option[PensionIncome])
 
 object AllPensionsData {
   implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
 
-  def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = { //scalastyle:off method.length
+  def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = // scalastyle:off method.length
     PensionsCYAModel(
       paymentsIntoPension = generatePaymentsIntoPensionsCyaFromPrior(prior),
       pensionsAnnualAllowances = generateAnnualAllowanceCyaFromPrior(prior),
@@ -46,8 +45,7 @@ object AllPensionsData {
       transfersIntoOverseasPensions = generateTransfersIntoOverseasPensionsCyaFromPrior(prior),
       shortServiceRefunds = generateShortServiceRefundCyaFromPrior(prior)
     )
-  }
-  
+
   def generatePaymentsIntoPensionsCyaFromPrior(prior: AllPensionsData): PaymentsIntoPensionsViewModel =
     PaymentsIntoPensionsViewModel(
       rasPensionPaymentQuestion = prior.pensionReliefs.map(_.pensionReliefs.regularPensionContributions.isDefined),
@@ -56,8 +54,7 @@ object AllPensionsData {
       totalOneOffRasPaymentPlusTaxRelief = prior.pensionReliefs.flatMap(_.pensionReliefs.oneOffPensionContributionsPaid),
       Some(true),
       pensionTaxReliefNotClaimedQuestion = prior.pensionReliefs.map(a =>
-        a.pensionReliefs.retirementAnnuityPayments.isDefined || a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined
-      ),
+        a.pensionReliefs.retirementAnnuityPayments.isDefined || a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined),
       retirementAnnuityContractPaymentsQuestion = prior.pensionReliefs.map(_.pensionReliefs.retirementAnnuityPayments.isDefined),
       totalRetirementAnnuityContractPayments = prior.pensionReliefs.flatMap(_.pensionReliefs.retirementAnnuityPayments),
       workplacePensionPaymentsQuestion = prior.pensionReliefs.map(_.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined),
@@ -77,41 +74,42 @@ object AllPensionsData {
     )
 
   def generateIncomeFromPensionsModelFromPrior(prior: AllPensionsData): IncomeFromPensionsViewModel = {
-    val (statePen, statePenLumpSum) = generateStatePensionCyaFromPrior(prior)
+    val (statePen, statePenLumpSum)   = generateStatePensionCyaFromPrior(prior)
     val (uKPenIncomesQ, uKPenIncomes) = generateUkPensionCyaFromPrior(prior)
 
     IncomeFromPensionsViewModel(
-      //TODO: validate as necessary on building CYA page
+      // TODO: validate as necessary on building CYA page
       statePension = statePen,
       statePensionLumpSum = statePenLumpSum,
 
-      //TODO: set the question below based on the list from backend
+      // TODO: set the question below based on the list from backend
       uKPensionIncomesQuestion = uKPenIncomesQ,
       uKPensionIncomes = uKPenIncomes
     )
   }
 
   def generateStatePensionCyaFromPrior(prior: AllPensionsData): (Option[StateBenefitViewModel], Option[StateBenefitViewModel]) = {
-    def getStatePensionModel(statePension: Option[StateBenefit]): Option[StateBenefitViewModel] = {
+    def getStatePensionModel(statePension: Option[StateBenefit]): Option[StateBenefitViewModel] =
       statePension match {
-        case Some(benefit) => Some(StateBenefitViewModel(
-          benefitId = Some(benefit.benefitId),
-          startDateQuestion = Some(true),
-          startDate = Some(benefit.startDate),
-          endDateQuestion = Some(benefit.endDate.isDefined),
-          endDate = benefit.endDate,
-          submittedOnQuestion = Some(benefit.submittedOn.isDefined),
-          submittedOn = benefit.submittedOn,
-          dateIgnoredQuestion = Some(benefit.dateIgnored.isDefined),
-          dateIgnored = benefit.dateIgnored,
-          amountPaidQuestion = Some(benefit.amount.isDefined),
-          amount = benefit.amount,
-          taxPaidQuestion = Some(benefit.taxPaid.isDefined),
-          taxPaid = benefit.taxPaid)
-        )
+        case Some(benefit) =>
+          Some(
+            StateBenefitViewModel(
+              benefitId = Some(benefit.benefitId),
+              startDateQuestion = Some(true),
+              startDate = Some(benefit.startDate),
+              endDateQuestion = Some(benefit.endDate.isDefined),
+              endDate = benefit.endDate,
+              submittedOnQuestion = Some(benefit.submittedOn.isDefined),
+              submittedOn = benefit.submittedOn,
+              dateIgnoredQuestion = Some(benefit.dateIgnored.isDefined),
+              dateIgnored = benefit.dateIgnored,
+              amountPaidQuestion = Some(benefit.amount.isDefined),
+              amount = benefit.amount,
+              taxPaidQuestion = Some(benefit.taxPaid.isDefined),
+              taxPaid = benefit.taxPaid
+            ))
         case _ => None
       }
-    }
     (
       getStatePensionModel(prior.stateBenefits.flatMap(_.stateBenefitsData.flatMap(_.statePension))),
       getStatePensionModel(prior.stateBenefits.flatMap(_.stateBenefitsData.flatMap(_.statePensionLumpSum)))
@@ -138,7 +136,7 @@ object AllPensionsData {
       }
     def getUkPensionQuestion(prior: AllPensionsData) =
       if (getUkPensionIncome(prior).nonEmpty) Some(true) else None
-    
+
     (getUkPensionQuestion(prior), getUkPensionIncome(prior))
   }
 
@@ -156,8 +154,8 @@ object AllPensionsData {
       pensionSchemeTaxReference = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.pensionSchemeTaxReference))
     )
 
-  def generatePaymentsIntoOverseasPensionsFromPrior(prior: AllPensionsData): PaymentsIntoOverseasPensionsViewModel = {    
-    def getTaxReliefQuestion(overseasPensionContribution: OverseasPensionContribution): String = {
+  def generatePaymentsIntoOverseasPensionsFromPrior(prior: AllPensionsData): PaymentsIntoOverseasPensionsViewModel = {
+    def getTaxReliefQuestion(overseasPensionContribution: OverseasPensionContribution): String =
       if (overseasPensionContribution.sf74Reference.isDefined) {
         TaxReliefQuestion.TransitionalCorrespondingRelief
       } else if (overseasPensionContribution.dblTaxationCountry.isDefined) {
@@ -167,44 +165,46 @@ object AllPensionsData {
       } else {
         TaxReliefQuestion.NoTaxRelief
       }
-    }
     PaymentsIntoOverseasPensionsViewModel(
       paymentsIntoOverseasPensionsQuestions = prior.pensionReliefs.map(_.pensionReliefs.overseasPensionSchemeContributions.isDefined),
       paymentsIntoOverseasPensionsAmount = prior.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions),
       employerPaymentsQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution).flatMap(_.headOption.map(_.customerReference.isDefined)),
-      taxPaidOnEmployerPaymentsQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution).flatMap(_.headOption.map(_.customerReference.isEmpty)),
-      reliefs = prior.pensionIncome.flatMap(_.overseasPensionContribution.map(_.map(oPC =>
-        Relief(
-          customerReference = oPC.customerReference,
-          employerPaymentsAmount = Some(oPC.exemptEmployersPensionContribs),
-          reliefType = Some(getTaxReliefQuestion(oPC)),
-          qopsReference = oPC.migrantMemReliefQopsRefNo,
-          alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(oPC.dblTaxationCountry),
-          alphaThreeCountryCode = oPC.dblTaxationCountry,
-          doubleTaxationArticle = oPC.dblTaxationArticle,
-          doubleTaxationTreaty = oPC.dblTaxationTreaty,
-          doubleTaxationReliefAmount = oPC.dblTaxationRelief,
-          sf74Reference = oPC.sf74Reference
-        )
-      ))).getOrElse(Nil)
+      taxPaidOnEmployerPaymentsQuestion =
+        prior.pensionIncome.flatMap(_.overseasPensionContribution).flatMap(_.headOption.map(_.customerReference.isEmpty)),
+      reliefs = prior.pensionIncome
+        .flatMap(_.overseasPensionContribution.map(_.map(oPC =>
+          Relief(
+            customerReference = oPC.customerReference,
+            employerPaymentsAmount = Some(oPC.exemptEmployersPensionContribs),
+            reliefType = Some(getTaxReliefQuestion(oPC)),
+            qopsReference = oPC.migrantMemReliefQopsRefNo,
+            alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(oPC.dblTaxationCountry),
+            alphaThreeCountryCode = oPC.dblTaxationCountry,
+            doubleTaxationArticle = oPC.dblTaxationArticle,
+            doubleTaxationTreaty = oPC.dblTaxationTreaty,
+            doubleTaxationReliefAmount = oPC.dblTaxationRelief,
+            sf74Reference = oPC.sf74Reference
+          ))))
+        .getOrElse(Nil)
     )
   }
 
   def generateIncomeFromOverseasPensionsCyaFromPrior(prior: AllPensionsData): IncomeFromOverseasPensionsViewModel =
     IncomeFromOverseasPensionsViewModel(
       paymentsFromOverseasPensionsQuestion = prior.pensionIncome.flatMap(_.foreignPension.map(_.nonEmpty)),
-      overseasIncomePensionSchemes = prior.pensionIncome.flatMap(_.foreignPension.map(_.map(fP =>
-        PensionScheme(
-          alphaThreeCode = Some(fP.countryCode),
-          alphaTwoCode = Countries.get2AlphaCodeFrom3AlphaCode(Some(fP.countryCode)),
-          pensionPaymentAmount = fP.amountBeforeTax,
-          pensionPaymentTaxPaid = fP.taxTakenOff,
-          specialWithholdingTaxQuestion = Some(fP.specialWithholdingTax.isDefined),
-          specialWithholdingTaxAmount = fP.specialWithholdingTax,
-          foreignTaxCreditReliefQuestion = fP.foreignTaxCreditRelief,
-          taxableAmount = Some(fP.taxableAmount)
-        )
-      ))).getOrElse(Nil)
+      overseasIncomePensionSchemes = prior.pensionIncome
+        .flatMap(_.foreignPension.map(_.map(fP =>
+          PensionScheme(
+            alphaThreeCode = Some(fP.countryCode),
+            alphaTwoCode = Countries.get2AlphaCodeFrom3AlphaCode(Some(fP.countryCode)),
+            pensionPaymentAmount = fP.amountBeforeTax,
+            pensionPaymentTaxPaid = fP.taxTakenOff,
+            specialWithholdingTaxQuestion = Some(fP.specialWithholdingTax.isDefined),
+            specialWithholdingTaxAmount = fP.specialWithholdingTax,
+            foreignTaxCreditReliefQuestion = fP.foreignTaxCreditRelief,
+            taxableAmount = Some(fP.taxableAmount)
+          ))))
+        .getOrElse(Nil)
     )
 
   def generateTransfersIntoOverseasPensionsCyaFromPrior(prior: AllPensionsData): TransfersIntoOverseasPensionsViewModel =
@@ -214,35 +214,37 @@ object AllPensionsData {
       overseasTransferChargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers.map(_.transferCharge)),
       pensionSchemeTransferCharge = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferChargeTaxPaid).isDefined),
       pensionSchemeTransferChargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers.map(_.transferChargeTaxPaid)),
-      transferPensionScheme = prior.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers.map( _.overseasSchemeProvider.map(osp =>
-        TransferPensionScheme(
-          ukTransferCharge = Some(osp.providerCountryCode == "GBR"),
-          name = Some(osp.providerName),
-          pstr = osp.pensionSchemeTaxReference.map(_.head).map(_.replace("Q", "")),
-          qops = osp.qualifyingRecognisedOverseasPensionScheme.map(_.head),
-          providerAddress = Some(osp.providerAddress),
-          alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(Some(osp.providerCountryCode)),
-          alphaThreeCountryCode = Some(osp.providerCountryCode)
-        )
-      ))).getOrElse(Nil)
+      transferPensionScheme = prior.pensionCharges
+        .flatMap(_.pensionSchemeOverseasTransfers.map(_.overseasSchemeProvider.map(osp =>
+          TransferPensionScheme(
+            ukTransferCharge = Some(osp.providerCountryCode == "GBR"),
+            name = Some(osp.providerName),
+            pstr = osp.pensionSchemeTaxReference.map(_.head).map(_.replace("Q", "")),
+            qops = osp.qualifyingRecognisedOverseasPensionScheme.map(_.head),
+            providerAddress = Some(osp.providerAddress),
+            alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(Some(osp.providerCountryCode)),
+            alphaThreeCountryCode = Some(osp.providerCountryCode)
+          ))))
+        .getOrElse(Nil)
     )
-  
+
   def generateShortServiceRefundCyaFromPrior(prior: AllPensionsData): ShortServiceRefundsViewModel =
     ShortServiceRefundsViewModel(
       shortServiceRefund = prior.pensionCharges.map(_.overseasPensionContributions.map(_.shortServiceRefund).isDefined),
       shortServiceRefundCharge = prior.pensionCharges.flatMap(_.overseasPensionContributions.map(_.shortServiceRefund)),
       shortServiceRefundTaxPaid = prior.pensionCharges.map(_.overseasPensionContributions.map(_.shortServiceRefundTaxPaid).isDefined),
       shortServiceRefundTaxPaidCharge = prior.pensionCharges.flatMap(_.overseasPensionContributions.map(_.shortServiceRefundTaxPaid)),
-      refundPensionScheme = prior.pensionCharges.flatMap(_.overseasPensionContributions.map(_.overseasSchemeProvider.map(osp =>
-        OverseasRefundPensionScheme(
-          ukRefundCharge = Some(osp.providerCountryCode == "GBR"),
-          name = Some(osp.providerName),
-          pensionSchemeTaxReference = osp.pensionSchemeTaxReference.map(_.head),
-          qualifyingRecognisedOverseasPensionScheme = osp.qualifyingRecognisedOverseasPensionScheme.map(_.head).map(_.replace("Q", "")),
-          providerAddress = Some(osp.providerAddress),
-          alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(Some(osp.providerCountryCode)),
-          alphaThreeCountryCode = Some(osp.providerCountryCode)
-        )
-      ))).getOrElse(Nil)
+      refundPensionScheme = prior.pensionCharges
+        .flatMap(_.overseasPensionContributions.map(_.overseasSchemeProvider.map(osp =>
+          OverseasRefundPensionScheme(
+            ukRefundCharge = Some(osp.providerCountryCode == "GBR"),
+            name = Some(osp.providerName),
+            pensionSchemeTaxReference = osp.pensionSchemeTaxReference.map(_.head),
+            qualifyingRecognisedOverseasPensionScheme = osp.qualifyingRecognisedOverseasPensionScheme.map(_.head).map(_.replace("Q", "")),
+            providerAddress = Some(osp.providerAddress),
+            alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(Some(osp.providerCountryCode)),
+            alphaThreeCountryCode = Some(osp.providerCountryCode)
+          ))))
+        .getOrElse(Nil)
     )
 }

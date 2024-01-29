@@ -25,7 +25,14 @@ import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewMod
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, ShortServiceRefundsViewModel, TransfersIntoOverseasPensionsViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{
+  IncomeFromOverseasPensionsViewModel,
+  PaymentsIntoOverseasPensionsViewModel,
+  PensionAnnualAllowancesViewModel,
+  ShortServiceRefundsViewModel,
+  TransfersIntoOverseasPensionsViewModel,
+  UnauthorisedPaymentsViewModel
+}
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 
@@ -53,7 +60,7 @@ object PensionsCYAModelBuilder {
     shortServiceRefunds = emptyShortServiceRefundsViewModel
   )
 
-  val aPensionsCYAGeneratedFromPriorEmpty:PensionsCYAModel = PensionsCYAModel(
+  val aPensionsCYAGeneratedFromPriorEmpty: PensionsCYAModel = PensionsCYAModel(
     paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel.copy(totalPaymentsIntoRASQuestion = Some(true)),
     pensionsAnnualAllowances = aPensionAnnualAllowanceEmptyViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = None),
     incomeFromPensions = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = None),
@@ -64,7 +71,7 @@ object PensionsCYAModelBuilder {
     shortServiceRefunds = emptyShortServiceRefundsViewModel
   )
 
-  def paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionViewModel: PaymentsIntoPensionsViewModel): PensionsCYAModel = {
+  def paymentsIntoPensionOnlyCYAModel(paymentsIntoPensionViewModel: PaymentsIntoPensionsViewModel): PensionsCYAModel =
     PensionsCYAModel(
       paymentsIntoPensionViewModel,
       PensionAnnualAllowancesViewModel(),
@@ -75,5 +82,4 @@ object PensionsCYAModelBuilder {
       TransfersIntoOverseasPensionsViewModel(),
       ShortServiceRefundsViewModel()
     )
-  }
 }

@@ -36,10 +36,10 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
 
   object Selectors {
     val captionSelector = "#main-content > div > div > header > p"
-    val titleSelector = "#main-content > div > div > header > h1"
-    val buttonSelector = "#continue"
-    val orSelector = "#main-content > div > div > form > div > fieldset > div > div.govuk-radios__divider"
-    val linkSelector = "#find-out-more-link"
+    val titleSelector   = "#main-content > div > div > header > h1"
+    val buttonSelector  = "#continue"
+    val orSelector      = "#main-content > div > div > form > div > fieldset > div > div.govuk-radios__divider"
+    val linkSelector    = "#find-out-more-link"
   }
 
   trait CommonExpectedResults {
@@ -62,50 +62,51 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
 
   object ExpectedCommonEN extends CommonExpectedResults {
     override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedMMR: String = "Migrant member relief"
-    override val expectedDTR: String = "Double taxation relief"
-    override val expectedTCR: String = "Transitional corresponding relief"
-    override val noneOfTheAbove: String = "None of these"
-    override val or: String = "or"
-    override val expectedLinkText: String = "Find out about the types of tax relief for overseas pension scheme payments (opens in new tab)"
-    override val continue: String = "Continue"
+    override val expectedMMR: String            = "Migrant member relief"
+    override val expectedDTR: String            = "Double taxation relief"
+    override val expectedTCR: String            = "Transitional corresponding relief"
+    override val noneOfTheAbove: String         = "None of these"
+    override val or: String                     = "or"
+    override val expectedLinkText: String       = "Find out about the types of tax relief for overseas pension scheme payments (opens in new tab)"
+    override val continue: String               = "Continue"
 
   }
 
   object ExpectedCommonCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    override val expectedMMR: String = "Rhyddhad aelod mudol"
-    override val expectedDTR: String = "Rhyddhad trethiant dwbl"
-    override val expectedTCR: String = "Rhyddhad cyfatebol trosiannol"
-    override val noneOfTheAbove: String = "Dim un o’r rhain"
-    override val or: String = "neu"
+    override val expectedCaption: Int => String = (taxYear: Int) =>
+      s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    override val expectedMMR: String      = "Rhyddhad aelod mudol"
+    override val expectedDTR: String      = "Rhyddhad trethiant dwbl"
+    override val expectedTCR: String      = "Rhyddhad cyfatebol trosiannol"
+    override val noneOfTheAbove: String   = "Dim un o’r rhain"
+    override val or: String               = "neu"
     override val expectedLinkText: String = "Dysgwch am y mathau o ryddhad treth ar gyfer taliadau cynlluniau pensiwn tramor (yn agor tab newydd)"
-    override val continue: String = "Yn eich blaen"
+    override val continue: String         = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    override val expectedTitle: String = "What tax relief did you get on payments into overseas pensions?"
-    override val expectedErrorTitle = s"Error: $expectedTitle"
+    override val expectedTitle: String     = "What tax relief did you get on payments into overseas pensions?"
+    override val expectedErrorTitle        = s"Error: $expectedTitle"
     override val expectedErrorText: String = "Select the type of tax relief you got on payments into overseas pensions"
 
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    override val expectedTitle: String = "Pa ryddhad treth a gawsoch ar daliadau i mewn i bensiynau tramor?"
-    override val expectedErrorTitle = s"Gwall: $expectedTitle"
+    override val expectedTitle: String     = "Pa ryddhad treth a gawsoch ar daliadau i mewn i bensiynau tramor?"
+    override val expectedErrorTitle        = s"Gwall: $expectedTitle"
     override val expectedErrorText: String = "Select the type of tax relief you got on payments into overseas pensions"
 
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    override val expectedTitle: String = "What tax relief did your client get on payments into overseas pensions?"
-    override val expectedErrorTitle = s"Error: $expectedTitle"
+    override val expectedTitle: String     = "What tax relief did your client get on payments into overseas pensions?"
+    override val expectedErrorTitle        = s"Error: $expectedTitle"
     override val expectedErrorText: String = "Select the type of tax relief your client got on payments into overseas pensions"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    override val expectedTitle: String = "Pa ryddhad treth a gafodd eich cleient ar daliadau i mewn i bensiynau tramor?"
-    override val expectedErrorTitle = s"Gwall: $expectedTitle"
+    override val expectedTitle: String     = "Pa ryddhad treth a gafodd eich cleient ar daliadau i mewn i bensiynau tramor?"
+    override val expectedErrorTitle        = s"Gwall: $expectedTitle"
     override val expectedErrorText: String = "Select the type of tax relief your client got on payments into overseas pensions"
   }
 
@@ -122,11 +123,13 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
       "render page with no prefilled data" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.
-              copy(reliefs = Seq.empty[Relief]))),
+          UserSessionDataRequest(
+            aPensionsUserData.copy(
+              pensions =
+                aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty[Relief]))),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
         def form: Form[String] = new FormsProvider().overseasPensionsReliefTypeForm(aUser)
 
@@ -140,24 +143,25 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
         radioButtonCheck(userScenario.commonExpectedResults.expectedTCR, 3, checked = false)
         textOnPageCheck(userScenario.commonExpectedResults.or, Selectors.orSelector)
         radioButtonCheck(userScenario.commonExpectedResults.noneOfTheAbove, 4, checked = false)
-        linkCheck(userScenario.commonExpectedResults.expectedLinkText, Selectors.linkSelector,
+        linkCheck(
+          userScenario.commonExpectedResults.expectedLinkText,
+          Selectors.linkSelector,
           href = "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions",
-          isExactUrlMatch = false)
+          isExactUrlMatch = false
+        )
       }
 
       "render page with pre filled data" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
+          aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
         def form: Form[String] = new FormsProvider().overseasPensionsReliefTypeForm(aUser)
 
-        implicit val document: Document = Jsoup.parse(underTest(form.fill(
-          aPensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.reliefType.get),
-          taxYearEOY,
-          Some(0)).body
-        )
+        implicit val document: Document = Jsoup.parse(
+          underTest(form.fill(aPensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.reliefType.get), taxYearEOY, Some(0)).body)
 
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
@@ -168,16 +172,19 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
         textOnPageCheck(userScenario.commonExpectedResults.or, Selectors.orSelector)
         radioButtonCheck(userScenario.commonExpectedResults.noneOfTheAbove, 4, checked = false)
 
-        linkCheck(userScenario.commonExpectedResults.expectedLinkText, Selectors.linkSelector,
+        linkCheck(
+          userScenario.commonExpectedResults.expectedLinkText,
+          Selectors.linkSelector,
           href = "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions",
-          isExactUrlMatch = false)
+          isExactUrlMatch = false
+        )
       }
 
       "render page with error text when no option was selected" which {
-        val user = if (userScenario.isAgent) anAgentUser else aUser
+        val user                        = if (userScenario.isAgent) anAgentUser else aUser
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
-          aPensionsUserData, user, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(aPensionsUserData, user, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
         def form: Form[String] = new FormsProvider().overseasPensionsReliefTypeForm(user)
 

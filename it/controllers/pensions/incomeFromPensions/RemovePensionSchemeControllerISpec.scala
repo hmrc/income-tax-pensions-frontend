@@ -31,12 +31,12 @@ import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
-  //scalastyle:off magic.number
+  // scalastyle:off magic.number
 
   private val pensionName: String = "pension name 1"
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > header > p"
+    val captionSelector: String    = "#main-content > div > div > form > header > p"
     val cancelLinkSelector: String = "#cancel-link-id"
   }
 
@@ -49,17 +49,17 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedTitle = s"Are you sure you want to remove $pensionName?"
+    val expectedTitle                  = s"Are you sure you want to remove $pensionName?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val buttonText = "Remove pension"
-    val cancelText = "Cancel"
+    val buttonText                     = "Remove pension"
+    val cancelText                     = "Cancel"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = s"A ydych yn siŵr eich bod am dynnu $pensionName?"
+    val expectedTitle                  = s"A ydych yn siŵr eich bod am dynnu $pensionName?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val buttonText = "Dileu’r pensiwn"
-    val cancelText = "Canslo"
+    val buttonText                     = "Dileu’r pensiwn"
+    val cancelText                     = "Canslo"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
@@ -81,8 +81,12 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -104,7 +108,9 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))), follow = false,
+        urlGet(
+          fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -119,7 +125,9 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, None)), follow = false,
+          urlGet(
+            fullUrl(removePensionSchemeUrl(taxYearEOY, None)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -134,7 +142,9 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(3))), follow = false,
+          urlGet(
+            fullUrl(removePensionSchemeUrl(taxYearEOY, Some(3))),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -152,7 +162,9 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(invalidJourney))
-          urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))), follow = false,
+          urlGet(
+            fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -163,13 +175,14 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
       }
 
       "previous questions are unanswered" which {
-        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(
-          uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(amount = None)))
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(amount = None)))
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(incompleteJourney))
-          urlGet(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))), follow = false,
+          urlGet(
+            fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -190,8 +203,12 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))), body = "", follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))),
+            body = "",
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         s"has a SEE_OTHER ($SEE_OTHER) status" in {
@@ -210,8 +227,12 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(7))), body = "", follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(removePensionSchemeUrl(taxYearEOY, Some(7))),
+            body = "",
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         s"has a SEE_OTHER ($SEE_OTHER) status" in {
@@ -233,8 +254,12 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(invalidJourney))
-          urlPost(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))), body = "", follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))),
+            body = "",
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has an SEE_OTHER(303) status" in {
@@ -244,14 +269,17 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
       }
 
       "previous questions are unanswered" which {
-        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(
-          uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(amount = None)))
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(amount = None)))
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(incompleteJourney))
-          urlPost(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))), body = "", follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))),
+            body = "",
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has an SEE_OTHER(303) status" in {
@@ -265,8 +293,12 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))), body = "", follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(removePensionSchemeUrl(taxYearEOY, Some(0))),
+          body = "",
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       s"has a SEE_OTHER ($SEE_OTHER) status" in {

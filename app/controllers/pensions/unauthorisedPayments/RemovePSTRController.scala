@@ -35,32 +35,36 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RemovePSTRController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                     authAction: AuthorisedAction,
-                                     removePensionSchemeView: RemovePSTRView,
-                                     appConfig: AppConfig,
-                                     pensionSessionService: PensionSessionService,
-                                     errorHandler: ErrorHandler,
-                                     clock: Clock,
-                                     ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class RemovePSTRController @Inject() (implicit
+    val mcc: MessagesControllerComponents,
+    authAction: AuthorisedAction,
+    removePensionSchemeView: RemovePSTRView,
+    appConfig: AppConfig,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    clock: Clock,
+    ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
+    implicit request =>
+      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
 
-      case Right(optData) =>
-        val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
-        redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
-
-          val pstrList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
-          checkIndexScheme(pensionSchemeIndex, pstrList) match {
-            case Some(scheme) =>
-              Future.successful(Ok(removePensionSchemeView(taxYear, scheme, pensionSchemeIndex)))
-            case _ =>
-              Future.successful(Redirect(UkPensionSchemeDetailsController.show(taxYear)))
+        case Right(optData) =>
+          val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
+          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+            val pstrList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
+            checkIndexScheme(pensionSchemeIndex, pstrList) match {
+              case Some(scheme) =>
+                Future.successful(Ok(removePensionSchemeView(taxYear, scheme, pensionSchemeIndex)))
+              case _ =>
+                Future.successful(Redirect(UkPensionSchemeDetailsController.show(taxYear)))
+            }
           }
-        }
-    }
+      }
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
@@ -69,23 +73,21 @@ class RemovePSTRController @Inject()(implicit val mcc: MessagesControllerCompone
       case Right(optData) =>
         val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
         redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
-
-          val pensionsCYAModel = data.pensions
-          val viewModel = pensionsCYAModel.unauthorisedPayments
+          val pensionsCYAModel      = data.pensions
+          val viewModel             = pensionsCYAModel.unauthorisedPayments
           val pstrList: Seq[String] = viewModel.pensionSchemeTaxReference.getOrElse(Seq.empty)
 
           checkIndexScheme(pensionSchemeIndex, pstrList) match {
             case Some(_) =>
-
               val rawPstrList: Seq[String] = pstrList.patch(pensionSchemeIndex.get, Nil, 1)
 
               val updatedPstrList = if (rawPstrList.isEmpty) None else Some(rawPstrList)
 
               val updatedCyaModel = pensionsCYAModel.copy(unauthorisedPayments = viewModel.copy(pensionSchemeTaxReference = updatedPstrList))
 
-              //TODO - call API to remove pension scheme
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+              // TODO - call API to remove pension scheme
+              pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                errorHandler.internalServerError()) {
                 Redirect(UkPensionSchemeDetailsController.show(taxYear))
               }
             case _ =>
@@ -95,13 +97,12 @@ class RemovePSTRController @Inject()(implicit val mcc: MessagesControllerCompone
     }
   }
 
-  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Option[String] = {
+  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Option[String] =
     pensionSchemeIndex match {
       case Some(index) if pensionSchemesList.size > index =>
         Some(pensionSchemesList(index))
       case _ =>
         None
     }
-  }
 
 }

@@ -24,10 +24,9 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class ExcludeJourneyService @Inject()(connector: ExcludeJourneyConnector) {
+class ExcludeJourneyService @Inject() (connector: ExcludeJourneyConnector) {
 
-  def excludeJourney(journeyKey: String, taxYear: Int, nino: String)(implicit user: User, hc: HeaderCarrier): Future[ExcludeJourneyResponse] = {
+  def excludeJourney(journeyKey: String, taxYear: Int, nino: String)(implicit user: User, hc: HeaderCarrier): Future[ExcludeJourneyResponse] =
     connector.excludeJourney(journeyKey, taxYear, nino)(hc.withExtraHeaders("mtditid" -> user.mtditid))
-  }
 
 }

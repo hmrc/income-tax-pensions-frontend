@@ -37,71 +37,77 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class PensionAmountController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                        authAction: AuthorisedAction,
-                                        pensionAmountView: PensionAmountView,
-                                        appConfig: AppConfig,
-                                        pensionSessionService: PensionSessionService,
-                                        errorHandler: ErrorHandler,
-                                        formsProvider: FormsProvider,
-                                        clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
+class PensionAmountController @Inject() (implicit
+    val mcc: MessagesControllerComponents,
+    authAction: AuthorisedAction,
+    pensionAmountView: PensionAmountView,
+    appConfig: AppConfig,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    formsProvider: FormsProvider,
+    clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper
+    with FormUtils {
 
-  private def validateIndex(optIndex: Option[Int], pensionSchemesList: Seq[UkPensionIncomeViewModel]): Option[Int] = {
+  private def validateIndex(optIndex: Option[Int], pensionSchemesList: Seq[UkPensionIncomeViewModel]): Option[Int] =
     optIndex match {
       case Some(index) if pensionSchemesList.size > index => Some(index)
-      case _ => None
+      case _                                              => None
     }
-  }
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        indexCheckThenJourneyCheck(data, pensionSchemeIndex, HowMuchPensionDidYouGetPaidPage, taxYear) {
-          data =>
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
+    implicit request =>
+      pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
+        case Some(data) =>
+          indexCheckThenJourneyCheck(data, pensionSchemeIndex, HowMuchPensionDidYouGetPaidPage, taxYear) { data =>
             val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
             validateIndex(pensionSchemeIndex, pensionIncomesList) match {
               case Some(index) =>
-                Future.successful(Ok(pensionAmountView(formsProvider.pensionAmountForm(request.user).fill((
-                  pensionIncomesList(index).amount,
-                  pensionIncomesList(index).taxPaid)),
-                  taxYear, index)))
+                Future.successful(
+                  Ok(
+                    pensionAmountView(
+                      formsProvider.pensionAmountForm(request.user).fill((pensionIncomesList(index).amount, pensionIncomesList(index).taxPaid)),
+                      taxYear,
+                      index)))
               case None => Future.successful(Redirect(redirectForSchemeLoop(pensionIncomesList, taxYear)))
             }
-        }
-      case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-    }
+          }
+        case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      }
   }
-
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        indexCheckThenJourneyCheck(data, pensionSchemeIndex, HowMuchPensionDidYouGetPaidPage, taxYear) {
-          data =>
-            val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
-            validateIndex(pensionSchemeIndex, pensionIncomesList) match {
-              case Some(index) =>
-                formsProvider.pensionAmountForm(request.user).bindFromRequest().fold(
+        indexCheckThenJourneyCheck(data, pensionSchemeIndex, HowMuchPensionDidYouGetPaidPage, taxYear) { data =>
+          val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
+          validateIndex(pensionSchemeIndex, pensionIncomesList) match {
+            case Some(index) =>
+              formsProvider
+                .pensionAmountForm(request.user)
+                .bindFromRequest()
+                .fold(
                   formWithErrors => Future.successful(BadRequest(pensionAmountView(formWithErrors, taxYear, index))),
                   amounts => {
-                    val pensionsCYAModel: PensionsCYAModel = data.pensions
+                    val pensionsCYAModel: PensionsCYAModel     = data.pensions
                     val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions
 
-                    val ukPensionModel: UkPensionIncomeViewModel = viewModel.uKPensionIncomes(index)
+                    val ukPensionModel: UkPensionIncomeViewModel        = viewModel.uKPensionIncomes(index)
                     val updatedUkPensionModel: UkPensionIncomeViewModel = ukPensionModel.copy(amount = amounts._1, taxPaid = amounts._2)
-                    val updatedList: Seq[UkPensionIncomeViewModel] = viewModel.uKPensionIncomes.updated(index, updatedUkPensionModel)
-                    val updatedCyaModel: PensionsCYAModel = {
-                      pensionsCYAModel.copy(incomeFromPensions =
-                        viewModel.copy(uKPensionIncomes = updatedList))
-                    }
+                    val updatedList: Seq[UkPensionIncomeViewModel]      = viewModel.uKPensionIncomes.updated(index, updatedUkPensionModel)
+                    val updatedCyaModel: PensionsCYAModel =
+                      pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedList))
                     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                       errorHandler.internalServerError()) {
 
                       schemeIsFinishedCheck(updatedList, index, taxYear, PensionSchemeStartDateController.show(taxYear, Some(index)))
                     }
-                  })
-              case None => Future.successful(Redirect(redirectForSchemeLoop(pensionIncomesList, taxYear)))
-            }
+                  }
+                )
+            case None => Future.successful(Redirect(redirectForSchemeLoop(pensionIncomesList, taxYear)))
+          }
         }
       case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }

@@ -28,17 +28,16 @@ import utils.UnitTest
 class FormUtilsSpec extends UnitTest with FormUtils {
 
   val charLimit: Int = 4
-  val validValue = "name"
-  val invalidValue = "nametoobig"
+  val validValue     = "name"
+  val invalidValue   = "nametoobig"
 
   def notEmpty(value: String): Constraint[String] =
     nonEmpty("Some error")
 
   val NotCharLimit: Constraint[String] = validateSize(charLimit)("It's too big")
 
-  def theForm(): Form[BigDecimal] = {
+  def theForm(): Form[BigDecimal] =
     amountForm("nothing to see here", "this not good", "too big")
-  }
 
   def aTestUtilForm(value: String): Form[String] = Form(
     value -> trimmedText.verifying(

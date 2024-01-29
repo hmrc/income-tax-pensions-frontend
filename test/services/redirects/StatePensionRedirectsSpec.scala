@@ -29,12 +29,12 @@ import utils.UnitTest
 class StatePensionRedirectsSpec extends UnitTest {
 
   private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
-  private val someRedirect = Some(Redirect(StatePensionController.show(taxYear)))
+  private val someRedirect              = Some(Redirect(StatePensionController.show(taxYear)))
 
   ".journeyCheck" should {
     "return None if page is valid and all previous questions have been answered" when {
       "current page is empty and at end of journey so far" in {
-        val data = cyaData.copy(incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(anEmptyStateBenefitViewModel)))
+        val data   = cyaData.copy(incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(anEmptyStateBenefitViewModel)))
         val result = journeyCheck(DoYouGetRegularStatePaymentsPage, data, taxYear)
 
         result shouldBe None
@@ -42,8 +42,8 @@ class StatePensionRedirectsSpec extends UnitTest {
 
       "current page is pre-filled and at end of journey so far" in {
         val data = cyaData.copy(
-          incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(anEmptyStateBenefitViewModel.copy(
-            amountPaidQuestion = Some(true), amount = Some(155.88))))
+          incomeFromPensions = IncomeFromPensionsViewModel(statePension =
+            Some(anEmptyStateBenefitViewModel.copy(amountPaidQuestion = Some(true), amount = Some(155.88))))
         )
         val result = journeyCheck(DoYouGetRegularStatePaymentsPage, data, taxYear)
 
@@ -51,15 +51,14 @@ class StatePensionRedirectsSpec extends UnitTest {
       }
 
       "current page is pre-filled and mid-journey" in {
-        val data = cyaData.copy(incomeFromPensions = aStatePensionIncomeFromPensionsViewModel)
+        val data   = cyaData.copy(incomeFromPensions = aStatePensionIncomeFromPensionsViewModel)
         val result = journeyCheck(TaxOnStatePensionLumpSumPage, data, taxYear)
 
         result shouldBe None
       }
 
       "previous page is unanswered but invalid and previous valid question has been answered" in {
-        val data = cyaData.copy(incomeFromPensions = IncomeFromPensionsViewModel(
-          statePension = Some(aMinimalStatePensionViewModel)))
+        val data   = cyaData.copy(incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(aMinimalStatePensionViewModel)))
         val result = journeyCheck(StatePensionLumpSumPage, data, taxYear)
 
         result shouldBe None
@@ -70,17 +69,18 @@ class StatePensionRedirectsSpec extends UnitTest {
       "previous question is unanswered" in {
         val data = cyaData.copy(
           incomeFromPensions = aStatePensionIncomeFromPensionsViewModel.copy(
-            statePension = Some(aStatePensionViewModel.copy(
-              amountPaidQuestion = None, amount = None
-            )))
+            statePension = Some(
+              aStatePensionViewModel.copy(
+                amountPaidQuestion = None,
+                amount = None
+              )))
         )
         val result = journeyCheck(StatePensionLumpSumPage, data, taxYear)
 
         result shouldBe someRedirect
       }
       "current page is invalid in journey" in {
-        val data = cyaData.copy(incomeFromPensions = IncomeFromPensionsViewModel(
-          statePension = Some(aMinimalStatePensionViewModel)))
+        val data   = cyaData.copy(incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(aMinimalStatePensionViewModel)))
         val result = journeyCheck(WhenDidYouStartGettingStatePaymentsPage, data, taxYear)
 
         result shouldBe someRedirect

@@ -21,12 +21,12 @@ import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
 
 case class PensionsUserData(sessionId: String,
-                              mtdItId: String,
-                              nino: String,
-                              taxYear: Int,
-                              isPriorSubmission: Boolean,
-                              pensions: PensionsCYAModel,
-                              lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
+                            mtdItId: String,
+                            nino: String,
+                            taxYear: Int,
+                            isPriorSubmission: Boolean,
+                            pensions: PensionsCYAModel,
+                            lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
 
 object PensionsUserData extends MongoJodaFormats {
 
@@ -36,12 +36,12 @@ object PensionsUserData extends MongoJodaFormats {
 }
 
 case class EncryptedPensionsUserData(sessionId: String,
-                                mtdItId: String,
-                                nino: String,
-                                taxYear: Int,
-                                isPriorSubmission: Boolean,
-                                pensions: EncryptedPensionCYAModel,
-                                lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
+                                     mtdItId: String,
+                                     nino: String,
+                                     taxYear: Int,
+                                     isPriorSubmission: Boolean,
+                                     pensions: EncryptedPensionCYAModel,
+                                     lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
 
 object EncryptedPensionsUserData extends MongoJodaFormats {
 

@@ -33,9 +33,8 @@ import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
-  }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
@@ -46,8 +45,12 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-        urlGet(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe OK
     }
@@ -60,7 +63,9 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowance = None)
           insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
 
-          urlGet(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -77,7 +82,9 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
           insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
 
-          urlGet(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -97,8 +104,12 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -117,8 +128,12 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = None)
           insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
 
-          urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has a SEE_OTHER status" in {
@@ -134,8 +149,12 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
           insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionsViewModel)))
 
-          urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has a SEE_OTHER status" in {
@@ -148,13 +167,19 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
     "redirect to PensionSchemeTaxReference page when user selects 'yes' with an amount and is not a prior submission" which {
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "14.55")
       val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-        pensionProvidePaidAnnualAllowanceQuestion = None, taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
+        pensionProvidePaidAnnualAllowanceQuestion = None,
+        taxPaidByPensionProvider = None,
+        pensionSchemeTaxReferences = None)
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -164,7 +189,7 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
 
       "updates reducedAnnualAllowanceQuestion to Some(true)" in {
         val expectedViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = None)
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        lazy val cyaModel     = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedViewModel
       }
     }
@@ -175,8 +200,12 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceViewModel))
-        urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -193,13 +222,19 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
     "redirect to the CYA page when user selects 'no' without prior data" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
       val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(
-        pensionProvidePaidAnnualAllowanceQuestion = None, taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
+        pensionProvidePaidAnnualAllowanceQuestion = None,
+        taxPaidByPensionProvider = None,
+        pensionSchemeTaxReferences = None)
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -209,7 +244,7 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
 
       "updates reducedAnnualAllowanceQuestion to Some(false)" in {
         val expectedViewModel = pensionsViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(false))
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        lazy val cyaModel     = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedViewModel
       }
     }
@@ -220,8 +255,12 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceViewModel))
-        urlPost(fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -231,7 +270,9 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
 
       "updates reducedAnnualAllowanceQuestion to Some(false)" in {
         val expectedViewModel = aPensionAnnualAllowanceViewModel.copy(
-          pensionProvidePaidAnnualAllowanceQuestion = Some(false), taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
+          pensionProvidePaidAnnualAllowanceQuestion = Some(false),
+          taxPaidByPensionProvider = None,
+          pensionSchemeTaxReferences = None)
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.pensionsAnnualAllowances shouldBe expectedViewModel
       }

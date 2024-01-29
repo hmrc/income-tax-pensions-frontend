@@ -36,18 +36,18 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
   val pstr2 = "12345678RB"
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val addAnotherLinkSelector = "#add-another-link"
-    val addLinkSelector = "#add-pstr-link"
-    val continueButtonSelector: String = "#continue"
-    val addSchemeButtonSelector: String = "#AddAScheme"
-    val overviewButtonSelector: String = "#ReturnToOverview"
-    val needToAddSchemeTextSelector: String = "#youNeedToAddOneOrMorePensionScheme1"
+    val captionSelector: String              = "#main-content > div > div > header > p"
+    val addAnotherLinkSelector               = "#add-another-link"
+    val addLinkSelector                      = "#add-pstr-link"
+    val continueButtonSelector: String       = "#continue"
+    val addSchemeButtonSelector: String      = "#AddAScheme"
+    val overviewButtonSelector: String       = "#ReturnToOverview"
+    val needToAddSchemeTextSelector: String  = "#youNeedToAddOneOrMorePensionScheme1"
     val returnToOverviewTextSelector: String = "#youNeedToAddOneOrMorePensionScheme2"
 
     def changeLinkSelector(index: Int): String = s"div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
     def removeLinkSelector(index: Int): String = s"div:nth-child($index) > dd.hmrc-add-to-a-list__remove > a"
-    def pstrSelector(index: Int): String = s"div:nth-child($index) > dt"
+    def pstrSelector(index: Int): String       = s"div:nth-child($index) > dt"
   }
 
   trait CommonExpectedResults {
@@ -66,31 +66,32 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val expectedAddPstrButtonText = "Add a PSTR"
-    val expectedOverviewButtonText = "Return to overview"
-    val expectedTitle = "Pension schemes that paid or agreed to pay the annual allowance tax"
-    val change = "Change"
-    val remove = "Remove"
-    val pensionSchemeTaxReference = "Pension Scheme Tax Reference"
-    val expectedAddAnotherText = "Add another Pensions Scheme Tax Reference"
+    val expectedCaption: Int => String     = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedButtonText                 = "Continue"
+    val expectedAddPstrButtonText          = "Add a PSTR"
+    val expectedOverviewButtonText         = "Return to overview"
+    val expectedTitle                      = "Pension schemes that paid or agreed to pay the annual allowance tax"
+    val change                             = "Change"
+    val remove                             = "Remove"
+    val pensionSchemeTaxReference          = "Pension Scheme Tax Reference"
+    val expectedAddAnotherText             = "Add another Pensions Scheme Tax Reference"
     val expectedNeedToAddPensionSchemeText = "You need to add one or more Pensions Scheme Tax Reference (PSTR)."
-    val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
+    val expectedReturnToOverviewPageText   = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Yn eich blaen"
-    val expectedAddPstrButtonText = "Ychwanegu PSTR"
-    val expectedOverviewButtonText = "Yn ôl i’r trosolwg"
-    val expectedTitle = "Cynlluniau pensiwn a dalodd y dreth lwfans blynyddol neu a gytunodd i wneud hynny"
-    val change = "Newid"
-    val remove = "Tynnu"
-    val pensionSchemeTaxReference = "Cyfeirnod Treth y Cynllun Pensiwn"
-    val expectedAddAnotherText = "Ychwanegu Cyfeirnod Treth Cynllun Pensiwn arall"
+    val expectedCaption: Int => String     = (taxYear: Int) => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText                 = "Yn eich blaen"
+    val expectedAddPstrButtonText          = "Ychwanegu PSTR"
+    val expectedOverviewButtonText         = "Yn ôl i’r trosolwg"
+    val expectedTitle                      = "Cynlluniau pensiwn a dalodd y dreth lwfans blynyddol neu a gytunodd i wneud hynny"
+    val change                             = "Newid"
+    val remove                             = "Tynnu"
+    val pensionSchemeTaxReference          = "Cyfeirnod Treth y Cynllun Pensiwn"
+    val expectedAddAnotherText             = "Ychwanegu Cyfeirnod Treth Cynllun Pensiwn arall"
     val expectedNeedToAddPensionSchemeText = "You need to add one or more Pensions Scheme Tax Reference (PSTR)."
-    val expectedReturnToOverviewPageText = "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
+    val expectedReturnToOverviewPageText =
+      "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(
@@ -112,7 +113,10 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
             dropPensionsDB()
             val viewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(pstr1, pstr2)))
             insertCyaData(pensionsUserDataWithAnnualAllowances(viewModel))
-            urlGet(fullUrl(pstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
+            urlGet(
+              fullUrl(pstrSummaryUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -127,13 +131,21 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(pstr1, pstrSelector(1))
           textOnPageCheck(pstr2, pstrSelector(2))
-          linkCheck(s"$change $change $pensionSchemeTaxReference $pstr1", changeLinkSelector(1),
+          linkCheck(
+            s"$change $change $pensionSchemeTaxReference $pstr1",
+            changeLinkSelector(1),
             PensionSchemeTaxReferenceController.show(taxYearEOY, Some(0)).url)
-          linkCheck(s"$change $change $pensionSchemeTaxReference $pstr2", changeLinkSelector(2),
+          linkCheck(
+            s"$change $change $pensionSchemeTaxReference $pstr2",
+            changeLinkSelector(2),
             PensionSchemeTaxReferenceController.show(taxYearEOY, Some(1)).url)
-          linkCheck(s"$remove $remove $pensionSchemeTaxReference $pstr1", removeLinkSelector(1),
+          linkCheck(
+            s"$remove $remove $pensionSchemeTaxReference $pstr1",
+            removeLinkSelector(1),
             RemoveAnnualAllowancePstrController.show(taxYearEOY, Some(0)).url)
-          linkCheck(s"$remove $remove $pensionSchemeTaxReference $pstr2", removeLinkSelector(2),
+          linkCheck(
+            s"$remove $remove $pensionSchemeTaxReference $pstr2",
+            removeLinkSelector(2),
             RemoveAnnualAllowancePstrController.show(taxYearEOY, Some(1)).url)
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, PensionSchemeTaxReferenceController.show(taxYearEOY, None).url)
           buttonCheck(expectedButtonText, continueButtonSelector, Some(annualAllowancesCYAUrl(taxYearEOY)))
@@ -146,7 +158,10 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
             dropPensionsDB()
             val viewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq()))
             insertCyaData(pensionsUserDataWithAnnualAllowances(viewModel))
-            urlGet(fullUrl(pstrSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
+            urlGet(
+              fullUrl(pstrSummaryUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -178,7 +193,9 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(taxPaidByPensionProvider = None)
           insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-          urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -195,7 +212,9 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
           insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-          urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -210,13 +229,15 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO redirect to annual allowance cya page
+        // TODO redirect to annual allowance cya page
         result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }

@@ -29,16 +29,16 @@ class SessionExpiredControllerSpec extends UnitTestWithApp with DefaultAwaitTime
   ".KeepAlive" should {
     "return no Content" in {
       val request = FakeRequest("GET", "/timeout")
-      val result = controller.keepAlive()(request)
+      val result  = controller.keepAlive()(request)
 
       status(result) shouldBe NO_CONTENT
-      }
     }
+  }
 
   ".timeout" should {
     "return OK with HTML" in {
       val request = FakeRequest("GET", "/keep-alive")
-      val result = controller.timeout()(request)
+      val result  = controller.timeout()(request)
 
       status(result) shouldBe OK
       contentType(result) shouldBe Some("text/html")

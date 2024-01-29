@@ -29,9 +29,9 @@ case class ShortServiceRefundsAudit(taxYear: Int,
                                     shortServiceRefunds: ShortServiceRefundsViewModel,
                                     priorShortServiceRefunds: Option[ShortServiceRefundsViewModel] = None) {
 
-  private val amend = "AmendShortServiceRefunds"
+  private val amend  = "AmendShortServiceRefunds"
   private val create = "CreateShortServiceRefunds"
-  private val view = "ViewShortServiceRefunds"
+  private val view   = "ViewShortServiceRefunds"
 
   def toAuditModelAmend: AuditModel[ShortServiceRefundsAudit] = toAuditModel(amend)
 
@@ -47,12 +47,15 @@ object ShortServiceRefundsAudit {
   def apply(taxYear: Int,
             user: User,
             shortServiceRefunds: ShortServiceRefundsViewModel,
-            priorShortServiceRefunds: Option[ShortServiceRefundsViewModel]): ShortServiceRefundsAudit = {
-
+            priorShortServiceRefunds: Option[ShortServiceRefundsViewModel]): ShortServiceRefundsAudit =
     ShortServiceRefundsAudit(
-      taxYear, user.affinityGroup, user.nino, user.mtditid, shortServiceRefunds, priorShortServiceRefunds
+      taxYear,
+      user.affinityGroup,
+      user.nino,
+      user.mtditid,
+      shortServiceRefunds,
+      priorShortServiceRefunds
     )
-  }
 
   implicit val writes: OWrites[ShortServiceRefundsAudit] = Json.writes[ShortServiceRefundsAudit]
 

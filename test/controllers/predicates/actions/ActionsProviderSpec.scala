@@ -31,13 +31,9 @@ import play.api.test.Helpers.status
 import support.ControllerUnitTest
 import support.mocks.{MockAuthorisedAction, MockErrorHandler, MockPensionSessionService}
 
+class ActionsProviderSpec extends ControllerUnitTest with MockAuthorisedAction with MockPensionSessionService with MockErrorHandler {
 
-class ActionsProviderSpec extends ControllerUnitTest
-  with MockAuthorisedAction
-  with MockPensionSessionService
-  with MockErrorHandler {
-
-  private val anyBlock = (_: WrappedRequest[AnyContent]) => Ok("any-result")
+  private val anyBlock      = (_: WrappedRequest[AnyContent]) => Ok("any-result")
   private val validTaxYears = validTaxYearList.mkString(",")
 
   val fakeIndividualRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
@@ -51,19 +47,19 @@ class ActionsProviderSpec extends ControllerUnitTest
     mockErrorHandler,
     appConfig
   )
-  
+
   type ActionType = Int => ActionBuilder[WrappedRequest, AnyContent]
 
-  for ( (actionName: String, action) <- Seq(
-    ("endOfYear", actionsProvider.endOfYear: ActionType),
-    ("userSessionDataFo", actionsProvider.userSessionDataFor :ActionType),
-    ("userPriorAndSessionDataFor", actionsProvider.userPriorAndSessionDataFor:ActionType))) {
-
+  for ((actionName: String, action) <- Seq(
+      ("endOfYear", actionsProvider.endOfYear: ActionType),
+      ("userSessionDataFo", actionsProvider.userSessionDataFor: ActionType),
+      ("userPriorAndSessionDataFor", actionsProvider.userPriorAndSessionDataFor: ActionType)
+    ))
     s".$actionName(taxYear)" should {
-      
+
       "redirect to UnauthorisedUserErrorController when authentication fails" in {
         mockFailToAuthenticate()
-        
+
         val underTest = action(taxYearEOY)(block = anyBlock)
         await(underTest(fakeIndividualRequest)) shouldBe Redirect(UnauthorisedUserErrorController.show)
       }
@@ -71,25 +67,32 @@ class ActionsProviderSpec extends ControllerUnitTest
       if (actionName != "endOfYear") {
         "handle internal server error when getUserSessionData result in error" in {
           mockAuthAsIndividual(Some(aUser.nino))
-          mockGetPensionSessionData(taxYearEOY,
+          mockGetPensionSessionData(
+            taxYearEOY,
             Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues."))))
           mockHandleError(INTERNAL_SERVER_ERROR, InternalServerError)
 
           val underTest = action(taxYearEOY)(block = anyBlock)
-          await(underTest(fakeIndividualRequest.withSession(TAX_YEAR -> taxYearEOY.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe InternalServerError
+          await(
+            underTest(
+              fakeIndividualRequest.withSession(TAX_YEAR -> taxYearEOY.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe InternalServerError
         }
       }
-      
+
       if (actionName == "userPriorAndSessionDataFor") {
         "handle internal server error when getUserPriorAndSessionData result in error" in {
           mockAuthAsIndividual(Some(aUser.nino))
           mockGetPensionSessionData(taxYearEOY, Right(Some(aPensionsUserData)))
-          mockGetPriorData(taxYearEOY, aUser,
+          mockGetPriorData(
+            taxYearEOY,
+            aUser,
             Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues."))))
           mockHandleError(INTERNAL_SERVER_ERROR, InternalServerError)
 
           val underTest = action(taxYearEOY)(block = anyBlock)
-          await(underTest(fakeIndividualRequest.withSession(TAX_YEAR -> taxYearEOY.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe InternalServerError
+          await(
+            underTest(
+              fakeIndividualRequest.withSession(TAX_YEAR -> taxYearEOY.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe InternalServerError
         }
       }
 
@@ -102,6 +105,5 @@ class ActionsProviderSpec extends ControllerUnitTest
         status(underTest(fakeIndividualRequest.withSession(TAX_YEAR -> taxYearEOY.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe OK
       }
     }
-  }
-  
+
 }

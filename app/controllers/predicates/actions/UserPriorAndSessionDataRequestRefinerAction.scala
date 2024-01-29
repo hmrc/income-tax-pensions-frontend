@@ -24,21 +24,18 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvi
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class UserPriorAndSessionDataRequestRefinerAction(taxYear: Int,
-                                                       pensionSessionService: PensionSessionService,
-                                                       errorHandler: ErrorHandler)
-                                                      (implicit ec: ExecutionContext)
-  extends ActionRefiner[UserSessionDataRequest, UserPriorAndSessionDataRequest] with FrontendHeaderCarrierProvider {
+case class UserPriorAndSessionDataRequestRefinerAction(taxYear: Int, pensionSessionService: PensionSessionService, errorHandler: ErrorHandler)(
+    implicit ec: ExecutionContext)
+    extends ActionRefiner[UserSessionDataRequest, UserPriorAndSessionDataRequest]
+    with FrontendHeaderCarrierProvider {
 
   override protected[predicates] def executionContext: ExecutionContext = ec
 
-  override protected[predicates] def refine[A](input: UserSessionDataRequest[A]): Future[Either[Result, UserPriorAndSessionDataRequest[A]]] = {
+  override protected[predicates] def refine[A](input: UserSessionDataRequest[A]): Future[Either[Result, UserPriorAndSessionDataRequest[A]]] =
     pensionSessionService.getPriorData(taxYear, input.user)(hc(input.request)).map {
       case Left(error) =>
         Left(errorHandler.handleError(error.status)(input.request))
       case Right(incomeTaxUserData) =>
         Right(UserPriorAndSessionDataRequest(input.pensionsUserData, incomeTaxUserData.pensions, input.user, input.request))
     }
-  }
 }
-

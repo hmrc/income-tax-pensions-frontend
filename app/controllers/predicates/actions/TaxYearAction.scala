@@ -27,13 +27,14 @@ import play.api.mvc._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TaxYearAction @Inject()(taxYear: Int, missingTaxYearReset: Boolean)(
-  implicit val appConfig: AppConfig,
-  val messagesApi: MessagesApi
-) extends ActionRefiner[AuthorisationRequest, AuthorisationRequest] with I18nSupport {
+class TaxYearAction @Inject() (taxYear: Int, missingTaxYearReset: Boolean)(implicit
+    val appConfig: AppConfig,
+    val messagesApi: MessagesApi
+) extends ActionRefiner[AuthorisationRequest, AuthorisationRequest]
+    with I18nSupport {
 
   implicit val executionContext: ExecutionContext = ExecutionContext.global
-  lazy val logger: Logger = Logger.apply(this.getClass)
+  lazy val logger: Logger                         = Logger.apply(this.getClass)
 
   override def refine[A](request: AuthorisationRequest[A]): Future[Either[Result, AuthorisationRequest[A]]] = {
     implicit val implicitUser: AuthorisationRequest[A] = request
@@ -48,10 +49,11 @@ class TaxYearAction @Inject()(taxYear: Int, missingTaxYearReset: Boolean)(
           Future.successful(Right(request))
         } else {
           logger.info("[TaxYearAction][refine] Tax year provided is different than that in session. Redirecting to overview.")
-          Future.successful(Left(
-            Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear))
-              .addingToSession(TAX_YEAR -> taxYear.toString)
-          ))
+          Future.successful(
+            Left(
+              Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear))
+                .addingToSession(TAX_YEAR -> taxYear.toString)
+            ))
         }
       } else {
         logger.warn(s"[TaxYearAction][refine] Invalid tax year, redirecting to error page. Valid Tax Years: $validClientTaxYears")
@@ -67,7 +69,7 @@ class TaxYearAction @Inject()(taxYear: Int, missingTaxYearReset: Boolean)(
 object TaxYearAction {
   def taxYearAction(taxYear: Int, missingTaxYearReset: Boolean = true)(implicit appConfig: AppConfig, messages: MessagesApi): TaxYearAction =
     new TaxYearAction(taxYear, missingTaxYearReset)
-    
+
   def apply(taxYear: Int, missingTaxYearReset: Boolean = true)(implicit appConfig: AppConfig, messages: MessagesApi): TaxYearAction =
     taxYearAction(taxYear, missingTaxYearReset)
 }

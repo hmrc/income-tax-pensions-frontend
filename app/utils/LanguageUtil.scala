@@ -22,10 +22,9 @@ import play.api.i18n.{Lang, Messages}
 import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En, Language}
 
 object LanguageUtil {
-  def checkLanguage(implicit messages: Messages): Language ={
+  def checkLanguage(implicit messages: Messages): Language =
     messages.lang match {
       case Lang(Locale.ENGLISH) => En
-      case _ => Cy
+      case _                    => Cy
     }
-  }
 }

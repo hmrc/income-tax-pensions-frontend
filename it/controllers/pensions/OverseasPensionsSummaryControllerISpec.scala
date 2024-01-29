@@ -34,21 +34,20 @@ import utils.PageUrls._
 import utils.PageUrls.ShortServiceRefunds.{shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl}
 import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, transferPensionSavingsUrl}
 
-class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAndAfterEach  { // scalastyle:off magic.number
+class OverseasPensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach { // scalastyle:off magic.number
 
   implicit val overseasPensionSummaryUrl: Int => String = overseasPensionsSummaryUrl
 
   object Selectors {
     val paymentsIntoOverseasPensionsLink = "#payments-into-overseas-pensions-link"
-    val incomeFromOverseasPensionsLink = "#income-from-overseas-pensions-link"
-    val overseasTransferChargesLink = "#overseas-transfer-charges-link"
-    val shortServiceRefundsLink = "#short-service-refunds-link"
-    val insetTextSelector = "#main-content > div > div > div.govuk-inset-text"
-    val buttonSelector = "#returnToOverviewPageBtn"
+    val incomeFromOverseasPensionsLink   = "#income-from-overseas-pensions-link"
+    val overseasTransferChargesLink      = "#overseas-transfer-charges-link"
+    val shortServiceRefundsLink          = "#short-service-refunds-link"
+    val insetTextSelector                = "#main-content > div > div > div.govuk-inset-text"
+    val buttonSelector                   = "#returnToOverviewPageBtn"
 
-    def summaryListStatusTagSelector(index: Int): String = {
+    def summaryListStatusTagSelector(index: Int): String =
       s"#overseas-pensions-summary > dl > div:nth-child($index) > dd > strong"
-    }
     def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
 
@@ -71,43 +70,43 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val buttonText = "Return to overview"
-    val updated = "Updated"
-    val notStarted = "Not Started"
+    val buttonText                     = "Return to overview"
+    val updated                        = "Updated"
+    val notStarted                     = "Not Started"
     val paymentsToOverseasPensionsText = "Payments into overseas pensions"
     val incomeFromOverseasPensionsText = "Income from overseas pensions"
-    val overseasTransferChargesText = "Overseas transfer charges"
-    val shortServiceRefundsText = "Short service refunds"
+    val overseasTransferChargesText    = "Overseas transfer charges"
+    val shortServiceRefundsText        = "Short service refunds"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Pensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val buttonText = "Yn ôl i’r trosolwg"
-    val updated = "Wedi diweddaru"
-    val notStarted = "Heb ddechrau"
+    val buttonText                     = "Yn ôl i’r trosolwg"
+    val updated                        = "Wedi diweddaru"
+    val notStarted                     = "Heb ddechrau"
     val paymentsToOverseasPensionsText = "Taliadau i bensiynau tramor"
     val incomeFromOverseasPensionsText = "Incwm o bensiynau tramor"
-    val overseasTransferChargesText = "Ffioedd ar drosglwyddiadau tramor"
-    val shortServiceRefundsText = "Ad-daliadau am wasanaeth byr"
+    val overseasTransferChargesText    = "Ffioedd ar drosglwyddiadau tramor"
+    val shortServiceRefundsText        = "Ad-daliadau am wasanaeth byr"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "Overseas pensions"
+    val expectedTitle          = "Overseas pensions"
     val expectedSectionsToFill = "You only need to fill in the sections that apply to you."
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "Overseas pensions"
+    val expectedTitle          = "Overseas pensions"
     val expectedSectionsToFill = "You only need to fill in the sections that apply to your client."
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Pensiynau tramor"
+    val expectedTitle: String  = "Pensiynau tramor"
     val expectedSectionsToFill = "Dim ond yr adrannau sy’n berthnasol i chi y mae angen i chi eu llenwi."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle: String = "Pensiynau tramor"
+    val expectedTitle: String  = "Pensiynau tramor"
     val expectedSectionsToFill = "Dim ond yr adrannau sy’n berthnasol i’ch cleient y mae angen i chi eu llenwi."
   }
 
@@ -121,12 +120,12 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
   ".show" when {
     import Selectors._
     userScenarios.foreach { userScenario =>
-      val common = userScenario.commonExpectedResults
+      val common   = userScenario.commonExpectedResults
       val specific = userScenario.specificExpectedResults.get
       s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
         "render the page where data does not exist and everything is 'Not Updated'" which {
           implicit lazy val result: WSResponse =
-            showPage(userScenario, anPensionsUserDataEmptyCya, anIncomeTaxUserData.copy( pensions = Some(anAllPensionDataEmpty)))
+            showPage(userScenario, anPensionsUserDataEmptyCya, anIncomeTaxUserData.copy(pensions = Some(anAllPensionDataEmpty)))
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -161,7 +160,8 @@ class OverseasPensionsSummaryControllerISpec extends  CommonUtils with BeforeAnd
         }
 
         "render the page where data exists for payments into pensions and income for overseas pensions to be 'Updated'" which {
-          val userData =  aPensionsUserData.copy(isPriorSubmission = true,
+          val userData = aPensionsUserData.copy(
+            isPriorSubmission = true,
             pensions = aPensionsCYAModel.copy(
               paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel,
               incomeFromOverseasPensions = anIncomeFromOverseasPensionsViewModel)

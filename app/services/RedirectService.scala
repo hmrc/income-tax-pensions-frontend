@@ -29,24 +29,20 @@ import PaymentsIntoPensionPages._
 
 import scala.concurrent.Future
 
-
 case class ConditionalRedirect2(cond: Boolean, condFalse: Result)
 
 case class RedirectsForPath(foo: Map[String, Seq[ConditionalRedirect2]])
 
 object RedirectService extends Logging {
 
+  // 1. Current Redirects
+  // 2. Next Page Redirects
 
-  //1. Current Redirects
-  //2. Next Page Redirects
-
-  def redirectBasedOnRequest[T](optUserData: Option[PensionsUserData], taxYear: Int):
-  Either[Result, PensionsUserData] = {
+  def redirectBasedOnRequest[T](optUserData: Option[PensionsUserData], taxYear: Int): Either[Result, PensionsUserData] =
     optUserData match {
       case Some(userData) => Right(userData)
-      case None => Left(Redirect(PensionsSummaryController.show(taxYear))) //No session data atm redirect to pensions summary page
+      case None           => Left(Redirect(PensionsSummaryController.show(taxYear))) // No session data atm redirect to pensions summary page
     }
-  }
 
   object PaymentsIntoPensionsRedirects {
     def journeyCheck(currentPage: PaymentsIntoPensionPages, cya: PensionsCYAModel, taxYear: Int): Seq[ConditionalRedirect] = {
@@ -54,7 +50,7 @@ object RedirectService extends Logging {
       val pIP = cya.paymentsIntoPension
 
       val startPageCheck = Seq(
-        ConditionalRedirect( //TODO: This condition may not be needed
+        ConditionalRedirect( // TODO: This condition may not be needed
           pIP.rasPensionPaymentQuestion.isEmpty,
           ReliefAtSourcePensionsController.show(taxYear),
           Some(RasPage.journeyNo))
@@ -70,11 +66,10 @@ object RedirectService extends Logging {
       (startPageCheck ++
         rasSection(currentPage, pIP, taxYear) ++
         taxReliefCheck ++
-        taxReliefNotClaimedSection(currentPage, pIP, taxYear)
-        ).filter(_.journeyNo.exists(_ < currentPage.journeyNo))
+        taxReliefNotClaimedSection(currentPage, pIP, taxYear)).filter(_.journeyNo.exists(_ < currentPage.journeyNo))
     }
 
-    private def rasSection(currentPage: PaymentsIntoPensionPages, pIP: PaymentsIntoPensionsViewModel, taxYear: Int): Seq[ConditionalRedirect] = {
+    private def rasSection(currentPage: PaymentsIntoPensionPages, pIP: PaymentsIntoPensionsViewModel, taxYear: Int): Seq[ConditionalRedirect] =
       pIP.rasPensionPaymentQuestion match {
         case Some(true) =>
           Seq(
@@ -89,7 +84,8 @@ object RedirectService extends Logging {
             ConditionalRedirect(
               pIP.oneOffRasPaymentPlusTaxReliefQuestion.contains(true) && pIP.totalOneOffRasPaymentPlusTaxRelief.isEmpty,
               OneOffRASPaymentsAmountController.show(taxYear),
-              Some(OneOffRasAmountPage.journeyNo)),
+              Some(OneOffRasAmountPage.journeyNo)
+            ),
             ConditionalRedirect(
               !pIP.totalPaymentsIntoRASQuestion.contains(true),
               TotalPaymentsIntoRASController.show(taxYear),
@@ -105,9 +101,10 @@ object RedirectService extends Logging {
           )
         case _ => Seq()
       }
-    }
 
-    private def taxReliefNotClaimedSection(currentPage: PaymentsIntoPensionPages, pIP: PaymentsIntoPensionsViewModel, taxYear: Int): Seq[ConditionalRedirect] = {
+    private def taxReliefNotClaimedSection(currentPage: PaymentsIntoPensionPages,
+                                           pIP: PaymentsIntoPensionsViewModel,
+                                           taxYear: Int): Seq[ConditionalRedirect] =
       pIP.pensionTaxReliefNotClaimedQuestion match {
         case Some(true) =>
           Seq(
@@ -118,15 +115,17 @@ object RedirectService extends Logging {
             ConditionalRedirect(
               pIP.retirementAnnuityContractPaymentsQuestion.exists(x => x) && pIP.totalRetirementAnnuityContractPayments.isEmpty,
               RetirementAnnuityAmountController.show(taxYear),
-              Some(RetirementAnnuityAmountPage.journeyNo)),
+              Some(RetirementAnnuityAmountPage.journeyNo)
+            ),
             ConditionalRedirect(
               pIP.workplacePensionPaymentsQuestion.isEmpty,
               WorkplacePensionController.show(taxYear),
               Some(WorkplacePensionPage.journeyNo)),
             ConditionalRedirect(
-              pIP.workplacePensionPaymentsQuestion.exists(x => x)  && pIP.totalWorkplacePensionPayments.isEmpty,
+              pIP.workplacePensionPaymentsQuestion.exists(x => x) && pIP.totalWorkplacePensionPayments.isEmpty,
               WorkplaceAmountController.show(taxYear),
-              Some(WorkplacePensionAmountPage.journeyNo))
+              Some(WorkplacePensionAmountPage.journeyNo)
+            )
           )
         case Some(false) =>
           Seq(
@@ -138,26 +137,23 @@ object RedirectService extends Logging {
           )
         case _ => Seq()
       }
-    }
   }
 
-
-  def redirectBasedOnCurrentAnswers(taxYear: Int, data: Option[PensionsUserData])
-                                   (conditions: PensionsCYAModel => Seq[ConditionalRedirect])
-                                   (block: PensionsUserData => Future[Result]): Future[Result] = {
+  def redirectBasedOnCurrentAnswers(taxYear: Int, data: Option[PensionsUserData])(conditions: PensionsCYAModel => Seq[ConditionalRedirect])(
+      block: PensionsUserData => Future[Result]): Future[Result] = {
     val redirectOrData = calculateRedirect(taxYear, data, conditions)
 
     redirectOrData match {
       case Left(redirect) => Future.successful(redirect)
-      case Right(cya) => block(cya)
+      case Right(cya)     => block(cya)
     }
   }
 
-  private def calculateRedirect(taxYear: Int, data: Option[PensionsUserData],
-                                cyaConditions: PensionsCYAModel => Seq[ConditionalRedirect]): Either[Result, PensionsUserData] = {
+  private def calculateRedirect(taxYear: Int,
+                                data: Option[PensionsUserData],
+                                cyaConditions: PensionsCYAModel => Seq[ConditionalRedirect]): Either[Result, PensionsUserData] =
     data match {
       case Some(cya) =>
-
         val possibleRedirects = cyaConditions(cya.pensions)
 
         val optRedirect = possibleRedirects.collectFirst {
@@ -166,10 +162,9 @@ object RedirectService extends Logging {
 
         optRedirect match {
           case Some(redirect) =>
-            logger.info(s"[RedirectService][calculateRedirect]" +
-              s" Some data is missing / in the wrong state for the requested page. Routing to ${
-                redirect.header.headers.getOrElse("Location", "")
-              }")
+            logger.info(
+              s"[RedirectService][calculateRedirect]" +
+                s" Some data is missing / in the wrong state for the requested page. Routing to ${redirect.header.headers.getOrElse("Location", "")}")
             Left(redirect)
           case None => Right(cya)
         }
@@ -177,13 +172,11 @@ object RedirectService extends Logging {
       case None =>
         Left(Redirect(controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear)))
     }
-  }
 
-  def isFinishedCheck(cya: PensionsCYAModel, taxYear: Int, redirect: Call): Result = {
+  def isFinishedCheck(cya: PensionsCYAModel, taxYear: Int, redirect: Call): Result =
     if (cya.paymentsIntoPension.isFinished) {
       Redirect(controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(taxYear))
     } else {
       Redirect(redirect)
     }
-  }
 }

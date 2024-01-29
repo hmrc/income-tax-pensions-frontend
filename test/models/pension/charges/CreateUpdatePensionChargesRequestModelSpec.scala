@@ -23,7 +23,8 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
 
   ".otherSubModelsEmpty" should {
 
-    val annualAllowancesPensionSubModel = AnnualAllowancesPensionCharges(anPensionCharges.pensionSavingsTaxCharges, anPensionCharges.pensionContributions)
+    val annualAllowancesPensionSubModel =
+      AnnualAllowancesPensionCharges(anPensionCharges.pensionSavingsTaxCharges, anPensionCharges.pensionContributions)
     Seq(
       anPensionCharges.pensionContributions,
       anPensionCharges.overseasPensionContributions,
@@ -32,14 +33,13 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
       anPensionCharges.pensionSchemeOverseasTransfers,
       Some(annualAllowancesPensionSubModel)
     ).foreach { subModel =>
-
       s"be false when subModel is non empty ${subModel.get.getClass.getName} and other models are not empty" in {
         val actualResult = CreateUpdatePensionChargesRequestModel(
           anPensionCharges.pensionSavingsTaxCharges,
           anPensionCharges.pensionSchemeOverseasTransfers,
           anPensionCharges.pensionSchemeUnauthorisedPayments,
           anPensionCharges.pensionContributions,
-          anPensionCharges.overseasPensionContributions,
+          anPensionCharges.overseasPensionContributions
         ).otherSubRequestModelsEmpty(subModel)
         actualResult shouldBe false
       }
@@ -50,7 +50,7 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
           None,
           None,
           None,
-          None,
+          None
         ).otherSubRequestModelsEmpty(subModel)
         actualResult shouldBe true
       }
@@ -61,7 +61,7 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
           None,
           anPensionCharges.pensionSchemeUnauthorisedPayments.map(_.copy(None, None, None)),
           None,
-          None,
+          None
         ).otherSubRequestModelsEmpty(subModel)
 
         actualResult shouldBe true
@@ -73,7 +73,7 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
           None,
           anPensionCharges.pensionSchemeUnauthorisedPayments.map(_.copy(Some(Seq("PSTR")), None, None)),
           None,
-          None,
+          None
         ).otherSubRequestModelsEmpty(subModel)
         actualResult shouldBe false
       }

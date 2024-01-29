@@ -29,9 +29,9 @@ case class AnnualAllowancesAudit(taxYear: Int,
                                  annualAllowances: PensionAnnualAllowancesViewModel,
                                  priorAnnualAllowances: Option[PensionAnnualAllowancesViewModel] = None) {
 
-  private val amend = "AmendAnnualAllowances"
+  private val amend  = "AmendAnnualAllowances"
   private val create = "CreateAnnualAllowances"
-  private val view = "ViewAnnualAllowances"
+  private val view   = "ViewAnnualAllowances"
 
   def toAuditModelAmend: AuditModel[AnnualAllowancesAudit] = toAuditModel(amend)
 
@@ -47,12 +47,15 @@ object AnnualAllowancesAudit {
   def apply(taxYear: Int,
             user: User,
             annualAllowances: PensionAnnualAllowancesViewModel,
-            priorAnnualAllowances: Option[PensionAnnualAllowancesViewModel]): AnnualAllowancesAudit = {
-
+            priorAnnualAllowances: Option[PensionAnnualAllowancesViewModel]): AnnualAllowancesAudit =
     AnnualAllowancesAudit(
-      taxYear, user.affinityGroup, user.nino, user.mtditid, annualAllowances, priorAnnualAllowances
+      taxYear,
+      user.affinityGroup,
+      user.nino,
+      user.mtditid,
+      annualAllowances,
+      priorAnnualAllowances
     )
-  }
 
   implicit val writes: OWrites[AnnualAllowancesAudit] = Json.writes[AnnualAllowancesAudit]
 

@@ -25,15 +25,11 @@ import utils.{Clock, TestTaxYearHelper, UnitTestClock}
 
 import scala.concurrent.ExecutionContext
 
-trait ControllerUnitTest extends UnitTest
-  with FutureAwaits with DefaultAwaitTimeout
-  with GuiceOneAppPerSuite
-  with Injecting
-  with TestTaxYearHelper {
+trait ControllerUnitTest extends UnitTest with FutureAwaits with DefaultAwaitTimeout with GuiceOneAppPerSuite with Injecting with TestTaxYearHelper {
 
   protected implicit val cc: MessagesControllerComponents = stubMessagesControllerComponents()
-  protected implicit val appConfig: AppConfig = new MockAppConfig().config()
-  protected implicit lazy val ec: ExecutionContext = ExecutionContext.Implicits.global
-  protected implicit val testClock: Clock = UnitTestClock
+  protected implicit val appConfig: AppConfig             = new MockAppConfig().config()
+  protected implicit lazy val ec: ExecutionContext        = ExecutionContext.Implicits.global
+  protected implicit val testClock: Clock                 = UnitTestClock
 
 }

@@ -27,8 +27,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeTaxUserDataConnector @Inject()(val http: HttpClient,
-                                           val config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
+class IncomeTaxUserDataConnector @Inject() (val http: HttpClient, val config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
   def getUserData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] = {
     val incomeTaxUserDataUrl: String = config.incomeTaxSubmissionBEBaseUrl + s"/income-tax/nino/$nino/sources/session?taxYear=$taxYear"

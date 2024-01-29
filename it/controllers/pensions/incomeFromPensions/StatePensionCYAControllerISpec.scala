@@ -45,10 +45,10 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
 
   private val newIncomeFromPensions: IncomeFromPensionsViewModel = anIncomeFromPensionEmptyViewModel.copy(
     uKPensionIncomesQuestion = Some(true),
-    uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(
-      pensionSchemeName = Some("New Pension Scheme"),
-      pensionSchemeRef = Some("123/123"),
-      pensionId = Some("123456"))))
+    uKPensionIncomes = Seq(
+      anUkPensionIncomeViewModelOne
+        .copy(pensionSchemeName = Some("New Pension Scheme"), pensionSchemeRef = Some("123/123"), pensionId = Some("123456")))
+  )
 
   private val statePensionCYAModel: ClaimCYAModel = aCreateStatePensionBenefitsUD.claim.get
 
@@ -65,14 +65,17 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
     amountPaidQuestion = Some(true),
     amount = statePensionCYAModel.amount,
     taxPaidQuestion = statePensionCYAModel.taxPaidQuestion,
-    taxPaid = statePensionCYAModel.taxPaid)
+    taxPaid = statePensionCYAModel.taxPaid
+  )
 
-  private val priorCYAData = aPensionsUserData.copy(taxYear = taxYear, pensions = aPensionsCYAGeneratedFromPriorEmpty.copy(
-    incomeFromPensions = IncomeFromPensionsViewModel(
-      statePension = Some(stateBenefitData),
-      uKPensionIncomesQuestion = Some(true),
-      uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))))
-
+  private val priorCYAData = aPensionsUserData.copy(
+    taxYear = taxYear,
+    pensions = aPensionsCYAGeneratedFromPriorEmpty.copy(
+      incomeFromPensions = IncomeFromPensionsViewModel(
+        statePension = Some(stateBenefitData),
+        uKPensionIncomesQuestion = Some(true),
+        uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne)))
+  )
 
   ".show" should {
 
@@ -82,7 +85,9 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
         authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData.copy(taxYear = taxYear))
         userDataStub(anIncomeTaxUserData, nino, taxYear)
-        urlGet(fullUrl(statePensionCyaUrl(taxYear)), follow = false,
+        urlGet(
+          fullUrl(statePensionCyaUrl(taxYear)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
       }
       result.status shouldBe OK
@@ -93,7 +98,10 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        urlGet(fullUrl(statePensionCyaUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+        urlGet(
+          fullUrl(statePensionCyaUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
@@ -101,14 +109,17 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
 
     "redirect to the first page in journey if journey is incomplete" in {
       val data = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(
-          incomeFromPensions = aStatePensionIncomeFromPensionsViewModel.copy(
-            statePension = Some(anStateBenefitViewModelOne.copy(startDateQuestion = None)))))
+        incomeFromPensions =
+          aStatePensionIncomeFromPensionsViewModel.copy(statePension = Some(anStateBenefitViewModelOne.copy(startDateQuestion = None)))))
 
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(data)
-        urlGet(fullUrl(statePensionCyaUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+        urlGet(
+          fullUrl(statePensionCyaUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
@@ -124,7 +135,10 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          urlPost(fullUrl(statePensionCyaUrl(taxYear)), form, follow = false,
+          urlPost(
+            fullUrl(statePensionCyaUrl(taxYear)),
+            form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
         result.status shouldBe SEE_OTHER
@@ -142,10 +156,15 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
           authoriseAgentOrIndividual()
           stateBenefitsSubmissionStub(Json.toJson(stateBenefitData).toString(), nino)
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(aPensionsUserData.copy(
-            pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear
-          ))
-          urlPost(fullUrl(statePensionCyaUrl(taxYear)), form, follow = false,
+          insertCyaData(
+            aPensionsUserData.copy(
+              pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions),
+              taxYear = taxYear
+            ))
+          urlPost(
+            fullUrl(statePensionCyaUrl(taxYear)),
+            form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
 
@@ -159,7 +178,7 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
       }
 
       "CYA data has been updated and differs from prior data" which {
-        val form = Map[String, String]()
+        val form           = Map[String, String]()
         val submissionData = stateBenefitData.copy(amount = Some(500.20), taxPaid = Some(20.05))
 
         lazy val result: WSResponse = {
@@ -168,7 +187,10 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
           stateBenefitsSubmissionStub(Json.toJson(submissionData).toString(), nino)
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
           insertCyaData(priorCYAData)
-          urlPost(fullUrl(statePensionCyaUrl(taxYear)), form, follow = false,
+          urlPost(
+            fullUrl(statePensionCyaUrl(taxYear)),
+            form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
 
@@ -190,7 +212,10 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
           stateBenefitsSubmissionStub(Json.toJson(stateBenefitData).toString(), nino)
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
           insertCyaData(priorCYAData)
-          urlPost(fullUrl(statePensionCyaUrl(taxYear)), form, follow = false,
+          urlPost(
+            fullUrl(statePensionCyaUrl(taxYear)),
+            form,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
 

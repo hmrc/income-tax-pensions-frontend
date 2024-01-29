@@ -22,21 +22,20 @@ import models.pension.AllPensionsData
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import play.api.libs.json.{Json, OWrites}
 
-
 case class IncomeFromOverseasPensionsAudit(taxYear: Int,
                                            userType: String,
                                            nino: String,
                                            mtdItId: String,
                                            incomeFromOverseasPensions: IncomeFromOverseasPensionsViewModel,
-                                           priorIncomeFromOverseasPensions: Option[IncomeFromOverseasPensionsViewModel] = None){
+                                           priorIncomeFromOverseasPensions: Option[IncomeFromOverseasPensionsViewModel] = None) {
 
-  private val amend = "AmendIncomeFromOverseasPensions"
+  private val amend  = "AmendIncomeFromOverseasPensions"
   private val create = "CreateIncomeFromOverseasPensions"
-  private val view = "ViewIncomeFromOverseasPensions"
+  private val view   = "ViewIncomeFromOverseasPensions"
 
-  def toAuditModelAmend: AuditModel[IncomeFromOverseasPensionsAudit] = toAuditModel(amend)
+  def toAuditModelAmend: AuditModel[IncomeFromOverseasPensionsAudit]  = toAuditModel(amend)
   def toAuditModelCreate: AuditModel[IncomeFromOverseasPensionsAudit] = toAuditModel(create)
-  def toAuditModelView: AuditModel[IncomeFromOverseasPensionsAudit] = toAuditModel(view)
+  def toAuditModelView: AuditModel[IncomeFromOverseasPensionsAudit]   = toAuditModel(view)
 
   private def toAuditModel(name: String): AuditModel[IncomeFromOverseasPensionsAudit] = AuditModel(name, name, this)
 }
@@ -46,12 +45,15 @@ object IncomeFromOverseasPensionsAudit {
   def apply(taxYear: Int,
             user: User,
             incomeFromOverseasPensions: IncomeFromOverseasPensionsViewModel,
-            priorIncomeFromOverseasPensions: Option[IncomeFromOverseasPensionsViewModel]): IncomeFromOverseasPensionsAudit = {
-
+            priorIncomeFromOverseasPensions: Option[IncomeFromOverseasPensionsViewModel]): IncomeFromOverseasPensionsAudit =
     IncomeFromOverseasPensionsAudit(
-      taxYear, user.affinityGroup, user.nino, user.mtditid, incomeFromOverseasPensions, priorIncomeFromOverseasPensions
+      taxYear,
+      user.affinityGroup,
+      user.nino,
+      user.mtditid,
+      incomeFromOverseasPensions,
+      priorIncomeFromOverseasPensions
     )
-  }
   implicit val writes: OWrites[IncomeFromOverseasPensionsAudit] = Json.writes[IncomeFromOverseasPensionsAudit]
 
   def amendAudit(user: User, sessionData: PensionsUserData, priorData: Option[AllPensionsData]): IncomeFromOverseasPensionsAudit =

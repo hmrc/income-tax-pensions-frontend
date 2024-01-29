@@ -44,20 +44,19 @@ import utils.PageUrls.PaymentIntoOverseasPensions.paymentsIntoOverseasPensionsCy
 class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach with Injecting {
 
   object Selectors {
-    val paymentsIntoPensionsLink = "#payments-into-pensions-link"
-    val incomeFromPensionsLink = "#income-from-pensions-link"
-    val pensionAnnualAllowanceLink = "#pension-annual-allowance-link"
+    val paymentsIntoPensionsLink             = "#payments-into-pensions-link"
+    val incomeFromPensionsLink               = "#income-from-pensions-link"
+    val pensionAnnualAllowanceLink           = "#pension-annual-allowance-link"
     val unauthorisedPaymentsFromPensionsLink = "#unauthorised-payments-from-pensions-link"
-    val overseasPensionsLink = "#overseas-pensions-summary-link"
-    val paymentsToOverseasPensionsLink = "#payments-to-overseas-pensions-link"
-    val insetTextSelector = "#main-content > div > div > div.govuk-inset-text"
-    val buttonSelector = "#returnToOverviewPageBtn"
+    val overseasPensionsLink                 = "#overseas-pensions-summary-link"
+    val paymentsToOverseasPensionsLink       = "#payments-to-overseas-pensions-link"
+    val insetTextSelector                    = "#main-content > div > div > div.govuk-inset-text"
+    val buttonSelector                       = "#returnToOverviewPageBtn"
 
-    def summaryListStatusTagSelector(index: Int): String = {
+    def summaryListStatusTagSelector(index: Int): String =
       s"#pensions-Summary > dl > div:nth-child($index) > dd > strong"
-    }
   }
-  
+
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val expectedTitle: String
@@ -75,30 +74,30 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle =  "Pensions"
-    val paymentsLinkText = "Payments into pensions"
-    val incomeLinkText = "Income from pensions"
-    val unauthLinkText = "Unauthorised payments from pensions"
-    val overseasPensionsLinkText = "Overseas pensions"
-    val annualAllowance = "Pension annual allowance"
-    val buttonText = "Return to overview"
-    val updated = "Updated"
-    val cannotUpdate = "Cannot update"
-    val notStarted = "Not Started"
+    val expectedTitle                  = "Pensions"
+    val paymentsLinkText               = "Payments into pensions"
+    val incomeLinkText                 = "Income from pensions"
+    val unauthLinkText                 = "Unauthorised payments from pensions"
+    val overseasPensionsLinkText       = "Overseas pensions"
+    val annualAllowance                = "Pension annual allowance"
+    val buttonText                     = "Return to overview"
+    val updated                        = "Updated"
+    val cannotUpdate                   = "Cannot update"
+    val notStarted                     = "Not Started"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) =>  s"Pensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "Pensiynau"
-    val paymentsLinkText = "Taliadau i bensiynau"
-    val incomeLinkText = "Incwm o bensiynau"
-    val unauthLinkText = "Taliadau heb awdurdod o bensiynau"
-    val overseasPensionsLinkText = "Pensiynau tramor"
-    val annualAllowance = "Lwfans blynyddol pensiwn"
-    val buttonText = "Yn ôl i’r trosolwg"
-    val updated = "Wedi diweddaru"
-    val cannotUpdate = "Cannot update"
-    val notStarted = "Heb ddechrau"
+    val expectedCaption: Int => String = (taxYear: Int) => s"Pensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedTitle: String          = "Pensiynau"
+    val paymentsLinkText               = "Taliadau i bensiynau"
+    val incomeLinkText                 = "Incwm o bensiynau"
+    val unauthLinkText                 = "Taliadau heb awdurdod o bensiynau"
+    val overseasPensionsLinkText       = "Pensiynau tramor"
+    val annualAllowance                = "Lwfans blynyddol pensiwn"
+    val buttonText                     = "Yn ôl i’r trosolwg"
+    val updated                        = "Wedi diweddaru"
+    val cannotUpdate                   = "Cannot update"
+    val notStarted                     = "Heb ddechrau"
     val paymentsToOverseasPensionsText = "Taliadau i bensiynau tramor"
   }
 
@@ -126,10 +125,10 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
 
             // if customerAddedStateBenefits and pensionSchemeOverseasTransfers empty still 'updated' if
             // stateBenefits and overseasPensionContributions present
-            val userData = anIncomeTaxUserData.copy(pensions = Some( anAllPensionsData.copy(
+            val userData = anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData.copy(
               stateBenefits = Some(aStateBenefitsModel.copy(customerAddedStateBenefitsData = None)),
-              pensionCharges = Some(anPensionCharges.copy(pensionSchemeOverseasTransfers = None)))
-            ))
+              pensionCharges = Some(anPensionCharges.copy(pensionSchemeOverseasTransfers = None))
+            )))
             showPage(userScenario, anPensionsUserDataEmptyCya, userData)
           }
 
@@ -171,10 +170,10 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
 
             // if stateBenefits and overseasPensionContributions empty still 'updated' if
             // customerAddedStateBenefits and pensionSchemeOverseasTransfers present
-            val userData = anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData.copy(
-              stateBenefits = Some(aStateBenefitsModel.copy(stateBenefitsData = None)),
-              pensionCharges = Some(anPensionCharges.copy(overseasPensionContributions = None)))
-            ))
+            val userData = anIncomeTaxUserData.copy(pensions = Some(
+              anAllPensionsData.copy(
+                stateBenefits = Some(aStateBenefitsModel.copy(stateBenefitsData = None)),
+                pensionCharges = Some(anPensionCharges.copy(overseasPensionContributions = None)))))
             showPage(userScenario, anPensionsUserDataEmptyCya, userData)
           }
 
@@ -187,8 +186,8 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           "has an income from pensions section" which {
-            //TODO: Change to use the href below when income From Pensions cya page available
-            //linkCheck(incomeLinkText, incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYearEOY))
+            // TODO: Change to use the href below when income From Pensions cya page available
+            // linkCheck(incomeLinkText, incomeFromPensionsLink, checkIncomeFromPensionCyaUrl(taxYearEOY))
             linkCheck(incomeLinkText, incomeFromPensionsLink, pensionIncomeSummaryUrl(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(IncomeFromPensionsIndex))
           }
@@ -218,7 +217,9 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
             authoriseAgentOrIndividual(userScenario.isAgent)
             emptyUserDataStub(nino, taxYearEOY)
             dropPensionsDB()
-            urlGet(fullUrl(pensionSummaryUrl(taxYearEOY)), welsh = userScenario.isWelsh,
+            urlGet(
+              fullUrl(pensionSummaryUrl(taxYearEOY)),
+              welsh = userScenario.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -258,9 +259,8 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(userScenario.isAgent)
 
-            val userData = anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData.copy(
-              pensionCharges = Some(anPensionCharges.copy(pensionSavingsTaxCharges = None, pensionContributions = None)))
-            ))
+            val userData = anIncomeTaxUserData.copy(pensions = Some(
+              anAllPensionsData.copy(pensionCharges = Some(anPensionCharges.copy(pensionSavingsTaxCharges = None, pensionContributions = None)))))
             showPage(userScenario, anPensionsUserDataEmptyCya, userData)
           }
 
@@ -301,10 +301,11 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(userScenario.isAgent)
 
-            val userData = anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData.copy(
-              pensionCharges = Some(anPensionCharges.copy(
-                pensionSchemeUnauthorisedPayments = None, pensionSchemeOverseasTransfers = None, overseasPensionContributions = None))
-            )))
+            val userData = anIncomeTaxUserData.copy(pensions = Some(
+              anAllPensionsData.copy(
+                pensionCharges = Some(anPensionCharges
+                  .copy(pensionSchemeUnauthorisedPayments = None, pensionSchemeOverseasTransfers = None, overseasPensionContributions = None))
+              )))
             showPage(userScenario, anPensionsUserDataEmptyCya, userData)
           }
 
@@ -322,7 +323,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
           }
 
           "has an pension annual allowance section" which {
-            //TODO: Change to use the href below when pension annual allowance cya page available
+            // TODO: Change to use the href below when pension annual allowance cya page available
             linkCheck(annualAllowance, pensionAnnualAllowanceLink, annualAllowancesCYAUrl(taxYearEOY))
 //            linkCheck(annualAllowance, pensionAnnualAllowanceLink, reducedAnnualAllowanceUrl(taxYearEOY))
             textOnPageCheck(updated, summaryListStatusTagSelector(PensionAnnualAllowanceIndex))
@@ -346,8 +347,11 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
         "render Unauthorised user error page" which {
           lazy val result: WSResponse = {
             unauthorisedAgentOrIndividual(userScenario.isAgent)
-            urlGet(fullUrl(pensionSummaryUrl(taxYearEOY)), welsh = userScenario.isWelsh,
-              headers = Seq(Predef.ArrowAssoc(HeaderNames.COOKIE) -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(pensionSummaryUrl(taxYearEOY)),
+              welsh = userScenario.isWelsh,
+              headers = Seq(Predef.ArrowAssoc(HeaderNames.COOKIE) -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
           "has an UNAUTHORIZED(401) status" in {
             result.status shouldBe UNAUTHORIZED
@@ -356,8 +360,8 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
       }
     }
   }
-  
-  private def checkCommonBehaviour(userScenario: UserScenario[CommonExpectedResults, Nothing])(implicit document: () => Document ): Unit = {
+
+  private def checkCommonBehaviour(userScenario: UserScenario[CommonExpectedResults, Nothing])(implicit document: () => Document): Unit = {
     import userScenario.commonExpectedResults._
     titleCheck(expectedTitle, userScenario.isWelsh)
     h1Check(expectedH1)
@@ -377,9 +381,9 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
 }
 
 object PensionsSummaryControllerISpec {
-  val PaymentsIntoPensionIndex = 1
-  val IncomeFromPensionsIndex = 2
-  val PensionAnnualAllowanceIndex = 3
+  val PaymentsIntoPensionIndex              = 1
+  val IncomeFromPensionsIndex               = 2
+  val PensionAnnualAllowanceIndex           = 3
   val UnauthorisedPaymentsFromPensionsIndex = 4
-  val OverseasPensionsIndex = 5
+  val OverseasPensionsIndex                 = 5
 }

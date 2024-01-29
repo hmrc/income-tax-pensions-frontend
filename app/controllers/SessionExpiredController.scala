@@ -27,17 +27,17 @@ import utils.SessionHelper
 import views.html.templates.TimeoutPage
 
 @Singleton
-class SessionExpiredController @Inject()(val mcc: MessagesControllerComponents,
-                                         implicit val appConfig: AppConfig,
-                                         timeoutPage: TimeoutPage) extends FrontendController(mcc) with I18nSupport with SessionHelper{
+class SessionExpiredController @Inject() (val mcc: MessagesControllerComponents, implicit val appConfig: AppConfig, timeoutPage: TimeoutPage)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
   def keepAlive(): Action[AnyContent] = Action(NoContent)
 
   def timeout: Action[AnyContent] = Action { implicit request =>
-
     getModelFromSession[Int](SessionValues.TAX_YEAR) match {
       case Some(taxYear) => Ok(timeoutPage(Call("GET", appConfig.incomeTaxSubmissionStartUrl(taxYear)))).withNewSession
-      case None => Ok(timeoutPage(Call("GET", appConfig.incomeTaxSubmissionStartUrl(appConfig.defaultTaxYear)))).withNewSession
+      case None          => Ok(timeoutPage(Call("GET", appConfig.incomeTaxSubmissionStartUrl(appConfig.defaultTaxYear)))).withNewSession
     }
   }
 }

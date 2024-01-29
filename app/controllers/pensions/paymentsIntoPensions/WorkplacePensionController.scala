@@ -36,53 +36,55 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class WorkplacePensionController @Inject()(authAction: AuthorisedAction,
-                                           pensionSessionService: PensionSessionService,
-                                           errorHandler: ErrorHandler,
-                                           workplacePensionView: WorkplacePensionView,
-                                           formProvider: PaymentsIntoPensionFormProvider)
-                                          (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport {
+class WorkplacePensionController @Inject() (
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    workplacePensionView: WorkplacePensionView,
+    formProvider: PaymentsIntoPensionFormProvider)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       val checkRedirect = journeyCheck(WorkplacePensionPage, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
-
         val form = formProvider.workplacePensionForm(request.user.isAgent)
 
         data.pensions.paymentsIntoPension.workplacePensionPaymentsQuestion match {
           case Some(value) => Future.successful(Ok(workplacePensionView(form.fill(value), taxYear)))
-          case None => Future.successful(Ok(workplacePensionView(form, taxYear)))
+          case None        => Future.successful(Ok(workplacePensionView(form, taxYear)))
         }
       }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    formProvider.workplacePensionForm(request.user.isAgent).bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(workplacePensionView(formWithErrors, taxYear))),
-      yesNo =>
-        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-          val checkRedirect = journeyCheck(WorkplacePensionPage, _, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+    formProvider
+      .workplacePensionForm(request.user.isAgent)
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(workplacePensionView(formWithErrors, taxYear))),
+        yesNo =>
+          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+            val checkRedirect = journeyCheck(WorkplacePensionPage, _, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+              val pensionsCYAModel: PensionsCYAModel       = data.pensions
+              val viewModel: PaymentsIntoPensionsViewModel = pensionsCYAModel.paymentsIntoPension
+              val updatedCyaModel: PensionsCYAModel =
+                pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(
+                  workplacePensionPaymentsQuestion = Some(yesNo),
+                  totalWorkplacePensionPayments = if (yesNo) viewModel.totalWorkplacePensionPayments else None))
+              val redirectLocation =
+                if (yesNo) WorkplaceAmountController.show(taxYear) else PaymentsIntoPensionsCYAController.show(taxYear)
 
-            val pensionsCYAModel: PensionsCYAModel = data.pensions
-            val viewModel: PaymentsIntoPensionsViewModel = pensionsCYAModel.paymentsIntoPension
-            val updatedCyaModel: PensionsCYAModel = {
-              pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(workplacePensionPaymentsQuestion = Some(yesNo),
-                totalWorkplacePensionPayments = if (yesNo) viewModel.totalWorkplacePensionPayments else None))
-            }
-            val redirectLocation =
-              if (yesNo) WorkplaceAmountController.show(taxYear) else PaymentsIntoPensionsCYAController.show(taxYear)
-
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
+              pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                errorHandler.internalServerError()) {
+                isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
+              }
             }
           }
-        }
-    )
+      )
   }
 
 }

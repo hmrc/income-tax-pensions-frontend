@@ -29,9 +29,8 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class ReliefSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
-  }
 
   ".show" should {
 
@@ -40,8 +39,12 @@ class ReliefSchemeSummaryControllerISpec extends IntegrationTest with ViewHelper
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        urlGet(fullUrl(pensionReliefSchemeSummaryUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(pensionReliefSchemeSummaryUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe OK
     }

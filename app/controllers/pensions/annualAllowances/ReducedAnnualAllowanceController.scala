@@ -37,50 +37,52 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class ReducedAnnualAllowanceController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                 actionsProvider: ActionsProvider,
-                                                 reducedAnnualAllowanceView: ReducedAnnualAllowanceView,
-                                                 appConfig: AppConfig,
-                                                 pensionSessionService: PensionSessionService,
-                                                 formsProvider: FormsProvider,
-                                                 errorHandler: ErrorHandler,
-                                                 clock: Clock) extends FrontendController(cc) with I18nSupport {
+class ReducedAnnualAllowanceController @Inject() (implicit
+    val cc: MessagesControllerComponents,
+    actionsProvider: ActionsProvider,
+    reducedAnnualAllowanceView: ReducedAnnualAllowanceView,
+    appConfig: AppConfig,
+    pensionSessionService: PensionSessionService,
+    formsProvider: FormsProvider,
+    errorHandler: ErrorHandler,
+    clock: Clock)
+    extends FrontendController(cc)
+    with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(ReducedAnnualAllowancePage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-      data =>
-        val yesNoForm = formsProvider.reducedAnnualAllowanceForm(request.user)
-        data.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
-          case Some(question) => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm.fill(question), taxYear)))
-          case None => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm, taxYear)))
-        }
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      val yesNoForm = formsProvider.reducedAnnualAllowanceForm(request.user)
+      data.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
+        case Some(question) => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm.fill(question), taxYear)))
+        case None           => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm, taxYear)))
+      }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(ReducedAnnualAllowancePage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-      data =>
-        formsProvider.reducedAnnualAllowanceForm(request.user).bindFromRequest().fold(
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      formsProvider
+        .reducedAnnualAllowanceForm(request.user)
+        .bindFromRequest()
+        .fold(
           formWithErrors => Future.successful(BadRequest(reducedAnnualAllowanceView(formWithErrors, taxYear))),
           yesNo => updateSessionData(data, yesNo, taxYear)
         )
     }
   }
 
-  private def updateSessionData[T](pensionUserData: PensionsUserData,
-                                   reducedAnnualAllowanceQ: Boolean, taxYear: Int)
-                                  (implicit request: UserSessionDataRequest[T]): Future[Result] = {
+  private def updateSessionData[T](pensionUserData: PensionsUserData, reducedAnnualAllowanceQ: Boolean, taxYear: Int)(implicit
+      request: UserSessionDataRequest[T]): Future[Result] = {
 
-    val pensionsCYAModel: PensionsCYAModel = pensionUserData.pensions
+    val pensionsCYAModel: PensionsCYAModel          = pensionUserData.pensions
     val viewModel: PensionAnnualAllowancesViewModel = pensionsCYAModel.pensionsAnnualAllowances
     val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(
-      pensionsAnnualAllowances = {
-        if (reducedAnnualAllowanceQ) viewModel.copy(reducedAnnualAllowanceQuestion = Some(true))
-        else PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(false))
-      })
-    pensionSessionService.createOrUpdateSessionData(
-      request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+      pensionsAnnualAllowances = if (reducedAnnualAllowanceQ) viewModel.copy(reducedAnnualAllowanceQuestion = Some(true))
+      else PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(false))
+    )
+    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
+      errorHandler.internalServerError()) {
       Redirect(
         if (reducedAnnualAllowanceQ) ReducedAnnualAllowanceTypeController.show(taxYear)
         else AnnualAllowanceCYAController.show(taxYear)

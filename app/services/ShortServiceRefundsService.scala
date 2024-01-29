@@ -23,16 +23,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ShortServiceRefundsService @Inject()(pensionSessionService: PensionSessionService)
-                                          (implicit ec: ExecutionContext) {
-
+class ShortServiceRefundsService @Inject() (pensionSessionService: PensionSessionService)(implicit ec: ExecutionContext) {
 
   def createOrUpdateShortServiceRefundQuestion(userData: PensionsUserData,
                                                question: Boolean,
                                                pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
     val refundPensionScheme = pensionIndex match {
       case Some(index) => userData.pensions.shortServiceRefunds.refundPensionScheme(index)
-      case None => OverseasRefundPensionScheme()
+      case None        => OverseasRefundPensionScheme()
     }
     val model = userData.pensions.shortServiceRefunds
     val updatedModel: ShortServiceRefundsViewModel =
@@ -40,16 +38,16 @@ class ShortServiceRefundsService @Inject()(pensionSessionService: PensionSession
         case Some(index) =>
           updateOverseasRefundPensionScheme(index, userData, model, refundPensionScheme, question)
         case None =>
-          if(model.refundPensionScheme.isEmpty) {
+          if (model.refundPensionScheme.isEmpty) {
             model.copy(refundPensionScheme = Seq(refundPensionScheme.copy(ukRefundCharge = Some(question))))
-          }
-          else {
-            model.refundPensionScheme.last.name match{
-              case Some(_) => model.copy(
-                refundPensionScheme = model.refundPensionScheme ++ Seq(refundPensionScheme.copy(ukRefundCharge = Some(question))))
-              case None => model.copy(
-                refundPensionScheme = model.refundPensionScheme.updated(
-                  model.refundPensionScheme.size - 1, refundPensionScheme.copy(ukRefundCharge = Some(question))))
+          } else {
+            model.refundPensionScheme.last.name match {
+              case Some(_) =>
+                model.copy(refundPensionScheme = model.refundPensionScheme ++ Seq(refundPensionScheme.copy(ukRefundCharge = Some(question))))
+              case None =>
+                model.copy(
+                  refundPensionScheme =
+                    model.refundPensionScheme.updated(model.refundPensionScheme.size - 1, refundPensionScheme.copy(ukRefundCharge = Some(question))))
             }
           }
       }
@@ -57,43 +55,39 @@ class ShortServiceRefundsService @Inject()(pensionSessionService: PensionSession
   }
 
   def updateCyaWithShortServiceRefundGatewayQuestion(pensionUserData: PensionsUserData,
-                                      yesNo: Boolean,
-                                      amount: Option[BigDecimal]): PensionsCYAModel = {
-    if(yesNo) {
+                                                     yesNo: Boolean,
+                                                     amount: Option[BigDecimal]): PensionsCYAModel =
+    if (yesNo) {
       pensionUserData.pensions.copy(
-        shortServiceRefunds = pensionUserData.pensions.shortServiceRefunds.copy(
-          shortServiceRefund = Some(yesNo),
-          shortServiceRefundCharge = amount))
+        shortServiceRefunds = pensionUserData.pensions.shortServiceRefunds.copy(shortServiceRefund = Some(yesNo), shortServiceRefundCharge = amount))
     } else {
       clearShortServiceRefunds(pensionUserData)
     }
-  }
 
   private def clearShortServiceRefunds(pensionsUserData: PensionsUserData): PensionsCYAModel =
     pensionsUserData.pensions.copy(
       shortServiceRefunds = ShortServiceRefundsViewModel(shortServiceRefund = Option(false))
     )
 
-  private def createOrUpdateModel(originalUserData: PensionsUserData, updatedModel: ShortServiceRefundsViewModel)
-  : Future[Either[Unit, PensionsUserData]] = {
+  private def createOrUpdateModel(originalUserData: PensionsUserData,
+                                  updatedModel: ShortServiceRefundsViewModel): Future[Either[Unit, PensionsUserData]] = {
 
-    val updatedCYA = originalUserData.pensions.copy(shortServiceRefunds = updatedModel)
+    val updatedCYA      = originalUserData.pensions.copy(shortServiceRefunds = updatedModel)
     val updatedUserData = originalUserData.copy(pensions = updatedCYA)
 
     pensionSessionService.createOrUpdateSessionData(updatedUserData).map {
-      case Left(_) => Left(())
+      case Left(_)  => Left(())
       case Right(_) => Right(updatedUserData)
     }
   }
 
-  private def updateOverseasRefundPensionScheme(
-                                         index: Int,
-                                         userData: PensionsUserData,
-                                         model: ShortServiceRefundsViewModel,
-                                         refundPensionScheme: OverseasRefundPensionScheme,
-                                         question: Boolean) = {
+  private def updateOverseasRefundPensionScheme(index: Int,
+                                                userData: PensionsUserData,
+                                                model: ShortServiceRefundsViewModel,
+                                                refundPensionScheme: OverseasRefundPensionScheme,
+                                                question: Boolean) = {
     val previousUkRefundCharge = userData.pensions.shortServiceRefunds.refundPensionScheme(index).ukRefundCharge.getOrElse(false)
-    if(previousUkRefundCharge == question) {
+    if (previousUkRefundCharge == question) {
       model.copy(refundPensionScheme = model.refundPensionScheme.updated(index, refundPensionScheme.copy(ukRefundCharge = Some(question))))
     } else {
       model.copy(refundPensionScheme = model.refundPensionScheme.updated(index, OverseasRefundPensionScheme(ukRefundCharge = Some(question))))

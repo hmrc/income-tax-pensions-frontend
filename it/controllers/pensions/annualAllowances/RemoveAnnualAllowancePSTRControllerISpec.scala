@@ -29,14 +29,13 @@ import utils.PageUrls.PensionAnnualAllowancePages.{pstrSummaryUrl, reducedAnnual
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-
 class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
-  //scalastyle:off magic.number
+  // scalastyle:off magic.number
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > header > p"
+    val captionSelector: String    = "#main-content > div > div > form > header > p"
     val cancelLinkSelector: String = "#cancel-link-id"
-    val insetSpanText: String = "#main-content > div > div > form > div.govuk-inset-text > span"
+    val insetSpanText: String      = "#main-content > div > div > form > div.govuk-inset-text > span"
   }
 
   trait CommonExpectedResults {
@@ -48,17 +47,17 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedTitle = s"Do you want to remove this Pension Scheme Tax Reference?"
+    val expectedTitle                  = s"Do you want to remove this Pension Scheme Tax Reference?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val buttonText = "Remove reference"
-    val cancelText = "Don’t remove"
+    val buttonText                     = "Remove reference"
+    val cancelText                     = "Don’t remove"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = s"A hoffech ddileu’r Cyfeirnod Treth Cynllun Pensiwn hwn?"
+    val expectedTitle                  = s"A hoffech ddileu’r Cyfeirnod Treth Cynllun Pensiwn hwn?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val buttonText = "Dileu cyfeirnod"
-    val cancelText = "Peidiwch â thynnu"
+    val buttonText                     = "Dileu cyfeirnod"
+    val cancelText                     = "Peidiwch â thynnu"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
@@ -79,7 +78,9 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlGet(fullUrl(removePstrUrl(taxYearEOY, 1)), user.isWelsh,
+            urlGet(
+              fullUrl(removePstrUrl(taxYearEOY, 1)),
+              user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -105,7 +106,9 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = None)))
-          urlGet(fullUrl(removePstrUrl(taxYearEOY, 0)), follow = false,
+          urlGet(
+            fullUrl(removePstrUrl(taxYearEOY, 0)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -120,7 +123,9 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlGet(fullUrl(removePstrUrl(taxYearEOY, 12)), follow = false,
+          urlGet(
+            fullUrl(removePstrUrl(taxYearEOY, 12)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -139,7 +144,9 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
           insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-          urlGet(fullUrl(removePstrUrl(taxYearEOY, 0)), follow = false,
+          urlGet(
+            fullUrl(removePstrUrl(taxYearEOY, 0)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -155,7 +162,9 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(taxPaidByPensionProvider = None)
           insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-          urlGet(fullUrl(removePstrUrl(taxYearEOY, 0)), follow = false,
+          urlGet(
+            fullUrl(removePstrUrl(taxYearEOY, 0)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -174,7 +183,10 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(aPensionsUserData)
-        urlPost(fullUrl(removePstrUrl(taxYearEOY, 0)), body = "", follow = false,
+        urlPost(
+          fullUrl(removePstrUrl(taxYearEOY, 0)),
+          body = "",
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -195,7 +207,10 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlPost(fullUrl(removePstrUrl(taxYearEOY, 12)), body = "", follow = false,
+          urlPost(
+            fullUrl(removePstrUrl(taxYearEOY, 12)),
+            body = "",
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -214,7 +229,10 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = None)))
-          urlPost(fullUrl(removePstrUrl(taxYearEOY, 12)), body = "", follow = false,
+          urlPost(
+            fullUrl(removePstrUrl(taxYearEOY, 12)),
+            body = "",
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -232,7 +250,10 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-        urlPost(fullUrl(removePstrUrl(taxYearEOY, 0)), body = "", follow = false,
+        urlPost(
+          fullUrl(removePstrUrl(taxYearEOY, 0)),
+          body = "",
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -246,7 +267,10 @@ class RemoveAnnualAllowancePSTRControllerISpec extends IntegrationTest with View
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(removePstrUrl(taxYearEOY, 0)), body = "", follow = false,
+        urlPost(
+          fullUrl(removePstrUrl(taxYearEOY, 0)),
+          body = "",
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 

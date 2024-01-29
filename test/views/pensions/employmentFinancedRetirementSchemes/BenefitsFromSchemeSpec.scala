@@ -29,9 +29,9 @@ import views.html.pensions.employmentFinancedRetirementSchemes.BenefitsFromSchem
 class BenefitsFromSchemeSpec extends ViewUnitTest {
 
   object Selectors {
-    val continueButtonFormSelector = "#main-content > div > div > form"
-    val expectedErrorHref = "#value"
-    val buttonSelector: String = "#continue"
+    val continueButtonFormSelector       = "#main-content > div > div > form"
+    val expectedErrorHref                = "#value"
+    val buttonSelector: String           = "#continue"
     val paragraphSelector: Int => String = (index: Int) => s"#main-content > div > div > p:nth-of-type($index)"
   }
 
@@ -55,9 +55,9 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) =>
       s"Employer-financed retirement benefits schemes for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitleText: String = "Employer-financed retirement benefits schemes"
-    val expectedYesText: String = "Yes"
-    val expectedNoText: String = "No"
+    val expectedTitleText: String  = "Employer-financed retirement benefits schemes"
+    val expectedYesText: String    = "Yes"
+    val expectedNoText: String     = "No"
     val expectedButtonText: String = "Continue"
     val paragraph1: String =
       "If a pension scheme is not a registered it might be an employer-financed retirement benefit scheme (EFRBS)."
@@ -68,9 +68,9 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) =>
       s"Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitleText: String = "Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr"
-    val expectedYesText: String = "Iawn"
-    val expectedNoText: String = "Na"
+    val expectedTitleText: String  = "Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr"
+    val expectedYesText: String    = "Iawn"
+    val expectedNoText: String     = "Na"
     val expectedButtonText: String = "Yn eich blaen"
     val paragraph1: String =
       "Os nad yw cynllun pensiwn yn gofrestredig, gallai fod yn gynllun buddiannau ymddeol a ariannwyd gan gyflogwyr (EFRBS)."
@@ -79,28 +79,28 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitleText: String = "Employer-financed retirement benefits schemes"
+    val expectedTitleText: String      = "Employer-financed retirement benefits schemes"
     val expectedErrorTitleText: String = s"Error: $expectedTitleText"
-    val expectedErrorText: String = "Select yes if you have an employer-financed retirement benefits scheme"
-    val expectedQuestionText: String = "Do you have an employer-financed retirement scheme?"
+    val expectedErrorText: String      = "Select yes if you have an employer-financed retirement benefits scheme"
+    val expectedQuestionText: String   = "Do you have an employer-financed retirement scheme?"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitleText: String = "Employer-financed retirement benefits schemes"
+    val expectedTitleText: String      = "Employer-financed retirement benefits schemes"
     val expectedErrorTitleText: String = s"Error: $expectedTitleText"
-    val expectedErrorText: String = "Select yes if your client has an employer-financed retirement benefits scheme"
-    val expectedQuestionText: String = "Does your client have an employer-financed retirement scheme?"
+    val expectedErrorText: String      = "Select yes if your client has an employer-financed retirement benefits scheme"
+    val expectedQuestionText: String   = "Does your client have an employer-financed retirement scheme?"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitleText: String = "Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr"
+    val expectedTitleText: String      = "Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr"
     val expectedErrorTitleText: String = s"Gwall: $expectedTitleText"
-    val expectedErrorText: String = "Dewiswch ‘Iawn’ os oes gennych gynllun buddiannau ymddeol a ariannwyd gan gyflogwr"
-    val expectedQuestionText: String = "A oes gennych gynllun ymddeol a ariannwyd gan gyflogwr?"
+    val expectedErrorText: String      = "Dewiswch ‘Iawn’ os oes gennych gynllun buddiannau ymddeol a ariannwyd gan gyflogwr"
+    val expectedQuestionText: String   = "A oes gennych gynllun ymddeol a ariannwyd gan gyflogwr?"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitleText: String = "Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr"
+    val expectedTitleText: String      = "Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr"
     val expectedErrorTitleText: String = s"Gwall: $expectedTitleText"
     val expectedErrorText: String =
       "Dewiswch ‘Iawn’ os oes gan eich cleient gynllun buddiannau ymddeol a ariannwyd gan gyflogwr"
@@ -117,16 +117,14 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
   private lazy val underTest = inject[BenefitsFromSchemeView]
 
   userScenarios.foreach { userScenario =>
-
     val form = YesNoForm.yesNoForm(
-      missingInputError =
-        s"employerFinancedRetirementScheme.benefitsFromScheme.error.${if (userScenario.isAgent) "agent" else "individual"}"
+      missingInputError = s"employerFinancedRetirementScheme.benefitsFromScheme.error.${if (userScenario.isAgent) "agent" else "individual"}"
     )
 
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render page with empty form and no value selected" which {
         implicit val userSessionDataRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                                       = getMessages(userScenario.isWelsh)
 
         implicit val document: Document = Jsoup.parse(underTest(taxYearEOY, form).body)
 
@@ -145,7 +143,7 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
 
       "render page with filled in form using selected ’Yes’ value" which {
         implicit val userSessionDataRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                                       = getMessages(userScenario.isWelsh)
 
         implicit val document: Document = Jsoup.parse(underTest(taxYearEOY, form = form.fill(value = true)).body)
 
@@ -164,7 +162,7 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
 
       "render page with filled in form using selected ’No’ value" which {
         implicit val userSessionDataRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                                       = getMessages(userScenario.isWelsh)
 
         implicit val document: Document = Jsoup.parse(underTest(taxYearEOY, form = form.fill(value = false)).body)
 
@@ -183,7 +181,7 @@ class BenefitsFromSchemeSpec extends ViewUnitTest {
 
       "render page with form containing empty form error" which {
         implicit val userSessionDataRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                                       = getMessages(userScenario.isWelsh)
 
         implicit val document: Document = Jsoup.parse(underTest(taxYearEOY, form = form.bind(Map(YesNoForm.yesNo -> ""))).body)
 

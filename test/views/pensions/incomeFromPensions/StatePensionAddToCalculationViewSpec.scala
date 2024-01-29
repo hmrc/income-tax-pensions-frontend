@@ -49,39 +49,39 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
+    val yesText                        = "Yes"
+    val noText                         = "No"
+    val buttonText                     = "Continue"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val yesText = "Iawn"
-    val noText = "Na"
-    val buttonText = "Yn eich blaen"
+    val yesText                        = "Iawn"
+    val noText                         = "Na"
+    val buttonText                     = "Yn eich blaen"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "Do you want to add State Pension to your Income Tax calculation?"
+    val expectedTitle      = "Do you want to add State Pension to your Income Tax calculation?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedErrorText = "Select yes if you want to add State Pension to your Income Tax calculation"
+    val expectedErrorText  = "Select yes if you want to add State Pension to your Income Tax calculation"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "A ydych chi am ychwanegu Pensiwn y Wladwriaeth i’ch cyfrifiad Treth Incwm?"
+    val expectedTitle      = "A ydych chi am ychwanegu Pensiwn y Wladwriaeth i’ch cyfrifiad Treth Incwm?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedErrorText = "Dewiswch ‘Iawn’ os ydych am ychwanegu Pensiwn y Wladwriaeth i’ch cyfrifiad Treth Incwm"
+    val expectedErrorText  = "Dewiswch ‘Iawn’ os ydych am ychwanegu Pensiwn y Wladwriaeth i’ch cyfrifiad Treth Incwm"
   }
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "Do you want to add State Pension to your client’s Income Tax calculation?"
+    val expectedTitle      = "Do you want to add State Pension to your client’s Income Tax calculation?"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedErrorText = "Select yes if you want to add State Pension to your client’s Income Tax Calculation"
+    val expectedErrorText  = "Select yes if you want to add State Pension to your client’s Income Tax Calculation"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "A ydych chi am ychwanegu Pensiwn y Wladwriaeth i gyfrifiad Treth Incwm eich cleient?"
+    val expectedTitle      = "A ydych chi am ychwanegu Pensiwn y Wladwriaeth i gyfrifiad Treth Incwm eich cleient?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedErrorText = "Dewiswch ‘Iawn’ os ydych am ychwanegu Pensiwn y Wladwriaeth i gyfrifiad Treth Incwm eich cleient"
+    val expectedErrorText  = "Dewiswch ‘Iawn’ os ydych am ychwanegu Pensiwn y Wladwriaeth i gyfrifiad Treth Incwm eich cleient"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -92,9 +92,9 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
   )
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val amountValueSelector: String = "#value"
+    val amountValueSelector: String    = "#value"
   }
 
   private lazy val underTest = inject[StatePensionAddToCalculationView]
@@ -103,16 +103,16 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render page with no pre-filled data" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = {
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionEmptyViewModel)),
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionEmptyViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        }
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
         def form: Form[Boolean] = new FormsProvider().statePensionAddToCalculationForm(userScenario.isAgent)
 
-        val htmlFormat = underTest(form, taxYearEOY)
+        val htmlFormat                  = underTest(form, taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         questionHeadingCheck(userScenario)
@@ -124,16 +124,16 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
 
       "render page with pre-filled data" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = {
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionEmptyViewModel)),
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionEmptyViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        }
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
         def form: Form[Boolean] = new FormsProvider().statePensionAddToCalculationForm(userScenario.isAgent)
 
-        val htmlFormat = underTest(form.bind(Map(RadioButtonForm.value -> "false")), taxYearEOY)
+        val htmlFormat                  = underTest(form.bind(Map(RadioButtonForm.value -> "false")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         questionHeadingCheck(userScenario)
@@ -145,16 +145,16 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
 
       "render page with no-entry error when no data is submitted" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = {
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionEmptyViewModel)),
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionEmptyViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        }
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
         def form: Form[Boolean] = new FormsProvider().statePensionAddToCalculationForm(userScenario.isAgent)
 
-        val htmlFormat = underTest(form.bind(Map(RadioButtonForm.value -> "")), taxYearEOY)
+        val htmlFormat                  = underTest(form.bind(Map(RadioButtonForm.value -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedErrorTitle, userScenario.isWelsh)

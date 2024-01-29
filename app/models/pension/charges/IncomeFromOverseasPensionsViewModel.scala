@@ -27,18 +27,15 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
 import utils.{EncryptedValue, SecureGCMCipher}
 
-
 case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion: Option[Boolean] = None,
-                                               overseasIncomePensionSchemes: Seq[PensionScheme] = Nil
-                                              ) extends PensionCYABaseModel {
+                                               overseasIncomePensionSchemes: Seq[PensionScheme] = Nil)
+    extends PensionCYABaseModel {
 
   def isEmpty: Boolean = paymentsFromOverseasPensionsQuestion.isEmpty && overseasIncomePensionSchemes.isEmpty
 
-  def isFinished: Boolean = {
+  def isFinished: Boolean =
     paymentsFromOverseasPensionsQuestion.exists(x =>
-      if (!x) true else overseasIncomePensionSchemes.nonEmpty && overseasIncomePensionSchemes.forall(_.isFinished)
-      )
-  }
+      if (!x) true else overseasIncomePensionSchemes.nonEmpty && overseasIncomePensionSchemes.forall(_.isFinished))
 
   def journeyIsNo: Boolean = !paymentsFromOverseasPensionsQuestion.getOrElse(true) && overseasIncomePensionSchemes.isEmpty
 
@@ -46,19 +43,17 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
 
   def hasPriorData: Boolean = paymentsFromOverseasPensionsQuestion.exists(_ && overseasIncomePensionSchemes.nonEmpty)
 
-  def toForeignPension: Seq[ForeignPension] = {
-    overseasIncomePensionSchemes.map {
-      scheme =>
-        ForeignPension(
-          countryCode = Countries.get3AlphaCodeFrom2AlphaCode(scheme.alphaTwoCode).get, // TODO validate CYA story to ensure country code present
-          taxableAmount = scheme.taxableAmount.get, //TODO validate CYA story to ensure taxable amount is present
-          amountBeforeTax = scheme.pensionPaymentAmount,
-          taxTakenOff = scheme.pensionPaymentTaxPaid,
-          specialWithholdingTax = scheme.specialWithholdingTaxAmount,
-          foreignTaxCreditRelief = scheme.foreignTaxCreditReliefQuestion
-        )
+  def toForeignPension: Seq[ForeignPension] =
+    overseasIncomePensionSchemes.map { scheme =>
+      ForeignPension(
+        countryCode = Countries.get3AlphaCodeFrom2AlphaCode(scheme.alphaTwoCode).get, // TODO validate CYA story to ensure country code present
+        taxableAmount = scheme.taxableAmount.get,                                     // TODO validate CYA story to ensure taxable amount is present
+        amountBeforeTax = scheme.pensionPaymentAmount,
+        taxTakenOff = scheme.pensionPaymentTaxPaid,
+        specialWithholdingTax = scheme.specialWithholdingTaxAmount,
+        foreignTaxCreditRelief = scheme.foreignTaxCreditReliefQuestion
+      )
     }
-  }
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromOverseasPensionsViewModel =
     EncryptedIncomeFromOverseasPensionsViewModel(
@@ -70,7 +65,6 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
 object IncomeFromOverseasPensionsViewModel {
   implicit val format: OFormat[IncomeFromOverseasPensionsViewModel] = Json.format[IncomeFromOverseasPensionsViewModel]
 }
-
 
 case class EncryptedIncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion: Option[EncryptedValue] = None,
                                                         overseasPensionSchemes: Seq[EncryptedPensionSchemeSummary] = Nil) {
@@ -86,16 +80,15 @@ object EncryptedIncomeFromOverseasPensionsViewModel {
 }
 
 case class EncryptedPensionSchemeSummary(
-                                          alphaThreeCode: Option[EncryptedValue] = None,
-                                          alphaTwoCode: Option[EncryptedValue] = None,
-                                          pensionPaymentAmount: Option[EncryptedValue] = None,
-                                          pensionPaymentTaxPaid: Option[EncryptedValue] = None,
-                                          specialWithholdingTaxQuestion: Option[EncryptedValue] = None,
-                                          specialWithholdingTaxAmount: Option[EncryptedValue] = None,
-                                          foreignTaxCredit: Option[EncryptedValue] = None,
-                                          taxableAmount: Option[EncryptedValue] = None
-                                        ) {
-
+    alphaThreeCode: Option[EncryptedValue] = None,
+    alphaTwoCode: Option[EncryptedValue] = None,
+    pensionPaymentAmount: Option[EncryptedValue] = None,
+    pensionPaymentTaxPaid: Option[EncryptedValue] = None,
+    specialWithholdingTaxQuestion: Option[EncryptedValue] = None,
+    specialWithholdingTaxAmount: Option[EncryptedValue] = None,
+    foreignTaxCredit: Option[EncryptedValue] = None,
+    taxableAmount: Option[EncryptedValue] = None
+) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): PensionScheme =
     PensionScheme(
@@ -115,18 +108,16 @@ object EncryptedPensionSchemeSummary {
   implicit val format: OFormat[EncryptedPensionSchemeSummary] = Json.format[EncryptedPensionSchemeSummary]
 }
 
+case class PensionScheme(alphaThreeCode: Option[String] = None,
+                         alphaTwoCode: Option[String] = None,
+                         pensionPaymentAmount: Option[BigDecimal] = None,
+                         pensionPaymentTaxPaid: Option[BigDecimal] = None,
+                         specialWithholdingTaxQuestion: Option[Boolean] = None,
+                         specialWithholdingTaxAmount: Option[BigDecimal] = None,
+                         foreignTaxCreditReliefQuestion: Option[Boolean] = None,
+                         taxableAmount: Option[BigDecimal] = None) {
 
-case class PensionScheme(
-                          alphaThreeCode: Option[String] = None,
-                          alphaTwoCode: Option[String] = None,
-                          pensionPaymentAmount: Option[BigDecimal] = None,
-                          pensionPaymentTaxPaid: Option[BigDecimal] = None,
-                          specialWithholdingTaxQuestion: Option[Boolean] = None,
-                          specialWithholdingTaxAmount: Option[BigDecimal] = None,
-                          foreignTaxCreditReliefQuestion: Option[Boolean] = None,
-                          taxableAmount: Option[BigDecimal] = None) {
-
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionSchemeSummary = {
+  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionSchemeSummary =
     EncryptedPensionSchemeSummary(
       alphaThreeCode = alphaThreeCode.map(_.encrypted),
       alphaTwoCode = alphaTwoCode.map(_.encrypted),
@@ -137,15 +128,13 @@ case class PensionScheme(
       foreignTaxCredit = foreignTaxCreditReliefQuestion.map(_.encrypted),
       taxableAmount = taxableAmount.map(_.encrypted)
     )
-  }
 
-  def isFinished: Boolean = {
+  def isFinished: Boolean =
     this.alphaTwoCode.isDefined &&
       this.pensionPaymentAmount.isDefined &&
       this.pensionPaymentTaxPaid.isDefined &&
       this.specialWithholdingTaxQuestion.exists(value => !value || (value && this.specialWithholdingTaxAmount.nonEmpty)) &&
       this.foreignTaxCreditReliefQuestion.exists(value => !value || (value && this.taxableAmount.nonEmpty))
-  }
 }
 
 object PensionScheme {
