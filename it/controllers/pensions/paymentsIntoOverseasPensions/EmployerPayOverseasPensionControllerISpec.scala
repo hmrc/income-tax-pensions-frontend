@@ -58,14 +58,14 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
   }
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
-    val findOutLinkSelector = "#annual-allowance-link"
-    val overLimitLinkSelector = "#over-limit-link"
-    val detailsSelector = "#main-content > div > div > form > details > summary > span"
+    val formSelector: String           = "#main-content > div > div > form"
+    val yesSelector                    = "#value"
+    val noSelector                     = "#value-no"
+    val findOutLinkSelector            = "#annual-allowance-link"
+    val overLimitLinkSelector          = "#over-limit-link"
+    val detailsSelector                = "#main-content > div > div > form > details > summary > span"
 
     def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
 
@@ -75,57 +75,57 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle: String = "Did your employers pay into your overseas pension schemes?"
-    val expectedHeading: String = "Did your employers pay into your overseas pension schemes?"
+    val expectedTitle: String      = "Did your employers pay into your overseas pension schemes?"
+    val expectedHeading: String    = "Did your employers pay into your overseas pension schemes?"
     val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val expectedError: String = "Select yes if your employer paid into your overseas pension schemes"
-    val expectedFindOut: String = "To find out you can:"
-    val expectedBullet1: String = "check your pension statement"
-    val expectedBullet2: String = "ask your employer"
+    val expectedError: String      = "Select yes if your employer paid into your overseas pension schemes"
+    val expectedFindOut: String    = "To find out you can:"
+    val expectedBullet1: String    = "check your pension statement"
+    val expectedBullet2: String    = "ask your employer"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle: String = "A wnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor?"
-    val expectedHeading: String = "A wnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor?"
+    val expectedTitle: String      = "A wnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor?"
+    val expectedHeading: String    = "A wnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor?"
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
-    val expectedError: String = "Dewiswch ‘Iawn’ os gwnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor"
-    val expectedFindOut: String = "Er mwyn dysgu beth yw hyn, gallwch wneud y canlynol:"
-    val expectedBullet1: String = "gwirio’ch datganiad pensiwn"
-    val expectedBullet2: String = "gofyn i’ch cyflogwr"
+    val expectedError: String      = "Dewiswch ‘Iawn’ os gwnaeth eich cyflogwr dalu i mewn i’ch cynlluniau pensiwn tramor"
+    val expectedFindOut: String    = "Er mwyn dysgu beth yw hyn, gallwch wneud y canlynol:"
+    val expectedBullet1: String    = "gwirio’ch datganiad pensiwn"
+    val expectedBullet2: String    = "gofyn i’ch cyflogwr"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle: String = "Did your client’s employers pay into the overseas pension schemes?"
-    val expectedHeading: String = "Did your client’s employers pay into the overseas pension schemes?"
+    val expectedTitle: String      = "Did your client’s employers pay into the overseas pension schemes?"
+    val expectedHeading: String    = "Did your client’s employers pay into the overseas pension schemes?"
     val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val expectedError: String = "Select yes if your client’s employer paid into their overseas pension schemes"
-    val expectedFindOut: String = "To find out you can ask your client to:"
-    val expectedBullet1: String = "check their pension statement"
-    val expectedBullet2: String = "ask their employer"
+    val expectedError: String      = "Select yes if your client’s employer paid into their overseas pension schemes"
+    val expectedFindOut: String    = "To find out you can ask your client to:"
+    val expectedBullet1: String    = "check their pension statement"
+    val expectedBullet2: String    = "ask their employer"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle: String = "A wnaeth cyflogwr eich cleient dalu i mewn i’r cynlluniau pensiwn tramor?"
-    val expectedHeading: String = "A wnaeth cyflogwr eich cleient dalu i mewn i’r cynlluniau pensiwn tramor?"
+    val expectedTitle: String      = "A wnaeth cyflogwr eich cleient dalu i mewn i’r cynlluniau pensiwn tramor?"
+    val expectedHeading: String    = "A wnaeth cyflogwr eich cleient dalu i mewn i’r cynlluniau pensiwn tramor?"
     val expectedErrorTitle: String = s"Gwall: $expectedTitle"
-    val expectedError: String = "Dewiswch ‘Iawn’ os gwnaeth cyflogwr eich cleient dalu i mewn i’w gynlluniau pensiwn tramor"
-    val expectedFindOut: String = "Er mwyn dysgu beth yw hyn, gallwch ofyn i’ch cleient wneud y canlynol:"
-    val expectedBullet1: String = "gwirio’i ddatganiad pensiwn"
-    val expectedBullet2: String = "gofyn i’w gyflogwr"
+    val expectedError: String      = "Dewiswch ‘Iawn’ os gwnaeth cyflogwr eich cleient dalu i mewn i’w gynlluniau pensiwn tramor"
+    val expectedFindOut: String    = "Er mwyn dysgu beth yw hyn, gallwch ofyn i’ch cleient wneud y canlynol:"
+    val expectedBullet1: String    = "gwirio’i ddatganiad pensiwn"
+    val expectedBullet2: String    = "gofyn i’w gyflogwr"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
+    val expectedButtonText             = "Continue"
+    val yesText                        = "Yes"
+    val noText                         = "No"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Yn eich blaen"
-    val yesText = "Iawn"
-    val noText = "Na"
+    val expectedButtonText             = "Yn eich blaen"
+    val yesText                        = "Iawn"
+    val noText                         = "Na"
   }
 
   ".show" should {
@@ -139,7 +139,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
           val overseasPensionViewModel = aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
             paymentsIntoOverseasPensionsQuestions = Some(true),
             paymentsIntoOverseasPensionsAmount = Some(1999.99))
-          val pensionsUserData = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
+          val pensionsUserData                 = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionsUserData)
 
           "has an OK status" in {
@@ -163,7 +163,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
         "render the 'Employer Pay Overseas Pension' page with correct content and yes pre-filled" which {
           val overseasPensionViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(true))
-          val pensionsUserData = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
+          val pensionsUserData         = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
 
           implicit lazy val result: WSResponse = showPage(user, pensionsUserData)
 
@@ -187,8 +187,8 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
         }
 
         "render the 'Employer Pay Overseas Pension' page with correct content and no pre-filled" which {
-          val overseasPensionViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(false))
-          val pensionsUserData = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
+          val overseasPensionViewModel         = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(false))
+          val pensionsUserData                 = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionsUserData)
 
           "has an OK status" in {
@@ -230,7 +230,6 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
           lazy val result: WSResponse = submitPage(user, aPensionsUserData, form)
 
-
           "has the correct status" in {
             result.status shouldBe BAD_REQUEST
           }
@@ -258,9 +257,9 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
     "redirect and update question to 'Yes' when user selects yes when there is no cya data" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = None)
-      val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
-      lazy val result: WSResponse = submitPage(pensionUserData, form)
+      val pensionsViewModel              = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = None)
+      val pensionUserData                = pensionUserDataWithOverseasPensions(pensionsViewModel)
+      lazy val result: WSResponse        = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -275,8 +274,8 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
     "redirect and update question to 'Yes' when user selects yes and cya data exists" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = None)
-      val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+      val pensionsViewModel              = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = None)
+      val pensionUserData                = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionUserData, form)
 
@@ -293,8 +292,8 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
 
     "redirect and update question to 'No' when user selects no and cya data exists" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(true))
-      val pensionsUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+      val pensionsViewModel              = aPaymentsIntoOverseasPensionsViewModel.copy(employerPaymentsQuestion = Some(true))
+      val pensionsUserData               = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionsUserData, form)
 

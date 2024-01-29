@@ -30,11 +30,12 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuditServiceSpec extends UnitTestWithApp {
 
   private trait Test {
-    val mockedAppName = "some-app-name"
+    val mockedAppName                      = "some-app-name"
     val mockAuditConnector: AuditConnector = mock[AuditConnector]
-    val mockConfig: Configuration = mock[Configuration]
+    val mockConfig: Configuration          = mock[Configuration]
 
-    (mockConfig.get[String](_: String)(_: play.api.ConfigLoader[String]))
+    (mockConfig
+      .get[String](_: String)(_: play.api.ConfigLoader[String]))
       .expects(*, *)
       .returns(mockedAppName)
 
@@ -43,13 +44,14 @@ class AuditServiceSpec extends UnitTestWithApp {
 
   "AuditService" when {
     "auditing an event" should {
-      val auditType = "Type"
-      val transactionName = "Name"
-      val eventDetails = "Details"
+      val auditType                     = "Type"
+      val transactionName               = "Name"
+      val eventDetails                  = "Details"
       val expected: Future[AuditResult] = Future.successful(Success)
       "return a successful audit result" in new Test {
 
-        (mockAuditConnector.sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
+        (mockAuditConnector
+          .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
           .expects(*, *, *)
           .returns(expected)
 
@@ -57,13 +59,12 @@ class AuditServiceSpec extends UnitTestWithApp {
         target.sendAudit(event) shouldBe expected
       }
 
-
       "generates an event with the correct auditSource" in new Test {
-        (mockAuditConnector.sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
+        (mockAuditConnector
+          .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
           .expects(
-            where {
-              (eventArg: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
-                eventArg.auditSource == mockedAppName
+            where { (eventArg: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
+              eventArg.auditSource == mockedAppName
             }
           )
           .returns(expected)
@@ -74,11 +75,11 @@ class AuditServiceSpec extends UnitTestWithApp {
       }
 
       "generates an event with the correct auditType" in new Test {
-        (mockAuditConnector.sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
+        (mockAuditConnector
+          .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
           .expects(
-            where {
-              (eventArg: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
-                eventArg.auditType == auditType
+            where { (eventArg: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
+              eventArg.auditType == auditType
             }
           )
           .returns(expected)
@@ -88,11 +89,11 @@ class AuditServiceSpec extends UnitTestWithApp {
       }
 
       "generates an event with the correct details" in new Test {
-        (mockAuditConnector.sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
+        (mockAuditConnector
+          .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
           .expects(
-            where {
-              (eventArg: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
-                eventArg.detail == Json.toJson(eventDetails)
+            where { (eventArg: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
+              eventArg.detail == Json.toJson(eventDetails)
             }
           )
           .returns(expected)
@@ -103,11 +104,11 @@ class AuditServiceSpec extends UnitTestWithApp {
       }
 
       "generates an event with the correct transactionName" in new Test {
-        (mockAuditConnector.sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
+        (mockAuditConnector
+          .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
           .expects(
-            where {
-              (eventArg: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
-                eventArg.tags.exists(tag => tag == "transactionName" -> transactionName)
+            where { (eventArg: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
+              eventArg.tags.exists(tag => tag == "transactionName" -> transactionName)
             }
           )
           .returns(expected)
@@ -119,5 +120,3 @@ class AuditServiceSpec extends UnitTestWithApp {
     }
   }
 }
-
-

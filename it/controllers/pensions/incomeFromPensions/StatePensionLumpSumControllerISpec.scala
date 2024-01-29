@@ -40,10 +40,12 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       implicit lazy val result: WSResponse = {
         authoriseAgentOrIndividual(aUser.isAgent)
         dropPensionsDB()
-        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
-          Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = None)))
+        val pensionsViewModel =
+          anIncomeFromPensionsViewModel.copy(statePensionLumpSum = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = None)))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
-        urlGet(fullUrl(statePensionLumpSumUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(statePensionLumpSumUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -66,19 +68,24 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       val data = aPensionsUserData.copy(
         pensions = aPensionsCYAModel.copy(
           incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-            statePension = Some(anStateBenefitViewModelOne.copy(
-              amountPaidQuestion = None,
-              amount = None,
-              startDateQuestion = None
-            ))
+            statePension = Some(
+              anStateBenefitViewModelOne.copy(
+                amountPaidQuestion = None,
+                amount = None,
+                startDateQuestion = None
+              ))
           )))
 
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(data)
-        urlGet(fullUrl(statePensionLumpSumUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(statePensionLumpSumUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe SEE_OTHER
       result.header("location").contains(statePension(taxYearEOY))
@@ -92,10 +99,13 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
-          Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = None)))
+        val pensionsViewModel =
+          anIncomeFromPensionsViewModel.copy(statePensionLumpSum = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = None)))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
-        urlPost(fullUrl(statePensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(
+          fullUrl(statePensionLumpSumUrl(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -109,11 +119,14 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
         dropPensionsDB()
         authoriseAgentOrIndividual()
 
-        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(statePensionLumpSum =
-          Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = None)))
+        val pensionsViewModel =
+          anIncomeFromPensionsViewModel.copy(statePensionLumpSum = Some(anStateBenefitViewModelOne.copy(amountPaidQuestion = None)))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
 
-        urlPost(fullUrl(statePensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(
+          fullUrl(statePensionLumpSumUrl(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -142,8 +155,8 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       result.header("location") shouldBe Some(taxOnLumpSumUrl(taxYearEOY))
 
       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-      cyaModel.pensions.incomeFromPensions.statePensionLumpSum shouldBe Some(StateBenefitViewModel(
-        amountPaidQuestion = Some(true), amount = Some(BigDecimal("42.24"))))
+      cyaModel.pensions.incomeFromPensions.statePensionLumpSum shouldBe Some(
+        StateBenefitViewModel(amountPaidQuestion = Some(true), amount = Some(BigDecimal("42.24"))))
     }
 
     "redirect to the 'Add to calculation' page when submitting answer as 'No' with no further lump sum data" in {
@@ -152,11 +165,16 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(aStatePensionIncomeFromPensionsViewModel.copy(
-          statePension = Some(aStatePensionNoAddToCalculationViewModel),
-          statePensionLumpSum = None
-        )))
-        urlPost(fullUrl(statePensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
+        insertCyaData(
+          pensionsUserDataWithIncomeFromPensions(
+            aStatePensionIncomeFromPensionsViewModel.copy(
+              statePension = Some(aStatePensionNoAddToCalculationViewModel),
+              statePensionLumpSum = None
+            )))
+        urlPost(
+          fullUrl(statePensionLumpSumUrl(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -174,7 +192,10 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithIncomeFromPensions(aStatePensionIncomeFromPensionsViewModel))
-        urlPost(fullUrl(statePensionLumpSumUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(
+          fullUrl(statePensionLumpSumUrl(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 

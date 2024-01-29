@@ -26,32 +26,36 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
 import services.redirects.IncomeFromOverseasPensionsPages._
-import services.redirects.IncomeFromOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck, redirectForSchemeLoop, schemeIsFinishedCheck}
+import services.redirects.IncomeFromOverseasPensionsRedirects.{
+  cyaPageCall,
+  indexCheckThenJourneyCheck,
+  journeyCheck,
+  redirectForSchemeLoop,
+  schemeIsFinishedCheck
+}
 import utils.UnitTest
 
 import scala.concurrent.Future
 
 class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
 
-  private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
-  private val statusPageRedirect = Some(Redirect(PensionOverseasIncomeStatus.show(taxYear)))
-  private val schemeStartCall: Call = PensionOverseasIncomeCountryController.show(taxYear, None)
-  private val ftcrPageCall: Call = ForeignTaxCreditReliefController.show(taxYear, Some(1))
-  private val taxableAmountPageCall: Call = TaxableAmountController.show(taxYear, Some(0))
-  private val schemesSummaryCall: Call = CountrySummaryListController.show(taxYear)
-  private val schemeSummaryRedirect: Result = Redirect(PensionSchemeSummaryController.show(taxYear, Some(1)))
+  private val cyaData: PensionsCYAModel                                        = PensionsCYAModel.emptyModels
+  private val statusPageRedirect                                               = Some(Redirect(PensionOverseasIncomeStatus.show(taxYear)))
+  private val schemeStartCall: Call                                            = PensionOverseasIncomeCountryController.show(taxYear, None)
+  private val ftcrPageCall: Call                                               = ForeignTaxCreditReliefController.show(taxYear, Some(1))
+  private val taxableAmountPageCall: Call                                      = TaxableAmountController.show(taxYear, Some(0))
+  private val schemesSummaryCall: Call                                         = CountrySummaryListController.show(taxYear)
+  private val schemeSummaryRedirect: Result                                    = Redirect(PensionSchemeSummaryController.show(taxYear, Some(1)))
   private val continueToContextualRedirect: PensionsUserData => Future[Result] = _ => Future.successful(Redirect(taxableAmountPageCall))
-  private val continueToSummaryRedirect: PensionsUserData => Future[Result] = _ => Future.successful(Redirect(schemesSummaryCall))
+  private val continueToSummaryRedirect: PensionsUserData => Future[Result]    = _ => Future.successful(Redirect(schemesSummaryCall))
 
   ".indexCheckThenJourneyCheck" when {
     "index is valid" should {
       "return PensionsUserData if previous questions are answered and journey is valid" in {
-        val result = indexCheckThenJourneyCheck(
-          data = aPensionsUserData,
-          optIndex = Some(0),
-          currentPage = ForeignTaxCreditReliefPage,
-          taxYear = taxYear)(continueToContextualRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val result =
+          indexCheckThenJourneyCheck(data = aPensionsUserData, optIndex = Some(0), currentPage = ForeignTaxCreditReliefPage, taxYear = taxYear)(
+            continueToContextualRedirect)
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
@@ -79,22 +83,21 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
             optIndex = Some(0),
             currentPage = ForeignTaxCreditReliefPage,
             taxYear = taxYear)(continueToContextualRedirect)
-          val statusHeader = await(result.map(_.header.status))
+          val statusHeader   = await(result.map(_.header.status))
           val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
           statusHeader shouldBe SEE_OTHER
           locationHeader shouldBe Some(PensionOverseasIncomeStatus.show(taxYear).url)
         }
         "journey is invalid" in {
-          val invalidJourney = cyaData.copy(incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel(
-            paymentsFromOverseasPensionsQuestion = Some(false),
-            overseasIncomePensionSchemes = Seq.empty))
+          val invalidJourney = cyaData.copy(incomeFromOverseasPensions =
+            IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion = Some(false), overseasIncomePensionSchemes = Seq.empty))
           val result = indexCheckThenJourneyCheck(
             data = aPensionsUserData.copy(pensions = invalidJourney),
             optIndex = Some(0),
             currentPage = ForeignTaxCreditReliefPage,
             taxYear = taxYear)(continueToContextualRedirect)
-          val statusHeader = await(result.map(_.header.status))
+          val statusHeader   = await(result.map(_.header.status))
           val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
           statusHeader shouldBe SEE_OTHER
@@ -104,27 +107,28 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
     }
     "index is invalid" should {
       "redirect to the first page in journey when previous questions are unanswered" in {
-        val cyaModel = aPensionsCYAModel.copy (incomeFromOverseasPensions = anIncomeFromOverseasPensionsEmptyViewModel)
+        val cyaModel = aPensionsCYAModel.copy(incomeFromOverseasPensions = anIncomeFromOverseasPensionsEmptyViewModel)
         val result = indexCheckThenJourneyCheck(
           data = aPensionsUserData.copy(pensions = cyaModel),
           optIndex = Some(8),
           currentPage = YourTaxableAmountPage,
           taxYear = taxYear)(continueToContextualRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
         locationHeader shouldBe Some(PensionOverseasIncomeStatus.show(taxYear).url)
       }
       "redirect to the first page in journey when there are no schemes" in {
-        val emptySchemesIFOPViewModel: IncomeFromOverseasPensionsViewModel = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = Seq.empty)
+        val emptySchemesIFOPViewModel: IncomeFromOverseasPensionsViewModel =
+          aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = Seq.empty)
         val cyaModel = aPensionsCYAModel.copy(incomeFromOverseasPensions = emptySchemesIFOPViewModel)
         val result = indexCheckThenJourneyCheck(
           data = aPensionsUserData.copy(pensions = cyaModel),
           optIndex = Some(8),
           currentPage = YourTaxableAmountPage,
           taxYear = taxYear)(continueToContextualRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
@@ -139,19 +143,17 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
           optIndex = Some(8),
           currentPage = CountrySchemeSummaryListPage,
           taxYear = taxYear)(continueToSummaryRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
         locationHeader shouldBe Some(schemesSummaryCall.url)
       }
       "redirect to the scheme summary page when schemes already exist" in {
-        val result: Future[Result] = indexCheckThenJourneyCheck(
-          data = aPensionsUserData,
-          optIndex = Some(8),
-          currentPage = YourTaxableAmountPage,
-          taxYear = taxYear)(continueToContextualRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val result: Future[Result] =
+          indexCheckThenJourneyCheck(data = aPensionsUserData, optIndex = Some(8), currentPage = YourTaxableAmountPage, taxYear = taxYear)(
+            continueToContextualRedirect)
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
@@ -163,7 +165,7 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
   ".redirectForSchemeLoop" should {
     "return a Call to the first page in scheme loop when 'schemes' is empty" in {
       val emptySchemes: Seq[PensionScheme] = Seq.empty
-      val result = redirectForSchemeLoop(emptySchemes, taxYear)
+      val result                           = redirectForSchemeLoop(emptySchemes, taxYear)
 
       result shouldBe schemeStartCall
     }
@@ -218,7 +220,8 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
           specialWithholdingTaxAmount = Some(400.00),
           foreignTaxCreditReliefQuestion = Some(true),
           taxableAmount = Some(2000.00)
-        ))
+        )
+      )
       val result = schemeIsFinishedCheck(schemes, 1, taxYear, ftcrPageCall)
 
       result shouldBe schemeSummaryRedirect
@@ -244,7 +247,8 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
           specialWithholdingTaxAmount = Some(400.00),
           foreignTaxCreditReliefQuestion = Some(true),
           taxableAmount = None
-        ))
+        )
+      )
       val result = schemeIsFinishedCheck(schemes, 1, taxYear, ftcrPageCall)
 
       result shouldBe Redirect(ftcrPageCall)
@@ -267,7 +271,7 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
               foreignTaxCreditReliefQuestion = None,
               taxableAmount = None
             )
-        )
+          )
         ))
         val result = journeyCheck(ForeignTaxCreditReliefPage, iFOPData, taxYear)
 
@@ -323,7 +327,7 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
       }
       "on the RemoveSchemePage and schemes exist" in {
         val iFOPData = cyaData.copy(incomeFromOverseasPensions = anIncomeFromOverseasPensionsViewModel)
-        val result = journeyCheck(RemoveSchemePage, iFOPData, taxYear)
+        val result   = journeyCheck(RemoveSchemePage, iFOPData, taxYear)
 
         result shouldBe None
       }
@@ -366,5 +370,5 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
       cyaPageCall(taxYear) shouldBe IncomeFromOverseasPensionsCYAController.show(taxYear)
     }
   }
-  
+
 }

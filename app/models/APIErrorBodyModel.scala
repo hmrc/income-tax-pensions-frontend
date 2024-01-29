@@ -21,26 +21,25 @@ import play.api.libs.json.{JsValue, Json, OFormat}
 
 sealed trait APIErrorBody
 
-case class APIErrorModel(status: Int, body: APIErrorBody) extends ServiceError{
-  def toJson: JsValue = {
+case class APIErrorModel(status: Int, body: APIErrorBody) extends ServiceError {
+  def toJson: JsValue =
     body match {
-      case error: APIErrorBodyModel => Json.toJson(error)
+      case error: APIErrorBodyModel   => Json.toJson(error)
       case errors: APIErrorsBodyModel => Json.toJson(errors)
     }
-  }
 
   override val message: String = toJson.toString()
 }
 
-/** Single API Error **/
+/** Single API Error * */
 case class APIErrorBodyModel(code: String, reason: String) extends APIErrorBody
 
 object APIErrorBodyModel {
   implicit val formats: OFormat[APIErrorBodyModel] = Json.format[APIErrorBodyModel]
-  val parsingError: APIErrorBodyModel = APIErrorBodyModel("PARSING_ERROR", "Error parsing response from API")
+  val parsingError: APIErrorBodyModel              = APIErrorBodyModel("PARSING_ERROR", "Error parsing response from API")
 }
 
-/** Multiple API Errors **/
+/** Multiple API Errors * */
 case class APIErrorsBodyModel(failures: Seq[APIErrorBodyModel]) extends APIErrorBody
 
 object APIErrorsBodyModel {

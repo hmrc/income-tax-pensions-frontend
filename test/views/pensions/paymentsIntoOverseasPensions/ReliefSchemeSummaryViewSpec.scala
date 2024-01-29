@@ -31,13 +31,12 @@ import views.html.pensions.paymentsIntoOverseasPensions.ReliefSchemeSummaryView
 
 class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider {
 
-
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val addAnotherLinkSelector = "#add-another-relief-link"
-    val addLinkSelector = "#add-relief-link"
+    val captionSelector: String        = "#main-content > div > div > header > p"
+    val addAnotherLinkSelector         = "#add-another-relief-link"
+    val addLinkSelector                = "#add-relief-link"
     val continueButtonSelector: String = "#continue"
-    val summaryListTableSelector = "#reliefSchemeSummaryList"
+    val summaryListTableSelector       = "#reliefSchemeSummaryList"
 
     def changeLinkSelector(index: Int): String = s"#reliefSchemeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
 
@@ -66,38 +65,38 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
 
   object CommonExpectedEN extends CommonExpectedResults {
     override val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val expectedTitle = "Schemes with untaxed employer payments"
-    val expectedHeading = "Schemes with untaxed employer payments"
-    val change = "Change"
-    val remove = "Remove"
-    val expectedAddAnotherText = "Add another overseas pension scheme"
-    val expectedAddPensionSchemeText = "Add an overseas pension scheme"
-    val addASchemeButton = "Add a scheme"
-    val returnToOverviewButton = "Return to overview"
-    val text1 = "You need to add one or more pension scheme."
+    val expectedButtonText                      = "Continue"
+    val expectedTitle                           = "Schemes with untaxed employer payments"
+    val expectedHeading                         = "Schemes with untaxed employer payments"
+    val change                                  = "Change"
+    val remove                                  = "Remove"
+    val expectedAddAnotherText                  = "Add another overseas pension scheme"
+    val expectedAddPensionSchemeText            = "Add an overseas pension scheme"
+    val addASchemeButton                        = "Add a scheme"
+    val returnToOverviewButton                  = "Return to overview"
+    val text1                                   = "You need to add one or more pension scheme."
     val text2 = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }
 
-
   object CommonExpectedCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Cynlluniau gyda thaliadau cyflogwr sydd heb eu trethu"
-    val expectedHeading = "Cynlluniau gyda thaliadau cyflogwr sydd heb eu trethu"
-    val change = "Newid"
-    val remove = "Tynnu"
-    val expectedAddAnotherText = "Ychwanegu cynllun pensiwn tramor arall"
+    override val expectedCaption: Int => String = (taxYear: Int) =>
+      s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedButtonText           = "Yn eich blaen"
+    val expectedTitle                = "Cynlluniau gyda thaliadau cyflogwr sydd heb eu trethu"
+    val expectedHeading              = "Cynlluniau gyda thaliadau cyflogwr sydd heb eu trethu"
+    val change                       = "Newid"
+    val remove                       = "Tynnu"
+    val expectedAddAnotherText       = "Ychwanegu cynllun pensiwn tramor arall"
     val expectedAddPensionSchemeText = "Add an overseas pension scheme"
-    val addASchemeButton = "Ychwanegu cynllun"
-    val returnToOverviewButton = "Yn ôl i’r trosolwg"
-    val text1 = "Bydd angen i chi ychwanegu un cynllun pensiwn neu fwy."
-    val text2 = "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
+    val addASchemeButton             = "Ychwanegu cynllun"
+    val returnToOverviewButton       = "Yn ôl i’r trosolwg"
+    val text1                        = "Bydd angen i chi ychwanegu un cynllun pensiwn neu fwy."
+    val text2                        = "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
   }
 
-  val cyaUrl = PaymentsIntoOverseasPensionsCYAController.show(taxYearEOY).url
-  val changeUrl = (index: Int) => ReliefsSchemeDetailsController.show(taxYearEOY, Some(index)).url
-  val removeUrl = (index: Int) => RemoveReliefSchemeController.show(taxYearEOY, Some(index)).url
+  val cyaUrl       = PaymentsIntoOverseasPensionsCYAController.show(taxYearEOY).url
+  val changeUrl    = (index: Int) => ReliefsSchemeDetailsController.show(taxYearEOY, Some(index)).url
+  val removeUrl    = (index: Int) => RemoveReliefSchemeController.show(taxYearEOY, Some(index)).url
   val addSchemeUrl = PensionsCustomerReferenceNumberController.show(taxYearEOY, None).url
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Unit]] = Seq(
@@ -112,10 +111,11 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
         import Selectors._
         import userScenario.commonExpectedResults._
 
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(aPensionsUserData, aUser, fakeIndividualRequest)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val schemes = aPaymentsIntoOverseasPensionsViewModel.reliefs
-        val htmlFormat = underTest(taxYearEOY, schemes)
+        val schemes                     = aPaymentsIntoOverseasPensionsViewModel.reliefs
+        val htmlFormat                  = underTest(taxYearEOY, schemes)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(expectedTitle, userScenario.isWelsh)
@@ -145,9 +145,10 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
         import Selectors._
         import userScenario.commonExpectedResults._
 
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(aPensionsUserData, aUser, fakeIndividualRequest)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val htmlFormat = underTest(taxYearEOY, Seq.empty)
+        val htmlFormat                  = underTest(taxYearEOY, Seq.empty)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(expectedTitle, userScenario.isWelsh)
@@ -163,4 +164,3 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
     }
   }
 }
-

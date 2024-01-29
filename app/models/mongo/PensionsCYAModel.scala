@@ -29,10 +29,10 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
                             incomeFromOverseasPensions: IncomeFromOverseasPensionsViewModel,
                             transfersIntoOverseasPensions: TransfersIntoOverseasPensionsViewModel,
                             shortServiceRefunds: ShortServiceRefundsViewModel) {
-  
+
   def isEmpty: Boolean = paymentsIntoPension.isEmpty && pensionsAnnualAllowances.isEmpty &&
     incomeFromPensions.isEmpty && paymentsIntoOverseasPensions.isEmpty &&
-      incomeFromOverseasPensions.isEmpty && transfersIntoOverseasPensions.isEmpty && shortServiceRefunds.isEmpty
+    incomeFromOverseasPensions.isEmpty && transfersIntoOverseasPensions.isEmpty && shortServiceRefunds.isEmpty
 }
 
 object PensionsCYAModel {
@@ -57,8 +57,7 @@ case class EncryptedPensionCYAModel(encryptedPaymentsIntoPension: EncryptedPayme
                                     paymentsIntoOverseasPensions: EncryptedPaymentsIntoOverseasPensionsViewModel,
                                     incomeFromOverseasPensions: EncryptedIncomeFromOverseasPensionsViewModel,
                                     transfersIntoOverseasPensions: EncryptedTransfersIntoOverseasPensionsViewModel,
-                                    shortServiceRefunds: EncryptedShortServiceRefundsViewModel
-                                   )
+                                    shortServiceRefunds: EncryptedShortServiceRefundsViewModel)
 
 object EncryptedPensionCYAModel {
   implicit val format: OFormat[EncryptedPensionCYAModel] = Json.format[EncryptedPensionCYAModel]

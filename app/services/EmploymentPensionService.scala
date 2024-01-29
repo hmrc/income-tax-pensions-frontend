@@ -28,47 +28,47 @@ import utils.{Clock, FutureEitherOps}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+class EmploymentPensionService @Inject() (pensionUserDataRepository: PensionsUserDataRepository, employmentConnector: EmploymentConnector) {
 
-class EmploymentPensionService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
-                                         employmentConnector: EmploymentConnector) {
-
-  def persistUkPensionIncomeViewModel(user: User, taxYear: Int)
-                                     (implicit hc: HeaderCarrier,
-                                      ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
+  def persistUkPensionIncomeViewModel(user: User, taxYear: Int)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      clock: Clock): Future[Either[ServiceError, Unit]] = {
 
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
 
-
-    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData = {
+    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData =
       userData match {
-        case Some(value) => value.copy(pensions = value.pensions.copy(incomeFromPensions = value.pensions.incomeFromPensions.copy(uKPensionIncomes = Nil)))
-        case None => PensionsUserData(
-          user.sessionId,
-          user.mtditid,
-          user.nino,
-          taxYear,
-          isPriorSubmission = false,
-          PensionsCYAModel.emptyModels,
-          clock.now(DateTimeZone.UTC)
-        )
+        case Some(value) =>
+          value.copy(pensions = value.pensions.copy(incomeFromPensions = value.pensions.incomeFromPensions.copy(uKPensionIncomes = Nil)))
+        case None =>
+          PensionsUserData(
+            user.sessionId,
+            user.mtditid,
+            user.nino,
+            taxYear,
+            isPriorSubmission = false,
+            PensionsCYAModel.emptyModels,
+            clock.now(DateTimeZone.UTC)
+          )
       }
-    }
 
     (for {
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
       optUkPensionIncomes = sessionData.map(p => p.pensions.incomeFromPensions.uKPensionIncomes)
       saveEmployments = optUkPensionIncomes.fold(Seq[Future[EmploymentSessionResponse]]())(_.map(ukPensionIncome =>
-        employmentConnector.saveEmploymentPensionsData(user.nino, taxYear, ukPensionIncome.toCreateUpdateEmploymentRequest)(hcWithExtras, ec)
-      ))
+        employmentConnector.saveEmploymentPensionsData(user.nino, taxYear, ukPensionIncome.toCreateUpdateEmploymentRequest)(hcWithExtras, ec)))
       _ <- FutureEitherOps[ServiceError, Seq[Unit]](Future.sequence(saveEmployments).map(sequence))
       updatedCYA = getPensionsUserData(sessionData, user)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
-    } yield {
-      result
-    }).value
+    } yield result).value
   }
 
-  private def sequence[A, B](s: Seq[Either[A, B]]): Either[A, Seq[B]] = {
-    s.foldRight(Right(Nil): Either[A, Seq[B]]) { (e, acc) => for (xs <- acc; x <- e) yield xs :+ x }
-  }
+  private def sequence[A, B](s: Seq[Either[A, B]]): Either[A, Seq[B]] =
+    s.foldRight(Right(Nil): Either[A, Seq[B]]) { (e, acc) =>
+      for {
+        xs <- acc
+        x  <- e
+      } yield xs :+ x
+    }
 }

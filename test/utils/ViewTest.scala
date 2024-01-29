@@ -25,22 +25,20 @@ import play.api.mvc.Call
 
 trait ViewTest extends UnitTest with GuiceOneAppPerSuite {
 
-  val testBackUrl = "/test-back-url"
-  val testCall: Call = Call("POST", "/test-url")
+  val testBackUrl                            = "/test-back-url"
+  val testCall: Call                         = Call("POST", "/test-url")
   implicit lazy val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
-  implicit lazy val messages: Messages = messagesApi.preferred(fakeRequest)
-  lazy val welshMessages: Messages = messagesApi.preferred(Seq(Lang("cy")))
+  implicit lazy val messages: Messages       = messagesApi.preferred(fakeRequest)
+  lazy val welshMessages: Messages           = messagesApi.preferred(Seq(Lang("cy")))
 
-  val serviceName = "Update and submit an Income Tax Return"
+  val serviceName    = "Update and submit an Income Tax Return"
   val govUkExtension = "GOV.UK"
 
-  def elements(selector: String)(implicit document: Document): Elements = {
+  def elements(selector: String)(implicit document: Document): Elements =
     document.select(selector)
-  }
 
-  def elementText(selector: String)(implicit document: Document): String = {
+  def elementText(selector: String)(implicit document: Document): String =
     document.select(selector).text()
-  }
 
   def element(selector: String)(implicit document: Document): Element = {
     val elements = document.select(selector)
@@ -52,61 +50,51 @@ trait ViewTest extends UnitTest with GuiceOneAppPerSuite {
     elements.first()
   }
 
-  def elementExist(selector: String)(implicit document: Document): Boolean = {
+  def elementExist(selector: String)(implicit document: Document): Boolean =
     !document.select(selector).isEmpty
-  }
 
-  def assertTitle(title: String)(implicit document: Document): Assertion = {
+  def assertTitle(title: String)(implicit document: Document): Assertion =
     elementText("title") shouldBe title
-  }
 
-  def assertH1(text: String)(implicit document: Document): Assertion = {
+  def assertH1(text: String)(implicit document: Document): Assertion =
     elementText("h1") shouldBe text
-  }
 
-  def assertCaption(text: String, selector: String = ".govuk-caption-l")(implicit document: Document): Assertion = {
+  def assertCaption(text: String, selector: String = ".govuk-caption-l")(implicit document: Document): Assertion =
     elementText(selector) shouldBe text
-  }
 
-  def titleCheck(title: String)(implicit document: Document): Unit = {
+  def titleCheck(title: String)(implicit document: Document): Unit =
     s"has a title of $title" in {
       document.title() shouldBe s"$title - $serviceName - $govUkExtension"
     }
-  }
 
-  def hintTextCheck(text: String, selector: String = ".govuk-hint")(implicit document: Document): Unit = {
+  def hintTextCheck(text: String, selector: String = ".govuk-hint")(implicit document: Document): Unit =
     s"has the hint text of '$text'" in {
       elementText(selector) shouldBe text
     }
-  }
 
-  def h1Check(header: String, size: String = "l")(implicit document: Document): Unit = {
+  def h1Check(header: String, size: String = "l")(implicit document: Document): Unit =
     s"have a page heading of '$header'" in {
       document.select(s".govuk-heading-$size").text() shouldBe header
     }
-  }
 
-  def textOnPageCheck(text: String, selector: String)(implicit document: Document): Unit = {
+  def textOnPageCheck(text: String, selector: String)(implicit document: Document): Unit =
     s"have text on the screen of '$text'" in {
       document.select(selector).text() shouldBe text
     }
-  }
 
-  def formGetLinkCheck(text: String, selector: String)(implicit document: Document): Unit = {
+  def formGetLinkCheck(text: String, selector: String)(implicit document: Document): Unit =
     s"have a form with an GET action of '$text'" in {
       document.select(selector).attr("action") shouldBe text
       document.select(selector).attr("method") shouldBe "GET"
     }
-  }
 
-  def formPostLinkCheck(text: String, selector: String)(implicit document: Document): Unit = {
+  def formPostLinkCheck(text: String, selector: String)(implicit document: Document): Unit =
     s"have a form with an POST action of '$text'" in {
       document.select(selector).attr("action") shouldBe text
       document.select(selector).attr("method") shouldBe "POST"
     }
-  }
 
-  def buttonCheck(text: String, selector: String, href: Option[String] = None)(implicit document: Document): Unit = {
+  def buttonCheck(text: String, selector: String, href: Option[String] = None)(implicit document: Document): Unit =
     s"have a $text button" which {
       s"has the text '$text'" in {
         document.select(selector).text() shouldBe text
@@ -115,15 +103,14 @@ trait ViewTest extends UnitTest with GuiceOneAppPerSuite {
         document.select(selector).attr("class") should include("govuk-button")
       }
 
-      if(href.isDefined) {
+      if (href.isDefined) {
         s"has a href to '${href.get}'" in {
           document.select(selector).attr("href") shouldBe href.get
         }
       }
     }
-  }
 
-  def radioButtonCheck(text: String, radioNumber: Int)(implicit document: Document): Unit = {
+  def radioButtonCheck(text: String, radioNumber: Int)(implicit document: Document): Unit =
     s"have a $text radio button" which {
       s"is of type radio button" in {
         val selector = ".govuk-radios__item > input"
@@ -134,9 +121,8 @@ trait ViewTest extends UnitTest with GuiceOneAppPerSuite {
         document.select(selector).get(radioNumber - 1).text() shouldBe text
       }
     }
-  }
 
-  def linkCheck(text: String, selector: String, href: String)(implicit document: Document): Unit = {
+  def linkCheck(text: String, selector: String, href: String)(implicit document: Document): Unit =
     s"have a $text link" which {
       s"has the text '$text'" in {
         document.select(selector).text() shouldBe text
@@ -145,13 +131,11 @@ trait ViewTest extends UnitTest with GuiceOneAppPerSuite {
         document.select(selector).attr("href") shouldBe href
       }
     }
-  }
 
-  def inputFieldCheck(name: String, selector: String)(implicit document: Document): Unit = {
+  def inputFieldCheck(name: String, selector: String)(implicit document: Document): Unit =
     s"has a name of '$name'" in {
       document.select(selector).attr("name") shouldBe name
     }
-  }
 
   def errorSummaryCheck(text: String, href: String)(implicit document: Document): Unit = {
     "contains an error summary" in {
@@ -170,15 +154,14 @@ trait ViewTest extends UnitTest with GuiceOneAppPerSuite {
     }
   }
 
-  def errorAboveElementCheck(text: String)(implicit document: Document): Unit = {
+  def errorAboveElementCheck(text: String)(implicit document: Document): Unit =
     s"has a $text error above the element" which {
       s"has the text '$text'" in {
         document.select(".govuk-error-message").text() shouldBe s"Error: $text"
       }
     }
-  }
 
-  def checkMessagesAreUnique(initial: List[(String, String)], keysToExplore: List[(String, String)], result: Set[String]): Set[String] = {
+  def checkMessagesAreUnique(initial: List[(String, String)], keysToExplore: List[(String, String)], result: Set[String]): Set[String] =
     keysToExplore match {
       case Nil => result
       case head :: tail =>
@@ -189,7 +172,6 @@ trait ViewTest extends UnitTest with GuiceOneAppPerSuite {
 
         checkMessagesAreUnique(initial, tail, duplicate ++ result)
     }
-  }
 
   def welshToggleCheck(activeLanguage: String)(implicit document: Document): Unit = {
     val otherLanguage = if (activeLanguage == "English") "Welsh" else "English"
@@ -198,8 +180,7 @@ trait ViewTest extends UnitTest with GuiceOneAppPerSuite {
 
     def linkLanguage = Map("English" -> "English", "Welsh" -> "Cymraeg")
 
-    def linkText = Map("English" -> "Change the language to English English",
-      "Welsh" -> "Newid yr iaith ir Gymraeg Cymraeg")
+    def linkText = Map("English" -> "Change the language to English English", "Welsh" -> "Newid yr iaith ir Gymraeg Cymraeg")
 
     s"have the language toggle already set to $activeLanguage" which {
       s"has the text '$activeLanguage" in {

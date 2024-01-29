@@ -37,19 +37,19 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
   private val amountInputName = "amount-2"
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
-    val amountHeadingSelector = "#conditional-value > div > label"
-    val amountValueSelector = "#amount-2"
-    val expectedErrorHref = "#amount-2"
-    val hintTextSelector: String = "#amount-2-hint"
-    val poundPrefixSelector = ".govuk-input__prefix"
-    val findOutLinkSelector = "#annual-allowance-link"
-    val overLimitLinkSelector = "#over-limit-link"
-    val detailsSelector = "#main-content > div > div > form > details > summary > span"
+    val formSelector: String           = "#main-content > div > div > form"
+    val yesSelector                    = "#value"
+    val noSelector                     = "#value-no"
+    val amountHeadingSelector          = "#conditional-value > div > label"
+    val amountValueSelector            = "#amount-2"
+    val expectedErrorHref              = "#amount-2"
+    val hintTextSelector: String       = "#amount-2-hint"
+    val poundPrefixSelector            = ".govuk-input__prefix"
+    val findOutLinkSelector            = "#annual-allowance-link"
+    val overLimitLinkSelector          = "#over-limit-link"
+    val detailsSelector                = "#main-content > div > div > form > details > summary > span"
 
     def detailsBulletSelector(index: Int): String = s"#main-content > div > div > form > details > div > ul > li:nth-child($index)"
   }
@@ -77,69 +77,69 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "Did you pay tax on the State Pension lump sum?"
-    val expectedHeading = "Did you pay tax on the State Pension lump sum?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedError = "Select yes if you paid tax on the State Pension lump sum"
+    val expectedTitle          = "Did you pay tax on the State Pension lump sum?"
+    val expectedHeading        = "Did you pay tax on the State Pension lump sum?"
+    val expectedErrorTitle     = s"Error: $expectedTitle"
+    val expectedError          = "Select yes if you paid tax on the State Pension lump sum"
     val expectedDetailsBullet1 = "your P60"
     val expectedDetailsBullet2 = "the ’About general increases in benefits’ letter the Pension Service sent you"
-    val emptyErrorText = "Enter the total amount of tax paid on the State Pension lump sum"
-    val maxAmountErrorText = "The amount of tax paid on the State Pension lump sum must be less than £100,000,000,000"
+    val emptyErrorText         = "Enter the total amount of tax paid on the State Pension lump sum"
+    val maxAmountErrorText     = "The amount of tax paid on the State Pension lump sum must be less than £100,000,000,000"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "A wnaethoch chi dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
-    val expectedHeading = "A wnaethoch chi dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth"
+    val expectedTitle          = "A wnaethoch chi dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
+    val expectedHeading        = "A wnaethoch chi dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
+    val expectedErrorTitle     = s"Gwall: $expectedTitle"
+    val expectedError          = "Dewiswch ‘Iawn’ os gwnaethoch dalu treth ar gyfandaliad Pensiwn y Wladwriaeth"
     val expectedDetailsBullet1 = "eich P60"
     val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn"
-    val emptyErrorText = "Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth"
-    val maxAmountErrorText = "Mae’n rhaid i swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
+    val emptyErrorText         = "Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth"
+    val maxAmountErrorText     = "Mae’n rhaid i swm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "Did your client pay tax on the State Pension lump sum?"
-    val expectedHeading = "Did your client pay tax on the State Pension lump sum?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedError = "Select yes if your client paid tax on the State Pension lump sum"
+    val expectedTitle          = "Did your client pay tax on the State Pension lump sum?"
+    val expectedHeading        = "Did your client pay tax on the State Pension lump sum?"
+    val expectedErrorTitle     = s"Error: $expectedTitle"
+    val expectedError          = "Select yes if your client paid tax on the State Pension lump sum"
     val expectedDetailsBullet1 = "your client’s P60"
     val expectedDetailsBullet2 = "the ’About general increases in benefits’ letter the Pension Service sent your client"
-    val emptyErrorText = "Enter the amount of tax your client paid on the State Pension lump sum"
-    val maxAmountErrorText = "The amount of tax your client paid on the State Pension lump sum must be less than £100,000,000,000"
+    val emptyErrorText         = "Enter the amount of tax your client paid on the State Pension lump sum"
+    val maxAmountErrorText     = "The amount of tax your client paid on the State Pension lump sum must be less than £100,000,000,000"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
-    val expectedHeading = "A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedError = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth"
+    val expectedTitle          = "A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
+    val expectedHeading        = "A wnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth?"
+    val expectedErrorTitle     = s"Gwall: $expectedTitle"
+    val expectedError          = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth ar gyfandaliad Pensiwn y Wladwriaeth"
     val expectedDetailsBullet1 = "P60 eich cleient"
     val expectedDetailsBullet2 = "y llythyr ’Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd at eich cleient gan y Gwasanaeth Pensiwn"
-    val emptyErrorText = "Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth"
+    val emptyErrorText         = "Nodwch swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth"
     val maxAmountErrorText = "Mae’n rhaid i swm y dreth a dalodd eich cleient ar y cyfandaliad Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedDetailsTitle = "Where to find this information"
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
-    val amountHeading = "Amount of tax paid"
-    val amountHint = "For example, £193.54"
-    val incorrectFormatErrorText = "Enter the total amount of tax paid on the State Pension lump sum in pounds"
+    val expectedDetailsTitle           = "Where to find this information"
+    val expectedButtonText             = "Continue"
+    val yesText                        = "Yes"
+    val noText                         = "No"
+    val amountHeading                  = "Amount of tax paid"
+    val amountHint                     = "For example, £193.54"
+    val incorrectFormatErrorText       = "Enter the total amount of tax paid on the State Pension lump sum in pounds"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedDetailsTitle = "Ble i ddod o hyd i’r wybodaeth hon"
-    val expectedButtonText = "Yn eich blaen"
-    val yesText = "Iawn"
-    val noText = "Na"
-    val amountHeading = "Swm y dreth a dalwyd"
-    val amountHint = "Er enghraifft, £193.54"
-    val incorrectFormatErrorText = "Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
+    val expectedDetailsTitle           = "Ble i ddod o hyd i’r wybodaeth hon"
+    val expectedButtonText             = "Yn eich blaen"
+    val yesText                        = "Iawn"
+    val noText                         = "Na"
+    val amountHeading                  = "Swm y dreth a dalwyd"
+    val amountHint                     = "Er enghraifft, £193.54"
+    val incorrectFormatErrorText       = "Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -157,16 +157,17 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
       "render the page with no data" which {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = {
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        }
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().taxPaidOnStatePensionLumpSum(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] =
+          new FormsProvider().taxPaidOnStatePensionLumpSum(if (userScenario.isAgent) anAgentUser else aUser)
 
-        val htmlFormat = underTest(form, taxYearEOY)
+        val htmlFormat                  = underTest(form, taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
@@ -184,14 +185,15 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
       "render page with pre-filled data" which {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = {
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        }
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().taxPaidOnStatePensionLumpSum(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] =
+          new FormsProvider().taxPaidOnStatePensionLumpSum(if (userScenario.isAgent) anAgentUser else aUser)
 
         val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "142.24")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
@@ -216,12 +218,14 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().taxPaidOnStatePensionLumpSum(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] =
+          new FormsProvider().taxPaidOnStatePensionLumpSum(if (userScenario.isAgent) anAgentUser else aUser)
 
         val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "", RadioButtonAmountForm.amount2 -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
@@ -234,12 +238,14 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().taxPaidOnStatePensionLumpSum(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] =
+          new FormsProvider().taxPaidOnStatePensionLumpSum(if (userScenario.isAgent) anAgentUser else aUser)
 
         val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
@@ -253,12 +259,14 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().taxPaidOnStatePensionLumpSum(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] =
+          new FormsProvider().taxPaidOnStatePensionLumpSum(if (userScenario.isAgent) anAgentUser else aUser)
 
         val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100wrong")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
@@ -272,14 +280,17 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().taxPaidOnStatePensionLumpSum(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] =
+          new FormsProvider().taxPaidOnStatePensionLumpSum(if (userScenario.isAgent) anAgentUser else aUser)
 
-        val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "£100,000,000,042")), taxYearEOY)
+        val htmlFormat =
+          underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "£100,000,000,042")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedErrorTitle, userScenario.isWelsh)

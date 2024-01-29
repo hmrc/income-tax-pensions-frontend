@@ -40,20 +40,19 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SpecialWithholdingTaxController @Inject()(authAction: AuthorisedAction,
-                                                view: SpecialWithholdingTaxView,
-                                                pensionSessionService: PensionSessionService,
-                                                errorHandler: ErrorHandler)
-                                               (implicit mcc: MessagesControllerComponents,
-                                                appConfig: AppConfig, clock: Clock,
-                                                ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+class SpecialWithholdingTaxController @Inject() (
+    authAction: AuthorisedAction,
+    view: SpecialWithholdingTaxView,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler)(implicit mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, SpecialWithholdingTaxPage, taxYear) { data =>
-
           val form = populateForm(data, index.getOrElse(0))
           Future.successful(Ok(view(form, taxYear, index)))
 
@@ -62,49 +61,51 @@ class SpecialWithholdingTaxController @Inject()(authAction: AuthorisedAction,
     }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request => {
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, SpecialWithholdingTaxPage, taxYear) { data =>
-
-          form(request.user.isAgent).bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
-            validForm =>
-              onValidForm(data, taxYear, validForm, index.getOrElse(0)))
+          form(request.user.isAgent)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
+              validForm => onValidForm(data, taxYear, validForm, index.getOrElse(0)))
 
         }
       case Right(None) =>
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
-  }
 
-  private def onValidForm(pensionsUserData: PensionsUserData, taxYear: Int, validForm: (Boolean, Option[BigDecimal]), index: Int)
-                         (implicit request: AuthorisationRequest[AnyContent], clock: Clock): Future[Result] = {
+  private def onValidForm(pensionsUserData: PensionsUserData, taxYear: Int, validForm: (Boolean, Option[BigDecimal]), index: Int)(implicit
+      request: AuthorisationRequest[AnyContent],
+      clock: Clock): Future[Result] =
     validForm match {
       case (yesWasSelected, amountOpt) =>
         val ifopData: IncomeFromOverseasPensionsViewModel = pensionsUserData.pensions.incomeFromOverseasPensions
         val updatedSchemes: Seq[PensionScheme] = ifopData.overseasIncomePensionSchemes
-          .updated(index, ifopData.overseasIncomePensionSchemes(index).copy(
-            specialWithholdingTaxQuestion = Some(yesWasSelected), specialWithholdingTaxAmount = amountOpt))
-        val updatedCyaModel: PensionsCYAModel = pensionsUserData.pensions.copy(
-          incomeFromOverseasPensions = ifopData.copy(overseasIncomePensionSchemes = updatedSchemes))
+          .updated(
+            index,
+            ifopData
+              .overseasIncomePensionSchemes(index)
+              .copy(specialWithholdingTaxQuestion = Some(yesWasSelected), specialWithholdingTaxAmount = amountOpt))
+        val updatedCyaModel: PensionsCYAModel =
+          pensionsUserData.pensions.copy(incomeFromOverseasPensions = ifopData.copy(overseasIncomePensionSchemes = updatedSchemes))
 
         pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(
           errorHandler.handleError(INTERNAL_SERVER_ERROR))(
           schemeIsFinishedCheck(updatedSchemes, index, taxYear, ForeignTaxCreditReliefController.show(taxYear, Some(index))))
     }
-  }
 
-  private def populateForm(pensionsUserData: PensionsUserData, index: Int)
-                          (implicit request: AuthorisationRequest[AnyContent]): Form[(Boolean, Option[BigDecimal])] = {
+  private def populateForm(pensionsUserData: PensionsUserData, index: Int)(implicit
+      request: AuthorisationRequest[AnyContent]): Form[(Boolean, Option[BigDecimal])] = {
     val baseForm = form(request.user.isAgent)
-    val scheme = pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index)
+    val scheme   = pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index)
     scheme.specialWithholdingTaxQuestion match {
-      case Some(true) => baseForm.fill((true, scheme.specialWithholdingTaxAmount))
+      case Some(true)  => baseForm.fill((true, scheme.specialWithholdingTaxAmount))
       case Some(false) => baseForm.fill((false, None))
-      case None => baseForm
+      case None        => baseForm
     }
   }
 

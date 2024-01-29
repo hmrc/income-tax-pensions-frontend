@@ -16,8 +16,12 @@
 
 package builders
 
-import builders.StateBenefitViewModelBuilder
-.{aPriorStatePensionLumpSumViewModel, aPriorStatePensionViewModel, aStatePensionLumpSumViewModel, aStatePensionViewModel}
+import builders.StateBenefitViewModelBuilder.{
+  aPriorStatePensionLumpSumViewModel,
+  aPriorStatePensionViewModel,
+  aStatePensionLumpSumViewModel,
+  aStatePensionViewModel
+}
 import models.pension.statebenefits.ClaimCYAModel
 
 import java.time.LocalDate
@@ -34,7 +38,7 @@ object ClaimCYAModelBuilder {
     amount = aStatePensionViewModel.amount,
     taxPaidQuestion = aStatePensionViewModel.taxPaidQuestion,
     taxPaid = aStatePensionViewModel.taxPaid
-    )
+  )
 
   val aStatePensionLumpSumClaimCYAModel = ClaimCYAModel(
     benefitId = aStatePensionLumpSumViewModel.benefitId,
@@ -46,7 +50,7 @@ object ClaimCYAModelBuilder {
     amount = aStatePensionLumpSumViewModel.amount,
     taxPaidQuestion = aStatePensionLumpSumViewModel.taxPaidQuestion,
     taxPaid = aStatePensionLumpSumViewModel.taxPaid
-    )
+  )
 
   val aPriorStatePensionClaimCYAModel = ClaimCYAModel(
     benefitId = aPriorStatePensionViewModel.benefitId,
@@ -58,7 +62,7 @@ object ClaimCYAModelBuilder {
     amount = aPriorStatePensionViewModel.amount,
     taxPaidQuestion = aPriorStatePensionViewModel.taxPaidQuestion,
     taxPaid = aPriorStatePensionViewModel.taxPaid
-    )
+  )
 
   val aPriorStatePensionLumpSumClaimCYAModel = ClaimCYAModel(
     benefitId = aPriorStatePensionLumpSumViewModel.benefitId,
@@ -70,6 +74,6 @@ object ClaimCYAModelBuilder {
     amount = aPriorStatePensionLumpSumViewModel.amount,
     taxPaidQuestion = aPriorStatePensionLumpSumViewModel.taxPaidQuestion,
     taxPaid = aPriorStatePensionLumpSumViewModel.taxPaid
-    )
+  )
 
 }

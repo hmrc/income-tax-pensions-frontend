@@ -39,16 +39,16 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
-  val inputName: String = "pensionsCustomerReferenceNumberId"
+  val inputName: String                               = "pensionsCustomerReferenceNumberId"
 
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false): PensionsUserData = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false): PensionsUserData =
     PensionsUserDataBuilder.aPensionsUserData.copy(
       isPriorSubmission = isPrior,
       pensions = pensionsCyaModel
     )
-  }
 
-  val noCrnRelief: Relief = Relief(reliefType = Some(TransitionalCorrespondingRelief),
+  val noCrnRelief: Relief = Relief(
+    reliefType = Some(TransitionalCorrespondingRelief),
     customerReference = None,
     employerPaymentsAmount = Some(1999.99),
     qopsReference = None,
@@ -59,7 +59,8 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
     doubleTaxationReliefAmount = None,
     sf74Reference = Some("SF74-123456")
   )
-  val someCrnRelief: Relief = Relief(reliefType = Some(TransitionalCorrespondingRelief),
+  val someCrnRelief: Relief = Relief(
+    reliefType = Some(TransitionalCorrespondingRelief),
     customerReference = Some("PENSIONSINCOME480"),
     employerPaymentsAmount = Some(1999.99),
     qopsReference = None,
@@ -79,9 +80,11 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
           val overseasPensionViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(false))
-          val pensionsUserData = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
+          val pensionsUserData         = pensionUserDataWithOverseasPensions(overseasPensionViewModel)
           insertCyaData(pensionsUsersData(pensionsUserData.pensions))
-          urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, None)), follow = false,
+          urlGet(
+            fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, None)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
           )
         }
@@ -98,7 +101,9 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-        urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(1))), follow = false,
+        urlGet(
+          fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(1))),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
       }
@@ -114,7 +119,9 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(pensionsNoSchemesViewModel))
-        urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(3))), follow = false,
+        urlGet(
+          fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(3))),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
       }
@@ -127,9 +134,11 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(noCrnRelief, noCrnRelief, noCrnRelief))
-        val pensionCYAModel = aPensionsCYAModel.copy(paymentsIntoOverseasPensions = pensionsViewModel)
+        val pensionCYAModel   = aPensionsCYAModel.copy(paymentsIntoOverseasPensions = pensionsViewModel)
         insertCyaData(pensionsUsersData(pensionCYAModel))
-        urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(1))), follow = false,
+        urlGet(
+          fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(1))),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
       }
@@ -143,7 +152,9 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel, isPrior = true))
-        urlGet(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(-1))), follow = false,
+        urlGet(
+          fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(-1))),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
       }
@@ -160,8 +171,12 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONSINCOME25")
         insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(aPaymentsIntoOverseasPensionsNoReliefsViewModel))
-        urlPost(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, None)), body = form,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, None)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -174,8 +189,12 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONSINCOME25")
         insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(aPaymentsIntoOverseasPensionsViewModel))
-        urlPost(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, None)), body = form,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, None)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -188,8 +207,12 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(aPaymentsIntoOverseasPensionsViewModel))
         val form: Map[String, String] = Map(PensionCustomerReferenceNumberForm.pensionsCustomerReferenceNumberId -> "PENSIONSINCOME24")
-        urlPost(fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(1))), body = form,
-          follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionCustomerReferenceNumberUrl(taxYearEOY, Some(1))),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -198,8 +221,10 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
       cyaModel.pensions.paymentsIntoOverseasPensions shouldBe aPaymentsIntoOverseasPensionsViewModel.copy(
         reliefs = Seq(
-          aTransitionalCorrespondingRelief, aMigrantMemberRelief.copy(customerReference = Some("PENSIONSINCOME24")),
-          aDoubleTaxationRelief, aNoTaxRelief))
+          aTransitionalCorrespondingRelief,
+          aMigrantMemberRelief.copy(customerReference = Some("PENSIONSINCOME24")),
+          aDoubleTaxationRelief,
+          aNoTaxRelief))
     }
 
     "return BadRequest error when an empty CRN value is submitted" in {

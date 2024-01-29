@@ -30,9 +30,9 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
 
     "shown" should {
       "show page when using a valid index" in {
-        val sessionData = pensionsUserData(aPensionsCYAModel)
+        val sessionData                     = pensionsUserData(aPensionsCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse = getPageWithIndex(1)
+        implicit val response: WSResponse   = getPageWithIndex(1)
 
         response.status equals OK
       }
@@ -40,16 +40,16 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
       "redirect to the summary page" when {
         "the user has no stored session data at all" in {
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
           assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
         }
       }
 
       "redirect to relief scheme summary page" when {
         "the user accesses page with index out of bounds" in {
-          val sessionData = pensionsUserData(aPensionsCYAModel)
+          val sessionData                     = pensionsUserData(aPensionsCYAModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex(8)
+          implicit val response: WSResponse   = getPageWithIndex(8)
           assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
         }
       }
@@ -58,28 +58,29 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
     "submitted" should {
       "redirect to the scheme summary page" when {
         "a valid index is used and the scheme is successfully removed from the session data" in {
-          val sessionData = pensionsUserData(aPensionsCYAModel)
+          val sessionData                     = pensionsUserData(aPensionsCYAModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
-          val expectedViewModel = sessionData.pensions.paymentsIntoOverseasPensions.copy(reliefs = Seq(aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief))
+          implicit val response: WSResponse   = submitForm(Map("" -> ""), Map("index" -> "0"))
+          val expectedViewModel =
+            sessionData.pensions.paymentsIntoOverseasPensions.copy(reliefs = Seq(aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief))
 
           assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
           getPaymentsIntoOverseasPensionsViewModel mustBe Some(expectedViewModel)
         }
 
         "an invalid index is used and there are existing schemes" in {
-          val sessionData = pensionsUserData(aPensionsCYAModel)
+          val sessionData                     = pensionsUserData(aPensionsCYAModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "4"))
+          implicit val response: WSResponse   = submitForm(Map("" -> ""), Map("index" -> "4"))
 
           assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
           getPaymentsIntoOverseasPensionsViewModel mustBe Some(aPaymentsIntoOverseasPensionsViewModel)
         }
         "an invalid index is used and there are no existing schemes" in {
-          val sessionData = pensionsUserData(aPensionsCYAModel.copy(
-            paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty)))
+          val sessionData =
+            pensionsUserData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty)))
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "4"))
+          implicit val response: WSResponse   = submitForm(Map("" -> ""), Map("index" -> "4"))
 
           assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
           getPaymentsIntoOverseasPensionsViewModel mustBe Some(aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty))
@@ -88,7 +89,7 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
 
       "redirect to the Pensions Summary page when the user has no stored session data at all" in {
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-        implicit val response: WSResponse = submitForm(Map("" -> ""), Map("index" -> "0"))
+        implicit val response: WSResponse   = submitForm(Map("" -> ""), Map("index" -> "0"))
 
         assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
         getTransferPensionsViewModel mustBe None

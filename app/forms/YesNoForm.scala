@@ -23,23 +23,21 @@ import play.api.data.format.Formatter
 object YesNoForm {
 
   val yesNo = "value"
-  val yes = "true"
-  val no = "false"
+  val yes   = "true"
+  val no    = "false"
 
   private def formatter(missingInputError: String): Formatter[Boolean] = new Formatter[Boolean] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Boolean] = {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Boolean] =
       data.get(key) match {
         case Some(`yes`) => Right(true)
-        case Some(`no`) => Right(false)
-        case _ => Left(Seq(FormError(key, missingInputError)))
+        case Some(`no`)  => Right(false)
+        case _           => Left(Seq(FormError(key, missingInputError)))
       }
-    }
 
-    override def unbind(key: String, value: Boolean): Map[String, String] = {
+    override def unbind(key: String, value: Boolean): Map[String, String] =
       Map(
         key -> value.toString
       )
-    }
   }
 
   def yesNoForm(missingInputError: String): Form[Boolean] = Form(

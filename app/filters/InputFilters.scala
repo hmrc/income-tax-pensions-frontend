@@ -39,7 +39,7 @@ trait InputFilters {
     @tailrec
     def applyFilters(filters: Seq[Pattern], sanitizedOuput: String): String = filters match {
       case filter :: tail => applyFilters(tail, filter.matcher(sanitizedOuput).replaceAll(""))
-      case _ => sanitizedOuput.filterNot(_ == '|')
+      case _              => sanitizedOuput.filterNot(_ == '|')
     }
     applyFilters(filters, input)
   }

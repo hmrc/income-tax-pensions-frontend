@@ -37,62 +37,53 @@ object PensionsUserDataBuilder extends UnitTest {
   val anPensionsUserDataEmptyCya: PensionsUserData = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
   def pensionsUserDataWithPaymentsIntoPensions(paymentsIntoPension: PaymentsIntoPensionsViewModel,
-                                               isPriorSubmission: Boolean = true): PensionsUserData = {
-    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
-      pensions = aPensionsCYAModel.copy(paymentsIntoPension = paymentsIntoPension)
-    )
-  }
+                                               isPriorSubmission: Boolean = true): PensionsUserData =
+    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission, pensions = aPensionsCYAModel.copy(paymentsIntoPension = paymentsIntoPension))
 
   def pensionsUserDataWithAnnualAllowances(pensionAnnualAllowancesViewModel: PensionAnnualAllowancesViewModel,
-                                           isPriorSubmission: Boolean = true): PensionsUserData = {
-    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
-      pensions = aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionAnnualAllowancesViewModel)
-    )
-  }
+                                           isPriorSubmission: Boolean = true): PensionsUserData =
+    aPensionsUserData.copy(
+      isPriorSubmission = isPriorSubmission,
+      pensions = aPensionsCYAModel.copy(pensionsAnnualAllowances = pensionAnnualAllowancesViewModel))
 
   def pensionsUserDataWithIncomeFromPensions(incomeFromPensionsViewModel: IncomeFromPensionsViewModel,
-                                             isPriorSubmission: Boolean = true, taxYear: Int = taxYearEOY): PensionsUserData = {
-    aPensionsUserData.copy(taxYear = taxYear, isPriorSubmission = isPriorSubmission,
-      pensions = aPensionsCYAModel.copy(incomeFromPensions = incomeFromPensionsViewModel)
-    )
-  }
+                                             isPriorSubmission: Boolean = true,
+                                             taxYear: Int = taxYearEOY): PensionsUserData =
+    aPensionsUserData.copy(
+      taxYear = taxYear,
+      isPriorSubmission = isPriorSubmission,
+      pensions = aPensionsCYAModel.copy(incomeFromPensions = incomeFromPensionsViewModel))
 
   def pensionsUserDataWithUnauthorisedPayments(unauthorisedPaymentViewModel: UnauthorisedPaymentsViewModel,
-                                               isPriorSubmission: Boolean = true): PensionsUserData = {
-    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
-      pensions = aPensionsCYAModel.copy(unauthorisedPayments = unauthorisedPaymentViewModel)
-    )
-  }
+                                               isPriorSubmission: Boolean = true): PensionsUserData =
+    aPensionsUserData.copy(
+      isPriorSubmission = isPriorSubmission,
+      pensions = aPensionsCYAModel.copy(unauthorisedPayments = unauthorisedPaymentViewModel))
 
   def pensionUserDataWithOverseasPensions(overseasPensionViewModel: PaymentsIntoOverseasPensionsViewModel,
-                                          isPriorSubmission: Boolean = true): PensionsUserData = {
-    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
+                                          isPriorSubmission: Boolean = true): PensionsUserData =
+    aPensionsUserData.copy(
+      isPriorSubmission = isPriorSubmission,
       pensions = aPensionsCYAModel.copy(paymentsIntoOverseasPensions = overseasPensionViewModel))
-  }
 
   def pensionUserDataWithPaymentsIntoOverseasPensions(overseasPensionViewModel: PaymentsIntoOverseasPensionsViewModel,
-                                                      isPriorSubmission: Boolean = true): PensionsUserData = {
-    anPensionsUserDataEmptyCya.copy(isPriorSubmission = isPriorSubmission,
+                                                      isPriorSubmission: Boolean = true): PensionsUserData =
+    anPensionsUserDataEmptyCya.copy(
+      isPriorSubmission = isPriorSubmission,
       pensions = anPensionsUserDataEmptyCya.pensions.copy(paymentsIntoOverseasPensions = overseasPensionViewModel))
-  }
-  
-  
 
   def pensionUserDataWithIncomeOverseasPension(incomeOverseasPensions: IncomeFromOverseasPensionsViewModel,
-                                          isPriorSubmission: Boolean = true): PensionsUserData = {
-    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
+                                               isPriorSubmission: Boolean = true): PensionsUserData =
+    aPensionsUserData.copy(
+      isPriorSubmission = isPriorSubmission,
       pensions = aPensionsCYAModel.copy(incomeFromOverseasPensions = incomeOverseasPensions))
-  }
 
   def pensionUserDataWithTransferIntoOverseasPension(transferViewModel: TransfersIntoOverseasPensionsViewModel,
-                                               isPriorSubmission: Boolean = true): PensionsUserData = {
-    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
+                                                     isPriorSubmission: Boolean = true): PensionsUserData =
+    aPensionsUserData.copy(
+      isPriorSubmission = isPriorSubmission,
       pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel))
-  }
 
-  def pensionUserDataWithShortServiceViewModel(refundViewModel: ShortServiceRefundsViewModel,
-                                                     isPriorSubmission: Boolean = true): PensionsUserData = {
-    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission,
-      pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundViewModel))
-  }
+  def pensionUserDataWithShortServiceViewModel(refundViewModel: ShortServiceRefundsViewModel, isPriorSubmission: Boolean = true): PensionsUserData =
+    aPensionsUserData.copy(isPriorSubmission = isPriorSubmission, pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundViewModel))
 }

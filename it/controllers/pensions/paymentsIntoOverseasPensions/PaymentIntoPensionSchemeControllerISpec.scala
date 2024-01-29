@@ -27,11 +27,11 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.WSResponse
 
 class PaymentIntoPensionSchemeControllerISpec
-  extends YesNoAmountControllerSpec("/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes") {
+    extends YesNoAmountControllerSpec("/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes") {
 
-  val selectorForFirstParagraph = "#main-content > div > div > p:nth-child(2)"
+  val selectorForFirstParagraph  = "#main-content > div > div > p:nth-child(2)"
   val selectorForSecondParagraph = "#main-content > div > div > p:nth-child(3)"
-  val selectorForBulletPoint = "#main-content > div > div > ul > li:nth-child(2)"
+  val selectorForBulletPoint     = "#main-content > div > div > ul > li:nth-child(2)"
 
   "This page" when {
     "requested to be shown" should {
@@ -39,7 +39,7 @@ class PaymentIntoPensionSchemeControllerISpec
         "the user has no stored session data at all" in {
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse = getPage
+          implicit val response: WSResponse   = getPage
 
           assertRedirectionAsExpected(PageRelativeURLs.overseasPensionsSummary)
         }
@@ -52,7 +52,7 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPPSPageAsExpected(
               OK,
@@ -63,24 +63,27 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
+                amountSection =
+                  ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
                     "eligible for tax relief (opens in new tab)",
-                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                  )
                 ),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your overseas pension schemes must not be registered in the UK."),
                   ExpectedText(selectorForSecondParagraph, "They must also be:"),
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
-              ))
+              )
+            )
           }
           scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPPSPageAsExpected(
               OK,
@@ -91,24 +94,27 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
+                amountSection =
+                  ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
                     "eligible for tax relief (opens in new tab)",
-                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                  )
                 ),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your overseas pension schemes must not be registered in the UK."),
                   ExpectedText(selectorForSecondParagraph, "They must also be:"),
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
-              ))
+              )
+            )
           }
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPPSPageAsExpected(
               OK,
@@ -119,12 +125,16 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                amountSection = ExpectedAmountSection(
+                  "Total amount, in pounds",
+                  "",
+                  Some("For example, £193.52 Do not include payments your client’s employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
                     "eligible for tax relief (opens in new tab)",
-                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                  )
                 ),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
@@ -137,7 +147,7 @@ class PaymentIntoPensionSchemeControllerISpec
           scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPPSPageAsExpected(
               OK,
@@ -148,34 +158,38 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                amountSection = ExpectedAmountSection(
+                  "Total amount, in pounds",
+                  "",
+                  Some("For example, £193.52 Do not include payments your client’s employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
                     "eligible for tax relief (opens in new tab)",
-                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                  )
                 ),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
                   ExpectedText(selectorForSecondParagraph, "They must also be:"),
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
-              ))
+              )
+            )
           }
         }
         "the user had previously answered 'Yes' with a valid amount, and" when {
 
           val sessionData: PensionsUserData =
-            pensionsUserData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions =
-              PaymentsIntoOverseasPensionsViewModel(
+            pensionsUserData(
+              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel(
                 paymentsIntoOverseasPensionsQuestions = Some(true),
-                paymentsIntoOverseasPensionsAmount = Some(42.64))
-            ))
+                paymentsIntoOverseasPensionsAmount = Some(42.64))))
 
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPPSPageAsExpected(
               OK,
@@ -186,24 +200,27 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "42.64", Some("For example, £193.52 Do not include payments your employer made")),
+                amountSection =
+                  ExpectedAmountSection("Total amount, in pounds", "42.64", Some("For example, £193.52 Do not include payments your employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
                     "eligible for tax relief (opens in new tab)",
-                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                  )
                 ),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your overseas pension schemes must not be registered in the UK."),
                   ExpectedText(selectorForSecondParagraph, "They must also be:"),
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
-              ))
+              )
+            )
           }
           scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPPSPageAsExpected(
               OK,
@@ -214,24 +231,27 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "42.64", Some("For example, £193.52 Do not include payments your employer made")),
+                amountSection =
+                  ExpectedAmountSection("Total amount, in pounds", "42.64", Some("For example, £193.52 Do not include payments your employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
                     "eligible for tax relief (opens in new tab)",
-                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                  )
                 ),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your overseas pension schemes must not be registered in the UK."),
                   ExpectedText(selectorForSecondParagraph, "They must also be:"),
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
-              ))
+              )
+            )
           }
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPPSPageAsExpected(
               OK,
@@ -242,24 +262,29 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "42.64", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                amountSection = ExpectedAmountSection(
+                  "Total amount, in pounds",
+                  "42.64",
+                  Some("For example, £193.52 Do not include payments your client’s employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
                     "eligible for tax relief (opens in new tab)",
-                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                  )
                 ),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
                   ExpectedText(selectorForSecondParagraph, "They must also be:"),
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
-              ))
+              )
+            )
           }
           scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPPSPageAsExpected(
               OK,
@@ -270,34 +295,36 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = checkedExpectedRadioButton("Yes"),
                 radioButtonForNo = uncheckedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "42.64", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                amountSection = ExpectedAmountSection(
+                  "Total amount, in pounds",
+                  "42.64",
+                  Some("For example, £193.52 Do not include payments your client’s employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
                     "eligible for tax relief (opens in new tab)",
-                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                  )
                 ),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
                   ExpectedText(selectorForSecondParagraph, "They must also be:"),
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
-              ))
+              )
+            )
           }
         }
         "the user had previously answered 'No' without an amount, and" when {
 
           val sessionData =
             pensionsUserData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions =
-              PaymentsIntoOverseasPensionsViewModel(
-                paymentsIntoOverseasPensionsQuestions = Some(false),
-                paymentsIntoOverseasPensionsAmount = None)
-            ))
+              PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions = Some(false), paymentsIntoOverseasPensionsAmount = None)))
 
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPPSPageAsExpected(
               OK,
@@ -308,24 +335,27 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
+                amountSection =
+                  ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
                     "eligible for tax relief (opens in new tab)",
-                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                  )
                 ),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your overseas pension schemes must not be registered in the UK."),
                   ExpectedText(selectorForSecondParagraph, "They must also be:"),
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
-              ))
+              )
+            )
           }
           scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPPSPageAsExpected(
               OK,
@@ -336,24 +366,27 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
+                amountSection =
+                  ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
                     "eligible for tax relief (opens in new tab)",
-                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                  )
                 ),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your overseas pension schemes must not be registered in the UK."),
                   ExpectedText(selectorForSecondParagraph, "They must also be:"),
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
-              ))
+              )
+            )
           }
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPPSPageAsExpected(
               OK,
@@ -364,24 +397,29 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                amountSection = ExpectedAmountSection(
+                  "Total amount, in pounds",
+                  "",
+                  Some("For example, £193.52 Do not include payments your client’s employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
                     "eligible for tax relief (opens in new tab)",
-                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                  )
                 ),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
                   ExpectedText(selectorForSecondParagraph, "They must also be:"),
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
-              ))
+              )
+            )
           }
           scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPPSPageAsExpected(
               OK,
@@ -392,19 +430,24 @@ class PaymentIntoPensionSchemeControllerISpec
                 radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                 radioButtonForNo = checkedExpectedRadioButton("No"),
                 buttonForContinue = ExpectedButton("Continue", ""),
-                amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                amountSection = ExpectedAmountSection(
+                  "Total amount, in pounds",
+                  "",
+                  Some("For example, £193.52 Do not include payments your client’s employer made")),
                 links = Set(
                   ExpectedLink(
                     "eligibleForTaxRelief-link",
                     "eligible for tax relief (opens in new tab)",
-                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                    "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                  )
                 ),
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
                   ExpectedText(selectorForSecondParagraph, "They must also be:"),
                   ExpectedText(selectorForBulletPoint, "paid into after tax (net income)")
                 )
-              ))
+              )
+            )
           }
         }
       }
@@ -414,7 +457,7 @@ class PaymentIntoPensionSchemeControllerISpec
         "the user has no stored session data at all" in {
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
           assertRedirectionAsExpected(PageRelativeURLs.overseasPensionsSummary)
           getViewModel mustBe None
@@ -426,10 +469,10 @@ class PaymentIntoPensionSchemeControllerISpec
           "the user has selected 'No'" in {
 
             val expectedViewModel = PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions = Some(false))
-            val sessionData = pensionsUserData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = expectedViewModel))
+            val sessionData       = pensionsUserData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = expectedViewModel))
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
             assertRedirectionAsExpected(PageRelativeURLs.piopCheckPiopPage)
             getViewModel mustBe Some(expectedViewModel)
@@ -442,7 +485,7 @@ class PaymentIntoPensionSchemeControllerISpec
             val sessionData = pensionsUserData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = expectedViewModel))
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
             assertRedirectionAsExpected(PageRelativeURLs.piopSchemeEmployerPaymentsPage)
             getViewModel mustBe Some(expectedViewModel)
@@ -455,7 +498,7 @@ class PaymentIntoPensionSchemeControllerISpec
             val sessionData = pensionsUserData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = expectedViewModel))
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
             assertRedirectionAsExpected(PageRelativeURLs.piopSchemeEmployerPaymentsPage)
             getViewModel mustBe Some(expectedViewModel)
@@ -468,12 +511,11 @@ class PaymentIntoPensionSchemeControllerISpec
           "the user has selected 'No'" in {
 
             val expectedViewModel =
-              sessionData.pensions.paymentsIntoOverseasPensions.copy(
-                paymentsIntoOverseasPensionsQuestions = Some(false),
-                paymentsIntoOverseasPensionsAmount = None)
+              sessionData.pensions.paymentsIntoOverseasPensions
+                .copy(paymentsIntoOverseasPensionsQuestions = Some(false), paymentsIntoOverseasPensionsAmount = None)
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
 
             assertRedirectionAsExpected(PageRelativeURLs.piopCheckPiopPage)
             getViewModel mustBe Some(expectedViewModel)
@@ -482,12 +524,11 @@ class PaymentIntoPensionSchemeControllerISpec
           "the user has selected 'Yes' as well as a valid amount (unformatted)" in {
 
             val expectedViewModel =
-              sessionData.pensions.paymentsIntoOverseasPensions.copy(
-                paymentsIntoOverseasPensionsQuestions = Some(true),
-                paymentsIntoOverseasPensionsAmount = Some(BigDecimal(42.64)))
+              sessionData.pensions.paymentsIntoOverseasPensions
+                .copy(paymentsIntoOverseasPensionsQuestions = Some(true), paymentsIntoOverseasPensionsAmount = Some(BigDecimal(42.64)))
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("42.64")))
 
             assertRedirectionAsExpected(PageRelativeURLs.piopSchemeEmployerPaymentsPage)
             getViewModel mustBe Some(expectedViewModel)
@@ -496,12 +537,11 @@ class PaymentIntoPensionSchemeControllerISpec
           "the user has selected 'Yes' as well as a valid amount (formatted)" in {
 
             val expectedViewModel =
-              sessionData.pensions.paymentsIntoOverseasPensions.copy(
-                paymentsIntoOverseasPensionsQuestions = Some(true),
-                paymentsIntoOverseasPensionsAmount = Some(BigDecimal(1042.64)))
+              sessionData.pensions.paymentsIntoOverseasPensions
+                .copy(paymentsIntoOverseasPensionsQuestions = Some(true), paymentsIntoOverseasPensionsAmount = Some(BigDecimal(1042.64)))
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("£1,042.64")))
 
             assertRedirectionAsExpected(PageRelativeURLs.piopSchemeEmployerPaymentsPage)
             getViewModel mustBe Some(expectedViewModel)
@@ -513,14 +553,14 @@ class PaymentIntoPensionSchemeControllerISpec
       "fail" when {
         "the user has relevant session data and" when {
 
-          val sessionData = pensionsUserData(aPensionsCYAModel)
+          val sessionData       = pensionsUserData(aPensionsCYAModel)
           val expectedViewModel = sessionData.pensions.paymentsIntoOverseasPensions
 
           "the user has selected neither 'Yes' nor 'No' and" when {
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -531,12 +571,14 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
+                  amountSection =
+                    ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your overseas pension schemes must not be registered in the UK."),
@@ -562,7 +604,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -573,12 +615,14 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
+                  amountSection =
+                    ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your overseas pension schemes must not be registered in the UK."),
@@ -604,7 +648,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -615,12 +659,16 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                  amountSection = ExpectedAmountSection(
+                    "Total amount, in pounds",
+                    "",
+                    Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
@@ -646,7 +694,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForAgentAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(None, None))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -657,12 +705,16 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = uncheckedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                  amountSection = ExpectedAmountSection(
+                    "Total amount, in pounds",
+                    "",
+                    Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
@@ -690,7 +742,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -701,12 +753,14 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
+                  amountSection =
+                    ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your overseas pension schemes must not be registered in the UK."),
@@ -732,7 +786,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -743,12 +797,14 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
+                  amountSection =
+                    ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your overseas pension schemes must not be registered in the UK."),
@@ -774,7 +830,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -785,12 +841,16 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                  amountSection = ExpectedAmountSection(
+                    "Total amount, in pounds",
+                    "",
+                    Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
@@ -816,7 +876,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForAgentAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), None))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -827,12 +887,16 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                  amountSection = ExpectedAmountSection(
+                    "Total amount, in pounds",
+                    "",
+                    Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
@@ -860,7 +924,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -871,12 +935,16 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "x2.64", Some("For example, £193.52 Do not include payments your employer made")),
+                  amountSection = ExpectedAmountSection(
+                    "Total amount, in pounds",
+                    "x2.64",
+                    Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your overseas pension schemes must not be registered in the UK."),
@@ -902,7 +970,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -913,12 +981,16 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "x2.64", Some("For example, £193.52 Do not include payments your employer made")),
+                  amountSection = ExpectedAmountSection(
+                    "Total amount, in pounds",
+                    "x2.64",
+                    Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your overseas pension schemes must not be registered in the UK."),
@@ -944,7 +1016,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -955,12 +1027,16 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "x2.64", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                  amountSection = ExpectedAmountSection(
+                    "Total amount, in pounds",
+                    "x2.64",
+                    Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
@@ -986,7 +1062,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForAgentAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("x2.64")))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -997,12 +1073,16 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "x2.64", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                  amountSection = ExpectedAmountSection(
+                    "Total amount, in pounds",
+                    "x2.64",
+                    Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
@@ -1030,7 +1110,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -1041,12 +1121,16 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "100,000,000,000", Some("For example, £193.52 Do not include payments your employer made")),
+                  amountSection = ExpectedAmountSection(
+                    "Total amount, in pounds",
+                    "100,000,000,000",
+                    Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your overseas pension schemes must not be registered in the UK."),
@@ -1072,7 +1156,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -1083,12 +1167,16 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "100,000,000,000", Some("For example, £193.52 Do not include payments your employer made")),
+                  amountSection = ExpectedAmountSection(
+                    "Total amount, in pounds",
+                    "100,000,000,000",
+                    Some("For example, £193.52 Do not include payments your employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your overseas pension schemes must not be registered in the UK."),
@@ -1114,7 +1202,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -1125,12 +1213,16 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "100,000,000,000", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                  amountSection = ExpectedAmountSection(
+                    "Total amount, in pounds",
+                    "100,000,000,000",
+                    Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
@@ -1140,12 +1232,15 @@ class PaymentIntoPensionSchemeControllerISpec
                   errorSummarySectionOpt = Some(
                     ErrorSummarySection(
                       title = "There is a problem",
-                      body = "The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000",
-                      link = "#amount-2")
+                      body =
+                        "The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000",
+                      link = "#amount-2"
+                    )
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
-                      title = "Error: The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000",
+                      title =
+                        "Error: The total amount that your client’s employers paid into their overseas pension scheme must be less than £100,000,000,000",
                       idOpt = Some("amount-2")
                     )
                   )
@@ -1156,7 +1251,7 @@ class PaymentIntoPensionSchemeControllerISpec
             scenarioNameForAgentAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
+              implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(true), Some("100,000,000,000")))
 
               assertPPSPageAsExpected(
                 BAD_REQUEST,
@@ -1167,12 +1262,16 @@ class PaymentIntoPensionSchemeControllerISpec
                   radioButtonForYes = checkedExpectedRadioButton("Yes"),
                   radioButtonForNo = uncheckedExpectedRadioButton("No"),
                   buttonForContinue = ExpectedButton("Continue", ""),
-                  amountSection = ExpectedAmountSection("Total amount, in pounds", "100,000,000,000", Some("For example, £193.52 Do not include payments your client’s employer made")),
+                  amountSection = ExpectedAmountSection(
+                    "Total amount, in pounds",
+                    "100,000,000,000",
+                    Some("For example, £193.52 Do not include payments your client’s employer made")),
                   links = Set(
                     ExpectedLink(
                       "eligibleForTaxRelief-link",
                       "eligible for tax relief (opens in new tab)",
-                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"),
+                      "https://www.gov.uk/guidance/overseas-pensions-tax-relief-on-your-contributions"
+                    )
                   ),
                   text = Set(
                     ExpectedText(selectorForSecondParagraph, "Your client’s overseas pension schemes must not be registered in the UK."),
@@ -1183,7 +1282,8 @@ class PaymentIntoPensionSchemeControllerISpec
                     ErrorSummarySection(
                       title = "Mae problem wedi codi",
                       body = "The amount your client’s employers paid into overseas pension schemes must be less than £100,000,000,000",
-                      link = "#amount-2")
+                      link = "#amount-2"
+                    )
                   ),
                   errorAboveElementCheckSectionOpt = Some(
                     ErrorAboveElementCheckSection(
@@ -1204,15 +1304,8 @@ class PaymentIntoPensionSchemeControllerISpec
   private def getViewModel(implicit userConfig: UserConfig): Option[PaymentsIntoOverseasPensionsViewModel] =
     loadPensionUserData.map(_.pensions.paymentsIntoOverseasPensions)
 
-  private def assertPPSPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedYesNoAmountPageContents, isWelsh: Boolean = false)
-                                     (implicit userConfig: UserConfig, response: WSResponse): Unit = {
+  private def assertPPSPageAsExpected(expectedStatusCode: Int,
+                                      expectedPageContents: ExpectedYesNoAmountPageContents,
+                                      isWelsh: Boolean = false)(implicit userConfig: UserConfig, response: WSResponse): Unit =
     assertPageAsExpected(expectedStatusCode, expectedPageContents)(userConfig, response, isWelsh)
-  }
 }
-
-
-
-
-
-
-

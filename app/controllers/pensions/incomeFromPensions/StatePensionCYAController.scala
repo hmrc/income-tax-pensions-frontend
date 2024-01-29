@@ -36,22 +36,24 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StatePensionCYAController @Inject()(auditProvider: AuditActionsProvider,
-                                          pensionSessionService: PensionSessionService,
-                                          statePensionService: StatePensionService,
-                                          view: StatePensionCYAView)
-                                         (implicit val mcc: MessagesControllerComponents,
-                                          appConfig: AppConfig, clock: Clock,
-                                          executionContext: ExecutionContext,
-                                          errorHandler: ErrorHandler)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class StatePensionCYAController @Inject() (auditProvider: AuditActionsProvider,
+                                           pensionSessionService: PensionSessionService,
+                                           statePensionService: StatePensionService,
+                                           view: StatePensionCYAView)(implicit
+    val mcc: MessagesControllerComponents,
+    appConfig: AppConfig,
+    clock: Clock,
+    executionContext: ExecutionContext,
+    errorHandler: ErrorHandler)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsViewAuditing(taxYear) async {
-    implicit userSessionDataRequest =>
-      val checkRedirect = journeyCheck(StatePensionsCYAPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-        data => Future.successful(Ok(view(taxYear, data.pensions.incomeFromPensions)))
-      }
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsViewAuditing(taxYear) async { implicit userSessionDataRequest =>
+    val checkRedirect = journeyCheck(StatePensionsCYAPage, _, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      Future.successful(Ok(view(taxYear, data.pensions.incomeFromPensions)))
+    }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsUpdateAuditing(taxYear) async { implicit request =>
@@ -61,7 +63,7 @@ class StatePensionCYAController @Inject()(auditProvider: AuditActionsProvider,
       ) { model =>
         if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
           statePensionService.persistStatePensionIncomeViewModel(request.user, taxYear) map {
-            case Left(_) => errorHandler.internalServerError()
+            case Left(_)  => errorHandler.internalServerError()
             case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
           }
         } else {
@@ -71,11 +73,10 @@ class StatePensionCYAController @Inject()(auditProvider: AuditActionsProvider,
     }
   }
 
-  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
+  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData match {
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
-      case None => true
+      case None        => true
     }
-  }
 
 }

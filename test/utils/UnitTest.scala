@@ -63,32 +63,34 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
   val sessionId: String = "eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
 
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders("X-Session-ID" -> sessionId)
-  val fakeRequestWithMtditidAndNino: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
-    SessionValues.CLIENT_MTDITID -> "1234567890",
-    SessionValues.CLIENT_NINO -> "AA123456A",
-    SessionValues.TAX_YEAR -> s"$taxYear",
-    SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","),
-  ).withHeaders("X-Session-ID" -> sessionId)
+  val fakeRequestWithMtditidAndNino: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+    .withSession(
+      SessionValues.CLIENT_MTDITID  -> "1234567890",
+      SessionValues.CLIENT_NINO     -> "AA123456A",
+      SessionValues.TAX_YEAR        -> s"$taxYear",
+      SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(",")
+    )
+    .withHeaders("X-Session-ID" -> sessionId)
   val fakeRequestWithNino: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
-    SessionValues.CLIENT_NINO -> "AA123456A",
+    SessionValues.CLIENT_NINO     -> "AA123456A",
     SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(",")
   )
   implicit val headerCarrierWithSession: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(sessionId)))
-  val emptyHeaderCarrier: HeaderCarrier = HeaderCarrier()
+  val emptyHeaderCarrier: HeaderCarrier                = HeaderCarrier()
 
-  implicit val mockAppConfig: AppConfig = new MockAppConfig().config()
-  implicit val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
+  implicit val mockAppConfig: AppConfig                       = new MockAppConfig().config()
+  implicit val mockErrorHandler: ErrorHandler                 = mock[ErrorHandler]
   implicit val mockControllerComponents: ControllerComponents = Helpers.stubControllerComponents()
-  implicit val mockExecutionContext: ExecutionContext = ExecutionContext.Implicits.global
-  implicit val mockAuthConnector: AuthConnector = mock[AuthConnector]
-  implicit val mockAuthService: AuthService = new AuthService(mockAuthConnector)
-  val agentAuthErrorPageView: AgentAuthErrorPageView = app.injector.instanceOf[AgentAuthErrorPageView]
+  implicit val mockExecutionContext: ExecutionContext         = ExecutionContext.Implicits.global
+  implicit val mockAuthConnector: AuthConnector               = mock[AuthConnector]
+  implicit val mockAuthService: AuthService                   = new AuthService(mockAuthConnector)
+  val agentAuthErrorPageView: AgentAuthErrorPageView          = app.injector.instanceOf[AgentAuthErrorPageView]
 
   implicit lazy val mockMessagesControllerComponents: MessagesControllerComponents = Helpers.stubMessagesControllerComponents()
   implicit lazy val authorisationRequest: AuthorisationRequest[AnyContent] =
     new AuthorisationRequest[AnyContent](User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString), fakeRequest)
 
-  val authorisedAction = new AuthorisedAction(mockAppConfig)(mockAuthService, stubMessagesControllerComponents())
+  val authorisedAction                       = new AuthorisedAction(mockAppConfig)(mockAuthService, stubMessagesControllerComponents())
   def status(awaitable: Future[Result]): Int = await(awaitable).header.status
 
   def bodyOf(awaitable: Future[Result]): String = {
@@ -96,57 +98,60 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
     await(awaited.body.consumeData.map(_.utf8String))
   }
 
-  def redirectUrl(awaitable: Future[Result]): String = {
+  def redirectUrl(awaitable: Future[Result]): String =
     await(awaitable).header.headers.getOrElse("Location", "/")
-  }
 
-  def getSession(awaitable: Future[Result]): Session = {
+  def getSession(awaitable: Future[Result]): Session =
     await(awaitable).session
-  }
 
-  //noinspection ScalaStyle
+  // noinspection ScalaStyle
   def mockAuth(nino: Option[String]): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] = {
-    val enrolments = Enrolments(Set(
-      Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
-      Enrolment(EnrolmentKeys.Agent, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.agentReference, "0987654321")), "Activated")
-    ) ++ nino.fold(Seq.empty[Enrolment])(unwrappedNino =>
-      Seq(Enrolment(EnrolmentKeys.nino, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, unwrappedNino)), "Activated"))
-    ))
+    val enrolments = Enrolments(
+      Set(
+        Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
+        Enrolment(EnrolmentKeys.Agent, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.agentReference, "0987654321")), "Activated")
+      ) ++ nino.fold(Seq.empty[Enrolment])(unwrappedNino =>
+        Seq(Enrolment(EnrolmentKeys.nino, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, unwrappedNino)), "Activated"))))
 
-    (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+    (mockAuthConnector
+      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, Retrievals.affinityGroup, *, *)
       .returning(Future.successful(Some(AffinityGroup.Individual)))
 
-    (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+    (mockAuthConnector
+      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
       .returning(Future.successful(enrolments and ConfidenceLevel.L250))
   }
 
-  //noinspection ScalaStyle
+  // noinspection ScalaStyle
   def mockAuthAsAgent(): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] = {
-    val enrolments: Enrolments = Enrolments(Set(
-      Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
-      Enrolment(EnrolmentKeys.Agent, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.agentReference, "0987654321")), "Activated")
-    ))
+    val enrolments: Enrolments = Enrolments(
+      Set(
+        Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
+        Enrolment(EnrolmentKeys.Agent, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.agentReference, "0987654321")), "Activated")
+      ))
 
     val agentRetrievals: Some[AffinityGroup] = Some(AffinityGroup.Agent)
 
-    (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+    (mockAuthConnector
+      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, Retrievals.affinityGroup, *, *)
       .returning(Future.successful(agentRetrievals))
 
-    (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+    (mockAuthConnector
+      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, Retrievals.allEnrolments, *, *)
       .returning(Future.successful(enrolments))
   }
 
-  //noinspection ScalaStyle
-  def mockAuthReturnException(exception: Exception): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] = {
-    (mockAuthConnector.authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+  // noinspection ScalaStyle
+  def mockAuthReturnException(exception: Exception): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] =
+    (mockAuthConnector
+      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, *, *, *)
       .returning(Future.failed(exception))
-  }
 
-  val nino = "AA123456A"
+  val nino    = "AA123456A"
   val mtditid = "1234567890"
 }

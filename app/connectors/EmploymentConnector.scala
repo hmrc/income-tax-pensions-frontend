@@ -26,15 +26,18 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class EmploymentConnector @Inject()(val http: HttpClient,
-                                    val config: AppConfig) extends Logging {
-  def saveEmploymentPensionsData(nino: String, taxYear: Int, model: CreateUpdateEmploymentRequest)
-                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[EmploymentSessionResponse] = {
-    
+class EmploymentConnector @Inject() (val http: HttpClient, val config: AppConfig) extends Logging {
+  def saveEmploymentPensionsData(nino: String, taxYear: Int, model: CreateUpdateEmploymentRequest)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): Future[EmploymentSessionResponse] = {
+
     val url = s"${config.employmentBEBaseUrl}/income-tax/nino/$nino/sources?taxYear=$taxYear"
     ConnectorRequestInfo("POST", url, "income-tax-employment").logRequestWithBody(logger, model)
 
-    http.POST[CreateUpdateEmploymentRequest, EmploymentSessionResponse](url,model)(
-      CreateUpdateEmploymentRequest.format, EmploymentSessionHttpReads, hc, ec)
+    http.POST[CreateUpdateEmploymentRequest, EmploymentSessionResponse](url, model)(
+      CreateUpdateEmploymentRequest.format,
+      EmploymentSessionHttpReads,
+      hc,
+      ec)
   }
 }

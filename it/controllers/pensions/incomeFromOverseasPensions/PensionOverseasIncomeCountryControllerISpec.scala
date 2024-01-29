@@ -16,7 +16,11 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
-import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsSingleSchemeViewModel, anIncomeFromOverseasPensionsViewModel}
+import builders.IncomeFromOverseasPensionsViewModelBuilder.{
+  anIncomeFromOverseasPensionsEmptyViewModel,
+  anIncomeFromOverseasPensionsSingleSchemeViewModel,
+  anIncomeFromOverseasPensionsViewModel
+}
 import builders.PensionSchemeBuilder.aPensionScheme1
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithIncomeOverseasPension}
 import builders.UserBuilder.aUserRequest
@@ -31,20 +35,18 @@ import utils.CommonUtils
 import utils.PageUrls.IncomeFromOverseasPensionsPages._
 import utils.PageUrls.{IncomeFromOverseasPensionsPages, overseasPensionsSummaryUrl}
 
-
 class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val inputSelector = "#countryId"
+    val formSelector: String           = "#main-content > div > div > form"
+    val inputSelector                  = "#countryId"
 
     def labelSelector(index: Int): String = s"form > div:nth-of-type($index) > label"
 
     def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
-
 
   trait SpecificExpectedResults {
     val expectedError: String
@@ -59,7 +61,6 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
     val expectedParagraph: String
     val expectedButtonText: String
   }
-
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedError: String = "Enter the name of the country the pension scheme is registered in"
@@ -79,24 +80,23 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle: String = "What country is the pension scheme registered in?"
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val expectedButtonText: String = "Continue"
-    val expectedParagraph: String = "You can add pension schemes from other countries later."
-    val expectedSubHeading: String = "Country"
+    val expectedTitle: String          = "What country is the pension scheme registered in?"
+    val expectedErrorTitle: String     = s"Error: $expectedTitle"
+    val expectedButtonText: String     = "Continue"
+    val expectedParagraph: String      = "You can add pension schemes from other countries later."
+    val expectedSubHeading: String     = "Country"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "Ym mha wlad y mae’r cynllun pensiwn wedi’i gofrestru?"
-    val expectedErrorTitle: String = s"Gwall: $expectedTitle"
-    val expectedButtonText: String = "Yn eich blaen"
-    val expectedParagraph: String = "Gallwch ychwanegu cynlluniau pensiwn o wledydd eraill yn nes ymlaen."
-    val expectedSubHeading: String = "Gwlad"
+    val expectedTitle: String          = "Ym mha wlad y mae’r cynllun pensiwn wedi’i gofrestru?"
+    val expectedErrorTitle: String     = s"Gwall: $expectedTitle"
+    val expectedButtonText: String     = "Yn eich blaen"
+    val expectedParagraph: String      = "Gallwch ychwanegu cynlluniau pensiwn o wledydd eraill yn nes ymlaen."
+    val expectedSubHeading: String     = "Gwlad"
   }
 
   val inputName: String = "countryId"
-
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -114,10 +114,9 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
 
         "render the page with correct content with no prior country data" which {
           implicit val overseasIncomeCountryUrl: Int => String = IncomeFromOverseasPensionsPages.pensionOverseasIncomeCountryUrl
-          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsEmptyViewModel.copy(
-            paymentsFromOverseasPensionsQuestion = Some(true)))
+          val pensionUserData = pensionUserDataWithIncomeOverseasPension(
+            anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(true)))
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
-
 
           "has an ok status" in {
             result.status shouldBe OK
@@ -136,17 +135,18 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
         }
 
         "render the page with correct content (not pre-filled country) with prior data" which {
-          val index = 0
+          val index                                            = 0
           implicit val overseasIncomeCountryUrl: Int => String = pensionOverseasIncomeCountryUrlIndex(index)
-          val countryCode = "GB"
+          val countryCode                                      = "GB"
 
           val pensionsViewModel = anIncomeFromOverseasPensionsViewModel.copy(
-            overseasIncomePensionSchemes = Seq(PensionScheme(
-              alphaTwoCode = Some(countryCode)
-            ))
+            overseasIncomePensionSchemes = Seq(
+              PensionScheme(
+                alphaTwoCode = Some(countryCode)
+              ))
           )
 
-          val pensionUserData = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
+          val pensionUserData                  = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
           "has an OK status" in {
@@ -170,8 +170,8 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
     "redirect to the first page in journey" when {
       "page is invalid in journey" in {
         implicit val overseasIncomeCountryUrl: Int => String = IncomeFromOverseasPensionsPages.pensionOverseasIncomeCountryUrl
-        val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsEmptyViewModel.copy(
-          paymentsFromOverseasPensionsQuestion = Some(false)))
+        val pensionUserData = pensionUserDataWithIncomeOverseasPension(
+          anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)))
 
         implicit lazy val result: WSResponse = showPage(pensionUserData)
 
@@ -180,7 +180,7 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
       }
       "previous question is unanswered" in {
         implicit val overseasIncomeCountryUrl: Int => String = IncomeFromOverseasPensionsPages.pensionOverseasIncomeCountryUrl
-        lazy val result: WSResponse = getResponseNoSessionData()
+        lazy val result: WSResponse                          = getResponseNoSessionData()
 
         result.status shouldBe SEE_OTHER
         result.header("location") shouldBe Some(incomeFromOverseasPensionsStatus(taxYearEOY))
@@ -195,9 +195,8 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
 
         s"return $BAD_REQUEST error when no value is submitted" which {
           lazy val form: Map[String, String] = Map(CountryForm.countryId -> "")
-          implicit val url: Int => String = IncomeFromOverseasPensionsPages.pensionOverseasIncomeCountryUrl
-          lazy val result: WSResponse = submitPage(user, aPensionsUserData, form)
-
+          implicit val url: Int => String    = IncomeFromOverseasPensionsPages.pensionOverseasIncomeCountryUrl
+          lazy val result: WSResponse        = submitPage(user, aPensionsUserData, form)
 
           "has the correct status" in {
             result.status shouldBe BAD_REQUEST
@@ -227,7 +226,7 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
           paymentsFromOverseasPensionsQuestion = Some(true),
           overseasIncomePensionSchemes = Seq.empty
         )
-        val pensionUserData = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
+        val pensionUserData             = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
         implicit val url: Int => String = IncomeFromOverseasPensionsPages.pensionOverseasIncomeCountryUrl
 
         lazy val result: WSResponse = submitPage(pensionUserData, form)
@@ -246,10 +245,10 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
 
       "adding to existing schemes list" which {
         lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
-        val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsSingleSchemeViewModel)
+        val pensionUserData                = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsSingleSchemeViewModel)
 
         implicit val url: Int => String = pensionOverseasIncomeCountryUrl
-        lazy val result: WSResponse = submitPage(pensionUserData, form)
+        lazy val result: WSResponse     = submitPage(pensionUserData, form)
 
         "has a SEE_OTHER(303) status" in {
           result.status shouldBe SEE_OTHER
@@ -259,18 +258,19 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
         "updates pension scheme tax reference to contain both tax reference" in {
           lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
           cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes shouldBe Seq(
-            aPensionScheme1, PensionScheme(alphaTwoCode = Some("GB")))
+            aPensionScheme1,
+            PensionScheme(alphaTwoCode = Some("GB")))
         }
       }
     }
 
     "redirect to Scheme Summary page and update country code of existing scheme when scheme is now completed" which {
       lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
-      val pensionsViewModel = anIncomeFromOverseasPensionsSingleSchemeViewModel
-      val pensionUserData = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
+      val pensionsViewModel              = anIncomeFromOverseasPensionsSingleSchemeViewModel
+      val pensionUserData                = pensionUserDataWithIncomeOverseasPension(pensionsViewModel)
 
       implicit val url: Int => String = pensionOverseasIncomeCountryUrlIndex(0)
-      lazy val result: WSResponse = submitPage(pensionUserData, form)
+      lazy val result: WSResponse     = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -279,17 +279,16 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
 
       "updates pension scheme tax reference to contain both tax reference" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes shouldBe Seq(
-          aPensionScheme1.copy(alphaTwoCode = Some("GB")))
+        cyaModel.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes shouldBe Seq(aPensionScheme1.copy(alphaTwoCode = Some("GB")))
       }
     }
 
     "redirect to country summary page when there are existing schemes but the index is invalid" which {
-      val index = 3
-      implicit val url: Int => String = pensionOverseasIncomeCountryUrlIndex(index)
+      val index                          = 3
+      implicit val url: Int => String    = pensionOverseasIncomeCountryUrlIndex(index)
       lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
-      val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsViewModel)
-      lazy val result: WSResponse = submitPage(pensionUserData, form)
+      val pensionUserData                = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsViewModel)
+      lazy val result: WSResponse        = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -303,7 +302,7 @@ class PensionOverseasIncomeCountryControllerISpec extends CommonUtils with Befor
     }
 
     "redirect to Overseas Pension Summary page there is no session data" should {
-      implicit val url: Int => String = pensionOverseasIncomeCountryUrl
+      implicit val url: Int => String    = pensionOverseasIncomeCountryUrl
       lazy val form: Map[String, String] = Map(CountryForm.countryId -> "GB")
 
       lazy val result: WSResponse = submitPageNoSessionData(form)

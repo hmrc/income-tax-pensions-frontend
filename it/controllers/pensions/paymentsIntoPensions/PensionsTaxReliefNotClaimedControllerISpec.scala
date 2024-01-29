@@ -26,22 +26,20 @@ import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 
-class PensionsTaxReliefNotClaimedControllerISpec
-  extends YesNoControllerSpec("/payments-into-pensions/no-tax-relief") {
+class PensionsTaxReliefNotClaimedControllerISpec extends YesNoControllerSpec("/payments-into-pensions/no-tax-relief") {
 
-  private val selectorForFirstParagraph = "#main-content > div > div > p:nth-of-type(1)"
+  private val selectorForFirstParagraph  = "#main-content > div > div > p:nth-of-type(1)"
   private val selectorForSecondParagraph = "#main-content > div > div > p:nth-of-type(2)"
-  private val selectorForSubHeading = "#main-content > div > div > form > div > fieldset > legend"
+  private val selectorForSubHeading      = "#main-content > div > div > form > div > fieldset > legend"
 
   val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
-    .copy(paymentsIntoPension =
-      PaymentsIntoPensionsViewModel(
-        rasPensionPaymentQuestion = Some(true),
-        totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
-        oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
-        totalOneOffRasPaymentPlusTaxRelief = Some(BigDecimal("1.00")),
-        totalPaymentsIntoRASQuestion = Some(true)
-      ))
+    .copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(
+      rasPensionPaymentQuestion = Some(true),
+      totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
+      oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
+      totalOneOffRasPaymentPlusTaxRelief = Some(BigDecimal("1.00")),
+      totalPaymentsIntoRASQuestion = Some(true)
+    ))
   val expectedRedirect: Option[String] = Some(PageRelativeURLs.paymentsIntoPensionsReliefAtSourcePage)
 
   "This page" when {
@@ -66,10 +64,9 @@ class PensionsTaxReliefNotClaimedControllerISpec
 
             val sessionData = pensionsUserData(
               aPensionsCYAEmptyModel
-                .copy(paymentsIntoPension =
-                  PaymentsIntoPensionsViewModel(
-                    rasPensionPaymentQuestion = Some(true)
-                  ))
+                .copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(
+                  rasPensionPaymentQuestion = Some(true)
+                ))
             )
 
             implicit val response: WSResponse = getPage(Some(sessionData))
@@ -82,11 +79,10 @@ class PensionsTaxReliefNotClaimedControllerISpec
 
             val sessionData = pensionsUserData(
               aPensionsCYAEmptyModel
-                .copy(paymentsIntoPension =
-                  PaymentsIntoPensionsViewModel(
-                    rasPensionPaymentQuestion = Some(true),
-                    totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00"))
-                  ))
+                .copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(
+                  rasPensionPaymentQuestion = Some(true),
+                  totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00"))
+                ))
             )
 
             implicit val response: WSResponse = getPage(Some(sessionData))
@@ -99,12 +95,11 @@ class PensionsTaxReliefNotClaimedControllerISpec
 
             val sessionData = pensionsUserData(
               aPensionsCYAEmptyModel
-                .copy(paymentsIntoPension =
-                  PaymentsIntoPensionsViewModel(
-                    rasPensionPaymentQuestion = Some(true),
-                    totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
-                    oneOffRasPaymentPlusTaxReliefQuestion = Some(true)
-                  ))
+                .copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(
+                  rasPensionPaymentQuestion = Some(true),
+                  totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
+                  oneOffRasPaymentPlusTaxReliefQuestion = Some(true)
+                ))
             )
 
             implicit val response: WSResponse = getPage(Some(sessionData))
@@ -117,13 +112,12 @@ class PensionsTaxReliefNotClaimedControllerISpec
 
             val sessionData = pensionsUserData(
               aPensionsCYAEmptyModel
-                .copy(paymentsIntoPension =
-                  PaymentsIntoPensionsViewModel(
-                    rasPensionPaymentQuestion = Some(true),
-                    totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
-                    oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
-                    totalOneOffRasPaymentPlusTaxRelief = Some(BigDecimal("1.00"))
-                  ))
+                .copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(
+                  rasPensionPaymentQuestion = Some(true),
+                  totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
+                  oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
+                  totalOneOffRasPaymentPlusTaxRelief = Some(BigDecimal("1.00"))
+                ))
             )
 
             implicit val response: WSResponse = getPage(Some(sessionData))
@@ -143,7 +137,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPageAsExpected(
               OK,
@@ -157,16 +151,19 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 links = Set.empty,
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "You can check your pension statements or contact your pension provider to find the information you need."),
                   ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
                 )
-              ))
+              )
+            )
 
           }
           scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPageAsExpected(
               OK,
@@ -179,17 +176,24 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."),
-                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(
+                    selectorForFirstParagraph,
+                    "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."
+                  ),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."
+                  ),
                   ExpectedText(selectorForSubHeading, "A wnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer?")
                 )
-              ))
+              )
+            )
 
           }
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPageAsExpected(
               OK,
@@ -202,17 +206,23 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
+                  ExpectedText(
+                    selectorForFirstParagraph,
+                    "These questions are about pensions your client pays into where tax relief is not claimed for them."),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."
+                  ),
                   ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
                 )
-              ))
+              )
+            )
 
           }
           scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPageAsExpected(
               OK,
@@ -225,11 +235,18 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."),
-                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(
+                    selectorForFirstParagraph,
+                    "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."
+                  ),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."
+                  ),
                   ExpectedText(selectorForSubHeading, "A wnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer?")
                 )
-              ))
+              )
+            )
 
           }
         }
@@ -246,7 +263,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPageAsExpected(
               OK,
@@ -260,16 +277,19 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 links = Set.empty,
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "You can check your pension statements or contact your pension provider to find the information you need."),
                   ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
                 )
-              ))
+              )
+            )
 
           }
           scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPageAsExpected(
               OK,
@@ -282,17 +302,24 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."),
-                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(
+                    selectorForFirstParagraph,
+                    "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."
+                  ),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."
+                  ),
                   ExpectedText(selectorForSubHeading, "A wnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer?")
                 )
-              ))
+              )
+            )
 
           }
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPageAsExpected(
               OK,
@@ -305,17 +332,23 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
+                  ExpectedText(
+                    selectorForFirstParagraph,
+                    "These questions are about pensions your client pays into where tax relief is not claimed for them."),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."
+                  ),
                   ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
                 )
-              ))
+              )
+            )
 
           }
           scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPageAsExpected(
               OK,
@@ -328,11 +361,18 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."),
-                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(
+                    selectorForFirstParagraph,
+                    "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."
+                  ),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."
+                  ),
                   ExpectedText(selectorForSubHeading, "A wnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer?")
                 )
-              ))
+              )
+            )
 
           }
 
@@ -350,7 +390,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPageAsExpected(
               OK,
@@ -364,16 +404,19 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 links = Set.empty,
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "You can check your pension statements or contact your pension provider to find the information you need."),
                   ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
                 )
-              ))
+              )
+            )
 
           }
           scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPageAsExpected(
               OK,
@@ -386,18 +429,24 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."),
-                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(
+                    selectorForFirstParagraph,
+                    "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."
+                  ),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."
+                  ),
                   ExpectedText(selectorForSubHeading, "A wnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer?")
                 )
-              ))
-
+              )
+            )
 
           }
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPageAsExpected(
               OK,
@@ -410,17 +459,23 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
+                  ExpectedText(
+                    selectorForFirstParagraph,
+                    "These questions are about pensions your client pays into where tax relief is not claimed for them."),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."
+                  ),
                   ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
                 )
-              ))
+              )
+            )
 
           }
           scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = getPage
+            implicit val response: WSResponse   = getPage
 
             assertPageAsExpected(
               OK,
@@ -433,11 +488,18 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."),
-                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(
+                    selectorForFirstParagraph,
+                    "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."
+                  ),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."
+                  ),
                   ExpectedText(selectorForSubHeading, "A wnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer?")
                 )
-              ))
+              )
+            )
 
           }
 
@@ -449,7 +511,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
         "the user has no stored session data at all" in {
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
           assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsCYAPage)
           getViewModel mustBe None
@@ -471,7 +533,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
             )
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
           assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsCYAPage)
           getViewModel mustBe Some(expectedViewModel)
@@ -493,7 +555,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
             )
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
           assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsCYAPage)
           getViewModel mustBe Some(expectedViewModel)
@@ -514,7 +576,7 @@ class PensionsTaxReliefNotClaimedControllerISpec
             )
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
           assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsRetirementAnnuityPage)
           getViewModel mustBe Some(expectedViewModel)
@@ -524,13 +586,13 @@ class PensionsTaxReliefNotClaimedControllerISpec
       "fail" when {
         "the user has selected neither 'Yes' nor 'No' and" when {
 
-          val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+          val sessionData       = pensionsUserData(minimalSessionDataToAccessThisPage)
           val expectedViewModel = sessionData.pensions.paymentsIntoPension
 
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(None))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(None))
 
             assertPageAsExpected(
               BAD_REQUEST,
@@ -544,7 +606,9 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 links = Set.empty,
                 text = Set(
                   ExpectedText(selectorForFirstParagraph, "These questions are about pensions you pay into where tax relief is not claimed for you."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your pension statements or contact your pension provider to find the information you need."),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "You can check your pension statements or contact your pension provider to find the information you need."),
                   ExpectedText(selectorForSubHeading, "Did you pay into a pension where tax relief was not claimed for you?")
                 ),
                 errorSummarySectionOpt = Some(
@@ -559,14 +623,15 @@ class PensionsTaxReliefNotClaimedControllerISpec
                     idOpt = Some("value")
                   )
                 )
-              ))
+              )
+            )
             getViewModel mustBe Some(expectedViewModel)
 
           }
           scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(None))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(None))
 
             assertPageAsExpected(
               BAD_REQUEST,
@@ -579,8 +644,14 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."),
-                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(
+                    selectorForFirstParagraph,
+                    "Mae’r cwestiynau hyn yn ymwneud â phensiynau y byddwch yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar eich cyfer."
+                  ),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "Gallwch wirio eich datganiadau pensiwn neu gysylltu â darparwr eich pensiwn i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."
+                  ),
                   ExpectedText(selectorForSubHeading, "A wnaethoch dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar eich cyfer?")
                 ),
                 errorSummarySectionOpt = Some(
@@ -595,14 +666,15 @@ class PensionsTaxReliefNotClaimedControllerISpec
                     idOpt = Some("value")
                   )
                 )
-              ))
+              )
+            )
             getViewModel mustBe Some(expectedViewModel)
 
           }
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(None))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(None))
 
             assertPageAsExpected(
               BAD_REQUEST,
@@ -615,8 +687,13 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "These questions are about pensions your client pays into where tax relief is not claimed for them."),
-                  ExpectedText(selectorForSecondParagraph, "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."),
+                  ExpectedText(
+                    selectorForFirstParagraph,
+                    "These questions are about pensions your client pays into where tax relief is not claimed for them."),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "You can check your client’s pension statements or contact your client’s pension provider to find the information you need."
+                  ),
                   ExpectedText(selectorForSubHeading, "Did your client pay into a pension where tax relief was not claimed for them?")
                 ),
                 errorSummarySectionOpt = Some(
@@ -631,14 +708,15 @@ class PensionsTaxReliefNotClaimedControllerISpec
                     idOpt = Some("value")
                   )
                 )
-              ))
+              )
+            )
             getViewModel mustBe Some(expectedViewModel)
 
           }
           scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(None))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(None))
 
             assertPageAsExpected(
               BAD_REQUEST,
@@ -651,15 +729,22 @@ class PensionsTaxReliefNotClaimedControllerISpec
                 buttonForContinue = ExpectedButton("Continue", ""),
                 links = Set.empty,
                 text = Set(
-                  ExpectedText(selectorForFirstParagraph, "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."),
-                  ExpectedText(selectorForSecondParagraph, "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."),
+                  ExpectedText(
+                    selectorForFirstParagraph,
+                    "Mae’r cwestiynau hyn yn ymwneud â phensiynau y bydd eich cleient yn talu i mewn iddynt, lle na chaiff rhyddhad treth ei hawlio ar ei gyfer."
+                  ),
+                  ExpectedText(
+                    selectorForSecondParagraph,
+                    "Gallwch wirio datganiadau pensiwn eich cleient neu gysylltu â darparwr pensiwn eich cleient i ddod o hyd i’r wybodaeth sydd ei hangen arnoch."
+                  ),
                   ExpectedText(selectorForSubHeading, "A wnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer?")
                 ),
                 errorSummarySectionOpt = Some(
                   ErrorSummarySection(
                     title = "Mae problem wedi codi",
                     body = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu i mewn i bensiwn lle na hawliwyd rhyddhad treth ar ei gyfer",
-                    link = "#value")
+                    link = "#value"
+                  )
                 ),
                 errorAboveElementCheckSectionOpt = Some(
                   ErrorAboveElementCheckSection(
@@ -667,7 +752,8 @@ class PensionsTaxReliefNotClaimedControllerISpec
                     idOpt = Some("value")
                   )
                 )
-              ))
+              )
+            )
             getViewModel mustBe Some(expectedViewModel)
 
           }
@@ -681,10 +767,3 @@ class PensionsTaxReliefNotClaimedControllerISpec
     loadPensionUserData.map(_.pensions.paymentsIntoPension)
 
 }
-
-
-
-
-
-
-

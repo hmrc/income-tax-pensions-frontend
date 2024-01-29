@@ -27,21 +27,24 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
                                             aboveAnnualAllowance: Option[BigDecimal] = None,
                                             pensionProvidePaidAnnualAllowanceQuestion: Option[Boolean] = None,
                                             taxPaidByPensionProvider: Option[BigDecimal] = None,
-                                            pensionSchemeTaxReferences: Option[Seq[String]] = None) extends PensionCYABaseModel {
+                                            pensionSchemeTaxReferences: Option[Seq[String]] = None)
+    extends PensionCYABaseModel {
 
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
-  def isFinished: Boolean = {
-    reducedAnnualAllowanceQuestion.exists(x => !x || {
-      (moneyPurchaseAnnualAllowance.getOrElse(false) || taperedAnnualAllowance.getOrElse(false)) &&
-        aboveAnnualAllowanceQuestion.exists(x => !x || {
-          aboveAnnualAllowance.isDefined &&
-            pensionProvidePaidAnnualAllowanceQuestion.exists(x => !x || {
-              taxPaidByPensionProvider.isDefined && pensionSchemeTaxReferences.exists(_.nonEmpty)
-            })
-        })
-    })
-  }
+  def isFinished: Boolean =
+    reducedAnnualAllowanceQuestion.exists(x =>
+      !x || {
+        (moneyPurchaseAnnualAllowance.getOrElse(false) || taperedAnnualAllowance.getOrElse(false)) &&
+        aboveAnnualAllowanceQuestion.exists(x =>
+          !x || {
+            aboveAnnualAllowance.isDefined &&
+            pensionProvidePaidAnnualAllowanceQuestion.exists(x =>
+              !x || {
+                taxPaidByPensionProvider.isDefined && pensionSchemeTaxReferences.exists(_.nonEmpty)
+              })
+          })
+      })
 
   def journeyIsNo: Boolean =
     (!reducedAnnualAllowanceQuestion.getOrElse(true)
@@ -55,16 +58,15 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
 
   def journeyIsUnanswered: Boolean = this.isEmpty
 
-  def typeOfAllowance: Option[Seq[String]] = {
+  def typeOfAllowance: Option[Seq[String]] =
     (moneyPurchaseAnnualAllowance, taperedAnnualAllowance) match {
       case (Some(true), Some(true)) => Some(Seq("Money purchase", "Tapered"))
-      case (Some(true), _) => Some(Seq("Money purchase"))
-      case (_, Some(true)) => Some(Seq("Tapered"))
-      case _ => None
+      case (Some(true), _)          => Some(Seq("Money purchase"))
+      case (_, Some(true))          => Some(Seq("Tapered"))
+      case _                        => None
     }
-  }
 
-  def toPensionContributions: PensionContributions = {
+  def toPensionContributions: PensionContributions =
     PensionContributions(
       pensionSchemeTaxReference = pensionSchemeTaxReferences.getOrElse(Nil),
       inExcessOfTheAnnualAllowance = aboveAnnualAllowance.getOrElse(BigDecimal(0.00)),
@@ -73,22 +75,22 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
       taperedAnnualAllowance = taperedAnnualAllowance,
       moneyPurchasedAllowance = moneyPurchaseAnnualAllowance
     )
-  }
 
-  def toPensionSavingsTaxCharges(prior: Option[AllPensionsData]): PensionSavingsTaxCharges = {
+  def toPensionSavingsTaxCharges(prior: Option[AllPensionsData]): PensionSavingsTaxCharges =
     PensionSavingsTaxCharges(
-      pensionSchemeTaxReference = prior.flatMap(_.pensionCharges).flatMap(_.pensionSavingsTaxCharges)
+      pensionSchemeTaxReference = prior
+        .flatMap(_.pensionCharges)
+        .flatMap(_.pensionSavingsTaxCharges)
         .flatMap(_.pensionSchemeTaxReference),
-      lumpSumBenefitTakenInExcessOfLifetimeAllowance =
-        prior.flatMap(_.pensionCharges)
-          .flatMap(_.pensionSavingsTaxCharges)
-          .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
-      benefitInExcessOfLifetimeAllowance =
-        prior.flatMap(_.pensionCharges)
-          .flatMap(_.pensionSavingsTaxCharges)
-          .flatMap(_.benefitInExcessOfLifetimeAllowance)
+      lumpSumBenefitTakenInExcessOfLifetimeAllowance = prior
+        .flatMap(_.pensionCharges)
+        .flatMap(_.pensionSavingsTaxCharges)
+        .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
+      benefitInExcessOfLifetimeAllowance = prior
+        .flatMap(_.pensionCharges)
+        .flatMap(_.pensionSavingsTaxCharges)
+        .flatMap(_.benefitInExcessOfLifetimeAllowance)
     )
-  }
 
   def toAnnualAllowanceChargesModel(prior: Option[AllPensionsData]): AnnualAllowancesPensionCharges = {
     val pensionContributionsOpt =

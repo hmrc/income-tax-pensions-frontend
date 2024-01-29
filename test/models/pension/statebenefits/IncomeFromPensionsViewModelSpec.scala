@@ -16,7 +16,11 @@
 
 package models.pension.statebenefits
 
-import builders.IncomeFromPensionsViewModelBuilder.{aStatePensionIncomeFromPensionsViewModel, anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
+import builders.IncomeFromPensionsViewModelBuilder.{
+  aStatePensionIncomeFromPensionsViewModel,
+  anIncomeFromPensionEmptyViewModel,
+  anIncomeFromPensionsViewModel
+}
 import builders.StateBenefitViewModelBuilder.{aMinimalStatePensionLumpSumViewModel, aMinimalStatePensionViewModel}
 import utils.UnitTest
 
@@ -37,7 +41,8 @@ class IncomeFromPensionsViewModelSpec extends UnitTest {
       "all required parameters are populated" in {
         aStatePensionIncomeFromPensionsViewModel.isFinishedStatePension shouldBe true
         IncomeFromPensionsViewModel(
-          statePension = Some(aMinimalStatePensionViewModel), statePensionLumpSum = Some(aMinimalStatePensionLumpSumViewModel)
+          statePension = Some(aMinimalStatePensionViewModel),
+          statePensionLumpSum = Some(aMinimalStatePensionLumpSumViewModel)
         ).isFinishedStatePension shouldBe true
       }
     }
@@ -45,9 +50,12 @@ class IncomeFromPensionsViewModelSpec extends UnitTest {
     "return false" when {
       "not all necessary questions have been populated" in {
         aStatePensionIncomeFromPensionsViewModel.copy(statePension = None).isFinishedStatePension shouldBe false
-        aStatePensionIncomeFromPensionsViewModel.copy(statePension = Some(aMinimalStatePensionViewModel.copy(
-          amountPaidQuestion = Some(true)
-        ))).isFinishedStatePension shouldBe false
+        aStatePensionIncomeFromPensionsViewModel
+          .copy(statePension = Some(
+            aMinimalStatePensionViewModel.copy(
+              amountPaidQuestion = Some(true)
+            )))
+          .isFinishedStatePension shouldBe false
       }
     }
   }
@@ -56,15 +64,19 @@ class IncomeFromPensionsViewModelSpec extends UnitTest {
     "return true" when {
       "StatePension and StatePensionLumpSum amountPaidQuestion are Some(false)" in {
         IncomeFromPensionsViewModel(
-          statePension = Some(aMinimalStatePensionViewModel), statePensionLumpSum = Some(aMinimalStatePensionLumpSumViewModel)
+          statePension = Some(aMinimalStatePensionViewModel),
+          statePensionLumpSum = Some(aMinimalStatePensionLumpSumViewModel)
         ).journeyIsNoStatePension
       }
     }
     "return false" when {
       "StatePension and StatePensionLumpSum amountPaidQuestion are not Some(false)" in {
-        aStatePensionIncomeFromPensionsViewModel.copy(
-          statePension = None, statePensionLumpSum = Some(aMinimalStatePensionLumpSumViewModel)
-        ).journeyIsNoStatePension shouldBe false
+        aStatePensionIncomeFromPensionsViewModel
+          .copy(
+            statePension = None,
+            statePensionLumpSum = Some(aMinimalStatePensionLumpSumViewModel)
+          )
+          .journeyIsNoStatePension shouldBe false
         aStatePensionIncomeFromPensionsViewModel.journeyIsNoStatePension shouldBe false
       }
     }

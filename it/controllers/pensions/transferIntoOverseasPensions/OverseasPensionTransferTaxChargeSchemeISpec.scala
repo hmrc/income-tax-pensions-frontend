@@ -29,13 +29,10 @@ import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, 
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
+class OverseasPensionTransferTaxChargeSchemeISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper { // scalastyle:off magic.number
 
-class OverseasPensionTransferTaxChargeSchemeISpec
-  extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper { //scalastyle:off magic.number
-
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
-  }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
@@ -45,8 +42,12 @@ class OverseasPensionTransferTaxChargeSchemeISpec
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        urlGet(fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe OK
     }
@@ -58,15 +59,16 @@ class OverseasPensionTransferTaxChargeSchemeISpec
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
-          pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
+        val transferViewModel =
+          aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
         val formData = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100")
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
         urlPost(
           fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
       result.status shouldBe SEE_OTHER
       result.header("location").head shouldBe checkYourDetailsPensionUrl(taxYearEOY)
@@ -87,7 +89,8 @@ class OverseasPensionTransferTaxChargeSchemeISpec
           fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
       result.status shouldBe SEE_OTHER
       result.header("location").contains(overseasTransferChargePaidUrl(taxYearEOY)) shouldBe true
@@ -108,7 +111,8 @@ class OverseasPensionTransferTaxChargeSchemeISpec
           fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
       result.status shouldBe SEE_OTHER
       result.header("location").contains(checkYourDetailsPensionUrl(taxYearEOY)) shouldBe true
@@ -118,15 +122,16 @@ class OverseasPensionTransferTaxChargeSchemeISpec
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
-          pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
+        val transferViewModel =
+          aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
         lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "")
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
         urlPost(
           fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = form)
+          body = form
+        )
       }
       "status is bad request" in {
         result.status shouldBe BAD_REQUEST
@@ -137,15 +142,16 @@ class OverseasPensionTransferTaxChargeSchemeISpec
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
-          pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
+        val transferViewModel =
+          aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = Some(100), pensionSchemeTransferCharge = Some(true))
         lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "dhjsvjdsg")
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferViewModel)))
         urlPost(
           fullUrl(transferPensionSchemeTaxUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = form)
+          body = form
+        )
       }
       "status is bad request" in {
         result.status shouldBe BAD_REQUEST

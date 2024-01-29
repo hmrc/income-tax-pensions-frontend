@@ -31,4 +31,3 @@ case class CustomerAddedStateBenefit(benefitId: UUID,
 object CustomerAddedStateBenefit {
   implicit val format: OFormat[CustomerAddedStateBenefit] = Json.format[CustomerAddedStateBenefit]
 }
-

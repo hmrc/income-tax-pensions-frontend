@@ -34,29 +34,29 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   val providerNameInputName = "providerName"
-  val refInputName = "schemeReference"
-  val pIdInputName = "pensionId"
-  val validRef = "123/ABCab"
-  val validProviderName = "Valid Provider Name -&"
-  val validPensionId = "Valid Pension Id +-/"
+  val refInputName          = "schemeReference"
+  val pIdInputName          = "pensionId"
+  val validRef              = "123/ABCab"
+  val validProviderName     = "Valid Provider Name -&"
+  val validPensionId        = "Valid Pension Id +-/"
 
   def pensionDetailsForm(providerName: String, ref: String, id: String): Map[String, String] = Map(
-    PensionSchemeDetailsForm.providerName -> providerName,
+    PensionSchemeDetailsForm.providerName    -> providerName,
     PensionSchemeDetailsForm.schemeReference -> ref,
-    PensionSchemeDetailsForm.pensionId -> id)
+    PensionSchemeDetailsForm.pensionId       -> id)
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val refHintSelector = "#schemeReference-hint"
-    val pIdHintSelector = "#pensionId-hint"
-    val providerNameInputSelector = "#providerName"
-    val refInputSelector = "#schemeReference"
-    val pIdInputSelector = "#pensionId"
-    val providerNameErrorHref = "#providerName"
-    val refErrorHref = "#schemeReference"
-    val pIdErrorHref = "#pensionId"
+    val formSelector: String           = "#main-content > div > div > form"
+    val refHintSelector                = "#schemeReference-hint"
+    val pIdHintSelector                = "#pensionId-hint"
+    val providerNameInputSelector      = "#providerName"
+    val refInputSelector               = "#schemeReference"
+    val pIdInputSelector               = "#pensionId"
+    val providerNameErrorHref          = "#providerName"
+    val refErrorHref                   = "#schemeReference"
+    val pIdErrorHref                   = "#pensionId"
 
     def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
 
@@ -90,15 +90,15 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedTitle = "Pension scheme details"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedTitle                  = "Pension scheme details"
+    val expectedErrorTitle             = s"Error: $expectedTitle"
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val buttonText = "Continue"
-    val providerNameLabel = "Pension provider name"
-    val referenceLabel = "Pension scheme PAYE reference number"
-    val pIdLabel = "Pension Identification (PID)"
-    val refHintText = "For example 123/AB456"
-    val refEmptyErrorText = "Enter the pension scheme PAYE reference number"
+    val buttonText                     = "Continue"
+    val providerNameLabel              = "Pension provider name"
+    val referenceLabel                 = "Pension scheme PAYE reference number"
+    val pIdLabel                       = "Pension Identification (PID)"
+    val refHintText                    = "For example 123/AB456"
+    val refEmptyErrorText              = "Enter the pension scheme PAYE reference number"
     val providerNameInvalidFormatErrorText: String = "The pension provider name must only include numbers 0 to 9, " +
       "letters a to z, hyphens, spaces, apostrophes, commas, full stops, round brackets, and the special characters &\\:"
     val refInvalidFormatErrorText = "Enter the pension scheme PAYE reference number in the correct format"
@@ -108,15 +108,15 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = "Manylion y cynllun pensiwn"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val expectedTitle                  = "Manylion y cynllun pensiwn"
+    val expectedErrorTitle             = s"Gwall: $expectedTitle"
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val buttonText = "Yn eich blaen"
-    val providerNameLabel = "Enw’r darparwr pensiwn"
-    val referenceLabel = "Cyfeirnod TWE y cynllun pensiwn"
-    val pIdLabel = "Rhif dynodydd pensiwn (PID)"
-    val refHintText = "Er enghraifft, 123/AB456"
-    val refEmptyErrorText = "Nodwch gyfeirnod TWE y cynllun pensiwn"
+    val buttonText                     = "Yn eich blaen"
+    val providerNameLabel              = "Enw’r darparwr pensiwn"
+    val referenceLabel                 = "Cyfeirnod TWE y cynllun pensiwn"
+    val pIdLabel                       = "Rhif dynodydd pensiwn (PID)"
+    val refHintText                    = "Er enghraifft, 123/AB456"
+    val refEmptyErrorText              = "Nodwch gyfeirnod TWE y cynllun pensiwn"
     val providerNameInvalidFormatErrorText: String = "Mae’n rhaid i enw’r darparwr pensiwn gynnwys y rhifau 0 i 9, " +
       "llythrennau a-z, cysylltnodau, bylchau, collnodau, comas, atalnodau llawn, cromfachau crwn a’r cymeriadau arbennig &\\: yn unig"
     val refInvalidFormatErrorText = "Nodwch gyfeirnod TWE y cynllun pensiwn yn y fformat cywir"
@@ -128,49 +128,49 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
   object ExpectedIndividualEN extends SpecificExpectedResults {
     val expectedYouCanFindThisParagraph: String = "You can find this information on your pension statement. " +
       "If you do not have a pension statement, you can ask your pension provider."
-    val expectedIfYouGetParagraph = "If you get pension income from more than one UK pension scheme, you can add them later."
-    val pIdHintText = "Check your pension statement or P60"
-    val providerNameEmptyErrorText = "Enter the name of your pension scheme provider"
+    val expectedIfYouGetParagraph          = "If you get pension income from more than one UK pension scheme, you can add them later."
+    val pIdHintText                        = "Check your pension statement or P60"
+    val providerNameEmptyErrorText         = "Enter the name of your pension scheme provider"
     val providerNameOverCharLimitErrorText = "The pension scheme name must be 74 characters or fewer"
-    val pIdEmptyErrorText = "Enter your pension identification (PID)"
+    val pIdEmptyErrorText                  = "Enter your pension identification (PID)"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     val expectedYouCanFindThisParagraph: String = "Gallwch ddod o hyd i’r wybodaeth hon ar eich datganiad pensiwn. " +
       "Os nad oes gennych ddatganiad pensiwn, gallwch ofyn i’ch darparwr pensiwn."
-    val expectedIfYouGetParagraph = "Os cawsoch incwm o bensiwn o fwy nag un cynllun pensiwn y DU, gallwch eu hychwanegu nes ymlaen."
-    val pIdHintText = "Gwirio’ch datganiad pensiwn neu P60"
-    val providerNameEmptyErrorText = "Enter the name of your pension scheme provider"
+    val expectedIfYouGetParagraph          = "Os cawsoch incwm o bensiwn o fwy nag un cynllun pensiwn y DU, gallwch eu hychwanegu nes ymlaen."
+    val pIdHintText                        = "Gwirio’ch datganiad pensiwn neu P60"
+    val providerNameEmptyErrorText         = "Enter the name of your pension scheme provider"
     val providerNameOverCharLimitErrorText = "The pension scheme name must be 74 characters or fewer"
-    val pIdEmptyErrorText = "Enter your pension identification (PID)"
+    val pIdEmptyErrorText                  = "Enter your pension identification (PID)"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedYouCanFindThisParagraph: String = "Your client can find this information on their pension statement. " +
       "If they do not have a pension statement, they can ask their pension provider."
-    val expectedIfYouGetParagraph = "If your client gets pension income from more than one UK pension scheme, you can add them later."
-    val pIdHintText = "Check your client’s pension statement or P60"
-    val providerNameEmptyErrorText = "Enter the name of your client’s pension scheme provider"
+    val expectedIfYouGetParagraph          = "If your client gets pension income from more than one UK pension scheme, you can add them later."
+    val pIdHintText                        = "Check your client’s pension statement or P60"
+    val providerNameEmptyErrorText         = "Enter the name of your client’s pension scheme provider"
     val providerNameOverCharLimitErrorText = "The name of your client’s pension scheme must be 74 characters or fewer"
-    val pIdEmptyErrorText = "Enter your client’s pension identification (PID)"
+    val pIdEmptyErrorText                  = "Enter your client’s pension identification (PID)"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     val expectedYouCanFindThisParagraph: String = "Gall eich cleient ddod o hyd i’r wybodaeth hon ar ei ddatganiad pensiwn. " +
       "Os nad oes ganddo ddatganiad pensiwn, gall ofyn i’w ddarparwr pensiwn."
-    val expectedIfYouGetParagraph = "Os cafodd eich cleient incwm o bensiwn o fwy nag un cynllun pensiwn y DU, gallwch eu hychwanegu nes ymlaen."
-    val pIdHintText = "Gwirio datganiad pensiwn neu P60 eich cleient"
+    val expectedIfYouGetParagraph  = "Os cafodd eich cleient incwm o bensiwn o fwy nag un cynllun pensiwn y DU, gallwch eu hychwanegu nes ymlaen."
+    val pIdHintText                = "Gwirio datganiad pensiwn neu P60 eich cleient"
     val providerNameEmptyErrorText = "Enter the name of your client’s pension scheme provider"
     val providerNameOverCharLimitErrorText = "The name of your client’s pension scheme must be 74 characters or fewer"
-    val pIdEmptyErrorText = "Enter your client’s pension identification (PID)"
+    val pIdEmptyErrorText                  = "Enter your client’s pension identification (PID)"
   }
-
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
+    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
+  )
 
   ".show" should {
     userScenarios.foreach { user =>
@@ -184,8 +184,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionIncomeModel))
-            urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -217,8 +221,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -251,7 +259,9 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), follow = false,
+        urlGet(
+          fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -268,7 +278,9 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(invalidJourney))
-          urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), follow = false,
+          urlGet(
+            fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -279,13 +291,14 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
       }
 
       "previous questions are unanswered" which {
-        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(
-          uKPensionIncomesQuestion = None)
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = None)
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(incompleteJourney))
-          urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), follow = false,
+          urlGet(
+            fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -299,9 +312,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          val viewModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
+          val viewModel =
+            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
-          urlGet(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(8))), follow = false,
+          urlGet(
+            fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(8))),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -326,8 +342,13 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, welsh = user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)),
+              body = form,
+              welsh = user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an BAD REQUEST status" in {
@@ -341,10 +362,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           inputFieldValueCheck(providerNameInputName, providerNameInputSelector, "")
           inputFieldValueCheck(refInputName, refInputSelector, "")
           inputFieldValueCheck(pIdInputName, pIdInputSelector, "")
-          multipleSummaryErrorCheck(List(
-            (user.specificExpectedResults.get.providerNameEmptyErrorText, providerNameErrorHref),
-            (refEmptyErrorText, refErrorHref),
-            (user.specificExpectedResults.get.pIdEmptyErrorText, pIdErrorHref)))
+          multipleSummaryErrorCheck(
+            List(
+              (user.specificExpectedResults.get.providerNameEmptyErrorText, providerNameErrorHref),
+              (refEmptyErrorText, refErrorHref),
+              (user.specificExpectedResults.get.pIdEmptyErrorText, pIdErrorHref)
+            ))
           errorAboveElementCheck(user.specificExpectedResults.get.providerNameEmptyErrorText, Some(providerNameInputName))
           errorAboveElementCheck(refEmptyErrorText, Some(refInputName))
           errorAboveElementCheck(user.specificExpectedResults.get.pIdEmptyErrorText, Some(pIdInputName))
@@ -357,8 +380,13 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, welsh = user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)),
+              body = form,
+              welsh = user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an BAD REQUEST status" in {
@@ -372,26 +400,32 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           inputFieldValueCheck(providerNameInputName, providerNameInputSelector, "<>")
           inputFieldValueCheck(refInputName, refInputSelector, "<>")
           inputFieldValueCheck(pIdInputName, pIdInputSelector, "{}")
-          multipleSummaryErrorCheck(List(
-            (providerNameInvalidFormatErrorText, providerNameErrorHref),
-            (refInvalidFormatErrorText, refErrorHref),
-            (pIdInvalidFormatErrorText, pIdErrorHref)))
+          multipleSummaryErrorCheck(
+            List(
+              (providerNameInvalidFormatErrorText, providerNameErrorHref),
+              (refInvalidFormatErrorText, refErrorHref),
+              (pIdInvalidFormatErrorText, pIdErrorHref)))
           errorAboveElementCheck(providerNameInvalidFormatErrorText, Some(providerNameInputName))
           errorAboveElementCheck(refInvalidFormatErrorText, Some(refInputName))
           errorAboveElementCheck(pIdInvalidFormatErrorText, Some(pIdInputName))
         }
 
         "return correct errors when Scheme Reference is valid, but Provider Name and Pension ID have inputs over the char limit" which {
-          lazy val providerNameTooLong = "Provider name with 75 characters Provider name with 75 characters 12345678."
-          lazy val pidTooLong = "PensionId with 39 chars. That's 2 much."
+          lazy val providerNameTooLong       = "Provider name with 75 characters Provider name with 75 characters 12345678."
+          lazy val pidTooLong                = "PensionId with 39 chars. That's 2 much."
           lazy val form: Map[String, String] = pensionDetailsForm(providerNameTooLong, validRef, pidTooLong)
 
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, welsh = user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)),
+              body = form,
+              welsh = user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an BAD REQUEST status" in {
@@ -405,9 +439,8 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           inputFieldValueCheck(providerNameInputName, providerNameInputSelector, providerNameTooLong)
           inputFieldValueCheck(refInputName, refInputSelector, validRef)
           inputFieldValueCheck(pIdInputName, pIdInputSelector, pidTooLong)
-          multipleSummaryErrorCheck(List(
-            (user.specificExpectedResults.get.providerNameOverCharLimitErrorText, providerNameErrorHref),
-            (pIdOverCharLimitText, pIdErrorHref)))
+          multipleSummaryErrorCheck(
+            List((user.specificExpectedResults.get.providerNameOverCharLimitErrorText, providerNameErrorHref), (pIdOverCharLimitText, pIdErrorHref)))
           errorAboveElementCheck(user.specificExpectedResults.get.providerNameOverCharLimitErrorText, Some(providerNameInputName))
           errorAboveElementCheck(pIdOverCharLimitText, Some(pIdInputName))
         }
@@ -422,11 +455,18 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
         dropPensionsDB()
         authoriseAgentOrIndividual()
         val uKPensionIncomesModel = anUkPensionIncomeViewModelTwo.copy(
-          pensionSchemeName = Some("Scheme Name"), pensionSchemeRef = Some("123/PREF"), pensionId = Some("Pension Id"))
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(
-          anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, uKPensionIncomesModel))))
-        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(1))), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          pensionSchemeName = Some("Scheme Name"),
+          pensionSchemeRef = Some("123/PREF"),
+          pensionId = Some("Pension Id"))
+        insertCyaData(
+          pensionsUserDataWithIncomeFromPensions(
+            anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, uKPensionIncomesModel))))
+        urlPost(
+          fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(1))),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has an SEE_OTHER(303) status" in {
@@ -452,8 +492,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true))))
-        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has an SEE_OTHER(303) status" in {
@@ -479,8 +523,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionsViewModel))
-        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has an SEE_OTHER(303) status" in {
@@ -507,8 +555,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has an SEE_OTHER(303) status" in {
@@ -526,8 +578,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(invalidJourney))
-          urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), body = form,
-            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has an SEE_OTHER(303) status" in {
@@ -537,14 +593,17 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
       }
 
       "previous questions are unanswered" which {
-        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(
-          uKPensionIncomesQuestion = None)
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = None)
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(incompleteJourney))
-          urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))), body = form,
-            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has an SEE_OTHER(303) status" in {
@@ -558,8 +617,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(aUKIncomeFromPensionsViewModel))
-          urlPost(fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(4))), body = form,
-            follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(4))),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has an SEE_OTHER status" in {

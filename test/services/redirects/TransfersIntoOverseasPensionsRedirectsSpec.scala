@@ -16,7 +16,6 @@
 
 package services.redirects
 
-
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.mvc.{Call, Result}
 import play.api.mvc.Results.Redirect
@@ -27,20 +26,27 @@ import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOver
 import controllers.pensions.transferIntoOverseasPensions.routes._
 import models.pension.charges.TransferPensionScheme
 import play.api.http.Status.SEE_OTHER
-import services.redirects.TransfersIntoOverseasPensionsPages.{DidYouTransferIntoAnOverseasPensionSchemePage, OverseasTransferChargeAmountPage, PensionSchemeDetailsPage, RemoveSchemePage, TaxOnPensionSchemesAmountPage, TransferIntoOverseasPensionsCYA}
+import services.redirects.TransfersIntoOverseasPensionsPages.{
+  DidYouTransferIntoAnOverseasPensionSchemePage,
+  OverseasTransferChargeAmountPage,
+  PensionSchemeDetailsPage,
+  RemoveSchemePage,
+  TaxOnPensionSchemesAmountPage,
+  TransferIntoOverseasPensionsCYA
+}
 import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck, redirectForSchemeLoop}
 
 import scala.concurrent.Future
 
 class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
 
-  private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
-  private val journeyStartCall: Call = TransferPensionSavingsController.show(taxYear)
-  private val journeyStartRedirect: Option[Result] = Some(Redirect(journeyStartCall))
-  private val schemeStartCall: Call = OverseasTransferChargePaidController.show(taxYear, None)
-  private val schemeDetailsCall: Call = TransferPensionsSchemeController.show(taxYear, None)
-  private val schemeSummaryCall: Call =TransferChargeSummaryController.show(taxYear)
-  private val checkYourAnswersCall: Call = TransferIntoOverseasPensionsCYAController.show(taxYear)
+  private val cyaData: PensionsCYAModel                                        = PensionsCYAModel.emptyModels
+  private val journeyStartCall: Call                                           = TransferPensionSavingsController.show(taxYear)
+  private val journeyStartRedirect: Option[Result]                             = Some(Redirect(journeyStartCall))
+  private val schemeStartCall: Call                                            = OverseasTransferChargePaidController.show(taxYear, None)
+  private val schemeDetailsCall: Call                                          = TransferPensionsSchemeController.show(taxYear, None)
+  private val schemeSummaryCall: Call                                          = TransferChargeSummaryController.show(taxYear)
+  private val checkYourAnswersCall: Call                                       = TransferIntoOverseasPensionsCYAController.show(taxYear)
   private val continueToContextualRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(schemeDetailsCall))
 
   ".cyaPageCall" should {
@@ -52,12 +58,10 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
   ".indexCheckThenJourneyCheck" when {
     "index is valid" should {
       "return PensionsUserData if previous questions are answered and journey is valid" in {
-        val result = indexCheckThenJourneyCheck(
-          data = aPensionsUserData,
-          optIndex = Some(0),
-          currentPage = PensionSchemeDetailsPage,
-          taxYear = taxYear)(continueToContextualRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val result =
+          indexCheckThenJourneyCheck(data = aPensionsUserData, optIndex = Some(0), currentPage = PensionSchemeDetailsPage, taxYear = taxYear)(
+            continueToContextualRedirect)
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
@@ -74,7 +78,7 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
             optIndex = Some(1),
             currentPage = PensionSchemeDetailsPage,
             taxYear = taxYear)(continueToContextualRedirect)
-          val statusHeader = await(result.map(_.header.status))
+          val statusHeader   = await(result.map(_.header.status))
           val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
           statusHeader shouldBe SEE_OTHER
@@ -91,7 +95,7 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
             currentPage = OverseasTransferChargeAmountPage,
             taxYear = taxYear)(continueToContextualRedirect)
 
-          val statusHeader = await(result.map(_.header.status))
+          val statusHeader   = await(result.map(_.header.status))
           val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
           statusHeader shouldBe SEE_OTHER
@@ -102,7 +106,8 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
 
     "index is invalid" should {
       "redirect to the first page in journey when previous questions are unanswered" in {
-        val cyaModel = cyaData.copy(transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(aNonUkTransferPensionScheme, anEmptyTransferPensionScheme)))
+        val cyaModel = cyaData.copy(transfersIntoOverseasPensions =
+          aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(aNonUkTransferPensionScheme, anEmptyTransferPensionScheme)))
 
         val result = indexCheckThenJourneyCheck(
           data = aPensionsUserData.copy(pensions = cyaModel),
@@ -110,7 +115,7 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
           currentPage = PensionSchemeDetailsPage,
           taxYear = taxYear)(continueToContextualRedirect)
 
-        val statusHeader = await(result.map(_.header.status))
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
@@ -125,7 +130,7 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
           optIndex = Some(2),
           currentPage = PensionSchemeDetailsPage,
           taxYear = taxYear)(continueToContextualRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
@@ -133,24 +138,22 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
       }
 
       "redirect to the scheme summary page when schemes already exist" in {
-        val result : Future[Result] = indexCheckThenJourneyCheck(
-          data = aPensionsUserData,
-          optIndex = Some(11),
-          currentPage = PensionSchemeDetailsPage,
-          taxYear = taxYear)(continueToContextualRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val result: Future[Result] =
+          indexCheckThenJourneyCheck(data = aPensionsUserData, optIndex = Some(11), currentPage = PensionSchemeDetailsPage, taxYear = taxYear)(
+            continueToContextualRedirect)
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
         locationHeader shouldBe Some(schemeSummaryCall.url)
       }
-  }
+    }
   }
 
   ".redirectForSchemeLoop" should {
     "return a Call to the first page in scheme loop when 'schemes' is empty" in {
       val emptySchemes: Seq[TransferPensionScheme] = Seq.empty
-      val result = redirectForSchemeLoop(emptySchemes, taxYear)
+      val result                                   = redirectForSchemeLoop(emptySchemes, taxYear)
 
       result shouldBe schemeStartCall
     }
@@ -229,7 +232,7 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
         ))
         val result1 = journeyCheck(DidYouTransferIntoAnOverseasPensionSchemePage, data1, taxYear)
 
-        val data2 = cyaData.copy(transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel)
+        val data2   = cyaData.copy(transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel)
         val result2 = journeyCheck(TaxOnPensionSchemesAmountPage, data2, taxYear, Some(1))
 
         result1 shouldBe None
@@ -246,7 +249,7 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
       }
 
       "on the RemoveSchemePage and schemes exist" in {
-        val data = cyaData.copy(transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel)
+        val data   = cyaData.copy(transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel)
         val result = journeyCheck(RemoveSchemePage, data, taxYear)
 
         result shouldBe None
@@ -255,7 +258,7 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
 
     "return Some(redirect) with redirect to first page in journey" when {
       "previous question is unanswered" in {
-        val data1 = cyaData
+        val data1   = cyaData
         val result1 = journeyCheck(OverseasTransferChargeAmountPage, data1, taxYear)
 
         val data2 = cyaData.copy(transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel.copy(

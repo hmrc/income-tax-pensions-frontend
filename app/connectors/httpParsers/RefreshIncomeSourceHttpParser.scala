@@ -25,15 +25,15 @@ object RefreshIncomeSourceHttpParser extends APIParser {
   type RefreshIncomeSourceResponse = Either[APIErrorModel, Unit]
 
   override val parserName: String = "RefreshIncomeSourceHttpParser"
-  override val service: String = "income-tax-submission"
-  
+  override val service: String    = "income-tax-submission"
+
   implicit object RefreshIncomeSourceHttpReads extends HttpReads[RefreshIncomeSourceResponse] {
     override def read(method: String, url: String, response: HttpResponse): RefreshIncomeSourceResponse = {
       ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
 
       response.status match {
         case NOT_FOUND => Right(())
-        case _ => SessionHttpReads.read(method, url, response)
+        case _         => SessionHttpReads.read(method, url, response)
       }
     }
   }

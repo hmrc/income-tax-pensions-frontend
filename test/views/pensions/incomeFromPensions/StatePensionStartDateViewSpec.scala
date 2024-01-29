@@ -37,22 +37,21 @@ class StatePensionStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
   def stateBenefitStartDateUrl(taxYear: Int): String =
     s"/update-and-submit-income-tax-return/pensions/${taxYear.toString}/pension-income/state-pension-start-date"
 
-  private val dayInputName = "stateBenefitStartDate-day"
+  private val dayInputName   = "stateBenefitStartDate-day"
   private val monthInputName = "stateBenefitStartDate-month"
-  private val yearInputName = "stateBenefitStartDate-year"
-  private val validDay = "27"
-  private val validMonth = "10"
-  private val validYear = "2021"
-
+  private val yearInputName  = "stateBenefitStartDate-year"
+  private val validDay       = "27"
+  private val validMonth     = "10"
+  private val validYear      = "2021"
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val hintSelector = "#stateBenefitStartDate-hint"
-    val dayInputSelector = "#day"
-    val monthInputSelector = "#month"
-    val yearInputSelector = "#year"
+    val formSelector: String           = "#main-content > div > div > form"
+    val hintSelector                   = "#stateBenefitStartDate-hint"
+    val dayInputSelector               = "#day"
+    val monthInputSelector             = "#month"
+    val yearInputSelector              = "#year"
 
     def labelSelector(index: Int): String = s"#stateBenefitStartDate > div:nth-child($index) > div > label"
   }
@@ -73,63 +72,61 @@ class StatePensionStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val buttonText = "Continue"
-    val expectedHintText = "For example, 27 3 2007"
-    val expectedDayLabel = "Day"
-    val expectedMonthLabel = "Month"
-    val expectedYearLabel = "Year"
+    val buttonText                     = "Continue"
+    val expectedHintText               = "For example, 27 3 2007"
+    val expectedDayLabel               = "Day"
+    val expectedMonthLabel             = "Month"
+    val expectedYearLabel              = "Year"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val buttonText = "Yn eich blaen"
-    val expectedHintText = "Er enghraifft, 27 3 2007"
-    val expectedDayLabel = "Diwrnod"
-    val expectedMonthLabel = "Mis"
-    val expectedYearLabel = "Blwyddyn"
+    val buttonText                     = "Yn eich blaen"
+    val expectedHintText               = "Er enghraifft, 27 3 2007"
+    val expectedDayLabel               = "Diwrnod"
+    val expectedMonthLabel             = "Mis"
+    val expectedYearLabel              = "Blwyddyn"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "When did you start getting State Pension payments?"
+    val expectedTitle   = "When did you start getting State Pension payments?"
     val expectedHeading = "When did you start getting State Pension payments?"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Pryd y gwnaethoch chi ddechrau cael taliadau Pensiwn y Wladwriaeth?"
+    val expectedTitle   = "Pryd y gwnaethoch chi ddechrau cael taliadau Pensiwn y Wladwriaeth?"
     val expectedHeading = "Pryd y gwnaethoch chi ddechrau cael taliadau Pensiwn y Wladwriaeth?"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "When did your client start getting State Pension payments?"
+    val expectedTitle   = "When did your client start getting State Pension payments?"
     val expectedHeading = "When did your client start getting State Pension payments?"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Pryd y gwnaeth eich cleient ddechrau cael taliadau Pensiwn y Wladwriaeth?"
+    val expectedTitle   = "Pryd y gwnaeth eich cleient ddechrau cael taliadau Pensiwn y Wladwriaeth?"
     val expectedHeading = "Pryd y gwnaeth eich cleient ddechrau cael taliadau Pensiwn y Wladwriaeth?"
   }
-
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
+    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
+  )
 
   private lazy val underTest = inject[StatePensionStartDateView]
-
 
   userScenarios.foreach { userScenario =>
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render page with no prefilled data" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAModel.copy(
-              incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-                statePension = None))),
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel.copy(statePension = None))),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
         def form: Form[DateForm.DateModel] = new FormsProvider().stateBenefitDateForm
 
@@ -153,7 +150,8 @@ class StatePensionStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
       "render page with prefilled data" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData,
+          UserSessionDataRequest(
+            aPensionsUserData,
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
@@ -176,5 +174,5 @@ class StatePensionStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
         welshToggleCheck(userScenario.isWelsh)
       }
     }
-    }
+  }
 }

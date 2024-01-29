@@ -29,36 +29,40 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
       }
       "all required questions are answered" in {
         anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).isFinished shouldBe true
-        anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
-          PensionScheme(
-            alphaThreeCode = None,
-            alphaTwoCode = Some("FR"),
-            pensionPaymentAmount = Some(1999.99),
-            pensionPaymentTaxPaid = Some(1999.99),
-            specialWithholdingTaxQuestion = Some(false),
-            specialWithholdingTaxAmount = None,
-            foreignTaxCreditReliefQuestion = Some(false),
-            taxableAmount = None
-          )
-        )).isFinished shouldBe true
+        anIncomeFromOverseasPensionsViewModel
+          .copy(overseasIncomePensionSchemes = Seq(
+            PensionScheme(
+              alphaThreeCode = None,
+              alphaTwoCode = Some("FR"),
+              pensionPaymentAmount = Some(1999.99),
+              pensionPaymentTaxPaid = Some(1999.99),
+              specialWithholdingTaxQuestion = Some(false),
+              specialWithholdingTaxAmount = None,
+              foreignTaxCreditReliefQuestion = Some(false),
+              taxableAmount = None
+            )
+          ))
+          .isFinished shouldBe true
       }
     }
 
     "return false" when {
       "not all necessary questions have been populated" in {
         anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(true)).isFinished shouldBe false
-        anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
-          PensionScheme(
-            alphaThreeCode = None,
-            alphaTwoCode = Some("FR"),
-            pensionPaymentAmount = Some(1999.99),
-            pensionPaymentTaxPaid = Some(1999.99),
-            specialWithholdingTaxQuestion = Some(true),
-            specialWithholdingTaxAmount = None,
-            foreignTaxCreditReliefQuestion = Some(true),
-            taxableAmount = None
-          )
-        )).isFinished shouldBe false
+        anIncomeFromOverseasPensionsViewModel
+          .copy(overseasIncomePensionSchemes = Seq(
+            PensionScheme(
+              alphaThreeCode = None,
+              alphaTwoCode = Some("FR"),
+              pensionPaymentAmount = Some(1999.99),
+              pensionPaymentTaxPaid = Some(1999.99),
+              specialWithholdingTaxQuestion = Some(true),
+              specialWithholdingTaxAmount = None,
+              foreignTaxCreditReliefQuestion = Some(true),
+              taxableAmount = None
+            )
+          ))
+          .isFinished shouldBe false
       }
     }
   }
@@ -131,7 +135,8 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
       anIncomeFromOverseasPensionsViewModel.toForeignPension shouldBe expectedResult
     }
     "be empty when there are no OverseasIncomePensionSchemes" in {
-      val viewModel: IncomeFromOverseasPensionsViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(true))
+      val viewModel: IncomeFromOverseasPensionsViewModel =
+        anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(true))
       val expectedResult: Seq[ForeignPension] = Seq.empty
 
       viewModel.toForeignPension shouldBe expectedResult

@@ -28,28 +28,29 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.BAD_REQUEST
 import utils.UnitTest
 
-class PensionsIncomeServiceSpec extends UnitTest
-  with MockPensionUserDataRepository
-  with MockPensionsConnector
-  with MockIncomeTaxUserDataConnector
-  with ScalaFutures {
+class PensionsIncomeServiceSpec
+    extends UnitTest
+    with MockPensionUserDataRepository
+    with MockPensionsConnector
+    with MockIncomeTaxUserDataConnector
+    with ScalaFutures {
 
   val pensionIncomeService = new PensionIncomeService(mockPensionUserDataRepository, mockPensionIncomeConnectorHelper, mockUserDataConnector)
 
   ".saveIncomeFromOverseasPensionsViewModel" should {
     "return Right(Unit) when model is saved successfully and income income from overseas pensions cya is cleared from DB" in {
       val allPensionsData = anAllPensionsData
-      val sessionCya = aPensionsCYAEmptyModel.copy(incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions)
+      val sessionCya      = aPensionsCYAEmptyModel.copy(incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
       val priorUserData = IncomeTaxUserData(Some(allPensionsData))
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
 
-
       val model = CreateUpdatePensionIncomeModel(
         foreignPension = Some(ForeignPensionContainer(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension)),
-        overseasPensionContribution = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution)).map(OverseasPensionContributionContainer)
+        overseasPensionContribution =
+          priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution)).map(OverseasPensionContributionContainer)
       )
 
       val userWithEmptySaveIncomeFromOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
@@ -67,13 +68,12 @@ class PensionsIncomeServiceSpec extends UnitTest
 
     "return Left(APIErrorModel) when pension connector could not be connected" in {
       val allPensionsData = anAllPensionsData
-      val sessionCya = aPensionsCYAEmptyModel.copy(incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions)
+      val sessionCya      = aPensionsCYAEmptyModel.copy(incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
       val priorUserData = IncomeTaxUserData(Some(allPensionsData))
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
-
 
       val model = CreateUpdatePensionIncomeModel(
         foreignPension = Some(ForeignPensionContainer(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension)),
@@ -87,16 +87,14 @@ class PensionsIncomeServiceSpec extends UnitTest
       result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
     }
 
-
     "return Left(DataNotUpdated) when data could not be updated" in {
       val allPensionsData = anAllPensionsData
-      val sessionCya = aPensionsCYAEmptyModel.copy(incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions)
+      val sessionCya      = aPensionsCYAEmptyModel.copy(incomeFromOverseasPensions = aPensionsUserData.pensions.incomeFromOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
       val priorUserData = IncomeTaxUserData(Some(allPensionsData))
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
-
 
       val model = CreateUpdatePensionIncomeModel(
         foreignPension = Some(ForeignPensionContainer(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension)),

@@ -19,15 +19,15 @@ package services
 import forms.{Countries, Country}
 import utils.UnitTest
 
-class CountryServiceSpec extends UnitTest { //scalatest:off magic.number
+class CountryServiceSpec extends UnitTest { // scalatest:off magic.number
 
   "Countries" must {
-    
+
     "give all countries with codes in alphabetical order of country name with filtering according to permitted MDG values" in {
       Countries.overseasCountries should contain(Country("Afghanistan", "AF", "AFG"))
-      
+
       Countries.allCountries should contain(Country("Afghanistan", "AF", "AFG"))
-      
+
       Countries.allCountries should contain(Country("Curaçao", "CW", "CUW"))
       Countries.allCountries should contain(Country("Réunion", "RE", "REU"))
       Countries.allCountries should contain(Country("Zimbabwe", "ZW", "ZWE"))
@@ -54,15 +54,15 @@ class CountryServiceSpec extends UnitTest { //scalatest:off magic.number
     }
 
     "since the link between the twoAlphaCountryCode map and the threeAlphaCountryCode map is country name " +
-                                                        "there should be no country name missing between both " in {
-      val threeAlphaCountriesNotInTwoAlphaMap =
-        Countries.countriesThreeAlphaMapFromCountryName.keySet -- Countries.countriesTwoAlphaMapFromCountryName.keySet
-      threeAlphaCountriesNotInTwoAlphaMap.size shouldBe 0
+      "there should be no country name missing between both " in {
+        val threeAlphaCountriesNotInTwoAlphaMap =
+          Countries.countriesThreeAlphaMapFromCountryName.keySet -- Countries.countriesTwoAlphaMapFromCountryName.keySet
+        threeAlphaCountriesNotInTwoAlphaMap.size shouldBe 0
 
-      val twoDigitCountriesNotInThreeDigitMap =
-        Countries.countriesTwoAlphaMapFromCountryName.keySet -- Countries.countriesThreeAlphaMapFromCountryName.keySet
-      twoDigitCountriesNotInThreeDigitMap.size shouldBe 1
-      //Czechoslovakia does not have three digit country code
-    }
+        val twoDigitCountriesNotInThreeDigitMap =
+          Countries.countriesTwoAlphaMapFromCountryName.keySet -- Countries.countriesThreeAlphaMapFromCountryName.keySet
+        twoDigitCountriesNotInThreeDigitMap.size shouldBe 1
+        // Czechoslovakia does not have three digit country code
+      }
   }
 }

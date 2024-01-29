@@ -23,61 +23,56 @@ case class CreateUpdatePensionChargesRequestModel(pensionSavingsTaxCharges: Opti
                                                   pensionSchemeOverseasTransfers: Option[PensionSchemeOverseasTransfers],
                                                   pensionSchemeUnauthorisedPayments: Option[PensionSchemeUnauthorisedPayments],
                                                   pensionContributions: Option[PensionContributions],
-                                                  overseasPensionContributions: Option[OverseasPensionContributions]) extends PensionRequestModel {
+                                                  overseasPensionContributions: Option[OverseasPensionContributions])
+    extends PensionRequestModel {
 
-
-  
-  override def otherSubRequestModelsEmpty[PensionChargesRequestSubModel <: PensionSubRequestModel]  //scalastyle:off cyclomatic.complexity
-  (excludedModel: Option[PensionChargesRequestSubModel]): Boolean = {
+  override def otherSubRequestModelsEmpty[PensionChargesRequestSubModel <: PensionSubRequestModel] // scalastyle:off cyclomatic.complexity
+  (excludedModel: Option[PensionChargesRequestSubModel]): Boolean =
     excludedModel match {
       case Some(_: AnnualAllowancesPensionCharges) =>
         pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
-          pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
-          overseasPensionContributions.forall(_.isEmpty)
+        pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
+        overseasPensionContributions.forall(_.isEmpty)
       case Some(_: PensionSavingsTaxCharges) =>
         pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
-          pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
-          pensionContributions.forall(_.isEmpty) &&
-          overseasPensionContributions.forall(_.isEmpty)
+        pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
+        pensionContributions.forall(_.isEmpty) &&
+        overseasPensionContributions.forall(_.isEmpty)
       case Some(_: PensionSchemeOverseasTransfers) =>
         pensionSavingsTaxCharges.forall(_.isEmpty) &&
-          pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
-          pensionContributions.forall(_.isEmpty) &&
-          overseasPensionContributions.forall(_.isEmpty)
+        pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
+        pensionContributions.forall(_.isEmpty) &&
+        overseasPensionContributions.forall(_.isEmpty)
       case Some(_: PensionSchemeUnauthorisedPayments) =>
         pensionSavingsTaxCharges.forall(_.isEmpty) &&
-          pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
-          pensionContributions.forall(_.isEmpty) &&
-          overseasPensionContributions.forall(_.isEmpty)
+        pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
+        pensionContributions.forall(_.isEmpty) &&
+        overseasPensionContributions.forall(_.isEmpty)
       case Some(_: PensionContributions) =>
         pensionSavingsTaxCharges.forall(_.isEmpty) &&
-          pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
-          pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
-          overseasPensionContributions.forall(_.isEmpty)
+        pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
+        pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
+        overseasPensionContributions.forall(_.isEmpty)
       case Some(_: OverseasPensionContributions) =>
         pensionSavingsTaxCharges.forall(_.isEmpty) &&
-          pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
-          pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
-          pensionContributions.forall(_.isEmpty)
+        pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
+        pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
+        pensionContributions.forall(_.isEmpty)
       case _ =>
-       pensionSavingsTaxCharges.forall(_.isEmpty) &&
-          pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
-          pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
-          pensionContributions.forall(_.isEmpty) &&
-          overseasPensionContributions.forall(_.isEmpty)
+        pensionSavingsTaxCharges.forall(_.isEmpty) &&
+        pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
+        pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
+        pensionContributions.forall(_.isEmpty) &&
+        overseasPensionContributions.forall(_.isEmpty)
     }
-  }
-  
-
 
   def createSubModel: CreateUpdatePensionChargesRequestModel = {
-    def processModel[T <: PensionChargesSubRequestModel](model: Option[T]): Option[T] = {
+    def processModel[T <: PensionChargesSubRequestModel](model: Option[T]): Option[T] =
       if (model.exists(_.isEmpty) || model.isEmpty) {
         None
       } else {
         model
       }
-    }
 
     CreateUpdatePensionChargesRequestModel(
       pensionSavingsTaxCharges = processModel(this.pensionSavingsTaxCharges),

@@ -23,14 +23,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OverseasTransferChargesService @Inject()(pensionSessionService: PensionSessionService)
-                                              (implicit ec: ExecutionContext) {
+class OverseasTransferChargesService @Inject() (pensionSessionService: PensionSessionService)(implicit ec: ExecutionContext) {
 
-
-  def updateOverseasTransferChargeQuestion(userData: PensionsUserData, yesNo: Boolean, pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
+  def updateOverseasTransferChargeQuestion(userData: PensionsUserData,
+                                           yesNo: Boolean,
+                                           pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
     val schemes: Seq[TransferPensionScheme] = userData.pensions.transfersIntoOverseasPensions.transferPensionScheme
-    val optIndex: Option[Int] = pensionIndex.filter(i => i >= 0 && i < schemes.size)
-    val updatedSchemes: Seq[TransferPensionScheme] = {
+    val optIndex: Option[Int]               = pensionIndex.filter(i => i >= 0 && i < schemes.size)
+    val updatedSchemes: Seq[TransferPensionScheme] =
       optIndex match {
         case Some(index) if schemes(index).ukTransferCharge.getOrElse(false) == yesNo => // if scheme exists and equals prior answer
           schemes.updated(index, schemes(index)) // ensure is the same
@@ -39,22 +39,19 @@ class OverseasTransferChargesService @Inject()(pensionSessionService: PensionSes
         case _ => // if new or other
           schemes ++ Seq(TransferPensionScheme(ukTransferCharge = Some(yesNo))) // add new to the end
       }
-    }
     createOrUpdateModel(userData, userData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = updatedSchemes))
   }
 
-  private def createOrUpdateModel(originalUserData: PensionsUserData, updatedModel: TransfersIntoOverseasPensionsViewModel)
-  : Future[Either[Unit, PensionsUserData]] = {
+  private def createOrUpdateModel(originalUserData: PensionsUserData,
+                                  updatedModel: TransfersIntoOverseasPensionsViewModel): Future[Either[Unit, PensionsUserData]] = {
 
-    val updatedCYA = originalUserData.pensions.copy(transfersIntoOverseasPensions = updatedModel)
+    val updatedCYA      = originalUserData.pensions.copy(transfersIntoOverseasPensions = updatedModel)
     val updatedUserData = originalUserData.copy(pensions = updatedCYA)
 
     pensionSessionService.createOrUpdateSessionData(updatedUserData).map {
-      case Left(_) => Left(())
+      case Left(_)  => Left(())
       case Right(_) => Right(updatedUserData)
     }
   }
 
-
 }
-

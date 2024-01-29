@@ -31,12 +31,10 @@ import utils.PageUrls.PaymentIntoOverseasPensions.{paymentsIntoOverseasPensionsC
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers
-  with PensionsDatabaseHelper {
+class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false) =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
-
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
@@ -48,8 +46,12 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
 
-        urlGet(fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe OK
     }
@@ -62,8 +64,12 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
           insertCyaData(pensionsUsersData(aPensionsCYAModel))
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
 
-          urlGet(fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYear)), !aUser.isAgent, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+          urlGet(
+            fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYear)),
+            !aUser.isAgent,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList))
+          )
         }
 
         result.status shouldBe SEE_OTHER
@@ -76,8 +82,12 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
           authoriseAgentOrIndividual(aUser.isAgent)
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
 
-          urlGet(fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlGet(
+            fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)),
+            !aUser.isAgent,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         result.status shouldBe SEE_OTHER
@@ -89,13 +99,17 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(
-          paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsNoReliefsViewModel.copy(
-            employerPaymentsQuestion = None))))
+        insertCyaData(
+          pensionsUsersData(aPensionsCYAModel.copy(
+            paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsNoReliefsViewModel.copy(employerPaymentsQuestion = None))))
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
 
-        urlGet(fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -109,9 +123,9 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         lazy implicit val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
-          insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(
-            paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsNoReliefsViewModel.copy(
-              taxPaidOnEmployerPaymentsQuestion = Some(true)))))
+          insertCyaData(
+            pensionsUsersData(aPensionsCYAModel.copy(
+              paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsNoReliefsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(true)))))
 
           userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
           pensionReliefsSessionStub("", nino, taxYearEOY)
@@ -122,7 +136,8 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
             fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = "")
+            body = ""
+          )
         }
 
         result.status shouldBe SEE_OTHER
@@ -144,7 +159,8 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
             fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = "")
+            body = ""
+          )
         }
 
         result.status shouldBe SEE_OTHER
@@ -162,7 +178,8 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
           fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYear)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
           follow = false,
-          body = "")
+          body = ""
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -173,16 +190,17 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(
-          paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsNoReliefsViewModel.copy(
-            paymentsIntoOverseasPensionsQuestions = None))))
+        insertCyaData(
+          pensionsUsersData(aPensionsCYAModel.copy(
+            paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsNoReliefsViewModel.copy(paymentsIntoOverseasPensionsQuestions = None))))
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
 
         urlPost(
           fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = "")
+          body = ""
+        )
       }
 
       result.status shouldBe SEE_OTHER

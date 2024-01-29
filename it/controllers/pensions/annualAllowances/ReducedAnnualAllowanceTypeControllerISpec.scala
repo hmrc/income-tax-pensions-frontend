@@ -28,7 +28,12 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.PensionAnnualAllowancePages.{aboveReducedAnnualAllowanceUrl, annualAllowancesCYAUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
+import utils.PageUrls.PensionAnnualAllowancePages.{
+  aboveReducedAnnualAllowanceUrl,
+  annualAllowancesCYAUrl,
+  reducedAnnualAllowanceTypeUrl,
+  reducedAnnualAllowanceUrl
+}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -38,14 +43,14 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
   private val externalHref = "https://www.gov.uk/guidance/pension-schemes-work-out-your-tapered-annual-allowance"
 
   object Selectors {
-    val checkboxHintSelector = "#reducedAnnualAllowanceType-hint"
-    val captionSelector: String = "#main-content > div > div > form > div > fieldset > legend > h1 > header > p"
-    val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val checkboxMoneyPurchaseSelector = "#reducedAnnualAllowanceType"
-    val checkboxTaperedSelector = "#reducedAnnualAllowanceType-2"
+    val checkboxHintSelector              = "#reducedAnnualAllowanceType-hint"
+    val captionSelector: String           = "#main-content > div > div > form > div > fieldset > legend > h1 > header > p"
+    val continueButtonSelector: String    = "#continue"
+    val formSelector: String              = "#main-content > div > div > form"
+    val checkboxMoneyPurchaseSelector     = "#reducedAnnualAllowanceType"
+    val checkboxTaperedSelector           = "#reducedAnnualAllowanceType-2"
     val expectedDetailsRevealTextSelector = "#main-content > div > div > form > details > summary > span"
-    val expectedDetailsLinkSelector = "#tapered-info-link"
+    val expectedDetailsLinkSelector       = "#tapered-info-link"
 
     def bulletSelector(index: Int): String = s"#main-content > div > div > form > details > div > ul > li:nth-child($index)"
 
@@ -77,17 +82,18 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "What type of reduced annual allowance do you have?"
-    val expectedError = "Select the type of reduced annual allowance you have"
+    val expectedTitle      = "What type of reduced annual allowance do you have?"
+    val expectedError      = "Select the type of reduced annual allowance you have"
     val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedDetailsMoneyParagraphText = "You’ll have this type of allowance if you flexibly access your pension. For example, this could include taking:"
+    val expectedDetailsMoneyParagraphText =
+      "You’ll have this type of allowance if you flexibly access your pension. For example, this could include taking:"
     val expectedDetailsTaperedParagraphText: String = "You’ll have this type of annual allowance if both your ‘threshold income’ " +
       "and ‘adjusted income’ are over the limit (opens in new tab)."
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Pa fath o lwfans blynyddol wedi’i ostwng sydd gennych?"
-    val expectedError = "Dewiswch y math o lwfans blynyddol wedi’i ostwng sydd gennych"
+    val expectedTitle      = "Pa fath o lwfans blynyddol wedi’i ostwng sydd gennych?"
+    val expectedError      = "Dewiswch y math o lwfans blynyddol wedi’i ostwng sydd gennych"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedDetailsMoneyParagraphText = "Bydd gennych y math hwn o lwfans os ydych yn cyrchu eich pensiwn yn hyblyg. " +
       "Er enghraifft, gallai hyn gynnwys cymryd:"
@@ -96,8 +102,8 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "What type of reduced annual allowance does your client have?"
-    val expectedError = "Select the type of reduced annual allowance your client has"
+    val expectedTitle      = "What type of reduced annual allowance does your client have?"
+    val expectedError      = "Select the type of reduced annual allowance your client has"
     val expectedErrorTitle = s"Error: $expectedTitle"
     val expectedDetailsMoneyParagraphText: String = "Your client will have this type of allowance if they flexibly access their pension. " +
       "For example, this could include taking:"
@@ -106,8 +112,8 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Pa fath o lwfans blynyddol wedi’i ostwng sydd gan eich cleient?"
-    val expectedError = "Dewiswch y math o lwfans blynyddol wedi’i ostwng sydd gan eich cleient"
+    val expectedTitle      = "Pa fath o lwfans blynyddol wedi’i ostwng sydd gan eich cleient?"
+    val expectedError      = "Dewiswch y math o lwfans blynyddol wedi’i ostwng sydd gan eich cleient"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
     val expectedDetailsMoneyParagraphText: String = "Bydd gan eich cleient y math hwn o lwfans os bydd yn cyrchu ei bensiwn yn hyblyg. " +
       "Er enghraifft, gallai hyn gynnwys cymryd:"
@@ -116,31 +122,31 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val checkboxHint = "Select all that apply."
-    val checkboxMoneyPurchaseText = "Money purchase annual allowance"
-    val checkboxTaperedText = "Tapered annual allowance"
-    val expectedDetailsRevealText = "More information about the types of reduced annual allowance"
+    val expectedCaption: Int => String   = (taxYear: Int) => s"Annual allowances for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val checkboxHint                     = "Select all that apply."
+    val checkboxMoneyPurchaseText        = "Money purchase annual allowance"
+    val checkboxTaperedText              = "Tapered annual allowance"
+    val expectedDetailsRevealText        = "More information about the types of reduced annual allowance"
     val expectedDetailsMoneyPurchaseText = "Money purchase annual allowance"
-    val expectedDetailsBullet1 = "income from a flexi-access drawdown fund"
-    val expectedDetailsBullet2 = "cash directly from a pension pot (‘uncrystallised funds pension lump sums’)"
-    val expectedDetailsTaperedText = "Tapered annual allowance"
-    val expectedButtonText = "Continue"
-    val expectedDetailsExternalLinkText = "over the limit (opens in new tab)"
+    val expectedDetailsBullet1           = "income from a flexi-access drawdown fund"
+    val expectedDetailsBullet2           = "cash directly from a pension pot (‘uncrystallised funds pension lump sums’)"
+    val expectedDetailsTaperedText       = "Tapered annual allowance"
+    val expectedButtonText               = "Continue"
+    val expectedDetailsExternalLinkText  = "over the limit (opens in new tab)"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val checkboxHint = "Dewiswch bob un sy’n berthnasol."
-    val checkboxMoneyPurchaseText = "Lwfans blynyddol pryniannau arian"
-    val checkboxTaperedText = "Lwfans blynyddol wedi’i feinhau"
-    val expectedDetailsRevealText = "Rhagor o wybodaeth am y mathau o lwfans blynyddol wedi’u gostwng"
+    val expectedCaption: Int => String   = (taxYear: Int) => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val checkboxHint                     = "Dewiswch bob un sy’n berthnasol."
+    val checkboxMoneyPurchaseText        = "Lwfans blynyddol pryniannau arian"
+    val checkboxTaperedText              = "Lwfans blynyddol wedi’i feinhau"
+    val expectedDetailsRevealText        = "Rhagor o wybodaeth am y mathau o lwfans blynyddol wedi’u gostwng"
     val expectedDetailsMoneyPurchaseText = "Lwfans blynyddol pryniannau arian"
-    val expectedDetailsBullet1 = "incwm a gyrchir yn hyblyg o gronfa"
-    val expectedDetailsBullet2 = "arian parod yn uniongyrchol o gronfa bensiwn (‘arian heb ei ddefnyddio ar ffurf cyfandaliad pensiwn’)"
-    val expectedDetailsTaperedText = "Lwfans blynyddol wedi’i feinhau"
-    val expectedDetailsExternalLinkText = "dros y terfyn (yn agor tab newydd)"
-    val expectedButtonText = "Yn eich blaen"
+    val expectedDetailsBullet1           = "incwm a gyrchir yn hyblyg o gronfa"
+    val expectedDetailsBullet2           = "arian parod yn uniongyrchol o gronfa bensiwn (‘arian heb ei ddefnyddio ar ffurf cyfandaliad pensiwn’)"
+    val expectedDetailsTaperedText       = "Lwfans blynyddol wedi’i feinhau"
+    val expectedDetailsExternalLinkText  = "dros y terfyn (yn agor tab newydd)"
+    val expectedButtonText               = "Yn eich blaen"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -168,8 +174,12 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
             )
 
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-            urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {
@@ -194,8 +204,7 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
           textOnPageCheck(expectedDetailsBullet2, Selectors.bulletSelector(2))
           textOnPageCheck(expectedDetailsTaperedText, Selectors.detailsParagraphSelector(4))
           textOnPageCheck(user.specificExpectedResults.get.expectedDetailsTaperedParagraphText, Selectors.detailsParagraphSelector(5))
-          linkCheck(expectedDetailsExternalLinkText,
-            expectedDetailsLinkSelector, externalHref)
+          linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
 
           buttonCheck(expectedButtonText, continueButtonSelector)
           formPostLinkCheck(reducedAnnualAllowanceTypeUrl(taxYearEOY), formSelector)
@@ -215,8 +224,12 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
             )
 
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-            urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {
@@ -241,8 +254,7 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
           textOnPageCheck(expectedDetailsBullet2, Selectors.bulletSelector(2))
           textOnPageCheck(expectedDetailsTaperedText, Selectors.detailsParagraphSelector(4))
           textOnPageCheck(user.specificExpectedResults.get.expectedDetailsTaperedParagraphText, Selectors.detailsParagraphSelector(5))
-          linkCheck(expectedDetailsExternalLinkText,
-            expectedDetailsLinkSelector, externalHref)
+          linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
 
           buttonCheck(expectedButtonText, continueButtonSelector)
           formPostLinkCheck(reducedAnnualAllowanceTypeUrl(taxYearEOY), formSelector)
@@ -261,8 +273,12 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
             )
 
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-            urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {
@@ -287,8 +303,7 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
           textOnPageCheck(expectedDetailsBullet2, Selectors.bulletSelector(2))
           textOnPageCheck(expectedDetailsTaperedText, Selectors.detailsParagraphSelector(4))
           textOnPageCheck(user.specificExpectedResults.get.expectedDetailsTaperedParagraphText, Selectors.detailsParagraphSelector(5))
-          linkCheck(expectedDetailsExternalLinkText,
-            expectedDetailsLinkSelector, externalHref)
+          linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
 
           buttonCheck(expectedButtonText, continueButtonSelector)
           formPostLinkCheck(reducedAnnualAllowanceTypeUrl(taxYearEOY), formSelector)
@@ -307,8 +322,12 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
             )
 
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-            urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {
@@ -333,8 +352,7 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
           textOnPageCheck(expectedDetailsBullet2, Selectors.bulletSelector(2))
           textOnPageCheck(expectedDetailsTaperedText, Selectors.detailsParagraphSelector(4))
           textOnPageCheck(user.specificExpectedResults.get.expectedDetailsTaperedParagraphText, Selectors.detailsParagraphSelector(5))
-          linkCheck(expectedDetailsExternalLinkText,
-            expectedDetailsLinkSelector, externalHref)
+          linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
 
           buttonCheck(expectedButtonText, continueButtonSelector)
           formPostLinkCheck(reducedAnnualAllowanceTypeUrl(taxYearEOY), formSelector)
@@ -355,7 +373,9 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
         )
 
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -378,7 +398,9 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
         )
 
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -394,13 +416,15 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
         dropPensionsDB()
         authoriseAgentOrIndividual()
         // no cya insert
-        urlGet(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        //TODO - go to annual allowance cya page when available
+        // TODO - go to annual allowance cya page when available
         result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
       }
 
@@ -410,11 +434,10 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
 
   ".submit" should {
 
-    val validFormAllChecked = Map(
-      s"${ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceType}[]" -> Seq(moneyPurchaseCheckboxValue, taperedCheckboxValue))
+    val validFormAllChecked =
+      Map(s"${ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceType}[]" -> Seq(moneyPurchaseCheckboxValue, taperedCheckboxValue))
 
     userScenarios.foreach { user =>
-
       import Selectors._
       import user.commonExpectedResults._
 
@@ -434,8 +457,13 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
             )
 
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-            urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+              body = form,
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an BAD_REQUEST status" in {
@@ -460,8 +488,7 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
           textOnPageCheck(expectedDetailsBullet2, Selectors.bulletSelector(2))
           textOnPageCheck(expectedDetailsTaperedText, Selectors.detailsParagraphSelector(4))
           textOnPageCheck(user.specificExpectedResults.get.expectedDetailsTaperedParagraphText, Selectors.detailsParagraphSelector(5))
-          linkCheck(expectedDetailsExternalLinkText,
-            expectedDetailsLinkSelector, externalHref)
+          linkCheck(expectedDetailsExternalLinkText, expectedDetailsLinkSelector, externalHref)
           errorSummaryCheck(user.specificExpectedResults.get.expectedError, checkboxMoneyPurchaseSelector)
           errorAboveElementCheck(user.specificExpectedResults.get.expectedError, Some("reducedAnnualAllowanceType"))
 
@@ -477,10 +504,13 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
         implicit lazy val result: WSResponse = {
           authoriseAgentOrIndividual()
           dropPensionsDB()
-          insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel.copy(
-            reducedAnnualAllowanceQuestion = Some(true))))
-          urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel.copy(reducedAnnualAllowanceQuestion = Some(true))))
+          urlPost(
+            fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+            body = validFormAllChecked,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has a SEE_OTHER(303) status" in {
@@ -498,15 +528,17 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
       }
 
       "user submits a valid form with one type checked" which {
-        val form = Map(
-          s"${ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceType}[]" -> Seq(taperedCheckboxValue))
+        val form = Map(s"${ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceType}[]" -> Seq(taperedCheckboxValue))
         implicit lazy val result: WSResponse = {
           authoriseAgentOrIndividual()
           dropPensionsDB()
-          insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel.copy(
-            reducedAnnualAllowanceQuestion = Some(true))))
-          urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel.copy(reducedAnnualAllowanceQuestion = Some(true))))
+          urlPost(
+            fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has a SEE_OTHER(303) status" in {
@@ -525,14 +557,17 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
     }
 
     "redirect to CYA page and update CYA session when type is changed from existing data and CYA is now complete" which {
-      val form = Map(
-        s"${ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceType}[]" -> Seq(moneyPurchaseCheckboxValue))
+      val form = Map(s"${ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceType}[]" -> Seq(moneyPurchaseCheckboxValue))
       implicit lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
         insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceViewModel))
-        urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -552,8 +587,12 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
           authoriseAgentOrIndividual()
           dropPensionsDB()
           insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel))
-          urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+            body = validFormAllChecked,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
         "has an SEE_OTHER status" in {
           result.status shouldBe SEE_OTHER
@@ -565,10 +604,14 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
         implicit lazy val result: WSResponse = {
           authoriseAgentOrIndividual()
           dropPensionsDB()
-          insertCyaData(pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel.copy(
-            reducedAnnualAllowanceQuestion = Some(false))))
-          urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          insertCyaData(
+            pensionsUserDataWithAnnualAllowances(aPensionAnnualAllowanceEmptyViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))))
+          urlPost(
+            fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+            body = validFormAllChecked,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
         "has an SEE_OTHER status" in {
           result.status shouldBe SEE_OTHER
@@ -581,8 +624,12 @@ class ReducedAnnualAllowanceTypeControllerISpec extends IntegrationTest with Bef
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)), body = validFormAllChecked, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(reducedAnnualAllowanceTypeUrl(taxYearEOY)),
+          body = validFormAllChecked,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER

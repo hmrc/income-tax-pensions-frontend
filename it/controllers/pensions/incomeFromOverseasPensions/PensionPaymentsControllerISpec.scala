@@ -27,38 +27,40 @@ import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionSchem
 import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.{WSClient, WSResponse}
 
-class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts") {
+class PensionPaymentsControllerISpec
+    extends TwoAmountsControllerISpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts") {
 
   "show" should {
     "redirect to the summary page the user has no stored session data" in {
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-      implicit val response: WSResponse = getPageWithIndex()
+      implicit val response: WSResponse   = getPageWithIndex()
 
       assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
     }
 
     "redirect to the the first page of the journey when the user has no relevant scheme data" in {
-      val emptySchemesIFOPViewModel: IncomeFromOverseasPensionsViewModel = aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = Seq.empty)
-      val cyaModel = aPensionsCYAModel.copy(incomeFromOverseasPensions = emptySchemesIFOPViewModel)
-      val sessionData = pensionsUserData(cyaModel)
+      val emptySchemesIFOPViewModel: IncomeFromOverseasPensionsViewModel =
+        aPensionsCYAModel.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = Seq.empty)
+      val cyaModel                        = aPensionsCYAModel.copy(incomeFromOverseasPensions = emptySchemesIFOPViewModel)
+      val sessionData                     = pensionsUserData(cyaModel)
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-      implicit val response: WSResponse = getPageWithIndex()
+      implicit val response: WSResponse   = getPageWithIndex()
 
       assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsStatus)
     }
 
     "redirect to the the IFOP scheme summary page" when {
       "an incorrect index provided" in {
-        val sessionData = pensionsUserData(aPensionsCYAModel)
+        val sessionData                     = pensionsUserData(aPensionsCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse = getPageWithIndex(7)
+        implicit val response: WSResponse   = getPageWithIndex(7)
 
         assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsCountrySummary)
       }
       "the user provides a negative index number" in {
-        val sessionData = pensionsUserData(aPensionsCYAModel)
+        val sessionData                     = pensionsUserData(aPensionsCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse = getPageWithIndex(-1)
+        implicit val response: WSResponse   = getPageWithIndex(-1)
 
         assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsCountrySummary)
       }
@@ -89,28 +91,28 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
 
         scenarioNameForIndividualAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expectedPageContents)
         }
 
         scenarioNameForIndividualAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expectedPageContents)
         }
 
         scenarioNameForAgentAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expectedPageContents)
         }
 
         scenarioNameForAgentAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expectedPageContents)
         }
@@ -126,32 +128,33 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
 
         val expPageContents = expectedPageContents.copy(
           amountSection1 = ExpectedAmountSection("Amount before tax", "1,992.36", Some("For example, £193.54")),
-          amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,121.31", Some("For example, £193.54")))
+          amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,121.31", Some("For example, £193.54"))
+        )
 
         scenarioNameForIndividualAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expPageContents)
         }
 
         scenarioNameForIndividualAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expPageContents)
         }
 
         scenarioNameForAgentAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expPageContents)
         }
 
         scenarioNameForAgentAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expPageContents)
         }
@@ -167,32 +170,33 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
 
         val expPageContents = expectedPageContents.copy(
           amountSection1 = ExpectedAmountSection("Amount before tax", "1,992.36", Some("For example, £193.54")),
-          amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")))
+          amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54"))
+        )
 
         scenarioNameForIndividualAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expPageContents)
         }
 
         scenarioNameForIndividualAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expPageContents)
         }
 
         scenarioNameForAgentAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expPageContents)
         }
 
         scenarioNameForAgentAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expPageContents)
         }
@@ -208,32 +212,33 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
 
         val expPageContents = expectedPageContents.copy(
           amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
-          amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,312.21", Some("For example, £193.54")))
+          amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,312.21", Some("For example, £193.54"))
+        )
 
         scenarioNameForIndividualAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expPageContents)
         }
 
         scenarioNameForIndividualAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expPageContents)
         }
 
         scenarioNameForAgentAndEnglish in {
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expPageContents)
         }
 
         scenarioNameForAgentAndWelsh ignore {
           implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPageWithIndex()
+          implicit val response: WSResponse   = getPageWithIndex()
 
           assertPageAsExpected(OK, expPageContents)
         }
@@ -245,7 +250,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
 
     "redirect to the Overseas Summary page when there is no session data" in {
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-      implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
+      implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
 
       assertRedirectionAsExpected(PageRelativeURLs.overseasSummaryPage)
       getViewModel mustBe None
@@ -254,12 +259,12 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
     "succeed" when {
       "the user submits both amount values which are persisted" when {
         "the scheme is now complete and so redirects to the Scheme Summary page" in {
-          val sessionData = pensionsUserData(aPensionsCYAModel)
+          val sessionData                     = pensionsUserData(aPensionsCYAModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1234.56"), Some("78.90")), 1)
+          implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1234.56"), Some("78.90")), 1)
 
-          val expectedViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2.copy(
-            pensionPaymentAmount = Some(1234.56), pensionPaymentTaxPaid = Some(78.90))))
+          val expectedViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes =
+            Seq(aPensionScheme1, aPensionScheme2.copy(pensionPaymentAmount = Some(1234.56), pensionPaymentTaxPaid = Some(78.90))))
 
           assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsScheme + "?index=1")
           getViewModel mustBe Some(expectedViewModel)
@@ -268,13 +273,15 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
         "the scheme is not yet complete and so redirects to the Special Withholding Tax page" in {
           val viewModel = anIncomeFromOverseasPensionsViewModel.copy(
             overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2, PensionScheme(alphaTwoCode = Some("GB"))))
-          val sessionData = pensionsUserData(aPensionsCYAModel.copy(incomeFromOverseasPensions = viewModel))
+          val sessionData                     = pensionsUserData(aPensionsCYAModel.copy(incomeFromOverseasPensions = viewModel))
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1234.56"), Some("78.90")), 2)
+          implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1234.56"), Some("78.90")), 2)
 
           val expectedViewModel = viewModel.copy(
-            overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2, PensionScheme(
-              alphaTwoCode = Some("GB"), pensionPaymentAmount = Some(1234.56), pensionPaymentTaxPaid = Some(78.90)))
+            overseasIncomePensionSchemes = Seq(
+              aPensionScheme1,
+              aPensionScheme2,
+              PensionScheme(alphaTwoCode = Some("GB"), pensionPaymentAmount = Some(1234.56), pensionPaymentTaxPaid = Some(78.90)))
           )
 
           assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsSwt + "?index=2")
@@ -293,10 +300,7 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
         amountSection1 = ExpectedAmountSection("Amount before tax", "1,233.41", Some("For example, £193.54")),
         amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
         errorSummarySectionOpt = Some(
-          ErrorSummarySection(
-            title = "There is a problem",
-            body = "Enter the amount of non-UK tax paid",
-            link = "#amount-2"),
+          ErrorSummarySection(title = "There is a problem", body = "Enter the amount of non-UK tax paid", link = "#amount-2")
         ),
         errorAboveElementCheckSectionOpt = Some(
           ErrorAboveElementCheckSection(
@@ -311,34 +315,34 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
         epc.errorSummarySectionOpt.map(ess => ess.copy(title = "Mae problem wedi codi"))
 
       "the user has relevant session data and" when {
-        val sessionData = pensionsUserData(aPensionsCYAModel)
+        val sessionData       = pensionsUserData(aPensionsCYAModel)
         val expectedViewModel = sessionData.pensions.incomeFromOverseasPensions
 
         "amount before tax with no non uk tax paid" when {
           scenarioNameForIndividualAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), None))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), None))
 
             assertPageAsExpected(BAD_REQUEST, expectedPageContents)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), None))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), None))
 
             assertPageAsExpected(BAD_REQUEST, expectedPageContents.copy(errorSummarySectionOpt = welshTitle(expectedPageContents)))
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), None))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), None))
 
             assertPageAsExpected(BAD_REQUEST, expectedPageContents)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), None))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), None))
 
             assertPageAsExpected(BAD_REQUEST, expectedPageContents.copy(errorSummarySectionOpt = welshTitle(expectedPageContents)))
             getViewModel mustBe Some(expectedViewModel)
@@ -350,33 +354,34 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
             amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
             amountSection2 = ExpectedAmountSection("Non-UK tax paid", "113.91", Some("For example, £193.54")),
             errorSummarySectionOpt = Some(ErrorSummarySection(title = "There is a problem", body = "Enter an amount before tax", link = "#amount-1")),
-            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(title = "Error: Enter an amount before tax", idOpt = Some("amount-1")))
+            errorAboveElementCheckSectionOpt =
+              Some(ErrorAboveElementCheckSection(title = "Error: Enter an amount before tax", idOpt = Some("amount-1")))
           )
 
           scenarioNameForIndividualAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, Some("113.91")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, Some("113.91")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, Some("113.91")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, Some("113.91")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents.copy(errorSummarySectionOpt = welshTitle(expPageContents)))
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, Some("113.91")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, Some("113.91")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, Some("113.91")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, Some("113.91")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents.copy(errorSummarySectionOpt = welshTitle(expPageContents)))
             getViewModel mustBe Some(expectedViewModel)
@@ -387,40 +392,42 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
           val expPageContents = expectedPageContents.copy(
             amountSection1 = ExpectedAmountSection("Amount before tax", "", Some("For example, £193.54")),
             amountSection2 = ExpectedAmountSection("Non-UK tax paid", "", Some("For example, £193.54")),
-            errorSummarySectionOpt = Some(ErrorSummarySection(title = "There is a problem", Seq(
-              ErrorSummaryMessage("Enter an amount before tax", "#amount-1"),
-              ErrorSummaryMessage("Enter the amount of non-UK tax paid", "#amount-2")
-            ))),
-            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount of non-UK tax paid", idOpt = Some("amount-2"))
-            )
+            errorSummarySectionOpt = Some(
+              ErrorSummarySection(
+                title = "There is a problem",
+                Seq(
+                  ErrorSummaryMessage("Enter an amount before tax", "#amount-1"),
+                  ErrorSummaryMessage("Enter the amount of non-UK tax paid", "#amount-2")
+                )
+              )),
+            errorAboveElementCheckSectionOpt =
+              Some(ErrorAboveElementCheckSection(title = "Error: Enter the amount of non-UK tax paid", idOpt = Some("amount-2")))
           )
 
           scenarioNameForIndividualAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
-
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents.copy(errorSummarySectionOpt = welshTitle(expPageContents)))
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(None, None))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents.copy(errorSummarySectionOpt = welshTitle(expPageContents)))
             getViewModel mustBe Some(expectedViewModel)
@@ -431,42 +438,42 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
           val expPageContentsIndividual = expectedPageContents.copy(
             amountSection1 = ExpectedAmountSection("Amount before tax", "$342.23", Some("For example, £193.54")),
             amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
-            errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter an amount before tax in pounds", link = "#amount-1")),
-            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter an amount before tax in pounds", idOpt = Some("amount-1")))
+            errorSummarySectionOpt =
+              Some(ErrorSummarySection(title = "There is a problem", body = "Enter an amount before tax in pounds", link = "#amount-1")),
+            errorAboveElementCheckSectionOpt =
+              Some(ErrorAboveElementCheckSection(title = "Error: Enter an amount before tax in pounds", idOpt = Some("amount-1")))
           )
           val expPageContentsAgent = expPageContentsIndividual.copy(
-            errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter the amount before tax in pounds", link = "#amount-1")),
-            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount before tax in pounds", idOpt = Some("amount-1")))
+            errorSummarySectionOpt =
+              Some(ErrorSummarySection(title = "There is a problem", body = "Enter the amount before tax in pounds", link = "#amount-1")),
+            errorAboveElementCheckSectionOpt =
+              Some(ErrorAboveElementCheckSection(title = "Error: Enter the amount before tax in pounds", idOpt = Some("amount-1")))
           )
 
           scenarioNameForIndividualAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("$342.23"), Some("1233.41")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("$342.23"), Some("1233.41")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContentsIndividual)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("$342.23"), Some("1233.41")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("$342.23"), Some("1233.41")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContentsIndividual.copy(errorSummarySectionOpt = welshTitle(expPageContentsIndividual)))
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("$342.23"), Some("1233.41")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("$342.23"), Some("1233.41")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContentsAgent)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("$342.23"), Some("1233.41")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("$342.23"), Some("1233.41")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContentsAgent.copy(errorSummarySectionOpt = welshTitle(expPageContentsAgent)))
             getViewModel mustBe Some(expectedViewModel)
@@ -477,36 +484,36 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
           val expPageContents = expectedPageContents.copy(
             amountSection1 = ExpectedAmountSection("Amount before tax", "1,231.26", Some("For example, £193.54")),
             amountSection2 = ExpectedAmountSection("Non-UK tax paid", "asd", Some("For example, £193.54")),
-            errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter the amount of non-UK tax paid in pounds", link = "#amount-2")),
-            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount of non-UK tax paid in pounds", idOpt = Some("amount-2")))
+            errorSummarySectionOpt =
+              Some(ErrorSummarySection(title = "There is a problem", body = "Enter the amount of non-UK tax paid in pounds", link = "#amount-2")),
+            errorAboveElementCheckSectionOpt =
+              Some(ErrorAboveElementCheckSection(title = "Error: Enter the amount of non-UK tax paid in pounds", idOpt = Some("amount-2")))
           )
 
           scenarioNameForIndividualAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("asd")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("asd")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("asd")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("asd")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents.copy(errorSummarySectionOpt = welshTitle(expPageContents)))
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("asd")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("asd")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("asd")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("asd")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents.copy(errorSummarySectionOpt = welshTitle(expPageContents)))
             getViewModel mustBe Some(expectedViewModel)
@@ -517,42 +524,42 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
           val expPageContentsIndividual = expectedPageContents.copy(
             amountSection1 = ExpectedAmountSection("Amount before tax", "-1", Some("For example, £193.54")),
             amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
-            errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter an amount before tax in pounds", link = "#amount-1")),
-            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter an amount before tax in pounds", idOpt = Some("amount-1")))
+            errorSummarySectionOpt =
+              Some(ErrorSummarySection(title = "There is a problem", body = "Enter an amount before tax in pounds", link = "#amount-1")),
+            errorAboveElementCheckSectionOpt =
+              Some(ErrorAboveElementCheckSection(title = "Error: Enter an amount before tax in pounds", idOpt = Some("amount-1")))
           )
           val expPageContentsAgent = expPageContentsIndividual.copy(
-            errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter the amount before tax in pounds", link = "#amount-1")),
-            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount before tax in pounds", idOpt = Some("amount-1")))
+            errorSummarySectionOpt =
+              Some(ErrorSummarySection(title = "There is a problem", body = "Enter the amount before tax in pounds", link = "#amount-1")),
+            errorAboveElementCheckSectionOpt =
+              Some(ErrorAboveElementCheckSection(title = "Error: Enter the amount before tax in pounds", idOpt = Some("amount-1")))
           )
 
           scenarioNameForIndividualAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("-1"), Some("1233.41")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("-1"), Some("1233.41")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContentsIndividual)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("-1"), Some("1233.41")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("-1"), Some("1233.41")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContentsIndividual.copy(errorSummarySectionOpt = welshTitle(expPageContentsIndividual)))
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("-1"), Some("1233.41")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("-1"), Some("1233.41")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContentsAgent)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("-1"), Some("1233.41")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("-1"), Some("1233.41")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContentsAgent.copy(errorSummarySectionOpt = welshTitle(expPageContentsAgent)))
             getViewModel mustBe Some(expectedViewModel)
@@ -563,36 +570,36 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
           val expPageContents = expectedPageContents.copy(
             amountSection1 = ExpectedAmountSection("Amount before tax", "1,231.26", Some("For example, £193.54")),
             amountSection2 = ExpectedAmountSection("Non-UK tax paid", "-1", Some("For example, £193.54")),
-            errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Enter the amount of non-UK tax paid in pounds", link = "#amount-2")),
-            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Enter the amount of non-UK tax paid in pounds", idOpt = Some("amount-2")))
+            errorSummarySectionOpt =
+              Some(ErrorSummarySection(title = "There is a problem", body = "Enter the amount of non-UK tax paid in pounds", link = "#amount-2")),
+            errorAboveElementCheckSectionOpt =
+              Some(ErrorAboveElementCheckSection(title = "Error: Enter the amount of non-UK tax paid in pounds", idOpt = Some("amount-2")))
           )
 
           scenarioNameForIndividualAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("-1")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("-1")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("-1")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("-1")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents.copy(errorSummarySectionOpt = welshTitle(expPageContents)))
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("-1")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("-1")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents)
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("-1")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1231.26"), Some("-1")))
 
             assertPageAsExpected(BAD_REQUEST, expPageContents.copy(errorSummarySectionOpt = welshTitle(expPageContents)))
             getViewModel mustBe Some(expectedViewModel)
@@ -603,10 +610,13 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
           val expPageContents = expectedPageContents.copy(
             amountSection1 = ExpectedAmountSection("Amount before tax", "1000000000001", Some("For example, £193.54")),
             amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1,233.41", Some("For example, £193.54")),
-            errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "The amount before tax must be less than £100,000,000,000", link = "#amount-1")),
-            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: The amount before tax must be less than £100,000,000,000", idOpt = Some("amount-1")))
+            errorSummarySectionOpt = Some(
+              ErrorSummarySection(
+                title = "There is a problem",
+                body = "The amount before tax must be less than £100,000,000,000",
+                link = "#amount-1")),
+            errorAboveElementCheckSectionOpt =
+              Some(ErrorAboveElementCheckSection(title = "Error: The amount before tax must be less than £100,000,000,000", idOpt = Some("amount-1")))
           )
 
           scenarioNameForIndividualAndEnglish in {
@@ -643,10 +653,15 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
           val expPageContents = expectedPageContents.copy(
             amountSection1 = ExpectedAmountSection("Amount before tax", "1,233.41", Some("For example, £193.54")),
             amountSection2 = ExpectedAmountSection("Non-UK tax paid", "1000000000001", Some("For example, £193.54")),
-            errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "The amount of non-UK tax paid must be less than £100,000,000,000", link = "#amount-2")),
-            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: The amount of non-UK tax paid must be less than £100,000,000,000", idOpt = Some("amount-2")))
+            errorSummarySectionOpt = Some(
+              ErrorSummarySection(
+                title = "There is a problem",
+                body = "The amount of non-UK tax paid must be less than £100,000,000,000",
+                link = "#amount-2")),
+            errorAboveElementCheckSectionOpt = Some(
+              ErrorAboveElementCheckSection(
+                title = "Error: The amount of non-UK tax paid must be less than £100,000,000,000",
+                idOpt = Some("amount-2")))
           )
 
           scenarioNameForIndividualAndEnglish in {
@@ -683,28 +698,28 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
 
           scenarioNameForIndividualAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
 
             response.status mustBe BAD_REQUEST
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForIndividualAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
 
             response.status mustBe BAD_REQUEST
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndEnglish in {
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
 
             response.status mustBe BAD_REQUEST
             getViewModel mustBe Some(expectedViewModel)
           }
           scenarioNameForAgentAndWelsh ignore {
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
+            implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1233.41"), Some("10000")))
 
             response.status mustBe BAD_REQUEST
             getViewModel mustBe Some(expectedViewModel)
@@ -720,11 +735,11 @@ class PensionPaymentsControllerISpec extends TwoAmountsControllerISpec("/oversea
   private def formUrl(index: Int = 0): Option[String] =
     Some(relativeUrlForThisPage + "?index=" + index)
 
-  private def submitFormWithIndex(submittedFormData: SubmittedFormData, index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+  private def submitFormWithIndex(submittedFormData: SubmittedFormData, index: Int = 0)(implicit
+      userConfig: UserConfig,
+      wsClient: WSClient): WSResponse =
     submitForm(submittedFormData, getMap(index))
-  }
 
-  private def getMap(index: Int): Map[String, String] = {
+  private def getMap(index: Int): Map[String, String] =
     Map("index" -> index.toString)
-  }
 }

@@ -46,10 +46,11 @@ import views.pensions.paymentsIntoPensions.TotalPaymentsIntoRasSpec.ExpectedIndi
 
 class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(paymentsIntoPensionViewModel: PaymentsIntoPensionsViewModel) = { //scalastyle:off magic.number
+  private def pensionsUsersData(paymentsIntoPensionViewModel: PaymentsIntoPensionsViewModel) = // scalastyle:off magic.number
 
     PensionsUserDataBuilder.aPensionsUserData.copy(
-      pensions = PensionsCYAModel(paymentsIntoPensionViewModel,
+      pensions = PensionsCYAModel(
+        paymentsIntoPensionViewModel,
         aPensionAnnualAllowanceEmptyViewModel,
         anIncomeFromPensionEmptyViewModel,
         anUnauthorisedPaymentsViewModel,
@@ -59,7 +60,6 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         emptyShortServiceRefundsViewModel
       )
     )
-  }
 
   private val requiredViewModel = PaymentsIntoPensionsViewModel(
     rasPensionPaymentQuestion = Some(true),
@@ -76,7 +76,9 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         authoriseAgentOrIndividual()
         dropPensionsDB()
         insertCyaData(pensionsUsersData(requiredViewModel))
-        urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -110,11 +112,11 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
-        insertCyaData(pensionsUsersData(requiredViewModel.copy(
-          oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
-          totalOneOffRasPaymentPlusTaxRelief = None)
-        ))
-        urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
+        insertCyaData(
+          pensionsUsersData(requiredViewModel.copy(oneOffRasPaymentPlusTaxReliefQuestion = Some(false), totalOneOffRasPaymentPlusTaxRelief = None)))
+        urlGet(
+          fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -126,7 +128,6 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
 
       textOnPageCheck(s"${CommonExpectedEN.totalPayments}", Selectors.tableSelector(1, 1))
 
-
     }
 
     "render the page with the radio button pre-filled" should {
@@ -135,7 +136,9 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         authoriseAgentOrIndividual()
         dropPensionsDB()
         insertCyaData(pensionsUsersData(requiredViewModel.copy(totalPaymentsIntoRASQuestion = Some(true))))
-        urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -150,7 +153,6 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         radioButtonCheck(CommonExpectedEN.noText, 2, checked = Some(false))
       }
 
-
     }
 
     "redirect to the check your answers CYA page when there is no CYA data" when {
@@ -158,7 +160,9 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
-        urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -171,14 +175,15 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
     "redirect to the ReliefAtSourcePensions question page if previous question is unanswered" when {
 
       val userDataModel = aPensionsUserData.copy(
-        pensions = aPensionsCYAEmptyModel.copy(
-          paymentsIntoPension = PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion = Some(true))))
+        pensions = aPensionsCYAEmptyModel.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion = Some(true))))
 
       lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
         insertCyaData(userDataModel)
-        urlGet(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -197,8 +202,12 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         authoriseAgentOrIndividual()
         dropPensionsDB()
         insertCyaData(pensionsUsersData(requiredViewModel))
-        urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = invalidForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)),
+          body = invalidForm,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has the correct status" in {
@@ -206,7 +215,6 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       }
 
       implicit def document: () => Document = () => Jsoup.parse(result.body)
-
 
       titleCheck(expectedErrorTitle)
       h1Check(expectedTitle)
@@ -237,8 +245,12 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         authoriseAgentOrIndividual()
         dropPensionsDB()
         insertCyaData(pensionsUsersData(requiredViewModel))
-        urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = yesForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)),
+          body = yesForm,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -262,8 +274,12 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
           authoriseAgentOrIndividual()
           dropPensionsDB()
           insertCyaData(pensionsUsersData(requiredViewModel))
-          urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = noForm, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)),
+            body = noForm,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has a SEE_OTHER(303) status" in {
@@ -286,15 +302,18 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         lazy val invalidForm: Map[String, String] = Map(YesNoForm.yesNo -> "")
 
         val userDataModel = aPensionsUserData.copy(
-          pensions = aPensionsCYAEmptyModel.copy(
-            paymentsIntoPension = PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion = Some(true))))
+          pensions = aPensionsCYAEmptyModel.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion = Some(true))))
 
         lazy val result: WSResponse = {
           authoriseAgentOrIndividual()
           dropPensionsDB()
           insertCyaData(userDataModel)
-          urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = invalidForm, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)),
+            body = invalidForm,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has a SEE_OTHER(303) status" in {
@@ -316,8 +335,12 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
       lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
-        urlPost(fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)), body = noForm, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(totalPaymentsIntoRASUrl(taxYearEOY)),
+          body = noForm,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {

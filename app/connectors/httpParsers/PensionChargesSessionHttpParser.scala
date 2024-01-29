@@ -24,7 +24,7 @@ object PensionChargesSessionHttpParser extends APIParser {
   type PensionChargesSessionResponse = Either[APIErrorModel, Unit]
 
   override val parserName: String = "PensionChargesSessionResponse"
-  override val service: String = "income-tax-pensions"
+  override val service: String    = "income-tax-pensions"
 
   implicit object PensionChargesSessionHttpReads extends HttpReads[PensionChargesSessionResponse] {
     override def read(method: String, url: String, response: HttpResponse): PensionChargesSessionResponse = {

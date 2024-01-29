@@ -28,30 +28,29 @@ import java.time.{Instant, LocalDate}
 import java.util.UUID
 
 case class StateBenefitViewModel(benefitId: Option[UUID] = None,
-                                  startDateQuestion: Option[Boolean] = None,
-                                  startDate: Option[LocalDate] = None,
-                                  endDateQuestion: Option[Boolean] = None,
-                                  endDate: Option[LocalDate] = None,
-                                  submittedOnQuestion: Option[Boolean] = None,
-                                  submittedOn: Option[Instant] = None,
-                                  dateIgnoredQuestion: Option[Boolean] = None,
-                                  dateIgnored: Option[Instant] = None,
-                                  amountPaidQuestion: Option[Boolean] = None,
-                                  amount: Option[BigDecimal] = None,
-                                  taxPaidQuestion: Option[Boolean] = None,
-                                  taxPaid: Option[BigDecimal] = None,
-                                  addToCalculation: Option[Boolean] = None) {
+                                 startDateQuestion: Option[Boolean] = None,
+                                 startDate: Option[LocalDate] = None,
+                                 endDateQuestion: Option[Boolean] = None,
+                                 endDate: Option[LocalDate] = None,
+                                 submittedOnQuestion: Option[Boolean] = None,
+                                 submittedOn: Option[Instant] = None,
+                                 dateIgnoredQuestion: Option[Boolean] = None,
+                                 dateIgnored: Option[Instant] = None,
+                                 amountPaidQuestion: Option[Boolean] = None,
+                                 amount: Option[BigDecimal] = None,
+                                 taxPaidQuestion: Option[Boolean] = None,
+                                 taxPaid: Option[BigDecimal] = None,
+                                 addToCalculation: Option[Boolean] = None) {
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
   def isFinished: Boolean =
-    amountPaidQuestion.exists(x => !x ||
-      amount.isDefined && startDateQuestion.getOrElse(false) && startDate.isDefined && addToCalculation.isDefined &&
-        (if (taxPaidQuestion.getOrElse(false)) taxPaid.isDefined else true)
-    )
+    amountPaidQuestion.exists(x =>
+      !x ||
+        amount.isDefined && startDateQuestion.getOrElse(false) && startDate.isDefined && addToCalculation.isDefined &&
+        (if (taxPaidQuestion.getOrElse(false)) taxPaid.isDefined else true))
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedStateBenefitViewModel =
     EncryptedStateBenefitViewModel(
-
       benefitId = benefitId.map(_.encrypted),
       startDateQuestion = startDateQuestion.map(_.encrypted),
       startDate = startDate.map(_.encrypted),
@@ -74,21 +73,21 @@ object StateBenefitViewModel {
 }
 
 case class EncryptedStateBenefitViewModel(
-                                           benefitId: Option[EncryptedValue] = None,
-                                           startDateQuestion: Option[EncryptedValue] = None,
-                                           startDate: Option[EncryptedValue] = None,
-                                           endDateQuestion: Option[EncryptedValue] = None,
-                                           endDate: Option[EncryptedValue] = None,
-                                           submittedOnQuestion: Option[EncryptedValue] = None,
-                                           submittedOn: Option[EncryptedValue] = None,
-                                           dateIgnoredQuestion: Option[EncryptedValue] = None,
-                                           dateIgnored: Option[EncryptedValue] = None,
-                                           amountPaidQuestion: Option[EncryptedValue] = None,
-                                           amount: Option[EncryptedValue] = None,
-                                           taxPaidQuestion: Option[EncryptedValue],
-                                           taxPaid: Option[EncryptedValue] = None,
-                                           addToCalculation: Option[EncryptedValue] = None
-                                         ) {
+    benefitId: Option[EncryptedValue] = None,
+    startDateQuestion: Option[EncryptedValue] = None,
+    startDate: Option[EncryptedValue] = None,
+    endDateQuestion: Option[EncryptedValue] = None,
+    endDate: Option[EncryptedValue] = None,
+    submittedOnQuestion: Option[EncryptedValue] = None,
+    submittedOn: Option[EncryptedValue] = None,
+    dateIgnoredQuestion: Option[EncryptedValue] = None,
+    dateIgnored: Option[EncryptedValue] = None,
+    amountPaidQuestion: Option[EncryptedValue] = None,
+    amount: Option[EncryptedValue] = None,
+    taxPaidQuestion: Option[EncryptedValue],
+    taxPaid: Option[EncryptedValue] = None,
+    addToCalculation: Option[EncryptedValue] = None
+) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): StateBenefitViewModel =
     StateBenefitViewModel(

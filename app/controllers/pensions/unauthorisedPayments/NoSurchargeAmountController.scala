@@ -37,13 +37,15 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
-                                            view: NoSurchargeAmountView,
-                                            pensionSessionService: PensionSessionService,
-                                            errorHandler: ErrorHandler)
-                                           (implicit val mcc: MessagesControllerComponents,
-                                            appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
+class NoSurchargeAmountController @Inject() (
+    authAction: AuthorisedAction,
+    view: NoSurchargeAmountView,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper
+    with FormUtils {
 
   val amountForm: Form[BigDecimal] = AmountForm.amountForm(
     emptyFieldKey = "unauthorisedPayments.noSurchargeAmount.error.noEntry",
@@ -57,7 +59,6 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
       case Right(optData) =>
         val checkRedirect = journeyCheck(NotSurchargedAmountPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
-
           data.pensions.unauthorisedPayments.noSurchargeAmount
             .map(value => Future.successful(Ok(view(amountForm.fill(value), taxYear))))
             .getOrElse(Future.successful(Ok(view(amountForm, taxYear))))
@@ -66,26 +67,30 @@ class NoSurchargeAmountController @Inject()(authAction: AuthorisedAction,
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    amountForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-      amount => {
-        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-          case Right(optData) =>
-            val checkRedirect = journeyCheck(NotSurchargedAmountPage, _: PensionsCYAModel, taxYear)
-            redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+    amountForm
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+        amount =>
+          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+            case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+            case Right(optData) =>
+              val checkRedirect = journeyCheck(NotSurchargedAmountPage, _: PensionsCYAModel, taxYear)
+              redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+                val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+                  unauthorisedPayments = data.pensions.unauthorisedPayments.copy(noSurchargeAmount = Some(amount))
+                )
 
-              val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
-                unauthorisedPayments = data.pensions.unauthorisedPayments.copy(noSurchargeAmount = Some(amount))
-              )
-
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                isFinishedCheck(updatedCyaModel.unauthorisedPayments, taxYear, NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear), cyaPageCall)
+                pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                  errorHandler.internalServerError()) {
+                  isFinishedCheck(
+                    updatedCyaModel.unauthorisedPayments,
+                    taxYear,
+                    NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear),
+                    cyaPageCall)
+                }
               }
-            }
-        }
-      }
-    )
+          }
+      )
   }
 }

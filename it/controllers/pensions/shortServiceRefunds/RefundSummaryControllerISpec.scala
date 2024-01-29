@@ -16,7 +16,10 @@
 
 package controllers.pensions.shortServiceRefunds
 
-import builders.OverseasRefundPensionSchemeBuilder.{anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge}
+import builders.OverseasRefundPensionSchemeBuilder.{
+  anOverseasRefundPensionSchemeWithUkRefundCharge,
+  anOverseasRefundPensionSchemeWithoutUkRefundCharge
+}
 import builders.PensionsUserDataBuilder.pensionUserDataWithShortServiceViewModel
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
 import builders.UserBuilder.aUserRequest
@@ -37,13 +40,16 @@ class RefundSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEa
 
     "render the 'short service refund' summary list page" which {
       val incompleteViewModel = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
-        anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge.copy(providerAddress = None)
+        anOverseasRefundPensionSchemeWithUkRefundCharge,
+        anOverseasRefundPensionSchemeWithoutUkRefundCharge.copy(providerAddress = None)
       ))
       implicit lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
         dropPensionsDB()
         insertCyaData(pensionUserDataWithShortServiceViewModel(incompleteViewModel))
-        urlGet(fullUrl(refundSummaryUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(refundSummaryUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -52,7 +58,7 @@ class RefundSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEa
       }
       "filters out any incomplete schemes and updates the session data" in {
         val filteredSchemes = incompleteViewModel.copy(refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithUkRefundCharge))
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        lazy val cyaModel   = findCyaData(taxYearEOY, aUserRequest).get
 
         cyaModel.pensions.shortServiceRefunds shouldBe filteredSchemes
       }
@@ -62,7 +68,9 @@ class RefundSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEa
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(refundSummaryUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(refundSummaryUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
@@ -77,7 +85,9 @@ class RefundSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEa
           authoriseAgentOrIndividual()
           dropPensionsDB()
           insertCyaData(pensionUserDataWithShortServiceViewModel(invalidJourneyViewModel))
-          urlGet(fullUrl(refundSummaryUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(refundSummaryUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -86,13 +96,16 @@ class RefundSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEa
       }
       "previous questions are unanswered" in {
         val incompleteViewModel = emptyShortServiceRefundsViewModel.copy(
-          shortServiceRefundTaxPaid = Some(true), shortServiceRefundTaxPaidCharge = Some(1000.00)
+          shortServiceRefundTaxPaid = Some(true),
+          shortServiceRefundTaxPaidCharge = Some(1000.00)
         )
         implicit lazy val result: WSResponse = {
           authoriseAgentOrIndividual()
           dropPensionsDB()
           insertCyaData(pensionUserDataWithShortServiceViewModel(incompleteViewModel))
-          urlGet(fullUrl(refundSummaryUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(refundSummaryUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 

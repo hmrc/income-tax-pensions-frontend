@@ -37,54 +37,48 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class RemoveTransferChargeSchemeController @Inject()(actionsProvider: ActionsProvider,
-                                                     pensionSessionService: PensionSessionService,
-                                                     view: RemoveTransferChargeSchemeView, errorHandler: ErrorHandler)
-                                                    (implicit val mcc: MessagesControllerComponents,
-                                                     appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class RemoveTransferChargeSchemeController @Inject() (
+    actionsProvider: ActionsProvider,
+    pensionSessionService: PensionSessionService,
+    view: RemoveTransferChargeSchemeView,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
     val checkRedirect = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-      data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val transferChargeScheme = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
-      validatedIndex(index, transferChargeScheme.size).fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
-      i =>
-        transferChargeScheme(i).name.fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
-          name =>
-                Future.successful(Ok(view(taxYear, name, index)))
-            }
+      validatedIndex(index, transferChargeScheme.size).fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) { i =>
+        transferChargeScheme(i).name.fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) { name =>
+          Future.successful(Ok(view(taxYear, name, index)))
         }
+      }
     }
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
     val transferChargeScheme = sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme
     validatedIndex(index, transferChargeScheme.size)
-      .fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) {
-        i =>
-          val updatedTransferScheme = transferChargeScheme.patch(i, Nil, 1)
-          val checkRedirect = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-            _ =>
-              updateSessionData(sessionUserData.pensionsUserData, updatedTransferScheme, taxYear)
-          }
+      .fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) { i =>
+        val updatedTransferScheme = transferChargeScheme.patch(i, Nil, 1)
+        val checkRedirect         = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
+          updateSessionData(sessionUserData.pensionsUserData, updatedTransferScheme, taxYear)
+        }
       }
   }
 
-  private def updateSessionData[T](pensionUserData: PensionsUserData,
-                                   transferChargeScheme: Seq[TransferPensionScheme],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]) = {
+  private def updateSessionData[T](pensionUserData: PensionsUserData, transferChargeScheme: Seq[TransferPensionScheme], taxYear: Int)(implicit
+      request: UserSessionDataRequest[T]) = {
     val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
-      transfersIntoOverseasPensions = pensionUserData.pensions.transfersIntoOverseasPensions.copy(
-        transferPensionScheme = transferChargeScheme))
+      transfersIntoOverseasPensions = pensionUserData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = transferChargeScheme))
 
-    pensionSessionService.createOrUpdateSessionData(request.user,
-      updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
+      errorHandler.internalServerError()) {
       Redirect(TransferChargeSummaryController.show(taxYear))
     }
   }
-
 
 }

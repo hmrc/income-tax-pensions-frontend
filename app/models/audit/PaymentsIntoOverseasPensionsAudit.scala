@@ -27,11 +27,10 @@ case class PaymentsIntoOverseasPensionsAudit(taxYear: Int,
                                              nino: String,
                                              mtdItId: String,
                                              paymentsIntoOverseasPensions: PaymentsIntoOverseasPensionsViewModel,
-                                             priorPaymentsIntoOverseasPensions: Option[PaymentsIntoOverseasPensionsViewModel] = None
-                                            ) {
-  private val amend = "AmendPaymentsIntoOverseasPensions"
+                                             priorPaymentsIntoOverseasPensions: Option[PaymentsIntoOverseasPensionsViewModel] = None) {
+  private val amend  = "AmendPaymentsIntoOverseasPensions"
   private val create = "CreatePaymentsIntoOverseasPensions"
-  private val view = "ViewPaymentsIntoOverseasPensions"
+  private val view   = "ViewPaymentsIntoOverseasPensions"
 
   def toAuditModelAmend: AuditModel[PaymentsIntoOverseasPensionsAudit] = toAuditModel(amend)
 
@@ -47,12 +46,15 @@ object PaymentsIntoOverseasPensionsAudit {
   def apply(taxYear: Int,
             user: User,
             paymentsIntoOverseasPensions: PaymentsIntoOverseasPensionsViewModel,
-            priorPaymentsIntoOverseasPensions: Option[PaymentsIntoOverseasPensionsViewModel]
-           ): PaymentsIntoOverseasPensionsAudit = {
+            priorPaymentsIntoOverseasPensions: Option[PaymentsIntoOverseasPensionsViewModel]): PaymentsIntoOverseasPensionsAudit =
     PaymentsIntoOverseasPensionsAudit(
-      taxYear, user.affinityGroup, user.nino, user.mtditid, paymentsIntoOverseasPensions, priorPaymentsIntoOverseasPensions
+      taxYear,
+      user.affinityGroup,
+      user.nino,
+      user.mtditid,
+      paymentsIntoOverseasPensions,
+      priorPaymentsIntoOverseasPensions
     )
-  }
 
   implicit val writes: OWrites[PaymentsIntoOverseasPensionsAudit] = Json.writes[PaymentsIntoOverseasPensionsAudit]
 

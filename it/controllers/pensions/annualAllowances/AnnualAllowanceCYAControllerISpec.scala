@@ -35,9 +35,8 @@ import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
-  }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
@@ -49,8 +48,12 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-        urlGet(fullUrl(annualAllowancesCYAUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(annualAllowancesCYAUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe OK
     }
@@ -62,7 +65,9 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(taxPaidByPensionProvider = None)
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-        urlGet(fullUrl(annualAllowancesCYAUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(annualAllowancesCYAUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -78,7 +83,9 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
           dropPensionsDB()
           authoriseAgentOrIndividual()
           userDataStub(IncomeTaxUserData(None), nino, taxYearEOY)
-          urlGet(fullUrl(annualAllowancesCYAUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(annualAllowancesCYAUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -92,7 +99,10 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
           authoriseAgentOrIndividual(aUser.isAgent)
           insertCyaData(pensionsUsersData(aPensionsCYAModel))
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          urlGet(fullUrl(annualAllowancesCYAUrl(taxYear)), !aUser.isAgent, follow = false,
+          urlGet(
+            fullUrl(annualAllowancesCYAUrl(taxYear)),
+            !aUser.isAgent,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
         }
 
@@ -166,7 +176,10 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = None)
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-        urlPost(fullUrl(annualAllowancesCYAUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(
+          fullUrl(annualAllowancesCYAUrl(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 

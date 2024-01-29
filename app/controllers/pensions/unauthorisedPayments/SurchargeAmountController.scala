@@ -37,21 +37,20 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
-                                          view: SurchargeAmountView,
-                                          pensionSessionService: PensionSessionService,
-                                          errorHandler: ErrorHandler)
-                                         (implicit val mcc: MessagesControllerComponents,
-                                          appConfig: AppConfig, clock: Clock,
-                                          ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with FormUtils {
-
+class SurchargeAmountController @Inject() (
+    authAction: AuthorisedAction,
+    view: SurchargeAmountView,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with FormUtils {
 
   val amountForm: Form[BigDecimal] = AmountForm.amountForm(
     emptyFieldKey = "unauthorisedPayments.surchargeAmount.error.noEntry",
     wrongFormatKey = "common.error.incorrectFormat",
     exceedsMaxAmountKey = "unauthorisedPayments.surchargeAmount.error.maxLimit"
   )
-
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
@@ -67,24 +66,28 @@ class SurchargeAmountController @Inject()(authAction: AuthorisedAction,
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    amountForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-      amount => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-          val checkRedirect = journeyCheck(SurchargedAmountPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+    amountForm
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
+        amount =>
+          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+            val checkRedirect = journeyCheck(SurchargedAmountPage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+              val pensionsCYAModel: PensionsCYAModel = data.pensions
+              val viewModel                          = pensionsCYAModel.unauthorisedPayments
+              val updatedCyaModel: PensionsCYAModel  = pensionsCYAModel.copy(unauthorisedPayments = viewModel.copy(surchargeAmount = Some(amount)))
 
-            val pensionsCYAModel: PensionsCYAModel = data.pensions
-            val viewModel = pensionsCYAModel.unauthorisedPayments
-            val updatedCyaModel: PensionsCYAModel = pensionsCYAModel.copy(unauthorisedPayments = viewModel.copy(surchargeAmount = Some(amount)))
-
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel.unauthorisedPayments, taxYear, NonUKTaxOnAmountResultedInSurchargeController.show(taxYear), cyaPageCall)
+              pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                errorHandler.internalServerError()) {
+                isFinishedCheck(
+                  updatedCyaModel.unauthorisedPayments,
+                  taxYear,
+                  NonUKTaxOnAmountResultedInSurchargeController.show(taxYear),
+                  cyaPageCall)
+              }
             }
           }
-        }
-      }
-    )
+      )
   }
 }

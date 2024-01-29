@@ -32,13 +32,13 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val addAnotherLinkSelector = "#add-another-pension-link"
-    val addLinkSelector = "#add-pension-income-link"
-    val continueButtonSelector: String = "#continue"
-    val summaryListTableSelector = "#pensionIncomeSummaryList"
-    def changeLinkSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
-    def removeLinkSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__remove > a"
+    val captionSelector: String                 = "#main-content > div > div > header > p"
+    val addAnotherLinkSelector                  = "#add-another-pension-link"
+    val addLinkSelector                         = "#add-pension-income-link"
+    val continueButtonSelector: String          = "#continue"
+    val summaryListTableSelector                = "#pensionIncomeSummaryList"
+    def changeLinkSelector(index: Int): String  = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
+    def removeLinkSelector(index: Int): String  = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__remove > a"
     def pensionNameSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dt"
 
   }
@@ -56,24 +56,24 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val expectedTitle = "Unauthorised payments from UK pensions schemes"
-    val expectedHeading = "Unauthorised payments from UK pensions schemes"
-    val change = "Change"
-    val remove = "Remove"
-    val expectedAddAnotherText = "Add another Pensions Scheme Tax Reference"
-    val expectedAddPensionSchemeText = "Add a Pensions Scheme Tax Reference"
+    val expectedButtonText             = "Continue"
+    val expectedTitle                  = "Unauthorised payments from UK pensions schemes"
+    val expectedHeading                = "Unauthorised payments from UK pensions schemes"
+    val change                         = "Change"
+    val remove                         = "Remove"
+    val expectedAddAnotherText         = "Add another Pensions Scheme Tax Reference"
+    val expectedAddPensionSchemeText   = "Add a Pensions Scheme Tax Reference"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Taliadau heb awdurdod o gynlluniau pensiwn yn y DU"
-    val expectedHeading = "Taliadau heb awdurdod o gynlluniau pensiwn yn y DU"
-    val change = "Newid"
-    val remove = "Tynnu"
-    val expectedAddAnotherText = "Ychwanegu Cyfeirnod Treth Cynllun Pensiwn arall"
-    val expectedAddPensionSchemeText = "Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn"
+    val expectedButtonText             = "Yn eich blaen"
+    val expectedTitle                  = "Taliadau heb awdurdod o gynlluniau pensiwn yn y DU"
+    val expectedHeading                = "Taliadau heb awdurdod o gynlluniau pensiwn yn y DU"
+    val change                         = "Newid"
+    val remove                         = "Tynnu"
+    val expectedAddAnotherText         = "Ychwanegu Cyfeirnod Treth Cynllun Pensiwn arall"
+    val expectedAddPensionSchemeText   = "Ychwanegu Cyfeirnod Treth ar gyfer Cynllun Pensiwn"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(
@@ -93,15 +93,18 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
         val pensionScheme2 = "12345678RB"
         val pensionSchemes = Seq(pensionScheme1, pensionScheme2)
 
-
         "render the 'UK pension scheme details' summary list page with pre-filled content" which {
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             val viewModel = anUnauthorisedPaymentsViewModel.copy(pensionSchemeTaxReference = Some(pensionSchemes))
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
-            urlGet(fullUrl(ukPensionSchemeDetailsUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(ukPensionSchemeDetailsUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {
@@ -115,11 +118,11 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
           captionCheck(expectedCaption(taxYearEOY))
           textOnPageCheck(pensionScheme1, pensionNameSelector(1))
           textOnPageCheck(pensionScheme2, pensionNameSelector(2))
-          
-          //TODO: replace hrefs "#" below with link to first details page when available .e.g. UkPensionSchemeDetailsCYAController.show(taxYearEOY, Some(1)).url
+
+          // TODO: replace hrefs "#" below with link to first details page when available .e.g. UkPensionSchemeDetailsCYAController.show(taxYearEOY, Some(1)).url
           linkCheck(s"$change $change $pensionScheme1", changeLinkSelector(1), pensionSchemeTaxReferenceUrlWithIndex(taxYearEOY, 0))
-          linkCheck(s"$change $change $pensionScheme2", changeLinkSelector(2),pensionSchemeTaxReferenceUrlWithIndex(taxYearEOY, 1))
-          //TODO: replace hrefs "#" below with link to remove page when available .e.g. RemovePensionSchemeDetailsController.show(taxYearEOY, Some(1)).url
+          linkCheck(s"$change $change $pensionScheme2", changeLinkSelector(2), pensionSchemeTaxReferenceUrlWithIndex(taxYearEOY, 1))
+          // TODO: replace hrefs "#" below with link to remove page when available .e.g. RemovePensionSchemeDetailsController.show(taxYearEOY, Some(1)).url
           linkCheck(s"$remove $remove $pensionScheme1", removeLinkSelector(1), removePensionSchemeReferenceUrlWithIndex(taxYearEOY, Some(0)))
           linkCheck(s"$remove $remove $pensionScheme2", removeLinkSelector(2), removePensionSchemeReferenceUrlWithIndex(taxYearEOY, Some(1)))
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, pensionSchemeTaxReferenceUrl(taxYearEOY))
@@ -134,8 +137,12 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
             val viewModel = anUnauthorisedPaymentsViewModel.copy(pensionSchemeTaxReference = Some(Seq.empty))
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
 
-            urlGet(fullUrl(ukPensionSchemeDetailsUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(ukPensionSchemeDetailsUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {
@@ -160,7 +167,9 @@ class UkPensionSchemeDetailsControllerISpec extends IntegrationTest with BeforeA
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(ukPensionSchemeDetailsUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(ukPensionSchemeDetailsUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 

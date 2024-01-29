@@ -27,7 +27,7 @@ import utils.{TestTaxYearHelper, UnitTest}
 class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
 
   implicit lazy val mockedConfig: AppConfig = mock[AppConfig]
-  implicit lazy val cc: MessagesApi = mockControllerComponents.messagesApi
+  implicit lazy val cc: MessagesApi         = mockControllerComponents.messagesApi
 
   def taxYearAction(taxYear: Int, reset: Boolean = true): TaxYearAction = new TaxYearAction(taxYear, reset)
 
@@ -38,8 +38,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
       "the tax year is within the list of valid tax years, and matches that in session if the feature switch is on" in {
         lazy val userRequest = AuthorisationRequest(
           User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString),
-          fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString,
-            SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
+          fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString, SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
         )
 
         lazy val result = {
@@ -54,8 +53,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
       "the tax year is within the list of valid tax years, and matches that in session if the feature switch is off" in {
         lazy val userRequest = AuthorisationRequest(
           User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString),
-          fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYearEOY.toString,
-            SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
+          fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYearEOY.toString, SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
         )
 
         lazy val result = {
@@ -70,8 +68,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
       "the tax year is different to the session value if the reset variable input is false" in {
         lazy val userRequest = AuthorisationRequest(
           User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString),
-          fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString,
-            SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
+          fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString, SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
         )
 
         lazy val result = {
@@ -96,7 +93,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         )
 
         lazy val result = {
-          mockedConfig.incomeTaxSubmissionStartUrl _ expects (taxYear) returning
+          mockedConfig.incomeTaxSubmissionStartUrl _ expects taxYear returning
             "controllers.routes.StartPageController.show(taxYear).url"
 
           taxYearAction(taxYear).refine(userRequest)
@@ -115,8 +112,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
       "the tax year is outside of validTaxYearList while the feature switch is on" which {
         lazy val userRequest = AuthorisationRequest(
           User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString),
-          fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString,
-            SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
+          fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString, SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
         )
 
         lazy val result = {
@@ -137,13 +133,12 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
       "the tax year is within the validTaxYearList but the missing tax year reset is true" which {
         lazy val userRequest = AuthorisationRequest(
           User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString),
-          fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString,
-            SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
+          fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString, SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
         )
 
         lazy val result = {
           (() => mockedConfig.taxYearErrorFeature).expects() returning true
-          mockedConfig.incomeTaxSubmissionOverviewUrl _ expects (taxYearEOY) returning
+          mockedConfig.incomeTaxSubmissionOverviewUrl _ expects taxYearEOY returning
             "controllers.routes.OverviewPageController.show(taxYearEOY).url"
 
           taxYearAction(taxYearEOY).refine(userRequest)
@@ -158,7 +153,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         }
 
         "has the updated TAX_YEAR session value" in {
-          await(result.map(_.left.toOption.get)).session.get(SessionValues.TAX_YEAR).get shouldBe (taxYearEOY).toString
+          await(result.map(_.left.toOption.get)).session.get(SessionValues.TAX_YEAR).get shouldBe taxYearEOY.toString
         }
       }
     }

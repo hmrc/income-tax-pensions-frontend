@@ -16,7 +16,6 @@
 
 package controllers.pensions.transferIntoOverseasPensions
 
-
 import config.AppConfig
 import models.mongo.PensionsCYAModel
 import controllers.predicates.actions.ActionsProvider
@@ -33,17 +32,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class TransferChargeSummaryController @Inject()(actionsProvider: ActionsProvider, view: TransferChargeSummaryView)
-                                            (implicit mcc: MessagesControllerComponents, appConfig: AppConfig)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class TransferChargeSummaryController @Inject() (actionsProvider: ActionsProvider, view: TransferChargeSummaryView)(implicit
+    mcc: MessagesControllerComponents,
+    appConfig: AppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionUserData =>
-      val checkRedirect = journeyCheck(SchemesPayingTransferChargesSummary, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-        data => {
-          Future.successful(Ok(view(taxYear, data.pensions.transfersIntoOverseasPensions.transferPensionScheme)))
-        }
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+    val checkRedirect = journeyCheck(SchemesPayingTransferChargesSummary, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      Future.successful(Ok(view(taxYear, data.pensions.transfersIntoOverseasPensions.transferPensionScheme)))
     }
   }
 }

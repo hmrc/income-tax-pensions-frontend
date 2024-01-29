@@ -23,9 +23,9 @@ class InputFiltersSpec extends UnitTest with InputFilters {
   "Input filter" must {
     "filter out those hackers" in {
 
-      filter("<script>(.*?)</script>") shouldBe  ""
+      filter("<script>(.*?)</script>") shouldBe ""
       filter("<script(.*?)>") shouldBe ""
-      filter("</script>") shouldBe  ""
+      filter("</script>") shouldBe ""
       filter("javascript:") shouldBe ""
       filter("vbscript:") shouldBe ""
       filter("onload(.*?)=") shouldBe ""

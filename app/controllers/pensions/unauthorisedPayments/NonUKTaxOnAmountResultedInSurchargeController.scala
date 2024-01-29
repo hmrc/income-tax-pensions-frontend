@@ -36,51 +36,50 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NonUKTaxOnAmountResultedInSurchargeController @Inject()(authAction: AuthorisedAction,
-                                                              view: NonUKTaxOnAmountResultedInSurchargeView,
-                                                              pensionSessionService: PensionSessionService,
-                                                              formsProvider: FormsProvider,
-                                                              errorHandler: ErrorHandler)
-                                                             (implicit val mcc: MessagesControllerComponents,
-                                                              appConfig: AppConfig,
-                                                              clock: Clock, ec: ExecutionContext)
-  extends FrontendController(mcc) with SessionHelper with I18nSupport {
+class NonUKTaxOnAmountResultedInSurchargeController @Inject() (
+    authAction: AuthorisedAction,
+    view: NonUKTaxOnAmountResultedInSurchargeView,
+    pensionSessionService: PensionSessionService,
+    formsProvider: FormsProvider,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with SessionHelper
+    with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
-    implicit request =>
-      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-        case Right(optData) =>
-          val checkRedirect = journeyCheck(NonUkTaxOnSurchargedAmountPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
-
-            val surchargeTaxQuestion = data.pensions.unauthorisedPayments.surchargeTaxAmountQuestion
-            val surchargeTaxAmount = data.pensions.unauthorisedPayments.surchargeTaxAmount
-            (surchargeTaxQuestion, surchargeTaxAmount) match {
-              case (Some(yesNo), amount) =>
-                Future.successful(Ok(view(formsProvider.unauthorisedNonUkTaxOnSurchargedAmountForm(request.user).fill((yesNo, amount)), taxYear)))
-              case _ =>
-                Future.successful(Ok(view(formsProvider.unauthorisedNonUkTaxOnSurchargedAmountForm(request.user), taxYear)))
-            }
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(optData) =>
+        val checkRedirect = journeyCheck(NonUkTaxOnSurchargedAmountPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+          val surchargeTaxQuestion = data.pensions.unauthorisedPayments.surchargeTaxAmountQuestion
+          val surchargeTaxAmount   = data.pensions.unauthorisedPayments.surchargeTaxAmount
+          (surchargeTaxQuestion, surchargeTaxAmount) match {
+            case (Some(yesNo), amount) =>
+              Future.successful(Ok(view(formsProvider.unauthorisedNonUkTaxOnSurchargedAmountForm(request.user).fill((yesNo, amount)), taxYear)))
+            case _ =>
+              Future.successful(Ok(view(formsProvider.unauthorisedNonUkTaxOnSurchargedAmountForm(request.user), taxYear)))
           }
-      }
+        }
+    }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async {
-    implicit request =>
-      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-        case Right(optData) =>
-
-          val checkRedirect = journeyCheck(NonUkTaxOnSurchargedAmountPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
-
-            formsProvider.unauthorisedNonUkTaxOnSurchargedAmountForm(request.user).bindFromRequest().fold(
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Right(optData) =>
+        val checkRedirect = journeyCheck(NonUkTaxOnSurchargedAmountPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+          formsProvider
+            .unauthorisedNonUkTaxOnSurchargedAmountForm(request.user)
+            .bindFromRequest()
+            .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
               yesNoAmount => {
                 val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
                   unauthorisedPayments = data.pensions.unauthorisedPayments.copy(
-                    surchargeTaxAmountQuestion = Some(yesNoAmount._1), surchargeTaxAmount = yesNoAmount._2
+                    surchargeTaxAmountQuestion = Some(yesNoAmount._1),
+                    surchargeTaxAmount = yesNoAmount._2
                   )
                 )
 
@@ -88,12 +87,13 @@ class NonUKTaxOnAmountResultedInSurchargeController @Inject()(authAction: Author
                   if (data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(true))
                     NoSurchargeAmountController.show(taxYear)
                   else WereAnyOfTheUnauthorisedPaymentsController.show(taxYear)
-                pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission
-                )(errorHandler.internalServerError()) {
+                pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                  errorHandler.internalServerError()) {
                   isFinishedCheck(updatedCyaModel.unauthorisedPayments, taxYear, redirectLocation, cyaPageCall)
                 }
-              })
-          }
-      }
+              }
+            )
+        }
+    }
   }
 }

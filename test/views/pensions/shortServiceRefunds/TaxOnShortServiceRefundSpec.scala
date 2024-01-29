@@ -36,10 +36,9 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
 
   object Selectors {
     val captionSelector = "#main-content > div > div > header > p"
-    val titleSelector = "#main-content > div > div > header > h1"
-    val buttonSelector = "#continue"
+    val titleSelector   = "#main-content > div > div > header > h1"
+    val buttonSelector  = "#continue"
   }
-
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
@@ -51,50 +50,51 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
 
   object ExpectedCommonEN extends CommonExpectedResults {
     override val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedTitle: String = "Did a UK pension scheme pay tax on the short service refunds?"
-    override val continue: String = "Continue"
-    override val yes: String = "Yes"
-    override val no: String = "No"
+    override val expectedTitle: String          = "Did a UK pension scheme pay tax on the short service refunds?"
+    override val continue: String               = "Continue"
+    override val yes: String                    = "Yes"
+    override val no: String                     = "No"
   }
 
   object ExpectedCommonCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    override val expectedCaption: Int => String = (taxYear: Int) =>
+      s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     override val expectedTitle: String = "A wnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliadau trethadwy am wasanaeth byr?"
-    override val continue: String = "Yn eich blaen"
-    override val yes: String = "Iawn"
-    override val no: String = "Na"
+    override val continue: String      = "Yn eich blaen"
+    override val yes: String           = "Iawn"
+    override val no: String            = "Na"
   }
 
   trait SpecificExpectedResults {
-    val expectedNoEntryErrorText : String
+    val expectedNoEntryErrorText: String
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle: String = "Did a UK pension scheme pay tax on the short service refunds?"
-    val continue: String = "Continue"
-    val expectedNoEntryErrorText : String = "Select yes if a UK pension scheme paid tax on the short service refund"
+    val expectedCaption: Int => String   = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedTitle: String            = "Did a UK pension scheme pay tax on the short service refunds?"
+    val continue: String                 = "Continue"
+    val expectedNoEntryErrorText: String = "Select yes if a UK pension scheme paid tax on the short service refund"
   }
 
-  object ExpectedIndividualCY extends SpecificExpectedResults{
-    val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "A wnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliadau trethadwy am wasanaeth byr?"
-    val continue: String = "Continue"
-    val expectedNoEntryErrorText : String = "Dewiswch ‘Iawn’ os gwnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliad am wasanaeth byr"
+  object ExpectedIndividualCY extends SpecificExpectedResults {
+    val expectedCaption: Int => String   = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedTitle: String            = "A wnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliadau trethadwy am wasanaeth byr?"
+    val continue: String                 = "Continue"
+    val expectedNoEntryErrorText: String = "Dewiswch ‘Iawn’ os gwnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliad am wasanaeth byr"
   }
 
-  object ExpectedAgentEN extends SpecificExpectedResults{
-    val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle: String = "Did a UK pension scheme pay tax on the short service refunds?"
-    val continue: String = "Continue"
-    val expectedNoEntryErrorText : String = "Select yes if a UK pension scheme paid tax on the short service refund"
+  object ExpectedAgentEN extends SpecificExpectedResults {
+    val expectedCaption: Int => String   = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedTitle: String            = "Did a UK pension scheme pay tax on the short service refunds?"
+    val continue: String                 = "Continue"
+    val expectedNoEntryErrorText: String = "Select yes if a UK pension scheme paid tax on the short service refund"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) =>  s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "A wnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliadau trethadwy am wasanaeth byr?"
-    val continue: String = "Continue"
-    val expectedNoEntryErrorText : String = "Dewiswch ‘Iawn’ os gwnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliad am wasanaeth byr"
+    val expectedCaption: Int => String   = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedTitle: String            = "A wnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliadau trethadwy am wasanaeth byr?"
+    val continue: String                 = "Continue"
+    val expectedNoEntryErrorText: String = "Dewiswch ‘Iawn’ os gwnaeth cynllun pensiwn y DU dalu treth ar yr ad-daliad am wasanaeth byr"
   }
 
   override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -109,13 +109,14 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render page with 'Yes' pre filled " which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
+          aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        def form: Form[Boolean] = new FormsProvider().shortServiceTaxOnShortServiceRefundForm
+        def form: Form[Boolean]         = new FormsProvider().shortServiceTaxOnShortServiceRefundForm
         val taxOnShortServiceRefundPage = TaxOnShortServiceRefundPage(taxYear - 1, Some(0), aPensionsUserData.pensions.shortServiceRefunds, form)
         implicit val htmlFormat: HtmlFormat.Appendable = underTest(taxOnShortServiceRefundPage)
-        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+        implicit val document: Document                = Jsoup.parse(htmlFormat.body)
 
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
         titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
@@ -125,19 +126,22 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
       }
       "render page with 'No' pre filled " which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
+          aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         def form: Form[Boolean] = new FormsProvider().shortServiceTaxOnShortServiceRefundForm
 
         val updatedShortServiceRefunds = aPensionsUserData.pensions.shortServiceRefunds.copy(
-          refundPensionScheme = aPensionsUserData.pensions.shortServiceRefunds.refundPensionScheme.updated(0, OverseasRefundPensionScheme(
-          ukRefundCharge = Some(false)
-        )))
+          refundPensionScheme = aPensionsUserData.pensions.shortServiceRefunds.refundPensionScheme.updated(
+            0,
+            OverseasRefundPensionScheme(
+              ukRefundCharge = Some(false)
+            )))
 
-        val taxOnShortServiceRefundPage = TaxOnShortServiceRefundPage(taxYear - 1, Some(0), updatedShortServiceRefunds, form)
+        val taxOnShortServiceRefundPage                = TaxOnShortServiceRefundPage(taxYear - 1, Some(0), updatedShortServiceRefunds, form)
         implicit val htmlFormat: HtmlFormat.Appendable = underTest(taxOnShortServiceRefundPage)
-        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+        implicit val document: Document                = Jsoup.parse(htmlFormat.body)
 
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
         titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
@@ -147,20 +151,23 @@ class TaxOnShortServiceRefundSpec extends ViewUnitTest with FakeRequestProvider 
       }
       "render page with no value pre filled " which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
+          aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
         def form: Form[Boolean] = new FormsProvider().shortServiceTaxOnShortServiceRefundForm
 
         val updatedShortServiceRefunds = aPensionsUserData.pensions.shortServiceRefunds.copy(
-          refundPensionScheme = aPensionsUserData.pensions.shortServiceRefunds.refundPensionScheme.updated(0, OverseasRefundPensionScheme(
-            ukRefundCharge = Some(false)
-          )))
+          refundPensionScheme = aPensionsUserData.pensions.shortServiceRefunds.refundPensionScheme.updated(
+            0,
+            OverseasRefundPensionScheme(
+              ukRefundCharge = Some(false)
+            )))
 
-        val taxOnShortServiceRefundPage = TaxOnShortServiceRefundPage(taxYear - 1, Some(0),
-          updatedShortServiceRefunds, form.bind(Map(YesNoForm.yesNo -> "")))
+        val taxOnShortServiceRefundPage =
+          TaxOnShortServiceRefundPage(taxYear - 1, Some(0), updatedShortServiceRefunds, form.bind(Map(YesNoForm.yesNo -> "")))
         implicit val htmlFormat: HtmlFormat.Appendable = underTest(taxOnShortServiceRefundPage)
-        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+        implicit val document: Document                = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoEntryErrorText, Some("value"))
         errorSummaryCheck(userScenario.specificExpectedResults.get.expectedNoEntryErrorText, "#value")

@@ -33,7 +33,7 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
     anPensionCharges.pensionSchemeOverseasTransfers,
     anPensionCharges.pensionSchemeUnauthorisedPayments,
     anPensionCharges.pensionContributions,
-    anPensionCharges.overseasPensionContributions,
+    anPensionCharges.overseasPensionContributions
   )
 
   ".sendDownstream" should {
@@ -50,12 +50,14 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
       "save" should {
         "when all sub models are non empty and unauthorised model is empty " in {
           val chargesModel = model.copy(
-            pensionSchemeUnauthorisedPayments = None,
+            pensionSchemeUnauthorisedPayments = None
           )
           mockSavePensionChargesSessionData(nino, taxYear, chargesModel, Right(()))
 
-          val result = Await.result(pensionChargerConnectorHelper
-            .sendDownstream(nino, taxYear, Some(unauthModel), Some(noCYA), chargesModel), Duration.Inf)
+          val result = Await.result(
+            pensionChargerConnectorHelper
+              .sendDownstream(nino, taxYear, Some(unauthModel), Some(noCYA), chargesModel),
+            Duration.Inf)
 
           result shouldBe Right(())
 
@@ -73,10 +75,12 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
             overseasPensionContributions = None
           )
 
-          mockDeletePensionChargesSessionData(nino, taxYear, Right(()) )
+          mockDeletePensionChargesSessionData(nino, taxYear, Right(()))
 
-          val result = Await.result(pensionChargerConnectorHelper
-            .sendDownstream(nino, taxYear, None, Some(noCYA), chargesModel), Duration.Inf)
+          val result = Await.result(
+            pensionChargerConnectorHelper
+              .sendDownstream(nino, taxYear, None, Some(noCYA), chargesModel),
+            Duration.Inf)
 
           result shouldBe Right(())
         }
@@ -90,10 +94,12 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
             overseasPensionContributions = None
           )
 
-          mockDeletePensionChargesSessionData(nino, taxYear, Right(()) )
+          mockDeletePensionChargesSessionData(nino, taxYear, Right(()))
 
-          val result = Await.result(pensionChargerConnectorHelper
-            .sendDownstream(nino, taxYear, Some(unauthModel), Some(noCYA), chargesModel), Duration.Inf)
+          val result = Await.result(
+            pensionChargerConnectorHelper
+              .sendDownstream(nino, taxYear, Some(unauthModel), Some(noCYA), chargesModel),
+            Duration.Inf)
 
           result shouldBe Right(())
         }
@@ -112,10 +118,12 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
         overseasPensionContributions = None
       )
 
-      mockSavePensionChargesSessionData(nino, taxYear, chargesModel, Right(()) )
+      mockSavePensionChargesSessionData(nino, taxYear, chargesModel, Right(()))
 
-      val result = Await.result(pensionChargerConnectorHelper
-        .sendDownstream(nino, taxYear, Some(unauthModel), Some(anUnauthorisedPaymentsViewModel), chargesModel), Duration.Inf)
+      val result = Await.result(
+        pensionChargerConnectorHelper
+          .sendDownstream(nino, taxYear, Some(unauthModel), Some(anUnauthorisedPaymentsViewModel), chargesModel),
+        Duration.Inf)
 
       result shouldBe Right(())
     }
@@ -132,10 +140,12 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
         overseasPensionContributions = None
       )
 
-      mockDeletePensionChargesSessionData(nino, taxYear, Right(()) )
+      mockDeletePensionChargesSessionData(nino, taxYear, Right(()))
 
-      val result = Await.result(pensionChargerConnectorHelper
-        .sendDownstream(nino, taxYear, Some(unauthModel), Some(anUnauthorisedPaymentsEmptyViewModel), chargesModel), Duration.Inf)
+      val result = Await.result(
+        pensionChargerConnectorHelper
+          .sendDownstream(nino, taxYear, Some(unauthModel), Some(anUnauthorisedPaymentsEmptyViewModel), chargesModel),
+        Duration.Inf)
 
       result shouldBe Right(())
 

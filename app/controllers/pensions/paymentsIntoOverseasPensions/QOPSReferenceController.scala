@@ -36,33 +36,35 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
-                                        qopsReferenceView: QOPSReferenceView,
-                                        pensionSessionService: PensionSessionService,
-                                        errorHandler: ErrorHandler)
-                                       (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class QOPSReferenceController @Inject() (
+    actionsProvider: ActionsProvider,
+    qopsReferenceView: QOPSReferenceView,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
   def referenceForm: Form[String] = QOPSReferenceNumberForm.qopsReferenceNumberForm(
     incorrectFormatMsg = "common.overseasPensions.qops.error.incorrectFormat"
   )
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionData =>
-      indexCheckThenJourneyCheck(sessionData.pensionsUserData, index, QOPSReferencePage, taxYear) { relief: Relief =>
-        relief.qopsReference match {
-          case Some(qopsNumber) => Future.successful(Ok(qopsReferenceView(referenceForm.fill(removePrefix(qopsNumber)), taxYear, index)))
-          case None => Future.successful(Ok(qopsReferenceView(referenceForm, taxYear, index)))
-        }
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+    indexCheckThenJourneyCheck(sessionData.pensionsUserData, index, QOPSReferencePage, taxYear) { relief: Relief =>
+      relief.qopsReference match {
+        case Some(qopsNumber) => Future.successful(Ok(qopsReferenceView(referenceForm.fill(removePrefix(qopsNumber)), taxYear, index)))
+        case None             => Future.successful(Ok(qopsReferenceView(referenceForm, taxYear, index)))
       }
+    }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit request =>
-      val piops = request.pensionsUserData.pensions.paymentsIntoOverseasPensions
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+    val piops = request.pensionsUserData.pensions.paymentsIntoOverseasPensions
 
-      indexCheckThenJourneyCheck(request.pensionsUserData, index, QOPSReferencePage, taxYear) { relief: Relief =>
-        referenceForm.bindFromRequest().fold(
+    indexCheckThenJourneyCheck(request.pensionsUserData, index, QOPSReferencePage, taxYear) { relief: Relief =>
+      referenceForm
+        .bindFromRequest()
+        .fold(
           formWithErrors => Future.successful(BadRequest(qopsReferenceView(formWithErrors, taxYear, index))),
           referenceNumber => {
             val maybeRef = if (referenceNumber.isEmpty) None else Some(referenceNumber)
@@ -70,16 +72,16 @@ class QOPSReferenceController @Inject()(actionsProvider: ActionsProvider,
             val updatedCyaModel: PensionsCYAModel = request.pensionsUserData.pensions.copy(
               paymentsIntoOverseasPensions = piops.copy(reliefs = piops.reliefs.updated(index.get, relief.copy(qopsReference = maybeRef)))
             )
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, request.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+            pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, request.pensionsUserData.isPriorSubmission)(
+              errorHandler.internalServerError()) {
               Redirect(ReliefsSchemeDetailsController.show(taxYear, index))
             }
           }
         )
-      }
+    }
   }
 
-  private def removePrefix(qopsReference: String): String = //TODO: check qops ref length
+  private def removePrefix(qopsReference: String): String = // TODO: check qops ref length
     if (qopsReference.length == 10) qopsReference.substring(4, 10) else qopsReference
 
 }

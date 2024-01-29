@@ -23,7 +23,8 @@ import utils.EncryptedValue
 // Minimum of one of these fields are required.
 case class PensionSavingsTaxCharges(pensionSchemeTaxReference: Option[Seq[String]],
                                     lumpSumBenefitTakenInExcessOfLifetimeAllowance: Option[LifetimeAllowance],
-                                    benefitInExcessOfLifetimeAllowance: Option[LifetimeAllowance]) extends PensionChargesSubRequestModel {
+                                    benefitInExcessOfLifetimeAllowance: Option[LifetimeAllowance])
+    extends PensionChargesSubRequestModel {
   override def isEmpty: Boolean = this.productIterator.forall(_ == None)
 }
 

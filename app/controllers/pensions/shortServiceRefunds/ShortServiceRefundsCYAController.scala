@@ -37,27 +37,25 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ShortServiceRefundsCYAController @Inject()(auditProvider: AuditActionsProvider,
-                                                 view: ShortServiceRefundsCYAView,
-                                                 pensionSessionService: PensionSessionService,
-                                                 pensionChargesService: PensionChargesService,
-                                                 errorHandler: ErrorHandler)
-                                                (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig,
-                                                 clock: Clock, ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class ShortServiceRefundsCYAController @Inject() (
+    auditProvider: AuditActionsProvider,
+    view: ShortServiceRefundsCYAView,
+    pensionSessionService: PensionSessionService,
+    pensionChargesService: PensionChargesService,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
-
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsViewAuditing(taxYear) async {
-    implicit request =>
-      pensionSessionService.getAndHandle(taxYear, request.user) {
-        case (Some(data), _) =>
-          val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(data), TaxableRefundAmountController.show(taxYear))(checkRedirect) {
-            data =>
-              Future.successful(Ok(view(taxYear, data.pensions.shortServiceRefunds)))
-          }
-        case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      }
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsViewAuditing(taxYear) async { implicit request =>
+    pensionSessionService.getAndHandle(taxYear, request.user) {
+      case (Some(data), _) =>
+        val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), TaxableRefundAmountController.show(taxYear))(checkRedirect) { data =>
+          Future.successful(Ok(view(taxYear, data.pensions.shortServiceRefunds)))
+        }
+      case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+    }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsUpdateAuditing(taxYear) async { implicit request =>
@@ -66,25 +64,23 @@ class ShortServiceRefundsCYAController @Inject()(auditProvider: AuditActionsProv
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(model), TaxableRefundAmountController.show(taxYear))(checkRedirect) {
-          data =>
-            if (sessionDataDifferentThanPriorData(data.pensions, prior)) {
-              pensionChargesService.saveShortServiceRefundsViewModel(request.user, taxYear).map {
-                case Left(_) => errorHandler.internalServerError()
-                case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
-              }
-            } else {
-              Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+        redirectBasedOnCurrentAnswers(taxYear, Some(model), TaxableRefundAmountController.show(taxYear))(checkRedirect) { data =>
+          if (sessionDataDifferentThanPriorData(data.pensions, prior)) {
+            pensionChargesService.saveShortServiceRefundsViewModel(request.user, taxYear).map {
+              case Left(_)  => errorHandler.internalServerError()
+              case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
             }
+          } else {
+            Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+          }
         }
       }
     }
   }
 
-  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
+  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData match {
-      case None => true
+      case None        => true
       case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
     }
-  }
 }

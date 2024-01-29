@@ -34,88 +34,81 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
       summaryRowForUKPensionSchemeTaxReferences(unauthorisedPaymentsViewModel, taxYear)
     ).flatten
 
-  private def summaryRowForUnauthorisedPaymentQuestion(
-                                                        unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel,
-                                                        taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForUnauthorisedPaymentQuestion(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     Some(
       summaryListRowWithBooleanValue(
         "unauthorisedPayments.common.title",
         unauthorisedPaymentsViewModel.unauthorisedPaymentQuestion,
         routes.UnauthorisedPaymentsController.show(taxYear))(messages)
     )
-  }
 
-  private def summaryRowForSurchargeAmount(
-                                            unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel,
-                                            taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForSurchargeAmount(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     unauthorisedPaymentsViewModel.surchargeQuestion
       .filter(_ == true)
       .map(_ =>
         summaryListRowWithOptionalAmountValue(
           "unauthorisedPayments.cya.amountSurcharged",
           unauthorisedPaymentsViewModel.surchargeAmount.fold(Some(BigDecimal(0)))(item => Some(item)),
-          routes.SurchargeAmountController.show(taxYear))(messages)
-      )
-  }
+          routes.SurchargeAmountController.show(taxYear)
+        )(messages))
 
-  private def summaryRowForSurchargeTaxAmount(
-                                               unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel,
-                                               taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForSurchargeTaxAmount(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     unauthorisedPaymentsViewModel.surchargeQuestion
       .filter(_ == true)
       .map(_ =>
         summaryListRowWithOptionalAmountValue(
           "unauthorisedPayments.cya.nonUkTaxAmountSurcharged",
           unauthorisedPaymentsViewModel.surchargeTaxAmount.fold(Some(BigDecimal(0)))(item => Some(item)),
-          controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController.show(taxYear))(messages)
-      )
-  }
+          controllers.pensions.unauthorisedPayments.routes.NonUKTaxOnAmountResultedInSurchargeController.show(taxYear)
+        )(messages))
 
-  private def summaryRowForNotSurchargeAmount(
-                                               unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel,
-                                               taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForNotSurchargeAmount(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     unauthorisedPaymentsViewModel.noSurchargeQuestion
       .filter(_ == true)
       .map(_ =>
         summaryListRowWithOptionalAmountValue(
           "unauthorisedPayments.cya.amountNotSurcharged",
           unauthorisedPaymentsViewModel.noSurchargeAmount.fold(Some(BigDecimal(0)))(item => Some(item)),
-          routes.NoSurchargeAmountController.show(taxYear))(messages)
-      )
-  }
+          routes.NoSurchargeAmountController.show(taxYear)
+        )(messages))
 
-  private def summaryRowForNotSurchargeTaxAmount(
-                                                  unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel,
-                                                  taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] =
+  private def summaryRowForNotSurchargeTaxAmount(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     unauthorisedPaymentsViewModel.noSurchargeQuestion
       .filter(_ == true)
       .map(_ =>
         summaryListRowWithOptionalAmountValue(
           "unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged",
           unauthorisedPaymentsViewModel.noSurchargeTaxAmount.fold(Some(BigDecimal(0)))(item => Some(item)),
-          routes.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear))(messages)
-      )
+          routes.NonUKTaxOnAmountNotResultedInSurchargeController.show(taxYear)
+        )(messages))
 
-  private def summaryRowForUKPensionSchemes(
-                                             unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel,
-                                             taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] =
-    unauthorisedPaymentsViewModel.unauthorisedPaymentQuestion.filter(_ == true).map(_ =>
-      summaryListRowWithBooleanValue(
-        "unauthorisedPayments.common.ukPensionSchemes",
-        unauthorisedPaymentsViewModel.ukPensionSchemesQuestion,
-        routes.WereAnyOfTheUnauthorisedPaymentsController.show(taxYear))(messages)
-    )
+  private def summaryRowForUKPensionSchemes(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
+    unauthorisedPaymentsViewModel.unauthorisedPaymentQuestion
+      .filter(_ == true)
+      .map(_ =>
+        summaryListRowWithBooleanValue(
+          "unauthorisedPayments.common.ukPensionSchemes",
+          unauthorisedPaymentsViewModel.ukPensionSchemesQuestion,
+          routes.WereAnyOfTheUnauthorisedPaymentsController.show(taxYear)
+        )(messages))
 
-  private def summaryRowForUKPensionSchemeTaxReferences(
-                                                         unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel,
-                                                         taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] = {
-    unauthorisedPaymentsViewModel.unauthorisedPaymentQuestion.filter(_ == true).flatMap(_ =>
-      unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.filter(_ == true).map(_ =>
-        summaryListRowWithStrings(
-          "unauthorisedPayments.cya.pensionSchemeTaxReferences",
-          unauthorisedPaymentsViewModel.pensionSchemeTaxReference,
-          routes.UkPensionSchemeDetailsController.show(taxYear))(messages)
-      )
-    )
-  }
+  private def summaryRowForUKPensionSchemeTaxReferences(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
+    unauthorisedPaymentsViewModel.unauthorisedPaymentQuestion
+      .filter(_ == true)
+      .flatMap(_ =>
+        unauthorisedPaymentsViewModel.ukPensionSchemesQuestion
+          .filter(_ == true)
+          .map(_ =>
+            summaryListRowWithStrings(
+              "unauthorisedPayments.cya.pensionSchemeTaxReferences",
+              unauthorisedPaymentsViewModel.pensionSchemeTaxReference,
+              routes.UkPensionSchemeDetailsController.show(taxYear)
+            )(messages)))
 }

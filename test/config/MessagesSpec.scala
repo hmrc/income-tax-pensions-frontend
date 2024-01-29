@@ -97,7 +97,6 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "common.annualAllowance.caption",
     "common.pensionAnnualAllowance.caption",
     "common.overseasPensions.pensionScheme.providerAddress.subheading",
-
     "pensions.aboveReducedAnnualAllowance.error.overMaximum.individual",
     "pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.individual",
     "pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.agent",
@@ -115,17 +114,14 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
   lazy val allLanguages: Map[String, Map[String, String]] = app.injector.instanceOf[MessagesApi].messages
 
   private val defaults = allLanguages("default")
-  private val welsh = allLanguages("cy")
-
+  private val welsh    = allLanguages("cy")
 
   "the messages file must have welsh translations" should {
     "check all keys in the default file other than those in the exclusion list has a corresponding translation" in {
-      defaults.keys.foreach(
-        key =>
-          if (!exclusionKeys.contains(key)) {
-            welsh.keys should contain(key)
-          }
-      )
+      defaults.keys.foreach(key =>
+        if (!exclusionKeys.contains(key)) {
+          welsh.keys should contain(key)
+        })
     }
   }
 

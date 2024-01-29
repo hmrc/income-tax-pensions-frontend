@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-class NrsService @Inject()(nrsConnector: NrsConnector) {
+class NrsService @Inject() (nrsConnector: NrsConnector) {
 
   def submit[A](nino: String, payload: A, mtditid: String)(implicit hc: HeaderCarrier, writes: Writes[A]): Future[NrsSubmissionResponse] = {
 

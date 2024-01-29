@@ -25,7 +25,6 @@ final case class ConnectorRequestInfo(method: String, url: String, apiId: String
   def logRequestWithBody[A: Writes](logger: Logger, body: A): Unit =
     logger.debug(s"Connector: $apiIdStr $method $url\nRequest Body: ${implicitly[Writes[A]].writes(body)}")
 
-
   def logRequest(logger: Logger): Unit =
     logger.debug(s"Connector: Sending Request $method $url")
 

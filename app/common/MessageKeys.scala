@@ -24,18 +24,14 @@ object MessageKeys {
           "common.pensions.selectYesifYourPensionProvider.noEntry.individual",
           "common.pensions.selectYesifYourPensionProvider.noEntry.agent")
       override val amountEmpty: UserTypeMessage =
-        UserTypeMessage(
-          "pensions.pensionsProviderPaidTax.error.noAmount.individual",
-          "pensions.pensionsProviderPaidTax.error.noAmount.agent")
-      override val minAmountMessage: UserTypeMessage = UserTypeMessage("","")
+        UserTypeMessage("pensions.pensionsProviderPaidTax.error.noAmount.individual", "pensions.pensionsProviderPaidTax.error.noAmount.agent")
+      override val minAmountMessage: UserTypeMessage = UserTypeMessage("", "")
       override val amountHasInvalidFormat: UserTypeMessage =
         UserTypeMessage(
           "pensions.pensionsProviderPaidTax.error.incorrectFormat.individual",
           "pensions.pensionsProviderPaidTax.error.incorrectFormat.agent")
       override val amountIsExcessive: UserTypeMessage =
-        UserTypeMessage(
-          "common.pensions.error.amountMaxLimit.individual",
-          "common.pensions.error.amountMaxLimit.agent")
+        UserTypeMessage("common.pensions.error.amountMaxLimit.individual", "common.pensions.error.amountMaxLimit.agent")
     }
   }
   object OverseasPensions {
@@ -48,15 +44,14 @@ object MessageKeys {
         UserTypeMessage(
           "overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.individual",
           "overseasPension.paymentIntoOverseasPensionScheme.no.entry.error.agent")
-      override val minAmountMessage: UserTypeMessage = UserTypeMessage("","")
+      override val minAmountMessage: UserTypeMessage = UserTypeMessage("", "")
       override val amountHasInvalidFormat: UserTypeMessage =
         UserTypeMessage(
           "overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.individual",
-          "overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent")
+          "overseasPension.paymentIntoOverseasPensionScheme.invalid.format.error.agent"
+        )
       override val amountIsExcessive: UserTypeMessage =
-        UserTypeMessage(
-          "common.overseas.pension.schemes.error.tooBig.individual",
-          "common.overseas.pension.schemes.error.tooBig.agent")
+        UserTypeMessage("common.overseas.pension.schemes.error.tooBig.individual", "common.overseas.pension.schemes.error.tooBig.agent")
     }
 
   }
@@ -74,22 +69,14 @@ object MessageKeys {
   object UnauthorisedPayments {
     object NonUKTaxOnAmountResultedInSurcharge extends YesNoAmountForm {
       override val neitherYesNorNo: UserTypeMessage =
-        UserTypeMessage(
-          "unauthorisedPayments.didYouPayNonUkTax.error.noEntry",
-          "unauthorisedPayments.didYouPayNonUkTax.error.noEntry")
+        UserTypeMessage("unauthorisedPayments.didYouPayNonUkTax.error.noEntry", "unauthorisedPayments.didYouPayNonUkTax.error.noEntry")
       override val amountEmpty: UserTypeMessage =
-        UserTypeMessage(
-          "common.pensions.error.amount.noEntry",
-          "common.pensions.error.amount.noEntry")
-      override val minAmountMessage: UserTypeMessage = UserTypeMessage("","")
+        UserTypeMessage("common.pensions.error.amount.noEntry", "common.pensions.error.amount.noEntry")
+      override val minAmountMessage: UserTypeMessage = UserTypeMessage("", "")
       override val amountHasInvalidFormat: UserTypeMessage =
-        UserTypeMessage(
-          "common.unauthorisedPayments.error.Amount.incorrectFormat",
-          "common.unauthorisedPayments.error.Amount.incorrectFormat")
+        UserTypeMessage("common.unauthorisedPayments.error.Amount.incorrectFormat", "common.unauthorisedPayments.error.Amount.incorrectFormat")
       override val amountIsExcessive: UserTypeMessage =
-        UserTypeMessage(
-          "common.pensions.error.amount.overMaximum",
-          "common.pensions.error.amount.overMaximum")
+        UserTypeMessage("common.pensions.error.amount.overMaximum", "common.pensions.error.amount.overMaximum")
     }
     object NonUKTaxOnAmountNotResultedInSurcharge extends YesNoAmountForm {
       override val neitherYesNorNo: UserTypeMessage =
@@ -97,18 +84,12 @@ object MessageKeys {
           "unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry",
           "unauthorisedPayments.nonUkTaxOnAmountNotSurcharge.error.noEntry")
       override val amountEmpty: UserTypeMessage =
-        UserTypeMessage(
-          "common.pensions.error.amount.noEntry",
-          "common.pensions.error.amount.noEntry")
-      override val minAmountMessage: UserTypeMessage = UserTypeMessage("","")
+        UserTypeMessage("common.pensions.error.amount.noEntry", "common.pensions.error.amount.noEntry")
+      override val minAmountMessage: UserTypeMessage = UserTypeMessage("", "")
       override val amountHasInvalidFormat: UserTypeMessage =
-        UserTypeMessage(
-          "common.unauthorisedPayments.error.Amount.incorrectFormat",
-          "common.unauthorisedPayments.error.Amount.incorrectFormat")
+        UserTypeMessage("common.unauthorisedPayments.error.Amount.incorrectFormat", "common.unauthorisedPayments.error.Amount.incorrectFormat")
       override val amountIsExcessive: UserTypeMessage =
-        UserTypeMessage(
-          "common.pensions.error.amount.overMaximum",
-          "common.pensions.error.amount.overMaximum")
+        UserTypeMessage("common.pensions.error.amount.overMaximum", "common.pensions.error.amount.overMaximum")
     }
     object SpecialWithholdingTax extends YesNoAmountForm {
       override val neitherYesNorNo: UserTypeMessage =
@@ -116,20 +97,14 @@ object MessageKeys {
           "overseasPension.specialWithHoldingTax.amount.individual.noEntry",
           "overseasPension.specialWithHoldingTax.amount.agent.noEntry")
       override val amountEmpty: UserTypeMessage =
-        UserTypeMessage(
-          "overseasPension.specialWithHoldingTax.amount.noAmountEntry",
-          "overseasPension.specialWithHoldingTax.amount.noAmountEntry")
-      override val minAmountMessage: UserTypeMessage = UserTypeMessage(
-        "common.error.amountNotZero",
-        "common.error.amountNotZero")
+        UserTypeMessage("overseasPension.specialWithHoldingTax.amount.noAmountEntry", "overseasPension.specialWithHoldingTax.amount.noAmountEntry")
+      override val minAmountMessage: UserTypeMessage = UserTypeMessage("common.error.amountNotZero", "common.error.amountNotZero")
       override val amountHasInvalidFormat: UserTypeMessage =
         UserTypeMessage(
           "overseasPension.specialWithHoldingTax.amount.incorrectFormat",
           "overseasPension.specialWithHoldingTax.amount.incorrectFormat")
       override val amountIsExcessive: UserTypeMessage =
-        UserTypeMessage(
-          "overseasPension.specialWithHoldingTax.amount.tooBig",
-          "overseasPension.specialWithHoldingTax.amount.tooBig")
+        UserTypeMessage("overseasPension.specialWithHoldingTax.amount.tooBig", "overseasPension.specialWithHoldingTax.amount.tooBig")
     }
   }
 
@@ -149,4 +124,3 @@ object MessageKeys {
     val noEntry: UserTypeMessage
   }
 }
-

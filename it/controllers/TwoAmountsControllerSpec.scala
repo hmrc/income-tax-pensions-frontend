@@ -26,7 +26,9 @@ class TwoAmountsControllerISpec(override val pathForThisPage: String) extends Co
   private val amount1FieldName = "amount-1"
   private val amount2FieldName = "amount-2"
 
-  def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedOptionTupleAmountPageContents)(implicit userConfig: UserConfig, response: WSResponse): Unit = {
+  def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedOptionTupleAmountPageContents)(implicit
+      userConfig: UserConfig,
+      response: WSResponse): Unit = {
 
     val document = parse(response.body)
     response must haveStatus(expectedStatusCode)
@@ -44,18 +46,18 @@ class TwoAmountsControllerISpec(override val pathForThisPage: String) extends Co
   }
 
   case class ExpectedOptionTupleAmountPageContents(
-                                                    title: String,
-                                                    header: String,
-                                                    caption: String,
-                                                    buttonForContinue: ExpectedButton,
-                                                    amountSection1: ExpectedAmountSection,
-                                                    amountSection2: ExpectedAmountSection,
-                                                    errorSummarySectionOpt: Option[ErrorSummarySection] = None,
-                                                    errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection] = None,
-                                                    links: Set[ExpectedLink] = Set.empty,
-                                                    text: Set[ExpectedText] = Set.empty,
-                                                    formUrl:Option[String] = None
-                                                  ) extends BaseExpectedPageContents
+      title: String,
+      header: String,
+      caption: String,
+      buttonForContinue: ExpectedButton,
+      amountSection1: ExpectedAmountSection,
+      amountSection2: ExpectedAmountSection,
+      errorSummarySectionOpt: Option[ErrorSummarySection] = None,
+      errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection] = None,
+      links: Set[ExpectedLink] = Set.empty,
+      text: Set[ExpectedText] = Set.empty,
+      formUrl: Option[String] = None
+  ) extends BaseExpectedPageContents
 }
 
 case class SubmittedFormDataForOptionTupleAmountPage(amount1: Option[String], amount2: Option[String]) extends SubmittedOptionTupleAmount {

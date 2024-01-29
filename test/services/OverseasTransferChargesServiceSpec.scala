@@ -35,65 +35,68 @@ class OverseasTransferChargesServiceSpec extends UnitTest with MockPensionSessio
 
       mockCreateOrUpdateSessionData(aPensionsUserData.copy(pensions = expectedCYA))
 
-      await(underTest.updateOverseasTransferChargeQuestion(aPensionsUserData, yesNo = false, Some(0))) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.updateOverseasTransferChargeQuestion(aPensionsUserData, yesNo = false, Some(0))) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with ukTransferCharge to true when no TransferPensionScheme exists" in {
-      val index = None
+      val index        = None
       val transfersCya = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq.empty)
-      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = transfersCya))
+      val userData     = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = transfersCya))
 
       val expectedCYA = aPensionsUserData.pensions.copy(transfersIntoOverseasPensions =
         aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(TransferPensionScheme(ukTransferCharge = Some(true)))))
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = true, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with ukTransferCharge to false when no TransferPensionScheme exists" in {
-      val index = None
+      val index        = None
       val transfersCya = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq.empty)
-      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = transfersCya))
+      val userData     = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = transfersCya))
 
       val expectedCYA = aPensionsUserData.pensions.copy(transfersIntoOverseasPensions =
         aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(TransferPensionScheme(ukTransferCharge = Some(false)))))
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = false, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with ukTransferCharge to true when TransferPensionSchemes exists" in {
-      val index = None
+      val index           = None
       val transferSchemes = aTransfersIntoOverseasPensionsViewModel.transferPensionScheme.head.copy(ukTransferCharge = Some(false))
-      val transfersCya = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(transferSchemes))
-      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = transfersCya))
+      val transfersCya    = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(transferSchemes))
+      val userData        = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = transfersCya))
 
-      val expectedCYA = aPensionsUserData.pensions.copy(transfersIntoOverseasPensions =
-        aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(
-          transferSchemes.copy(ukTransferCharge = Some(false)), TransferPensionScheme(ukTransferCharge = Some(true)))
-        ))
+      val expectedCYA =
+        aPensionsUserData.pensions.copy(transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme =
+          Seq(transferSchemes.copy(ukTransferCharge = Some(false)), TransferPensionScheme(ukTransferCharge = Some(true)))))
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = true, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with ukTransferCharge to false when TransferPensionSchemes exists" in {
-      val index = None
+      val index           = None
       val transferSchemes = aTransfersIntoOverseasPensionsViewModel.transferPensionScheme.head.copy(ukTransferCharge = Some(false))
-      val transfersCya = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(transferSchemes))
-      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = transfersCya))
+      val transfersCya    = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(transferSchemes))
+      val userData        = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = transfersCya))
 
-      val expectedCYA = aPensionsUserData.pensions.copy(transfersIntoOverseasPensions =
-        aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(
-          transferSchemes.copy(ukTransferCharge = Some(false)), TransferPensionScheme(ukTransferCharge = Some(false)))
-        ))
+      val expectedCYA =
+        aPensionsUserData.pensions.copy(transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme =
+          Seq(transferSchemes.copy(ukTransferCharge = Some(false)), TransferPensionScheme(ukTransferCharge = Some(false)))))
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = false, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with new scheme with ukTransferCharge to true when index is none but other TransferPensionSchemes exists" in {
@@ -106,17 +109,17 @@ class OverseasTransferChargesServiceSpec extends UnitTest with MockPensionSessio
 
       val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = transferSchemes))
 
-      val expectedCYA = aPensionsUserData.pensions.copy(transfersIntoOverseasPensions =
-        aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(
+      val expectedCYA =
+        aPensionsUserData.pensions.copy(transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = Seq(
           TransferPensionScheme(ukTransferCharge = Some(true), name = Some("Scheme 1")),
           TransferPensionScheme(ukTransferCharge = Some(false)),
           TransferPensionScheme(ukTransferCharge = Some(true))
-        ))
-      )
+        )))
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
       expectedCYA.transfersIntoOverseasPensions.transferPensionScheme.size shouldBe 3
-      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.updateOverseasTransferChargeQuestion(userData, yesNo = true, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
   }
 }

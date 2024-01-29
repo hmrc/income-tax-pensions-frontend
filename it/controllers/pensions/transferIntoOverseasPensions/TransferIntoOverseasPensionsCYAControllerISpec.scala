@@ -34,8 +34,7 @@ import utils.PageUrls.TransferIntoOverseasPensions._
 import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers
-  with PensionsDatabaseHelper {
+class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false) =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
@@ -51,8 +50,12 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
 
-        urlGet(fullUrl(checkYourDetailsPensionUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe OK
     }
@@ -64,8 +67,12 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
 
-        urlGet(fullUrl(checkYourDetailsPensionUrl(taxYear)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(checkYourDetailsPensionUrl(taxYear)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe SEE_OTHER
       result.header("location") shouldBe Some(overviewUrl(taxYear))
@@ -74,7 +81,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
 
   ".submit" should {
     "redirect to summary page when there is no CYA data" which {
-     
+
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -103,14 +110,16 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
           authoriseAgentOrIndividual(aUser.isAgent)
           pensionChargesSessionStub(Json.toJson(transferChargeSubmissionCRM).toString(), nino, taxYearEOY)
           userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
-          insertCyaData(aPensionsUserData.copy(
-            pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = emptyTransfersIntoOverseasPensionsViewModel)
-          ))
+          insertCyaData(
+            aPensionsUserData.copy(
+              pensions = aPensionsCYAModel.copy(transfersIntoOverseasPensions = emptyTransfersIntoOverseasPensionsViewModel)
+            ))
           urlPost(
             fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = Json.toJson(transferChargeSubmissionCRM).toString())
+            body = Json.toJson(transferChargeSubmissionCRM).toString()
+          )
         }
 
         "have the status SEE OTHER" in {
@@ -137,7 +146,8 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
             fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = Json.toJson(transferChargeSubmissionCRM).toString())
+            body = Json.toJson(transferChargeSubmissionCRM).toString()
+          )
         }
 
         "have the status SEE OTHER" in {
@@ -161,7 +171,8 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
             fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = Json.toJson(priorPensionChargesRM).toString())
+            body = Json.toJson(priorPensionChargesRM).toString()
+          )
         }
 
         "have the status SEE OTHER" in {
@@ -176,15 +187,16 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
 
     "redirect to the first page in the journey if journey is incomplete" in {
       val incompleteViewModel = aTransfersIntoOverseasPensionsViewModel.copy(
-        transferPensionScheme = Seq(TransferPensionScheme(
-          ukTransferCharge = Some(true),
-          name = Some("UK TPS"),
-          pstr = None,
-          qops = None,
-          providerAddress = Some("Some address 1"),
-          alphaTwoCountryCode = None,
-          alphaThreeCountryCode = None
-        ))
+        transferPensionScheme = Seq(
+          TransferPensionScheme(
+            ukTransferCharge = Some(true),
+            name = Some("UK TPS"),
+            pstr = None,
+            qops = None,
+            providerAddress = Some("Some address 1"),
+            alphaTwoCountryCode = None,
+            alphaThreeCountryCode = None
+          ))
       )
       implicit lazy val result: WSResponse = {
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -192,10 +204,11 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         insertCyaData(pensionUserDataWithTransferIntoOverseasPension(incompleteViewModel))
 
-        urlPost(fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
+        urlPost(
+          fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
-            follow = false,
-            body = "")
+          follow = false,
+          body = "")
       }
       result.status shouldBe SEE_OTHER
       result.header("location") shouldBe Some(transferPensionSavingsUrl(taxYearEOY))

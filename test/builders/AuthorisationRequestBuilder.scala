@@ -16,8 +16,8 @@
 
 package builders
 
-import models.{AuthorisationRequest}
-import play.api.mvc.{AnyContent}
+import models.AuthorisationRequest
+import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import builders.UserBuilder.aUser
 

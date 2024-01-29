@@ -26,7 +26,7 @@ import utils.PagerDutyHelper.pagerDutyLog
 object NrsSubmissionHttpParser extends APIParser {
   type NrsSubmissionResponse = Either[APIErrorModel, Unit]
   override val parserName: String = "NrsSubmissionHttpParser"
-  override val service: String = "income-tax-nrs-proxy"
+  override val service: String    = "income-tax-nrs-proxy"
 
   implicit object NrsSubmissionHttpReads extends HttpReads[NrsSubmissionResponse] {
     override def read(method: String, url: String, response: HttpResponse): NrsSubmissionResponse = {

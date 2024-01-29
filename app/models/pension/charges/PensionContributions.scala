@@ -25,7 +25,8 @@ case class PensionContributions(pensionSchemeTaxReference: Seq[String],
                                 annualAllowanceTaxPaid: BigDecimal,
                                 isAnnualAllowanceReduced: Option[Boolean],
                                 taperedAnnualAllowance: Option[Boolean],
-                                moneyPurchasedAllowance: Option[Boolean]) extends PensionChargesSubRequestModel {
+                                moneyPurchasedAllowance: Option[Boolean])
+    extends PensionChargesSubRequestModel {
   override def isEmpty: Boolean = false
 }
 

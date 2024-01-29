@@ -21,9 +21,9 @@ import play.api.libs.json.{Json, OFormat}
 
 case class CreateOrUpdatePensionReliefsModel(pensionReliefs: Reliefs) extends PensionRequestModel {
   override def otherSubRequestModelsEmpty[T <: PensionSubRequestModel](subModel: Option[T]): Boolean = true
-  override def createSubModel: PensionRequestModel = this
+  override def createSubModel: PensionRequestModel                                                   = this
 }
 
 object CreateOrUpdatePensionReliefsModel {
-    implicit val format: OFormat[CreateOrUpdatePensionReliefsModel] = Json.format[CreateOrUpdatePensionReliefsModel]
-  }
+  implicit val format: OFormat[CreateOrUpdatePensionReliefsModel] = Json.format[CreateOrUpdatePensionReliefsModel]
+}

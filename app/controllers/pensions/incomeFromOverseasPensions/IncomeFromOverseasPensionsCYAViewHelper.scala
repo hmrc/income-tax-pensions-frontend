@@ -25,44 +25,38 @@ import utils.CYABaseHelper
 
 object IncomeFromOverseasPensionsCYAViewHelper extends CYABaseHelper {
 
-  def summaryListRows(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)
-                     (implicit messages: Messages): Seq[SummaryListRow] = {
+  def summaryListRows(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)(implicit
+      messages: Messages): Seq[SummaryListRow] = {
     val summaryRowForPaymentsFromOverseasPensionsRow = summaryRowForPaymentsFromOverseasPensions(incomeFromOverseasPensionsViewModel, taxYear)
-    val summaryRowForPensionSchemeCodesRows = summaryRowForPensionSchemeCodes(incomeFromOverseasPensionsViewModel, taxYear)
+    val summaryRowForPensionSchemeCodesRows          = summaryRowForPensionSchemeCodes(incomeFromOverseasPensionsViewModel, taxYear)
     (summaryRowForPaymentsFromOverseasPensionsRow +: Seq(summaryRowForPensionSchemeCodesRows)).flatten
   }
 
-
-  private def summaryRowForPaymentsFromOverseasPensions(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)
-                                                       (implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForPaymentsFromOverseasPensions(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)(
+      implicit messages: Messages): Option[SummaryListRow] =
     Some(
       summaryListRowWithBooleanValue(
         "incomeFromOverseasPensions.cya.paymentsFromOverseasPensions",
         incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion,
-        PensionOverseasIncomeStatus.show(taxYear))(messages)
+        PensionOverseasIncomeStatus.show(taxYear)
+      )(messages)
     )
-  }
 
-  private def summaryRowForPensionSchemeCodes(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)
-                                             (implicit messages: Messages): Option[SummaryListRow] = {
-    if (
-      incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion
-        .exists(_ && incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.nonEmpty)
-    ) {
+  private def summaryRowForPensionSchemeCodes(incomeFromOverseasPensionsViewModel: IncomeFromOverseasPensionsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
+    if (incomeFromOverseasPensionsViewModel.paymentsFromOverseasPensionsQuestion
+        .exists(_ && incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.nonEmpty)) {
       val countryNames = for {
         pensionScheme <- incomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes
-      } yield {
-        Countries.getCountryFromCodeWithDefault(pensionScheme.alphaTwoCode)
-      }
+      } yield Countries.getCountryFromCodeWithDefault(pensionScheme.alphaTwoCode)
 
-      Some(summaryListRowWithString(
-        "common.overseas.pension.schemes",
-        Some(countryNames.map(_.toUpperCase).mkString(", ")),
-        CountrySummaryListController.show(taxYear))(messages)
-      )
+      Some(
+        summaryListRowWithString(
+          "common.overseas.pension.schemes",
+          Some(countryNames.map(_.toUpperCase).mkString(", ")),
+          CountrySummaryListController.show(taxYear))(messages))
     } else {
       None
     }
-  }
 
 }

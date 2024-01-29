@@ -27,23 +27,21 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ActionsProvider @Inject()(authAction: AuthorisedAction,
-                                pensionSessionService: PensionSessionService,
-                                errorHandler: ErrorHandler,
-                                appConfig: AppConfig)
-                               (implicit ec: ExecutionContext, val messagesApi: MessagesApi) {
+class ActionsProvider @Inject() (authAction: AuthorisedAction,
+                                 pensionSessionService: PensionSessionService,
+                                 errorHandler: ErrorHandler,
+                                 appConfig: AppConfig)(implicit ec: ExecutionContext, val messagesApi: MessagesApi) {
 
   def endOfYear(taxYear: Int): ActionBuilder[AuthorisationRequest, AnyContent] =
     authAction
       .andThen(TaxYearAction(taxYear)(appConfig, messagesApi))
 
   def userSessionDataFor(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
-     endOfYear(taxYear)
+    endOfYear(taxYear)
       .andThen(UserSessionDataRequestRefinerAction(taxYear, pensionSessionService, errorHandler))
 
- def userPriorAndSessionDataFor(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
-   userSessionDataFor(taxYear)
+  def userPriorAndSessionDataFor(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
+    userSessionDataFor(taxYear)
       .andThen(UserPriorAndSessionDataRequestRefinerAction(taxYear, pensionSessionService, errorHandler))
-  
-}
 
+}

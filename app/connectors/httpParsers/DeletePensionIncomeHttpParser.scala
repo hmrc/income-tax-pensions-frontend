@@ -24,8 +24,7 @@ object DeletePensionIncomeHttpParser extends APIParser {
   type DeletePensionIncomeResponse = Either[APIErrorModel, Unit]
 
   override val parserName: String = "DeletePensionIncomeHttpParser"
-  override val service: String = "income-tax-pensions-frontend"
-
+  override val service: String    = "income-tax-pensions-frontend"
 
   implicit object DeletePensionIncomeHttpReads extends HttpReads[DeletePensionIncomeResponse] {
 

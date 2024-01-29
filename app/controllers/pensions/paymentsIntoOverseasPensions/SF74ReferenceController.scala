@@ -36,20 +36,22 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class SF74ReferenceController @Inject()(actionsProvider: ActionsProvider,
-                                        pensionSessionService: PensionSessionService,
-                                        view: SF74ReferenceView,
-                                        formsProvider: FormsProvider,
-                                        errorHandler: ErrorHandler)
-                                       (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class SF74ReferenceController @Inject() (
+    actionsProvider: ActionsProvider,
+    pensionSessionService: PensionSessionService,
+    view: SF74ReferenceView,
+    formsProvider: FormsProvider,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
       indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, SF74ReferencePage, taxYear) { relief: Relief =>
         relief.sf74Reference match {
           case Some(value) => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear, reliefIndex)))
-          case None => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
+          case None        => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
         }
       }
   }
@@ -57,26 +59,26 @@ class SF74ReferenceController @Inject()(actionsProvider: ActionsProvider,
   def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
       indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, SF74ReferencePage, taxYear) { _: Relief =>
-        formsProvider.sf74ReferenceIdForm.bindFromRequest().fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
-          sf74Reference => updateSessionData(userSessionDataRequest.pensionsUserData, Some(sf74Reference), taxYear, reliefIndex.get))
+        formsProvider.sf74ReferenceIdForm
+          .bindFromRequest()
+          .fold(
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
+            sf74Reference => updateSessionData(userSessionDataRequest.pensionsUserData, Some(sf74Reference), taxYear, reliefIndex.get)
+          )
       }
   }
 
-  private def updateSessionData[T](pensionsUserData: PensionsUserData,
-                                   sf74Reference: Option[String],
-                                   taxYear: Int,
-                                   idx: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
+  private def updateSessionData[T](pensionsUserData: PensionsUserData, sf74Reference: Option[String], taxYear: Int, idx: Int)(implicit
+      request: UserSessionDataRequest[T]): Future[Result] = {
 
     val piopUserData = pensionsUserData.pensions.paymentsIntoOverseasPensions
 
     val updatedCyaModel = pensionsUserData.pensions.copy(
-      paymentsIntoOverseasPensions = piopUserData.copy(
-        reliefs = piopUserData.reliefs.updated(idx, piopUserData.reliefs(idx).copy(sf74Reference = sf74Reference)
-        ))
+      paymentsIntoOverseasPensions =
+        piopUserData.copy(reliefs = piopUserData.reliefs.updated(idx, piopUserData.reliefs(idx).copy(sf74Reference = sf74Reference)))
     )
-    pensionSessionService.createOrUpdateSessionData(request.user,
-      updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(
+      errorHandler.internalServerError()) {
       Redirect(ReliefsSchemeDetailsController.show(taxYear, Some(idx)))
     }
   }

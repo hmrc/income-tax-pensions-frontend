@@ -16,7 +16,10 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
-import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsViewModel, anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel}
+import builders.IncomeFromOverseasPensionsViewModelBuilder.{
+  anIncomeFromOverseasPensionsViewModel,
+  anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel
+}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya, pensionUserDataWithIncomeOverseasPension}
 import models.pension.charges.PensionScheme
 import org.jsoup.Jsoup
@@ -24,21 +27,22 @@ import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromOverseasPensionsPages.{countrySummaryListControllerUrl, incomeFromOverseasPensionsStatus, overseasPensionsSchemeSummaryUrl}
+import utils.PageUrls.IncomeFromOverseasPensionsPages.{
+  countrySummaryListControllerUrl,
+  incomeFromOverseasPensionsStatus,
+  overseasPensionsSchemeSummaryUrl
+}
 import utils.PageUrls.{IncomeFromOverseasPensionsPages, overseasPensionsSummaryUrl}
 import utils.{CommonUtils, PensionsDatabaseHelper}
 
 import java.text.NumberFormat
 import java.util.Locale
 
-class TaxableAmountControllerISpec extends
-  CommonUtils with
-  BeforeAndAfterEach with
-  PensionsDatabaseHelper {
+class TaxableAmountControllerISpec extends CommonUtils with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val formSelector: String = "#main-content > div > div > form"
+    val captionSelector: String        = "#main-content > div > div > header > p"
+    val formSelector: String           = "#main-content > div > div > form"
     val continueButtonSelector: String = "#continue"
 
     val tableCaptionSelector: String = s"#main-content > div > div > table > caption"
@@ -49,9 +53,9 @@ class TaxableAmountControllerISpec extends
     val tableRowHeadSelector: (Int, Int) => String = (row, column) =>
       s"#main-content > div > div > table > tbody > tr:nth-child($row) > th:nth-of-type($column)"
 
-    val labelSelector: Int => String = index => s"form > div:nth-of-type($index) > label"
+    val labelSelector: Int => String     = index => s"form > div:nth-of-type($index) > label"
     val paragraphSelector: Int => String = index => s"#main-content > div > div > p:nth-of-type($index)"
-    val paraItemSelector: Int => String = index => s"#main-content > div > div > ul > li:nth-of-type($index)"
+    val paraItemSelector: Int => String  = index => s"#main-content > div > div > ul > li:nth-of-type($index)"
 
   }
 
@@ -78,70 +82,70 @@ class TaxableAmountControllerISpec extends
 
   object CommonExpectedIndividualEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle: String = "Your taxable amount"
-    val expectedHeading: String = "Your taxable amount"
-    val expectedParagraph: String = "Your taxable amount is the amount you got in foreign pension payments."
-    val expectedFtcrParagraph: String = "Your taxable amount is:"
-    val expectedFtcrParaItem1: String = "the amount you got in foreign pension payments"
-    val expectedFtcrParaItem2: String = "minus any non-UK tax you paid"
-    val expectedTableCaption: String = "Your taxable amount calculation"
-    val expectedTableHeader1: String = "Item"
-    val expectedTableHeader2: String = "Amount"
-    val expectedRowHeading1: String = "Foreign pension payments"
-    val expectedRowHeading2: String = "Non-UK tax deducted"
-    val expectedRowHeading3: String = "Taxable amount"
-    val expectedButtonText: String = "Continue"
+    val expectedTitle: String          = "Your taxable amount"
+    val expectedHeading: String        = "Your taxable amount"
+    val expectedParagraph: String      = "Your taxable amount is the amount you got in foreign pension payments."
+    val expectedFtcrParagraph: String  = "Your taxable amount is:"
+    val expectedFtcrParaItem1: String  = "the amount you got in foreign pension payments"
+    val expectedFtcrParaItem2: String  = "minus any non-UK tax you paid"
+    val expectedTableCaption: String   = "Your taxable amount calculation"
+    val expectedTableHeader1: String   = "Item"
+    val expectedTableHeader2: String   = "Amount"
+    val expectedRowHeading1: String    = "Foreign pension payments"
+    val expectedRowHeading2: String    = "Non-UK tax deducted"
+    val expectedRowHeading3: String    = "Taxable amount"
+    val expectedButtonText: String     = "Continue"
   }
 
   object CommonExpectedAgentEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle: String = "Your client’s taxable amount"
-    val expectedHeading: String = "Your client’s taxable amount"
-    val expectedParagraph: String = "Your client’s taxable amount is the amount they got in foreign pension payments."
-    val expectedFtcrParagraph: String = "Your client’s taxable amount is:"
-    val expectedFtcrParaItem1: String = "the amount your client got in foreign pension payments"
-    val expectedFtcrParaItem2: String = "minus any non-UK tax they paid"
-    val expectedTableCaption: String = "Your client’s taxable amount calculation"
-    val expectedTableHeader1: String = "Item"
-    val expectedTableHeader2: String = "Amount"
-    val expectedRowHeading1: String = "Foreign pension payments"
-    val expectedRowHeading2: String = "Non-UK tax deducted"
-    val expectedRowHeading3: String = "Taxable amount"
-    val expectedButtonText: String = "Continue"
+    val expectedTitle: String          = "Your client’s taxable amount"
+    val expectedHeading: String        = "Your client’s taxable amount"
+    val expectedParagraph: String      = "Your client’s taxable amount is the amount they got in foreign pension payments."
+    val expectedFtcrParagraph: String  = "Your client’s taxable amount is:"
+    val expectedFtcrParaItem1: String  = "the amount your client got in foreign pension payments"
+    val expectedFtcrParaItem2: String  = "minus any non-UK tax they paid"
+    val expectedTableCaption: String   = "Your client’s taxable amount calculation"
+    val expectedTableHeader1: String   = "Item"
+    val expectedTableHeader2: String   = "Amount"
+    val expectedRowHeading1: String    = "Foreign pension payments"
+    val expectedRowHeading2: String    = "Non-UK tax deducted"
+    val expectedRowHeading3: String    = "Taxable amount"
+    val expectedButtonText: String     = "Continue"
   }
 
   object CommonExpectedIndividualCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "Eich cyfanswm trethadwy"
-    val expectedHeading: String = "Eich cyfanswm trethadwy"
-    val expectedParagraph: String = "Eich swm trethadwy yw’r swm a gawsoch mewn taliadau pensiwn tramor."
-    val expectedFtcrParagraph: String = "Eich swm trethadwy yw:"
-    val expectedFtcrParaItem1: String = "y swm a gawsoch mewn taliadau pensiwn tramor"
-    val expectedFtcrParaItem2: String = "llai unrhyw dreth a dalwyd gennych y tu allan i’r DU"
-    val expectedTableCaption: String = "Cyfrifiad eich swm trethadwy"
-    val expectedTableHeader1: String = "Eitem"
-    val expectedTableHeader2: String = "Swm"
-    val expectedRowHeading1: String = "Taliadau pensiwn tramor"
-    val expectedRowHeading3: String = "Swm trethadwy"
-    val expectedRowHeading2: String = "Treth a dalwyd y tu allan i’r DU y didynnwyd"
-    val expectedButtonText: String = "Yn eich blaen"
+    val expectedTitle: String          = "Eich cyfanswm trethadwy"
+    val expectedHeading: String        = "Eich cyfanswm trethadwy"
+    val expectedParagraph: String      = "Eich swm trethadwy yw’r swm a gawsoch mewn taliadau pensiwn tramor."
+    val expectedFtcrParagraph: String  = "Eich swm trethadwy yw:"
+    val expectedFtcrParaItem1: String  = "y swm a gawsoch mewn taliadau pensiwn tramor"
+    val expectedFtcrParaItem2: String  = "llai unrhyw dreth a dalwyd gennych y tu allan i’r DU"
+    val expectedTableCaption: String   = "Cyfrifiad eich swm trethadwy"
+    val expectedTableHeader1: String   = "Eitem"
+    val expectedTableHeader2: String   = "Swm"
+    val expectedRowHeading1: String    = "Taliadau pensiwn tramor"
+    val expectedRowHeading3: String    = "Swm trethadwy"
+    val expectedRowHeading2: String    = "Treth a dalwyd y tu allan i’r DU y didynnwyd"
+    val expectedButtonText: String     = "Yn eich blaen"
   }
 
   object CommonExpectedAgentCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "Swm trethadwy eich cleient"
-    val expectedHeading: String = "Swm trethadwy eich cleient"
-    val expectedParagraph: String = "Swm trethadwy eich cleient yw’r swm a gafodd eich cleient mewn taliadau pensiwn tramor."
-    val expectedFtcrParagraph: String = "Swm trethadwy eich cleient yw:"
-    val expectedFtcrParaItem1: String = "y swm a gafodd eich cleient mewn taliadau pensiwn tramor"
-    val expectedFtcrParaItem2: String = "llai unrhyw dreth a dalwyd gan eich cleient y tu allan i’r DU"
-    val expectedTableCaption: String = "Cyfrifiad swm trethadwy eich cleient"
-    val expectedTableHeader1: String = "Eitem"
-    val expectedTableHeader2: String = "Swm"
-    val expectedRowHeading1: String = "Taliadau pensiwn tramor"
-    val expectedRowHeading3: String = "Swm trethadwy"
-    val expectedRowHeading2: String = "Treth a dalwyd y tu allan i’r DU y didynnwyd"
-    val expectedButtonText: String = "Yn eich blaen"
+    val expectedTitle: String          = "Swm trethadwy eich cleient"
+    val expectedHeading: String        = "Swm trethadwy eich cleient"
+    val expectedParagraph: String      = "Swm trethadwy eich cleient yw’r swm a gafodd eich cleient mewn taliadau pensiwn tramor."
+    val expectedFtcrParagraph: String  = "Swm trethadwy eich cleient yw:"
+    val expectedFtcrParaItem1: String  = "y swm a gafodd eich cleient mewn taliadau pensiwn tramor"
+    val expectedFtcrParaItem2: String  = "llai unrhyw dreth a dalwyd gan eich cleient y tu allan i’r DU"
+    val expectedTableCaption: String   = "Cyfrifiad swm trethadwy eich cleient"
+    val expectedTableHeader1: String   = "Eitem"
+    val expectedTableHeader2: String   = "Swm"
+    val expectedRowHeading1: String    = "Taliadau pensiwn tramor"
+    val expectedRowHeading3: String    = "Swm trethadwy"
+    val expectedRowHeading2: String    = "Treth a dalwyd y tu allan i’r DU y didynnwyd"
+    val expectedButtonText: String     = "Yn eich blaen"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -159,7 +163,7 @@ class TaxableAmountControllerISpec extends
 
         "Redirects to the pension summary page when user data is empty" which {
           implicit val overseasIncomeCountryUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          implicit lazy val result: WSResponse = showPage(user, anPensionsUserDataEmptyCya)
+          implicit lazy val result: WSResponse                 = showPage(user, anPensionsUserDataEmptyCya)
 
           "has SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER
@@ -168,7 +172,7 @@ class TaxableAmountControllerISpec extends
 
         "Redirect to the pension summary page if there is no session data" which {
           implicit val overseasIncomeCountryUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          lazy val result: WSResponse = getResponseNoSessionData()
+          lazy val result: WSResponse                          = getResponseNoSessionData()
 
           "has SEE_OTHER status" in {
             result.status shouldBe SEE_OTHER
@@ -178,8 +182,9 @@ class TaxableAmountControllerISpec extends
 
         "Redirects to the first page in journey if pension payment amount is missing" which {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel
-            .copy(overseasIncomePensionSchemes = Seq(PensionScheme(pensionPaymentAmount = None))))
+          val pensionUserData = pensionUserDataWithIncomeOverseasPension(
+            anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel
+              .copy(overseasIncomePensionSchemes = Seq(PensionScheme(pensionPaymentAmount = None))))
 
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
@@ -191,8 +196,9 @@ class TaxableAmountControllerISpec extends
 
         "Redirects to the first page in journey if pension payment tax paid amount is missing" should {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel
-            .copy(overseasIncomePensionSchemes = Seq(PensionScheme(pensionPaymentTaxPaid = None))))
+          val pensionUserData = pensionUserDataWithIncomeOverseasPension(
+            anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel
+              .copy(overseasIncomePensionSchemes = Seq(PensionScheme(pensionPaymentTaxPaid = None))))
 
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
@@ -203,8 +209,8 @@ class TaxableAmountControllerISpec extends
         }
 
         "redirect to the country summary page when schemes exist but the index is invalid" which {
-          val index = 3
-          implicit val url: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(index)
+          val index                            = 3
+          implicit val url: Int => String      = IncomeFromOverseasPensionsPages.taxableAmountUrl(index)
           implicit lazy val result: WSResponse = showPage(user, aPensionsUserData)
 
           "has a SEE_OTHER(303) status" in {
@@ -215,7 +221,7 @@ class TaxableAmountControllerISpec extends
 
         "renders page when user data is available" which {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          implicit lazy val result: WSResponse = showPage(user, aPensionsUserData)
+          implicit lazy val result: WSResponse         = showPage(user, aPensionsUserData)
 
           "has an OK status" in {
             result.status shouldBe OK
@@ -241,7 +247,7 @@ class TaxableAmountControllerISpec extends
 
         "renders correct pension payment amount from user data" should {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          implicit lazy val result: WSResponse = showPage(user, aPensionsUserData)
+          implicit lazy val result: WSResponse         = showPage(user, aPensionsUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -252,18 +258,18 @@ class TaxableAmountControllerISpec extends
 
         "renders correct taxable amounts from user data" should {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          implicit lazy val result: WSResponse = showPage(user, aPensionsUserData)
+          implicit lazy val result: WSResponse         = showPage(user, aPensionsUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
-          val taxableAmount = aPensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.pensionPaymentAmount
+          val taxableAmount          = aPensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.pensionPaymentAmount
           val formattedTaxableAmount = formatNoZeros(taxableAmount.getOrElse(BigDecimal(0)))
           textOnPageCheck(formattedTaxableAmount, tableSelector(2, 1))
         }
 
         "renders correctly when FTCR value is false" should {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel)
+          val pensionUserData                  = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -293,7 +299,7 @@ class TaxableAmountControllerISpec extends
 
         "shows correctly calculated amounts from user data when FTCR is false" should {
           implicit val taxableAmountUrl: Int => String = IncomeFromOverseasPensionsPages.taxableAmountUrl(0)
-          val pensionUserData = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel)
+          val pensionUserData                  = pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -302,13 +308,13 @@ class TaxableAmountControllerISpec extends
           val formattedPensionPaymentAmount = formatNoZeros(pensionPaymentAmount.getOrElse(BigDecimal(0)))
           textOnPageCheck(formattedPensionPaymentAmount, tableSelector(1, 1))
 
-          val pensionTaxPaid = pensionUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.pensionPaymentTaxPaid
+          val pensionTaxPaid   = pensionUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes.head.pensionPaymentTaxPaid
           val formattedTaxPaid = formatNoZeros(-pensionTaxPaid.getOrElse(BigDecimal(0)))
           textOnPageCheck(formattedTaxPaid, tableSelector(2, 1))
 
           val tax = for {
             amountBeforeTax <- pensionPaymentAmount
-            nonUkTaxPaid <- pensionTaxPaid
+            nonUkTaxPaid    <- pensionTaxPaid
             taxableAmount = amountBeforeTax - nonUkTaxPaid
           } yield taxableAmount
 

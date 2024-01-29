@@ -26,17 +26,22 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
-import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, noSurchargeAmountUrl, taxOnAmountNotSurchargedUrl, unauthorisedPaymentsUrl}
-
+import utils.PageUrls.UnauthorisedPaymentsPages.{
+  checkUnauthorisedPaymentsCyaUrl,
+  noSurchargeAmountUrl,
+  taxOnAmountNotSurchargedUrl,
+  unauthorisedPaymentsUrl
+}
 
 class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
-
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] =
-    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, None),
+    Seq(
+      UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, None),
       UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, None),
       UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, None),
-      UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, None))
+      UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, None)
+    )
 
   private val poundPrefixText = "£"
   private val amountInputName = "amount"
@@ -55,43 +60,41 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
     val buttonText: String
   }
 
-  trait SpecificExpectedResults {
-  }
+  trait SpecificExpectedResults {}
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val hintTextSelector = "#amount-hint"
-    val poundPrefixSelector = ".govuk-input__prefix"
-    val inputSelector = "#amount"
-    val expectedErrorHref = "#amount"
+    val formSelector: String           = "#main-content > div > div > form"
+    val hintTextSelector               = "#amount-hint"
+    val poundPrefixSelector            = ".govuk-input__prefix"
+    val inputSelector                  = "#amount"
+    val expectedErrorHref              = "#amount"
 
     def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle = "Amount that did not result in a surcharge"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val hintText = "For example, £193.52"
-    val noEntryErrorMessage = "Enter the total amount of unauthorised payment that did not result in a surcharge"
-    val invalidFormatErrorText = "Enter the total amount in pounds"
-    val maxAmountErrorText = "The total amount must be less than £100,000,000,000"
-    val buttonText = "Continue"
+    val expectedTitle                  = "Amount that did not result in a surcharge"
+    val expectedErrorTitle             = s"Error: $expectedTitle"
+    val hintText                       = "For example, £193.52"
+    val noEntryErrorMessage            = "Enter the total amount of unauthorised payment that did not result in a surcharge"
+    val invalidFormatErrorText         = "Enter the total amount in pounds"
+    val maxAmountErrorText             = "The total amount must be less than £100,000,000,000"
+    val buttonText                     = "Continue"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle = "Y swm na wnaeth arwain at ordal"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val hintText = "Er enghraifft, £193.52"
-    val noEntryErrorMessage = "Nodwch gyfanswm y taliadau heb awdurdod na wnaethant arwain at ordal"
-    val invalidFormatErrorText = "Nodwch y cyfanswm yn y fformat cywir"
-    val maxAmountErrorText = "Mae’n rhaid i’r cyfanswm fod yn llai na £100,000,000,000"
-    val buttonText = "Yn eich blaen"
+    val expectedTitle                  = "Y swm na wnaeth arwain at ordal"
+    val expectedErrorTitle             = s"Gwall: $expectedTitle"
+    val hintText                       = "Er enghraifft, £193.52"
+    val noEntryErrorMessage            = "Nodwch gyfanswm y taliadau heb awdurdod na wnaethant arwain at ordal"
+    val invalidFormatErrorText         = "Nodwch y cyfanswm yn y fformat cywir"
+    val maxAmountErrorText             = "Mae’n rhaid i’r cyfanswm fod yn llai na £100,000,000,000"
+    val buttonText                     = "Yn eich blaen"
   }
-
 
   ".show" should {
     userScenarios.foreach { user =>
@@ -100,7 +103,7 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
 
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         "render page with no pre filling" which {
-          val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
+          val viewModel       = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
           val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
           lazy val result: WSResponse = showPage(user, pensionUserData)
@@ -124,8 +127,8 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
 
         "render page with pre-filled cya data" which {
           val existingAmount: BigDecimal = 999.88
-          val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = Some(existingAmount))
-          val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+          val viewModel                  = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = Some(existingAmount))
+          val pensionUserData            = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
           lazy val result: WSResponse = showPage(user, pensionUserData)
 
@@ -149,8 +152,8 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
     }
 
     "redirect to the first page in journey if the previous question has not been answered" in {
-      val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeQuestion = None)
-      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+      val viewModel               = anUnauthorisedPaymentsViewModel.copy(noSurchargeQuestion = None)
+      val pensionUserData         = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
       lazy val result: WSResponse = showPage(pensionUserData)
 
       result.status shouldBe SEE_OTHER
@@ -177,10 +180,10 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
 
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         "return an error when form is submitted with no input entry for amount not surcharge page" which {
-          val amountEmpty = ""
+          val amountEmpty                    = ""
           val emptyForm: Map[String, String] = Map(AmountForm.amount -> amountEmpty)
-          val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
-          val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+          val viewModel                      = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
+          val pensionUserData                = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
           lazy val result: WSResponse = submitPage(user, pensionUserData, emptyForm)
 
@@ -204,10 +207,10 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
         }
 
         "return an error when form is submitted with an invalid format input" which {
-          val amountInvalidFormat = "invalid"
+          val amountInvalidFormat                    = "invalid"
           val invalidFormatForm: Map[String, String] = Map(AmountForm.amount -> amountInvalidFormat)
-          val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
-          val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+          val viewModel                              = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
+          val pensionUserData                        = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
           lazy val result: WSResponse = submitPage(user, pensionUserData, invalidFormatForm)
 
@@ -231,10 +234,10 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
         }
 
         "return an error when form is submitted with input over maximum allowed value" which {
-          val amountOverMaximum = "100,000,000,000"
+          val amountOverMaximum                    = "100,000,000,000"
           val overMaximumForm: Map[String, String] = Map(AmountForm.amount -> amountOverMaximum)
-          val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
-          val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+          val viewModel                            = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
+          val pensionUserData                      = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
           lazy val result: WSResponse = submitPage(user, pensionUserData, overMaximumForm)
 
@@ -260,12 +263,10 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
     }
 
     "redirect to the no surcharge tax amount page when a valid amount is submitted and update the session data" which {
-      val validAmount = "100.22"
+      val validAmount                    = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
-      val viewModel = anUnauthorisedPaymentsEmptyViewModel.copy(
-        surchargeQuestion = Some(false),
-        noSurchargeQuestion = Some(true),
-        noSurchargeAmount = None)
+      val viewModel =
+        anUnauthorisedPaymentsEmptyViewModel.copy(surchargeQuestion = Some(false), noSurchargeQuestion = Some(true), noSurchargeAmount = None)
       val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
       lazy val result: WSResponse = submitPage(pensionUserData, validForm)
@@ -282,10 +283,10 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
     }
 
     "redirect to the CYA page when a valid amount is submitted and update the session amount, completing the journey" which {
-      val validAmount = "100.22"
+      val validAmount                    = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
-      val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
-      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+      val viewModel                      = anUnauthorisedPaymentsViewModel.copy(noSurchargeAmount = None)
+      val pensionUserData                = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
       lazy val result: WSResponse = submitPage(pensionUserData, validForm)
 
@@ -301,10 +302,10 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
     }
 
     "redirect to the first page in journey if user submits request directly without providing the prior information" which {
-      val validAmount = "100.22"
+      val validAmount                    = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
-      val viewModel = anUnauthorisedPaymentsEmptyViewModel.copy(noSurchargeQuestion = None)
-      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+      val viewModel                      = anUnauthorisedPaymentsEmptyViewModel.copy(noSurchargeQuestion = None)
+      val pensionUserData                = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
 
       implicit lazy val result: WSResponse = submitPage(pensionUserData, validForm)
 
@@ -318,8 +319,8 @@ class NoSurchargeAmountControllerISpec extends CommonUtils with BeforeAndAfterEa
     }
 
     "redirect to the CYA page if there is no session data" which {
-      val validAmount = "100.22"
-      val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
+      val validAmount                      = "100.22"
+      val validForm: Map[String, String]   = Map(AmountForm.amount -> validAmount)
       implicit lazy val result: WSResponse = submitPageNoSessionData(validForm)
 
       "has an SEE_OTHER status" in {

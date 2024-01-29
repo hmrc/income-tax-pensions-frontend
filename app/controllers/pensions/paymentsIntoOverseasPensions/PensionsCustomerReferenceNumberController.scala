@@ -38,47 +38,53 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: ActionsProvider,
-                                                          pensionsCustomerReferenceNumberView: PensionsCustomerReferenceNumberView,
-                                                          pensionSessionService: PensionSessionService,
-                                                          errorHandler: ErrorHandler
-                                                         )(implicit val mcc: MessagesControllerComponents,
-                                                           appConfig: AppConfig,
-                                                           clock: Clock) extends FrontendController(mcc) with I18nSupport {
+class PensionsCustomerReferenceNumberController @Inject() (
+    actionsProvider: ActionsProvider,
+    pensionsCustomerReferenceNumberView: PensionsCustomerReferenceNumberView,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def referenceForm(user: User): Form[String] = PensionCustomerReferenceNumberForm.pensionCustomerReferenceNumberForm(
     incorrectFormatMsg = s"overseasPension.pensionsCustomerReferenceNumber.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionDataRequest =>
-      index match {
-        case Some(_) =>
-          indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, index, PensionsCustomerReferenceNumberPage, taxYear) { relief =>
-            relief.customerReference match {
-              case Some(customerReferenceNumber) =>
-                Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user)
-                  .fill(customerReferenceNumber),
-                  taxYear, index)))
-              case None =>
-                Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, index)))
-            }
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionDataRequest =>
+    index match {
+      case Some(_) =>
+        indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, index, PensionsCustomerReferenceNumberPage, taxYear) { relief =>
+          relief.customerReference match {
+            case Some(customerReferenceNumber) =>
+              Future.successful(
+                Ok(
+                  pensionsCustomerReferenceNumberView(
+                    referenceForm(sessionDataRequest.user)
+                      .fill(customerReferenceNumber),
+                    taxYear,
+                    index)))
+            case None =>
+              Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, index)))
           }
-        case None =>
-          val checkRedirect = journeyCheck(PensionsCustomerReferenceNumberPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(sessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
+        }
+      case None =>
+        val checkRedirect = journeyCheck(PensionsCustomerReferenceNumberPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(sessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+          data: PensionsUserData =>
             Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, index)))
-          }
-      }
+        }
+    }
   }
 
   def submit(taxYear: Int, optIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionDataRequest =>
-
       val piop = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions
 
       def createOrUpdateSessionData(updatedCyaModel: PensionsCYAModel, newIndex: Some[Int]): Future[Result] =
-        pensionSessionService.createOrUpdateSessionData(sessionDataRequest.user, updatedCyaModel, taxYear,
+        pensionSessionService.createOrUpdateSessionData(
+          sessionDataRequest.user,
+          updatedCyaModel,
+          taxYear,
           sessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
           schemeIsFinishedCheck(
             updatedCyaModel.paymentsIntoOverseasPensions.reliefs,
@@ -90,35 +96,38 @@ class PensionsCustomerReferenceNumberController @Inject()(actionsProvider: Actio
       optIndex match {
         case None =>
           val checkRedirect = journeyCheck(PensionsCustomerReferenceNumberPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(sessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
-            referenceForm(sessionDataRequest.user).bindFromRequest().fold(
-              formWithErrors =>
-                Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, optIndex))),
-              pensionCustomerReferenceNumber => {
-                val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
-                  paymentsIntoOverseasPensions = piop.copy(
-                    reliefs = piop.reliefs :+ Relief(customerReference = Some(pensionCustomerReferenceNumber))
-                  ))
-                createOrUpdateSessionData(updatedCyaModel, Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))
-              })
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+            data: PensionsUserData =>
+              referenceForm(sessionDataRequest.user)
+                .bindFromRequest()
+                .fold(
+                  formWithErrors => Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, optIndex))),
+                  pensionCustomerReferenceNumber => {
+                    val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+                      paymentsIntoOverseasPensions = piop.copy(
+                        reliefs = piop.reliefs :+ Relief(customerReference = Some(pensionCustomerReferenceNumber))
+                      ))
+                    createOrUpdateSessionData(updatedCyaModel, Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))
+                  }
+                )
           }
         case Some(index) =>
           indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, Some(index), PensionsCustomerReferenceNumberPage, taxYear) { _: Relief =>
-            referenceForm(sessionDataRequest.user).bindFromRequest().fold(
-              formWithErrors =>
-                Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, Some(index)))),
-
-              pensionCustomerReferenceNumber => {
-                val updatedCyaModel: PensionsCYAModel = sessionDataRequest.pensionsUserData.pensions.copy(
-                  paymentsIntoOverseasPensions = piop.copy(
-                    reliefs = piop.reliefs.updated(
-                      index,
-                      piop.reliefs(index).copy(customerReference = Some(pensionCustomerReferenceNumber))
-                    )))
-                val currentIndex = optIndex.fold(
-                  Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))(Some(_))
-                createOrUpdateSessionData(updatedCyaModel, currentIndex)
-              })
+            referenceForm(sessionDataRequest.user)
+              .bindFromRequest()
+              .fold(
+                formWithErrors => Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, Some(index)))),
+                pensionCustomerReferenceNumber => {
+                  val updatedCyaModel: PensionsCYAModel = sessionDataRequest.pensionsUserData.pensions.copy(
+                    paymentsIntoOverseasPensions = piop.copy(
+                      reliefs = piop.reliefs.updated(
+                        index,
+                        piop.reliefs(index).copy(customerReference = Some(pensionCustomerReferenceNumber))
+                      )))
+                  val currentIndex = optIndex.fold(Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))(Some(_))
+                  createOrUpdateSessionData(updatedCyaModel, currentIndex)
+                }
+              )
           }
       }
   }

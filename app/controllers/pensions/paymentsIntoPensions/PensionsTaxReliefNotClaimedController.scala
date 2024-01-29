@@ -36,65 +36,58 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class PensionsTaxReliefNotClaimedController @Inject()(authAction: AuthorisedAction,
-                                                      pensionSessionService: PensionSessionService,
-                                                      errorHandler: ErrorHandler,
-                                                      pensionsTaxReliefNotClaimedView: PensionsTaxReliefNotClaimedView,
-                                                      formProvider: PaymentsIntoPensionFormProvider)
-                                                     (implicit val mcc: MessagesControllerComponents,
-                                                      appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport {
+class PensionsTaxReliefNotClaimedController @Inject() (
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    pensionsTaxReliefNotClaimedView: PensionsTaxReliefNotClaimedView,
+    formProvider: PaymentsIntoPensionFormProvider)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
-    implicit request =>
-      pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-        optData =>
-          val checkRedirect = journeyCheck(TaxReliefNotClaimedPage, _, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) {
-            data =>
-
-              val form = formProvider.pensionsTaxReliefNotClaimedForm(request.user.isAgent)
-              data.pensions.paymentsIntoPension.pensionTaxReliefNotClaimedQuestion match {
-                case Some(question) => Future.successful(Ok(pensionsTaxReliefNotClaimedView(form.fill(question), taxYear)))
-                case None => Future.successful(Ok(pensionsTaxReliefNotClaimedView(form, taxYear)))
-              }
-          }
+  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+      val checkRedirect = journeyCheck(TaxReliefNotClaimedPage, _, taxYear)
+      redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+        val form = formProvider.pensionsTaxReliefNotClaimedForm(request.user.isAgent)
+        data.pensions.paymentsIntoPension.pensionTaxReliefNotClaimedQuestion match {
+          case Some(question) => Future.successful(Ok(pensionsTaxReliefNotClaimedView(form.fill(question), taxYear)))
+          case None           => Future.successful(Ok(pensionsTaxReliefNotClaimedView(form, taxYear)))
+        }
       }
+    }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authAction.async {
-    implicit request =>
-      formProvider.pensionsTaxReliefNotClaimedForm(request.user.isAgent).bindFromRequest().fold(
+  def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
+    formProvider
+      .pensionsTaxReliefNotClaimedForm(request.user.isAgent)
+      .bindFromRequest()
+      .fold(
         formWithErrors => Future.successful(BadRequest(pensionsTaxReliefNotClaimedView(formWithErrors, taxYear))),
-        yesNo => {
-          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-            optData =>
-              val checkRedirect = journeyCheck(TaxReliefNotClaimedPage, _, taxYear)
-              redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) {
-                data =>
-
-                  val pensionsCYAModel: PensionsCYAModel = data.pensions
-                  val viewModel: PaymentsIntoPensionsViewModel = pensionsCYAModel.paymentsIntoPension
-                  val updatedCyaModel: PensionsCYAModel = {
-                    pensionsCYAModel.copy(
-                      paymentsIntoPension = viewModel.copy(
-                        pensionTaxReliefNotClaimedQuestion = Some(yesNo),
-                        retirementAnnuityContractPaymentsQuestion = if (yesNo) viewModel.retirementAnnuityContractPaymentsQuestion else None,
-                        totalRetirementAnnuityContractPayments = if (yesNo) viewModel.totalRetirementAnnuityContractPayments else None,
-                        workplacePensionPaymentsQuestion = if (yesNo) viewModel.workplacePensionPaymentsQuestion else None,
-                        totalWorkplacePensionPayments = if (yesNo) viewModel.totalWorkplacePensionPayments else None
-                      )
-                    )
-                  }
-                  val redirectLocation =
-                    if (yesNo) RetirementAnnuityController.show(taxYear) else PaymentsIntoPensionsCYAController.show(taxYear)
-                  pensionSessionService.createOrUpdateSessionData(request.user,
-                    updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                    isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
-                  }
+        yesNo =>
+          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+            val checkRedirect = journeyCheck(TaxReliefNotClaimedPage, _, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+              val pensionsCYAModel: PensionsCYAModel       = data.pensions
+              val viewModel: PaymentsIntoPensionsViewModel = pensionsCYAModel.paymentsIntoPension
+              val updatedCyaModel: PensionsCYAModel =
+                pensionsCYAModel.copy(
+                  paymentsIntoPension = viewModel.copy(
+                    pensionTaxReliefNotClaimedQuestion = Some(yesNo),
+                    retirementAnnuityContractPaymentsQuestion = if (yesNo) viewModel.retirementAnnuityContractPaymentsQuestion else None,
+                    totalRetirementAnnuityContractPayments = if (yesNo) viewModel.totalRetirementAnnuityContractPayments else None,
+                    workplacePensionPaymentsQuestion = if (yesNo) viewModel.workplacePensionPaymentsQuestion else None,
+                    totalWorkplacePensionPayments = if (yesNo) viewModel.totalWorkplacePensionPayments else None
+                  )
+                )
+              val redirectLocation =
+                if (yesNo) RetirementAnnuityController.show(taxYear) else PaymentsIntoPensionsCYAController.show(taxYear)
+              pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                errorHandler.internalServerError()) {
+                isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
               }
+            }
           }
-        }
       )
   }
 

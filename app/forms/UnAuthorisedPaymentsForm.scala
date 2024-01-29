@@ -24,28 +24,26 @@ import play.api.data.validation.{Constraint, Invalid, Valid}
 
 object UnAuthorisedPaymentsForm {
 
-  val yesSurchargeValue = "yesSurchargeValue"
+  val yesSurchargeValue    = "yesSurchargeValue"
   val yesNotSurchargeValue = "yesNotSurchargeValue"
-  val noValue = "noValue"
+  val noValue              = "noValue"
 
   case class UnAuthorisedPaymentsModel(unauthorisedPayments: Seq[String]) {
-    val containsYesSurcharge: Boolean = unauthorisedPayments.contains(yesSurchargeValue)
+    val containsYesSurcharge: Boolean    = unauthorisedPayments.contains(yesSurchargeValue)
     val containsYesNotSurcharge: Boolean = unauthorisedPayments.contains(yesNotSurchargeValue)
-    val containsNoVal: Boolean = unauthorisedPayments.contains(noValue)
+    val containsNoVal: Boolean           = unauthorisedPayments.contains(noValue)
   }
 
   val unauthorisedPaymentsType: String = "unauthorisedPayments"
 
-  val allEmpty: String => Constraint[UnAuthorisedPaymentsModel] = msgKey => constraint[UnAuthorisedPaymentsModel](
-    unauthorisedPayments => {
+  val allEmpty: String => Constraint[UnAuthorisedPaymentsModel] = msgKey =>
+    constraint[UnAuthorisedPaymentsModel] { unauthorisedPayments =>
       if (!unauthorisedPayments.containsYesSurcharge & !unauthorisedPayments.containsYesNotSurcharge & !unauthorisedPayments.containsNoVal) {
         Invalid(msgKey)
-      }
-      else {
+      } else {
         Valid
       }
     }
-  )
 
   def unAuthorisedPaymentsTypeForm(user: User): Form[UnAuthorisedPaymentsModel] = {
     val agentIndividual = if (user.isAgent) "agent" else "individual"

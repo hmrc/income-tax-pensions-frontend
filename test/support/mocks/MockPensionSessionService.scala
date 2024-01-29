@@ -33,34 +33,34 @@ trait MockPensionSessionService extends MockFactory {
 
   def mockGetPriorData(taxYear: Int,
                        user: User,
-                       result: IncomeTaxUserDataResponse): CallHandler3[Int, User, HeaderCarrier, Future[IncomeTaxUserDataResponse]] = {
-    (mockPensionSessionService.getPriorData(_: Int, _: User)(_: HeaderCarrier))
+                       result: IncomeTaxUserDataResponse): CallHandler3[Int, User, HeaderCarrier, Future[IncomeTaxUserDataResponse]] =
+    (mockPensionSessionService
+      .getPriorData(_: Int, _: User)(_: HeaderCarrier))
       .expects(taxYear, user, *)
       .returning(Future.successful(result))
-  }
-  
-  def mockGetPensionsSessionDataResult(taxYear: Int, result: Result):
-  CallHandler4[Int, User, Option[PensionsUserData] => Future[Result], Request[_], Future[Result]] = {
-    (mockPensionSessionService.getPensionsSessionDataResult(_: Int, _: User)
-    (_: Option[PensionsUserData] => Future[Result])(_: Request[_]))
+
+  def mockGetPensionsSessionDataResult(
+      taxYear: Int,
+      result: Result): CallHandler4[Int, User, Option[PensionsUserData] => Future[Result], Request[_], Future[Result]] =
+    (mockPensionSessionService
+      .getPensionsSessionDataResult(_: Int, _: User)(_: Option[PensionsUserData] => Future[Result])(_: Request[_]))
       .expects(taxYear, *, *, *)
       .returns(Future.successful(result))
       .anyNumberOfTimes()
-  }
 
-  def mockGetPensionSessionData(taxYear: Int, result: Either[Unit, Option[PensionsUserData]]):
-  CallHandler2[Int, User, Future[Either[Unit, Option[PensionsUserData]]]] = {
-    (mockPensionSessionService.getPensionSessionData(_: Int, _: User))
+  def mockGetPensionSessionData(
+      taxYear: Int,
+      result: Either[Unit, Option[PensionsUserData]]): CallHandler2[Int, User, Future[Either[Unit, Option[PensionsUserData]]]] =
+    (mockPensionSessionService
+      .getPensionSessionData(_: Int, _: User))
       .expects(taxYear, *)
       .returns(Future.successful(result))
       .anyNumberOfTimes()
-  }
 
-
-  def mockCreateOrUpdateSessionData(userData: PensionsUserData, result: Either[DatabaseError, Unit] = Right(())): Unit = {
-    (mockPensionSessionService.createOrUpdateSessionData(_: PensionsUserData))
+  def mockCreateOrUpdateSessionData(userData: PensionsUserData, result: Either[DatabaseError, Unit] = Right(())): Unit =
+    (mockPensionSessionService
+      .createOrUpdateSessionData(_: PensionsUserData))
       .expects(userData)
       .returns(Future.successful(result))
       .anyNumberOfTimes()
-  }
 }

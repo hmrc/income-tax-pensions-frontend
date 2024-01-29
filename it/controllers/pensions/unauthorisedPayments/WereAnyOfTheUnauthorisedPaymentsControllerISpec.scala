@@ -33,11 +33,11 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
+    val formSelector: String           = "#main-content > div > div > form"
+    val yesSelector                    = "#value"
+    val noSelector                     = "#value-no"
   }
 
   trait SpecificExpectedResults {
@@ -55,49 +55,49 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "Were any of the unauthorised payments from a UK pension scheme?"
-    val expectedHeading = "Were any of the unauthorised payments from a UK pension scheme?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedTitle       = "Were any of the unauthorised payments from a UK pension scheme?"
+    val expectedHeading     = "Were any of the unauthorised payments from a UK pension scheme?"
+    val expectedErrorTitle  = s"Error: $expectedTitle"
     val noEntryErrorMessage = "Select yes if you got an unauthorised payment from a pension scheme"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
-    val expectedHeading = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val expectedTitle       = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
+    val expectedHeading     = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
+    val expectedErrorTitle  = s"Gwall: $expectedTitle"
     val noEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch daliad heb awdurdod o gynllun pensiwn"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "Were any of the unauthorised payments from a UK pension scheme?"
-    val expectedHeading = "Were any of the unauthorised payments from a UK pension scheme?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedTitle       = "Were any of the unauthorised payments from a UK pension scheme?"
+    val expectedHeading     = "Were any of the unauthorised payments from a UK pension scheme?"
+    val expectedErrorTitle  = s"Error: $expectedTitle"
     val noEntryErrorMessage = "Select yes if your client got an unauthorised payment from a pension scheme"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
-    val expectedHeading = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val expectedTitle       = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
+    val expectedHeading     = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
+    val expectedErrorTitle  = s"Gwall: $expectedTitle"
     val noEntryErrorMessage = "Select yes if your client got an unauthorised payment from a pension scheme"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val expectedTitle = "Were any of the unauthorised payments from a UK pension scheme?"
-    val expectedHeading = "Were any of the unauthorised payments from a UK pension scheme?"
-    val yesText = "Yes"
-    val noText = "No"
+    val expectedButtonText             = "Continue"
+    val expectedTitle                  = "Were any of the unauthorised payments from a UK pension scheme?"
+    val expectedHeading                = "Were any of the unauthorised payments from a UK pension scheme?"
+    val yesText                        = "Yes"
+    val noText                         = "No"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
-    val expectedHeading = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
-    val yesText = "Iawn"
-    val noText = "Na"
+    val expectedButtonText             = "Yn eich blaen"
+    val expectedTitle                  = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
+    val expectedHeading                = "A ddaeth unrhyw rai o’r taliadau heb awdurdod o gynllun pensiwn yn y DU?"
+    val yesText                        = "Iawn"
+    val noText                         = "Na"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
@@ -119,8 +119,12 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel.copy(ukPensionSchemesQuestion = None)))
-            urlGet(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {
@@ -147,8 +151,11 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
             val viewModel = anUnauthorisedPaymentsViewModel.copy()
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
             authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)),
+              user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {
@@ -173,8 +180,11 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has an SEE_OTHER status" in {
@@ -195,8 +205,13 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)),
+              body = form,
+              follow = false,
+              welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has the correct status" in {
@@ -226,12 +241,15 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        val viewModel = anUnauthorisedPaymentsViewModel.copy(
-          ukPensionSchemesQuestion = None, pensionSchemeTaxReference = None)
+        val viewModel = anUnauthorisedPaymentsViewModel.copy(ukPensionSchemesQuestion = None, pensionSchemeTaxReference = None)
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status and redirect to Pension Scheme Tax Reference (PSTR) Page" in {
@@ -241,7 +259,7 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
 
       "updates ukPensionSchemesQuestion to Some(true)" in {
         val expectedViewModel = anUnauthorisedPaymentsEmptySchemesViewModel.copy(ukPensionSchemesQuestion = Some(true))
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        lazy val cyaModel     = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.unauthorisedPayments shouldBe expectedViewModel
       }
     }
@@ -253,8 +271,12 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
         dropPensionsDB()
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel))
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status and redirect to Pension Scheme Tax Reference (PSTR) Page" in {
@@ -273,12 +295,15 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        val viewModel = anUnauthorisedPaymentsViewModel.copy(
-          ukPensionSchemesQuestion = None, pensionSchemeTaxReference = None)
+        val viewModel = anUnauthorisedPaymentsViewModel.copy(ukPensionSchemesQuestion = None, pensionSchemeTaxReference = None)
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel))
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status and redirect to Check your unauthorised payments page" in {
@@ -299,8 +324,12 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
         dropPensionsDB()
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel))
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status and redirect to Check your unauthorised payments page" in {
@@ -319,8 +348,12 @@ class WereAnyOfTheUnauthorisedPaymentsControllerISpec extends IntegrationTest wi
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(wereAnyOfTheUnauthorisedPaymentsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
 
       }
 

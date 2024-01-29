@@ -25,14 +25,15 @@ import play.api.data.validation.Constraint
 object QOPSReferenceNumberForm extends InputFilters {
 
   val qopsReferenceId: String = "qopsReferenceId"
-  val regex: String = "^$|\\d{6}$"
+  val regex: String           = "^$|\\d{6}$"
 
+  def validateFormat(message: String): Constraint[String] = validateChar(regex)(message)
 
-  def validateFormat(message : String): Constraint[String] = validateChar(regex)(message)
-
-  def qopsReferenceNumberForm(incorrectFormatMsg : String): Form[String] = Form(
-    qopsReferenceId -> trimmedText.transform[String](filter, identity).verifying(
-      validateFormat(incorrectFormatMsg)
-    )
+  def qopsReferenceNumberForm(incorrectFormatMsg: String): Form[String] = Form(
+    qopsReferenceId -> trimmedText
+      .transform[String](filter, identity)
+      .verifying(
+        validateFormat(incorrectFormatMsg)
+      )
   )
 }

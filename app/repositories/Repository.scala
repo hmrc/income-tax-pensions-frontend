@@ -35,7 +35,7 @@ trait Repository {
   def handleEncryptionDecryptionException[T](exception: Exception, startOfMessage: String): Left[DatabaseError, T] = {
     val message: String = exception match {
       case exception: EncryptionDecryptionException => s"${exception.failureReason} ${exception.failureMessage}"
-      case _ => exception.getMessage
+      case _                                        => exception.getMessage
     }
 
     pagerDutyLog(ENCRYPTION_DECRYPTION_ERROR, s"$startOfMessage $message")

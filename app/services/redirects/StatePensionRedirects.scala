@@ -22,17 +22,16 @@ import models.pension.statebenefits.IncomeFromPensionsViewModel
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
 
-object StatePensionRedirects { //scalastyle:off magic.number
+object StatePensionRedirects { // scalastyle:off magic.number
 
   def cyaPageCall(taxYear: Int): Call = StatePensionCYAController.show(taxYear)
 
-  def statePensionIsFinishedCheck(cya: IncomeFromPensionsViewModel, taxYear: Int, continueRedirect: Call): Result = {
+  def statePensionIsFinishedCheck(cya: IncomeFromPensionsViewModel, taxYear: Int, continueRedirect: Call): Result =
     if (cya.isFinishedStatePension) {
       Redirect(cyaPageCall(taxYear))
     } else {
       Redirect(continueRedirect)
     }
-  }
 
   def journeyCheck(currentPage: StatePensionPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
     val incomeFromPensions = cya.incomeFromPensions
@@ -57,11 +56,15 @@ object StatePensionRedirects { //scalastyle:off magic.number
     }
 
     Map(
-      1 -> isTrue, 3 -> isTrue, 6 -> isTrue, 7 -> isTrue,
+      1 -> isTrue,
+      3 -> isTrue,
+      6 -> isTrue,
+      7 -> isTrue,
       // 2 need Q1: statePension = true
       2 -> statePensionQuestionFn,
       // 4 and 5 need Q1: statePensionLumpSome = true
-      4 -> lumpSumQuestionFn, 5 -> lumpSumQuestionFn
+      4 -> lumpSumQuestionFn,
+      5 -> lumpSumQuestionFn
     )
   }
 
@@ -70,28 +73,21 @@ object StatePensionRedirects { //scalastyle:off magic.number
 
   private val prevQuestionIsAnsweredMap: Map[Int, IncomeFromPensionsViewModel => Boolean] = Map(
     1 -> { _: IncomeFromPensionsViewModel => true },
-
     2 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel => incomeFromPensionsViewModel.statePension.exists(_.amount.isDefined) },
-
     3 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel =>
       if (isPageValidInJourney(2, incomeFromPensionsViewModel))
         incomeFromPensionsViewModel.statePension.exists(_.startDateQuestion.isDefined)
       else incomeFromPensionsViewModel.statePension.exists(_.amountPaidQuestion.isDefined)
     },
-
     4 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel => incomeFromPensionsViewModel.statePensionLumpSum.exists(_.amount.isDefined) },
-
     5 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel =>
-      incomeFromPensionsViewModel.statePensionLumpSum.exists(spls =>
-        spls.taxPaidQuestion.exists(x => if (x) spls.taxPaid.isDefined else true))
+      incomeFromPensionsViewModel.statePensionLumpSum.exists(spls => spls.taxPaidQuestion.exists(x => if (x) spls.taxPaid.isDefined else true))
     },
-
     6 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel =>
       if (isPageValidInJourney(5, incomeFromPensionsViewModel))
         incomeFromPensionsViewModel.statePensionLumpSum.exists(_.startDateQuestion.isDefined)
       else incomeFromPensionsViewModel.statePensionLumpSum.isDefined
     },
-
     7 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel => incomeFromPensionsViewModel.isFinishedStatePension }
   )
 

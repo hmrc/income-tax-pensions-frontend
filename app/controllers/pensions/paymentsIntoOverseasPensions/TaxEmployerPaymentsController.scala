@@ -38,13 +38,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
-                                              taxEmployerPaymentsView: TaxEmployerPaymentsView,
-                                              pensionSessionService: PensionSessionService,
-                                              errorHandler: ErrorHandler)
-                                             (implicit val mcc: MessagesControllerComponents,
-                                              appConfig: AppConfig, clock: Clock,
-                                              ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+class TaxEmployerPaymentsController @Inject() (
+    authAction: AuthorisedAction,
+    taxEmployerPaymentsView: TaxEmployerPaymentsView,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"overseasPension.taxEmployerPayments.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
@@ -54,42 +54,40 @@ class TaxEmployerPaymentsController @Inject()(authAction: AuthorisedAction,
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) =>
-
         val checkRedirect = journeyCheck(TaxEmployerPaymentsPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, optPensionUserData, cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
           data.pensions.paymentsIntoOverseasPensions.taxPaidOnEmployerPaymentsQuestion match {
-            case Some(value) => Future.successful(Ok(taxEmployerPaymentsView(
-              yesNoForm(request.user).fill(value), taxYear)))
-            case None => Future.successful(Ok(taxEmployerPaymentsView(yesNoForm(request.user), taxYear)))
+            case Some(value) => Future.successful(Ok(taxEmployerPaymentsView(yesNoForm(request.user).fill(value), taxYear)))
+            case None        => Future.successful(Ok(taxEmployerPaymentsView(yesNoForm(request.user), taxYear)))
           }
         }
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    yesNoForm(request.user).bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(taxEmployerPaymentsView(formWithErrors, taxYear))),
-      yesNo => {
-        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Right(Some(data)) =>
+    yesNoForm(request.user)
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(taxEmployerPaymentsView(formWithErrors, taxYear))),
+        yesNo =>
+          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+            case Right(Some(data)) =>
+              val cyaModel: PensionsCYAModel = data.pensions
+              val updatedViewModel: PaymentsIntoOverseasPensionsViewModel =
+                if (yesNo) cyaModel.paymentsIntoOverseasPensions.copy(taxPaidOnEmployerPaymentsQuestion = Some(true), reliefs = Seq.empty)
+                else cyaModel.paymentsIntoOverseasPensions.copy(taxPaidOnEmployerPaymentsQuestion = Some(false))
+              val updatedCyaModel: PensionsCYAModel = cyaModel.copy(paymentsIntoOverseasPensions = updatedViewModel)
 
-            val cyaModel: PensionsCYAModel = data.pensions
-            val updatedViewModel: PaymentsIntoOverseasPensionsViewModel =
-              if (yesNo) cyaModel.paymentsIntoOverseasPensions.copy(taxPaidOnEmployerPaymentsQuestion = Some(true), reliefs = Seq.empty)
-              else cyaModel.paymentsIntoOverseasPensions.copy(taxPaidOnEmployerPaymentsQuestion = Some(false))
-            val updatedCyaModel: PensionsCYAModel = cyaModel.copy(paymentsIntoOverseasPensions = updatedViewModel)
+              val redirectLocation =
+                if (yesNo) cyaPageCall(taxYear)
+                else redirectForSchemeLoop(updatedCyaModel.paymentsIntoOverseasPensions.reliefs, taxYear)
 
-            val redirectLocation =
-              if (yesNo) cyaPageCall(taxYear)
-              else redirectForSchemeLoop(updatedCyaModel.paymentsIntoOverseasPensions.reliefs, taxYear)
-
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
-            }
-          case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
-        }
-      }
-    )
+              pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                errorHandler.internalServerError()) {
+                isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
+              }
+            case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+          }
+      )
   }
 }

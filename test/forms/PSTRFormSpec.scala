@@ -23,7 +23,7 @@ class PSTRFormSpec extends UnitTest {
   "The Pension Scheme Tax Reference Form regex" when {
 
     "provided a correct PSTR that starts with 8 numbers then one 'R' then one other letter" should {
-      val pstr = "12345678RB"
+      val pstr  = "12345678RB"
       val pstr2 = "45671238RG"
       val pstr3 = "12567348Rc"
       val pstr4 = "12567348rc"
@@ -39,7 +39,7 @@ class PSTRFormSpec extends UnitTest {
     }
 
     "provided an incorrect PSTR that does not contain an 'R' in the 9th position" should {
-      val pstr = "12345781c"
+      val pstr  = "12345781c"
       val pstr2 = "1234578ac"
       val pstr3 = "125734RdR"
 
@@ -51,7 +51,7 @@ class PSTRFormSpec extends UnitTest {
     }
 
     "provided an incorrect PSTR that contains too few characters" should {
-      val pstr = "1234567Rr"
+      val pstr  = "1234567Rr"
       val pstr2 = "12345678R"
 
       "return false" in {
@@ -61,7 +61,7 @@ class PSTRFormSpec extends UnitTest {
     }
 
     "provided an incorrect PSTR that starts with more than 8 numbers" should {
-      val pstr = "1234567899Rc"
+      val pstr  = "1234567899Rc"
       val pstr2 = "1257348R9RRZ"
 
       "return false" in {
@@ -71,7 +71,7 @@ class PSTRFormSpec extends UnitTest {
     }
 
     "provided an incorrect PSTR that contains a symbol" should {
-      val pstr = "1234578R#"
+      val pstr  = "1234578R#"
       val pstr2 = "1234567+Rc"
 
       "return false" in {
@@ -81,11 +81,10 @@ class PSTRFormSpec extends UnitTest {
     }
 
     "provided an incorrect PSTR that does not follow the correct format" should {
-      val pstr = "abcdefghRi"
+      val pstr  = "abcdefghRi"
       val pstr2 = "123456R8RR"
       val pstr3 = "12345678AR"
       val pstr4 = "12345678R8"
-
 
       "return false" in {
         checkRegex(pstr) shouldBe false
@@ -97,7 +96,6 @@ class PSTRFormSpec extends UnitTest {
 
   }
 
-  private def checkRegex(input: String) = {
+  private def checkRegex(input: String) =
     PensionSchemeTaxReferenceForm.filterAndUpperCase(input).matches(PensionSchemeTaxReferenceForm.regex)
-  }
 }

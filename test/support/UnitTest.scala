@@ -20,6 +20,4 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
 
-trait UnitTest extends AnyWordSpec
-  with FutureAwaits with DefaultAwaitTimeout
-  with Matchers
+trait UnitTest extends AnyWordSpec with FutureAwaits with DefaultAwaitTimeout with Matchers

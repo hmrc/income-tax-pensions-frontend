@@ -33,18 +33,18 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
 class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
-  
+
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val addAnotherLinkSelector = "#add-another-pension-link"
-    val addLinkSelector = "#add-pension-income-link"
-    val continueButtonSelector: String = "#continue"
-    val summaryListTableSelector = "#pensionTransferSummaryList"
-    def changeLinkSelector(index: Int): String = s"#pensionTransferSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
-    def removeLinkSelector(index: Int): String = s"#pensionTransferSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__remove > a"
+    val captionSelector: String                 = "#main-content > div > div > header > p"
+    val addAnotherLinkSelector                  = "#add-another-pension-link"
+    val addLinkSelector                         = "#add-pension-income-link"
+    val continueButtonSelector: String          = "#continue"
+    val summaryListTableSelector                = "#pensionTransferSummaryList"
+    def changeLinkSelector(index: Int): String  = s"#pensionTransferSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
+    def removeLinkSelector(index: Int): String  = s"#pensionTransferSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__remove > a"
     def pensionNameSelector(index: Int): String = s"#pensionTransferSummaryList > dl > div:nth-child($index) > dt"
-    val insetSpanText1: String = "#youNeedToAddOneOrMorePensionScheme1"
-    val insetSpanText2: String = "#youNeedToAddOneOrMorePensionScheme2"
+    val insetSpanText1: String                  = "#youNeedToAddOneOrMorePensionScheme1"
+    val insetSpanText2: String                  = "#youNeedToAddOneOrMorePensionScheme2"
 
   }
 
@@ -65,33 +65,32 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val expectedTitle = "Pension schemes paying transfer charges - summary"
-    val expectedHeading = "Pension schemes paying transfer charges - summary"
-    val change = "Change"
-    val remove = "Remove"
-    val expectedAddAnotherText = "Add another pension scheme"
-    val expectedAddPensionSchemeText = "Add a pension scheme"
-    val addASchemeButton = "Add a scheme"
-    val returnToOverviewButton = "Return to overview"
-    val text1 = "You need to add one or more pension scheme."
-    val text2 = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
+    val expectedButtonText             = "Continue"
+    val expectedTitle                  = "Pension schemes paying transfer charges - summary"
+    val expectedHeading                = "Pension schemes paying transfer charges - summary"
+    val change                         = "Change"
+    val remove                         = "Remove"
+    val expectedAddAnotherText         = "Add another pension scheme"
+    val expectedAddPensionSchemeText   = "Add a pension scheme"
+    val addASchemeButton               = "Add a scheme"
+    val returnToOverviewButton         = "Return to overview"
+    val text1                          = "You need to add one or more pension scheme."
+    val text2                          = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }
-  
-  
+
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Cynlluniau pensiwn sy’n talu’r taliadau trosglwyddiadau – crynodeb"
-    val expectedHeading = "Cynlluniau pensiwn sy’n talu’r taliadau trosglwyddiadau – crynodeb"
-    val change = "Newid"
-    val remove = "Tynnu"
-    val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
-    val expectedAddPensionSchemeText = "Add a pension scheme"
-    val addASchemeButton = "Ychwanegu cynllun"
-    val returnToOverviewButton = "Yn ôl i’r trosolwg"
-    val text1 = "Bydd angen i chi ychwanegu un cynllun pensiwn neu fwy."
-    val text2 = "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
+    val expectedButtonText             = "Yn eich blaen"
+    val expectedTitle                  = "Cynlluniau pensiwn sy’n talu’r taliadau trosglwyddiadau – crynodeb"
+    val expectedHeading                = "Cynlluniau pensiwn sy’n talu’r taliadau trosglwyddiadau – crynodeb"
+    val change                         = "Newid"
+    val remove                         = "Tynnu"
+    val expectedAddAnotherText         = "Ychwanegu cynllun pensiwn arall"
+    val expectedAddPensionSchemeText   = "Add a pension scheme"
+    val addASchemeButton               = "Ychwanegu cynllun"
+    val returnToOverviewButton         = "Yn ôl i’r trosolwg"
+    val text1                          = "Bydd angen i chi ychwanegu un cynllun pensiwn neu fwy."
+    val text2                          = "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(
@@ -106,16 +105,24 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         import Selectors._
         import user.commonExpectedResults._
-        
+
         "render the 'overseas transfer charge' summary list page with pre-filled content" which {
-          val pensionScheme = TransferPensionScheme(ukTransferCharge = Some(true), name = Some("Pension Scheme 1"), pstr = Some("12345678RA"),
+          val pensionScheme = TransferPensionScheme(
+            ukTransferCharge = Some(true),
+            name = Some("Pension Scheme 1"),
+            pstr = Some("12345678RA"),
             qops = None,
             providerAddress = Some("Some address 1"),
-            alphaThreeCountryCode = None)
-          val pensionScheme2 = TransferPensionScheme(ukTransferCharge = Some(true), name = Some("Pension Scheme 2"), pstr = Some("12345678RA"),
+            alphaThreeCountryCode = None
+          )
+          val pensionScheme2 = TransferPensionScheme(
+            ukTransferCharge = Some(true),
+            name = Some("Pension Scheme 2"),
+            pstr = Some("12345678RA"),
             qops = None,
             providerAddress = Some("Some address 2"),
-            alphaThreeCountryCode = None)
+            alphaThreeCountryCode = None
+          )
           val newPensionSchemes = Seq(pensionScheme, pensionScheme2)
           val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = newPensionSchemes)
 
@@ -124,8 +131,12 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
             dropPensionsDB()
             val viewModel = transferViewModel
             insertCyaData(pensionUserDataWithTransferIntoOverseasPension(viewModel))
-            urlGet(fullUrl(transferChargeSummaryUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(transferChargeSummaryUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {
@@ -163,23 +174,26 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
         userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
         insertCyaData(pensionUserDataWithTransferIntoOverseasPension(incompleteViewModel))
 
-        urlPost(fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
+        urlPost(
+          fullUrl(checkYourDetailsPensionUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
           body = "")
       }
 
       "if journey is incomplete" in {
-      result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(transferPensionSavingsUrl(taxYearEOY))
-    }
+        result.status shouldBe SEE_OTHER
+        result.header("location") shouldBe Some(transferPensionSavingsUrl(taxYearEOY))
+      }
     }
 
     "redirect to the pensions summary page if there is no session data" should {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(transferChargeSummaryUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(transferChargeSummaryUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 

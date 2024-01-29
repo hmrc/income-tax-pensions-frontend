@@ -27,32 +27,31 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import scala.concurrent.duration.Duration
 
 @Singleton
-class AppConfig @Inject()(servicesConfig: ServicesConfig) extends Logging {
+class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
 
   private lazy val signInBaseUrl: String = servicesConfig.getString(ConfigKeys.signInUrl)
 
   private lazy val signInContinueBaseUrl: String = servicesConfig.getString(ConfigKeys.signInContinueUrl)
-  lazy val signInContinueUrl: String = SafeRedirectUrl(signInContinueBaseUrl).encodedUrl //TODO add redirect to overview page
-  private lazy val signInOrigin = servicesConfig.getString("appName")
-  lazy val signInUrl: String = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
+  lazy val signInContinueUrl: String             = SafeRedirectUrl(signInContinueBaseUrl).encodedUrl // TODO add redirect to overview page
+  private lazy val signInOrigin                  = servicesConfig.getString("appName")
+  lazy val signInUrl: String                     = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
 
   def defaultTaxYear: Int = servicesConfig.getInt(ConfigKeys.defaultTaxYear)
 
   lazy val incomeTaxSubmissionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionUrl) + "/income-tax-submission-service"
 
   lazy val pensionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxPensionsUrl) + "/income-tax-pensions"
-  
+
   lazy val employmentBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxEmploymentUrl) + "/income-tax-employment"
 
   lazy val statePensionBEBaseUrl: String = servicesConfig.getString(incomeTaxStateBenefitsUrl)
-  private val incomeTaxStateBenefitsUrl = "microservice.services.income-tax-state-benefits.url"
+  private val incomeTaxStateBenefitsUrl  = "microservice.services.income-tax-state-benefits.url"
 
-  lazy val nrsProxyBaseUrl: String = servicesConfig.getString(incomeTaxNrsProxyUrlKey)
+  lazy val nrsProxyBaseUrl: String    = servicesConfig.getString(incomeTaxNrsProxyUrlKey)
   private val incomeTaxNrsProxyUrlKey = "microservice.services.income-tax-nrs-proxy.url"
 
   def incomeTaxSubmissionBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionFrontendUrl) +
     servicesConfig.getString("microservice.services.income-tax-submission-frontend.context")
-
 
   def incomeTaxSubmissionOverviewUrl(taxYear: Int): String = incomeTaxSubmissionBaseUrl + "/" + taxYear +
     servicesConfig.getString("microservice.services.income-tax-submission-frontend.overview")
@@ -65,15 +64,15 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig) extends Logging {
 
   lazy val incomeTaxExpensesBEUrl: String = s"${servicesConfig.getString(ConfigKeys.incomeTaxExpensesUrl)}/income-tax-expenses"
 
-  private lazy val vcBaseUrl: String = servicesConfig.getString(ConfigKeys.viewAndChangeUrl)
+  private lazy val vcBaseUrl: String   = servicesConfig.getString(ConfigKeys.viewAndChangeUrl)
   def viewAndChangeEnterUtrUrl: String = s"$vcBaseUrl/report-quarterly/income-and-expenses/view/agents/client-utr"
 
-  lazy private val appUrl: String = servicesConfig.getString("microservice.url")
+  lazy private val appUrl: String     = servicesConfig.getString("microservice.url")
   lazy private val contactFrontEndUrl = servicesConfig.getString(ConfigKeys.contactFrontendUrl)
 
-  lazy private val contactFormServiceIndividual = "update-and-submit-income-tax-return"
-  lazy private val contactFormServiceAgent = "update-and-submit-income-tax-return-agent"
-  def contactFormServiceIdentifier(implicit isAgent: Boolean): String = if(isAgent) contactFormServiceAgent else contactFormServiceIndividual
+  lazy private val contactFormServiceIndividual                       = "update-and-submit-income-tax-return"
+  lazy private val contactFormServiceAgent                            = "update-and-submit-income-tax-return-agent"
+  def contactFormServiceIdentifier(implicit isAgent: Boolean): String = if (isAgent) contactFormServiceAgent else contactFormServiceIndividual
 
   private def requestUri(implicit request: RequestHeader): String = SafeRedirectUrl(appUrl + request.uri).encodedUrl
 
@@ -90,12 +89,12 @@ class AppConfig @Inject()(servicesConfig: ServicesConfig) extends Logging {
 
   lazy val signOutUrl: String = s"$basGatewayUrl/bas-gateway/sign-out-without-state"
 
-  lazy val timeoutDialogTimeout: Int = servicesConfig.getInt("timeoutDialogTimeout")
+  lazy val timeoutDialogTimeout: Int   = servicesConfig.getInt("timeoutDialogTimeout")
   lazy val timeoutDialogCountdown: Int = servicesConfig.getInt("timeoutDialogCountdown")
 
-  //Mongo config
+  // Mongo config
   lazy val encryptionKey: String = servicesConfig.getString("mongodb.encryption.key")
-  lazy val mongoTTL: Int = Duration(servicesConfig.getString("mongodb.timeToLive")).toMinutes.toInt
+  lazy val mongoTTL: Int         = Duration(servicesConfig.getString("mongodb.timeToLive")).toMinutes.toInt
 
   def taxYearErrorFeature: Boolean = servicesConfig.getBoolean("taxYearErrorFeatureSwitch")
 

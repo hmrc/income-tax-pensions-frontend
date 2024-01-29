@@ -33,15 +33,15 @@ import scala.concurrent.Future
 
 class ShortServiceRefundsRedirectsSpec extends UnitTest {
 
-  private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
-  private val journeyStartCall: Call = TaxableRefundAmountController.show(taxYear)
-  private val journeyStartRedirect: Option[Result] = Some(Redirect(journeyStartCall))
-  private val schemeStartCall: Call = TaxOnShortServiceRefundController.show(taxYear, None)
-  private val schemeDetailsCall: Call = ShortServicePensionsSchemeController.show(taxYear, None)
-  private val schemeSummaryCall: Call = RefundSummaryController.show(taxYear)
-  private val checkYourAnswersCall: Call = ShortServiceRefundsCYAController.show(taxYear)
+  private val cyaData: PensionsCYAModel                                        = PensionsCYAModel.emptyModels
+  private val journeyStartCall: Call                                           = TaxableRefundAmountController.show(taxYear)
+  private val journeyStartRedirect: Option[Result]                             = Some(Redirect(journeyStartCall))
+  private val schemeStartCall: Call                                            = TaxOnShortServiceRefundController.show(taxYear, None)
+  private val schemeDetailsCall: Call                                          = ShortServicePensionsSchemeController.show(taxYear, None)
+  private val schemeSummaryCall: Call                                          = RefundSummaryController.show(taxYear)
+  private val checkYourAnswersCall: Call                                       = ShortServiceRefundsCYAController.show(taxYear)
   private val continueToContextualRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(schemeDetailsCall))
-  private val continueToSummaryRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(schemeSummaryCall))
+  private val continueToSummaryRedirect: PensionsUserData => Future[Result]    = aPensionsUserData => Future.successful(Redirect(schemeSummaryCall))
 
   ".cyaPageCall" should {
     "return a redirect call to the cya page" in {
@@ -52,12 +52,9 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
   ".indexCheckThenJourneyCheck" when {
     "index is valid" should {
       "return PensionsUserData if previous questions are answered and journey is valid" in {
-        val result = indexCheckThenJourneyCheck(
-          data = aPensionsUserData,
-          optIndex = Some(0),
-          currentPage = SchemeDetailsPage,
-          taxYear = taxYear)(continueToContextualRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val result = indexCheckThenJourneyCheck(data = aPensionsUserData, optIndex = Some(0), currentPage = SchemeDetailsPage, taxYear = taxYear)(
+          continueToContextualRedirect)
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
@@ -73,7 +70,7 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
             optIndex = Some(1),
             currentPage = SchemeDetailsPage,
             taxYear = taxYear)(continueToContextualRedirect)
-          val statusHeader = await(result.map(_.header.status))
+          val statusHeader   = await(result.map(_.header.status))
           val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
           statusHeader shouldBe SEE_OTHER
@@ -88,7 +85,7 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
             optIndex = Some(0),
             currentPage = NonUkTaxRefundsAmountPage,
             taxYear = taxYear)(continueToContextualRedirect)
-          val statusHeader = await(result.map(_.header.status))
+          val statusHeader   = await(result.map(_.header.status))
           val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
           statusHeader shouldBe SEE_OTHER
@@ -106,7 +103,7 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
           optIndex = Some(8),
           currentPage = SchemeDetailsPage,
           taxYear = taxYear)(continueToContextualRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
@@ -119,7 +116,7 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
           optIndex = Some(2),
           currentPage = SchemeDetailsPage,
           taxYear = taxYear)(continueToContextualRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
@@ -132,19 +129,17 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
           optIndex = Some(2),
           currentPage = RefundSchemesSummaryPage,
           taxYear = taxYear)(continueToSummaryRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
         locationHeader shouldBe Some(schemeSummaryCall.url)
       }
       "redirect to the scheme summary page when schemes already exist" in {
-        val result: Future[Result] = indexCheckThenJourneyCheck(
-          data = aPensionsUserData,
-          optIndex = Some(8),
-          currentPage = SchemeDetailsPage,
-          taxYear = taxYear)(continueToContextualRedirect)
-        val statusHeader = await(result.map(_.header.status))
+        val result: Future[Result] =
+          indexCheckThenJourneyCheck(data = aPensionsUserData, optIndex = Some(8), currentPage = SchemeDetailsPage, taxYear = taxYear)(
+            continueToContextualRedirect)
+        val statusHeader   = await(result.map(_.header.status))
         val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
         statusHeader shouldBe SEE_OTHER
@@ -156,7 +151,7 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
   ".redirectForSchemeLoop" should {
     "return a Call to the first page in scheme loop when 'schemes' is empty" in {
       val emptySchemes: Seq[OverseasRefundPensionScheme] = Seq.empty
-      val result = redirectForSchemeLoop(emptySchemes, taxYear)
+      val result                                         = redirectForSchemeLoop(emptySchemes, taxYear)
 
       result shouldBe schemeStartCall
     }
@@ -191,12 +186,15 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
     "return None if page is valid and all previous questions have been answered" when {
       "current page is empty and at end of journey so far" in {
         val ssrData1 = cyaData.copy(shortServiceRefunds = ShortServiceRefundsViewModel(
-          shortServiceRefund = Some(true), shortServiceRefundCharge = Some(500)
+          shortServiceRefund = Some(true),
+          shortServiceRefundCharge = Some(500)
         ))
         val result1 = journeyCheck(NonUkTaxRefundsAmountPage, ssrData1, taxYear)
         val ssrData2 = cyaData.copy(shortServiceRefunds = ShortServiceRefundsViewModel(
-          shortServiceRefund = Some(true), shortServiceRefundCharge = Some(500),
-          shortServiceRefundTaxPaid = Some(true), shortServiceRefundTaxPaidCharge = Some(200),
+          shortServiceRefund = Some(true),
+          shortServiceRefundCharge = Some(500),
+          shortServiceRefundTaxPaid = Some(true),
+          shortServiceRefundTaxPaidCharge = Some(200),
           refundPensionScheme = Seq(anEmptyOverseasRefundPensionScheme.copy(ukRefundCharge = Some(false)))
         ))
         val result2 = journeyCheck(SchemeDetailsPage, ssrData2, taxYear)
@@ -206,12 +204,16 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
       }
       "current page is pre-filled and at end of journey so far" in {
         val ssrData1 = cyaData.copy(shortServiceRefunds = ShortServiceRefundsViewModel(
-          shortServiceRefund = Some(true), shortServiceRefundCharge = Some(500), shortServiceRefundTaxPaid = Some(false)
+          shortServiceRefund = Some(true),
+          shortServiceRefundCharge = Some(500),
+          shortServiceRefundTaxPaid = Some(false)
         ))
         val result1 = journeyCheck(NonUkTaxRefundsAmountPage, ssrData1, taxYear)
         val ssrData2 = cyaData.copy(shortServiceRefunds = ShortServiceRefundsViewModel(
-          shortServiceRefund = Some(true), shortServiceRefundCharge = Some(500),
-          shortServiceRefundTaxPaid = Some(true), shortServiceRefundTaxPaidCharge = Some(200),
+          shortServiceRefund = Some(true),
+          shortServiceRefundCharge = Some(500),
+          shortServiceRefundTaxPaid = Some(true),
+          shortServiceRefundTaxPaidCharge = Some(200),
           refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithoutUkRefundCharge)
         ))
         val result2 = journeyCheck(SchemeDetailsPage, ssrData2, taxYear, Some(0))
@@ -221,12 +223,14 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
       }
       "current page is pre-filled and mid-journey" in {
         val ssrData1 = cyaData.copy(shortServiceRefunds = ShortServiceRefundsViewModel(
-          shortServiceRefund = Some(true), shortServiceRefundCharge = Some(500),
-          shortServiceRefundTaxPaid = Some(true), shortServiceRefundTaxPaidCharge = Some(200)
+          shortServiceRefund = Some(true),
+          shortServiceRefundCharge = Some(500),
+          shortServiceRefundTaxPaid = Some(true),
+          shortServiceRefundTaxPaidCharge = Some(200)
         ))
-        val result1 = journeyCheck(TaxableRefundsAmountPage, ssrData1, taxYear)
+        val result1  = journeyCheck(TaxableRefundsAmountPage, ssrData1, taxYear)
         val ssrData2 = cyaData.copy(shortServiceRefunds = aShortServiceRefundsViewModel)
-        val result2 = journeyCheck(SchemePaidTaxOnRefundsPage, ssrData2, taxYear, Some(1))
+        val result2  = journeyCheck(SchemePaidTaxOnRefundsPage, ssrData2, taxYear, Some(1))
 
         result1 shouldBe None
         result2 shouldBe None
@@ -241,7 +245,7 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
       }
       "on the RemoveSchemePage and schemes exist" in {
         val ssrData = cyaData.copy(shortServiceRefunds = aShortServiceRefundsViewModel)
-        val result = journeyCheck(RemoveRefundSchemePage, ssrData, taxYear)
+        val result  = journeyCheck(RemoveRefundSchemePage, ssrData, taxYear)
 
         result shouldBe None
       }
@@ -250,7 +254,7 @@ class ShortServiceRefundsRedirectsSpec extends UnitTest {
     "return Some(redirect) with redirect to first page in journey" when {
       "previous question is unanswered" in {
         val ssrData1 = cyaData
-        val result1 = journeyCheck(NonUkTaxRefundsAmountPage, ssrData1, taxYear)
+        val result1  = journeyCheck(NonUkTaxRefundsAmountPage, ssrData1, taxYear)
         val ssrData2 = cyaData.copy(shortServiceRefunds = aShortServiceRefundsViewModel.copy(
           refundPensionScheme = Seq(anEmptyOverseasRefundPensionScheme)
         ))

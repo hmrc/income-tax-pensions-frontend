@@ -29,12 +29,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class OverseasPensionsSummaryController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                                  appConfig: AppConfig,
-                                                  authAction: AuthorisedAction,
-                                                  pensionSessionService: PensionSessionService,
-                                                  overseasPensionsSummaryView: OverseasPensionsSummaryView
-                                                  ) extends FrontendController(mcc) with I18nSupport {
+class OverseasPensionsSummaryController @Inject() (implicit
+    val mcc: MessagesControllerComponents,
+    appConfig: AppConfig,
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    overseasPensionsSummaryView: OverseasPensionsSummaryView)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getAndHandle(taxYear, request.user) { (pensionsUserData, priorData) =>

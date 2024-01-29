@@ -23,9 +23,11 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.templates.YouNeedAgentServicesView
 
-class YouNeedAgentServicesController @Inject()(val mcc: MessagesControllerComponents,
-                                               youNeedAgentServicesPage: YouNeedAgentServicesView,
-                                               implicit val appConfig: AppConfig) extends FrontendController(mcc) with I18nSupport {
+class YouNeedAgentServicesController @Inject() (val mcc: MessagesControllerComponents,
+                                                youNeedAgentServicesPage: YouNeedAgentServicesView,
+                                                implicit val appConfig: AppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def show(): Action[AnyContent] = Action { implicit request =>
     Unauthorized(youNeedAgentServicesPage())

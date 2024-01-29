@@ -32,10 +32,9 @@ private[repositories] object PensionsUserDataIndexes {
     ascending("taxYear")
   )
 
-  def indexes(appConfig: AppConfig): Seq[IndexModel] = {
+  def indexes(appConfig: AppConfig): Seq[IndexModel] =
     Seq(
       IndexModel(lookUpIndex, IndexOptions().unique(true).name("UserDataLookupIndex")),
       IndexModel(ascending("lastUpdated"), IndexOptions().expireAfter(appConfig.mongoTTL, TimeUnit.MINUTES).name("UserDataTTL"))
     )
-  }
 }

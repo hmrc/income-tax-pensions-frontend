@@ -37,11 +37,13 @@ class TransfersIntoOverseasPensionsViewModelSpec extends UnitTest {
         aTransfersIntoOverseasPensionsViewModel.isFinished
       }
       "all required questions are answered" in {
-        aTransfersIntoOverseasPensionsViewModel.copy(
-          pensionSchemeTransferCharge = Some(false),
-          pensionSchemeTransferChargeAmount = None,
-          transferPensionScheme = Seq.empty
-        ).isFinished
+        aTransfersIntoOverseasPensionsViewModel
+          .copy(
+            pensionSchemeTransferCharge = Some(false),
+            pensionSchemeTransferChargeAmount = None,
+            transferPensionScheme = Seq.empty
+          )
+          .isFinished
       }
     }
 
@@ -54,21 +56,23 @@ class TransfersIntoOverseasPensionsViewModelSpec extends UnitTest {
 
   ".toTransfersIOP" should {
     "transform a TransfersIntoOverseasPensionsViewModel into a PensionSchemeOverseasTransfers" in {
-      val result = PensionSchemeOverseasTransfers(overseasSchemeProvider = Seq(
-        OverseasSchemeProvider(
-          providerName = "UK TPS",
-          providerAddress = "Some address 1",
-          providerCountryCode = "",
-          qualifyingRecognisedOverseasPensionScheme = None,
-          pensionSchemeTaxReference = Some(Seq("12345678RA"))
+      val result = PensionSchemeOverseasTransfers(
+        overseasSchemeProvider = Seq(
+          OverseasSchemeProvider(
+            providerName = "UK TPS",
+            providerAddress = "Some address 1",
+            providerCountryCode = "",
+            qualifyingRecognisedOverseasPensionScheme = None,
+            pensionSchemeTaxReference = Some(Seq("12345678RA"))
+          ),
+          OverseasSchemeProvider(
+            providerName = "Non-UK TPS",
+            providerAddress = "Some address 2",
+            providerCountryCode = "FRA",
+            qualifyingRecognisedOverseasPensionScheme = Some(Seq("Q123456")),
+            pensionSchemeTaxReference = None
+          )
         ),
-        OverseasSchemeProvider(
-          providerName = "Non-UK TPS",
-          providerAddress = "Some address 2",
-          providerCountryCode = "FRA",
-          qualifyingRecognisedOverseasPensionScheme = Some(Seq("Q123456")),
-          pensionSchemeTaxReference = None
-        )),
         transferCharge = 1999.99,
         transferChargeTaxPaid = 1000.00
       )

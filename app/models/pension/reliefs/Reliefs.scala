@@ -24,8 +24,8 @@ case class Reliefs(regularPensionContributions: Option[BigDecimal],
                    oneOffPensionContributionsPaid: Option[BigDecimal],
                    retirementAnnuityPayments: Option[BigDecimal],
                    paymentToEmployersSchemeNoTaxRelief: Option[BigDecimal],
-                   overseasPensionSchemeContributions: Option[BigDecimal]
-                  ) extends PensionReliefsSubRequestModel {
+                   overseasPensionSchemeContributions: Option[BigDecimal])
+    extends PensionReliefsSubRequestModel {
   override def isEmpty: Boolean = regularPensionContributions.isEmpty &&
     oneOffPensionContributionsPaid.isEmpty &&
     retirementAnnuityPayments.isEmpty &&
@@ -40,10 +40,8 @@ case class EncryptedReliefs(regularPensionContributions: Option[EncryptedValue],
                             oneOffPensionContributionsPaid: Option[EncryptedValue],
                             retirementAnnuityPayments: Option[EncryptedValue],
                             paymentToEmployersSchemeNoTaxRelief: Option[EncryptedValue],
-                            overseasPensionSchemeContributions: Option[EncryptedValue]
-                           )
+                            overseasPensionSchemeContributions: Option[EncryptedValue])
 
 object EncryptedReliefs {
   implicit val formats: OFormat[EncryptedReliefs] = Json.format[EncryptedReliefs]
 }
-

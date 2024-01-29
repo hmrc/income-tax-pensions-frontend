@@ -39,18 +39,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StatePensionStartDateController @Inject()(actionsProvider: ActionsProvider,
-                                                pensionSessionService: PensionSessionService,
-                                                errorHandler: ErrorHandler,
-                                                view: StatePensionStartDateView,
-                                                formProvider: FormsProvider)
-                                               (implicit val mcc: MessagesControllerComponents,
-                                                appConfig: AppConfig,
-                                                ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class StatePensionStartDateController @Inject() (
+    actionsProvider: ActionsProvider,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    view: StatePensionStartDateView,
+    formProvider: FormsProvider)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest: UserSessionDataRequest[AnyContent] =>
-
       val checkRedirect = journeyCheck(WhenDidYouStartGettingStatePaymentsPage, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
         data: PensionsUserData =>
@@ -58,38 +58,35 @@ class StatePensionStartDateController @Inject()(actionsProvider: ActionsProvider
       }
   }
 
-  private def showStartDate(taxYear: Int, data: PensionsUserData)(implicit userSessionDataRequest: UserSessionDataRequest[AnyContent]): Result = {
+  private def showStartDate(taxYear: Int, data: PensionsUserData)(implicit userSessionDataRequest: UserSessionDataRequest[AnyContent]): Result =
     data.pensions.incomeFromPensions.statePension.fold {
       Redirect(PensionsSummaryController.show(taxYear))
     } { sP =>
       sP.startDate.fold {
         Ok(view(formProvider.stateBenefitDateForm, taxYear))
       } { startDate =>
-        val filledForm: Form[DateModel] = formProvider.stateBenefitDateForm.fill(DateModel(
-          startDate.getDayOfMonth.toString, startDate.getMonthValue.toString, startDate.getYear.toString))
+        val filledForm: Form[DateModel] = formProvider.stateBenefitDateForm.fill(
+          DateModel(startDate.getDayOfMonth.toString, startDate.getMonthValue.toString, startDate.getYear.toString))
 
         Ok(view(filledForm, taxYear))
       }
     }
-  }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit userSessionDataRequest =>
-      val checkRedirect = journeyCheck(WhenDidYouStartGettingStatePaymentsPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-        val verifiedForm = formProvider.stateBenefitDateForm.bindFromRequest()
-        verifiedForm.copy(errors = DateForm.verifyDate(verifiedForm.get, "incomeFromPensions.stateBenefitStartDate")).fold(
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit userSessionDataRequest =>
+    val checkRedirect = journeyCheck(WhenDidYouStartGettingStatePaymentsPage, _, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      val verifiedForm = formProvider.stateBenefitDateForm.bindFromRequest()
+      verifiedForm
+        .copy(errors = DateForm.verifyDate(verifiedForm.get, "incomeFromPensions.stateBenefitStartDate"))
+        .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
           newStartDate =>
             data.pensions.incomeFromPensions.statePension.fold {
               Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
             } { sP =>
               val updatedModel: PensionsUserData =
-                data.copy(pensions =
-                  data.pensions.copy(incomeFromPensions =
-                    data.pensions.incomeFromPensions.copy(statePension =
-                      Some(sP.copy(startDateQuestion = Some(true), startDate = Some(newStartDate.toLocalDate)))
-                    )))
+                data.copy(pensions = data.pensions.copy(incomeFromPensions = data.pensions.incomeFromPensions.copy(statePension =
+                  Some(sP.copy(startDateQuestion = Some(true), startDate = Some(newStartDate.toLocalDate))))))
               pensionSessionService.createOrUpdateSessionData(updatedModel).map {
                 case Right(_) =>
                   statePensionIsFinishedCheck(updatedModel.pensions.incomeFromPensions, taxYear, StatePensionLumpSumController.show(taxYear))
@@ -97,7 +94,7 @@ class StatePensionStartDateController @Inject()(actionsProvider: ActionsProvider
               }
             }
         )
-      }
+    }
   }
 
 }

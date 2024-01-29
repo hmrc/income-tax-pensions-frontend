@@ -29,12 +29,12 @@ import play.api.http.Status.{BAD_REQUEST, OK}
 import play.api.libs.ws.WSResponse
 
 class UnauthorisedPensionSchemeTaxReferenceControllerISpec
-  extends ControllerSpec("/unauthorised-payments-from-pensions/pension-scheme-tax-reference") {
+    extends ControllerSpec("/unauthorised-payments-from-pensions/pension-scheme-tax-reference") {
 
   private val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
-  private val selectorForFirstParagraph = "#main-content > div > div > p:nth-of-type(1)"
-  private val selectorForSecondParagraph = "#main-content > div > div > p:nth-of-type(2)"
-  private val selectorForHint = "#taxReferenceId-hint"
+  private val selectorForFirstParagraph                            = "#main-content > div > div > p:nth-of-type(1)"
+  private val selectorForSecondParagraph                           = "#main-content > div > div > p:nth-of-type(2)"
+  private val selectorForHint                                      = "#taxReferenceId-hint"
 
   "show" should {
     "render page" when {
@@ -47,7 +47,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForIndividualAndEnglish in {
 
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = getPage
+          implicit val response: WSResponse   = getPage
 
           assertPageAsExpected(
             OK,
@@ -59,7 +59,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
@@ -69,7 +70,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForIndividualAndWelsh ignore {
 
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPage
+          implicit val response: WSResponse   = getPage
 
           assertPageAsExpected(
             OK,
@@ -81,7 +82,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
@@ -91,7 +93,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForAgentAndEnglish in {
 
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = getPage
+          implicit val response: WSResponse   = getPage
 
           assertPageAsExpected(
             OK,
@@ -103,7 +105,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
@@ -113,7 +116,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForAgentAndWelsh ignore {
 
           implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPage
+          implicit val response: WSResponse   = getPage
 
           assertPageAsExpected(
             OK,
@@ -125,7 +128,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
@@ -138,8 +142,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         val sessionData = pensionsUserData(
           minimalSessionDataToAccessThisPage.copy(
             unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(
-              pensionSchemeTaxReference = Some(
-                Seq("12345678RA", "22446688RA", "0000000RX"))
+              pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688RA", "0000000RX"))
             )
           )
         )
@@ -147,7 +150,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForIndividualAndEnglish in {
 
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = getPage
+          implicit val response: WSResponse   = getPage
 
           assertPageAsExpected(
             OK,
@@ -159,7 +162,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
@@ -169,7 +173,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForIndividualAndWelsh ignore {
 
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPage
+          implicit val response: WSResponse   = getPage
 
           assertPageAsExpected(
             OK,
@@ -181,7 +185,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
@@ -191,7 +196,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForAgentAndEnglish in {
 
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = getPage
+          implicit val response: WSResponse   = getPage
 
           assertPageAsExpected(
             OK,
@@ -203,7 +208,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
@@ -213,7 +219,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForAgentAndWelsh ignore {
 
           implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-          implicit val response: WSResponse = getPage
+          implicit val response: WSResponse   = getPage
 
           assertPageAsExpected(
             OK,
@@ -225,7 +231,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               )
@@ -252,7 +259,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
             )
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("12345678RT")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("12345678RT")))
 
           assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
           getViewModel mustBe Some(expectedViewModel)
@@ -264,8 +271,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         val sessionData = pensionsUserData(
           minimalSessionDataToAccessThisPage.copy(
             unauthorisedPayments = anUnauthorisedPaymentsViewModel.copy(
-              pensionSchemeTaxReference = Some(
-                Seq("12345678RA", "22446688RA", "0000000RX"))
+              pensionSchemeTaxReference = Some(Seq("12345678RA", "22446688RA", "0000000RX"))
             )
           )
         )
@@ -277,7 +283,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
             )
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("88888888RY")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("88888888RY")))
 
           assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
           getViewModel mustBe Some(expectedViewModel)
@@ -291,7 +297,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
             )
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("  88888888RY  ")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("  88888888RY  ")))
 
           assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
           getViewModel mustBe Some(expectedViewModel)
@@ -305,7 +311,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
             )
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("22446688RA")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("22446688RA")))
 
           assertRedirectionAsExpected(relativeUrl("/unauthorised-payments-from-pensions/uk-pension-scheme-details"))
           getViewModel mustBe Some(expectedViewModel)
@@ -315,7 +321,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
 
     "return BAD_REQUEST" when {
 
-      val sessionData = pensionsUserData(minimalSessionDataToAccessThisPage)
+      val sessionData       = pensionsUserData(minimalSessionDataToAccessThisPage)
       val expectedViewModel = sessionData.pensions.unauthorisedPayments
 
       "the user has entered an empty PSTR" when {
@@ -323,7 +329,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForIndividualAndEnglish in {
 
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("")))
 
           assertPageAsExpected(
             BAD_REQUEST,
@@ -335,15 +341,13 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               ),
               errorSummarySectionOpt = Some(
-                ErrorSummarySection(
-                  title = "There is a problem",
-                  body = "Enter your Pension Scheme Tax Reference",
-                  link = "#taxReferenceId")
+                ErrorSummarySection(title = "There is a problem", body = "Enter your Pension Scheme Tax Reference", link = "#taxReferenceId")
               ),
               errorAboveElementCheckSectionOpt = Some(
                 ErrorAboveElementCheckSection(
@@ -358,7 +362,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForIndividualAndWelsh ignore {
 
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("")))
 
           assertPageAsExpected(
             BAD_REQUEST,
@@ -370,15 +374,13 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               ),
               errorSummarySectionOpt = Some(
-                ErrorSummarySection(
-                  title = "Mae problem wedi codi",
-                  body = "Enter your Pension Scheme Tax Reference",
-                  link = "#taxReferenceId")
+                ErrorSummarySection(title = "Mae problem wedi codi", body = "Enter your Pension Scheme Tax Reference", link = "#taxReferenceId")
               ),
               errorAboveElementCheckSectionOpt = Some(
                 ErrorAboveElementCheckSection(
@@ -393,7 +395,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForAgentAndEnglish in {
 
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("")))
 
           assertPageAsExpected(
             BAD_REQUEST,
@@ -405,15 +407,13 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               ),
               errorSummarySectionOpt = Some(
-                ErrorSummarySection(
-                  title = "There is a problem",
-                  body = "Enter your client’s Pension Scheme Tax Reference",
-                  link = "#taxReferenceId")
+                ErrorSummarySection(title = "There is a problem", body = "Enter your client’s Pension Scheme Tax Reference", link = "#taxReferenceId")
               ),
               errorAboveElementCheckSectionOpt = Some(
                 ErrorAboveElementCheckSection(
@@ -428,7 +428,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForAgentAndWelsh ignore {
 
           implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("")))
 
           assertPageAsExpected(
             BAD_REQUEST,
@@ -440,7 +440,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", ""),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               ),
@@ -465,7 +466,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForIndividualAndEnglish in {
 
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("   ")))
 
           assertPageAsExpected(
             BAD_REQUEST,
@@ -477,15 +478,13 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               ),
               errorSummarySectionOpt = Some(
-                ErrorSummarySection(
-                  title = "There is a problem",
-                  body = "Enter your Pension Scheme Tax Reference",
-                  link = "#taxReferenceId")
+                ErrorSummarySection(title = "There is a problem", body = "Enter your Pension Scheme Tax Reference", link = "#taxReferenceId")
               ),
               errorAboveElementCheckSectionOpt = Some(
                 ErrorAboveElementCheckSection(
@@ -500,7 +499,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForIndividualAndWelsh ignore {
 
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("   ")))
 
           assertPageAsExpected(
             BAD_REQUEST,
@@ -512,15 +511,13 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               ),
               errorSummarySectionOpt = Some(
-                ErrorSummarySection(
-                  title = "Mae problem wedi codi",
-                  body = "Enter your Pension Scheme Tax Reference",
-                  link = "#taxReferenceId")
+                ErrorSummarySection(title = "Mae problem wedi codi", body = "Enter your Pension Scheme Tax Reference", link = "#taxReferenceId")
               ),
               errorAboveElementCheckSectionOpt = Some(
                 ErrorAboveElementCheckSection(
@@ -535,7 +532,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForAgentAndEnglish in {
 
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("   ")))
 
           assertPageAsExpected(
             BAD_REQUEST,
@@ -547,15 +544,13 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               ),
               errorSummarySectionOpt = Some(
-                ErrorSummarySection(
-                  title = "There is a problem",
-                  body = "Enter your client’s Pension Scheme Tax Reference",
-                  link = "#taxReferenceId")
+                ErrorSummarySection(title = "There is a problem", body = "Enter your client’s Pension Scheme Tax Reference", link = "#taxReferenceId")
               ),
               errorAboveElementCheckSectionOpt = Some(
                 ErrorAboveElementCheckSection(
@@ -570,7 +565,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForAgentAndWelsh ignore {
 
           implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("   ")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("   ")))
 
           assertPageAsExpected(
             BAD_REQUEST,
@@ -582,7 +577,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "   "),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               ),
@@ -610,7 +606,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForIndividualAndEnglish in {
 
           implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("123456RA")))
 
           assertPageAsExpected(
             BAD_REQUEST,
@@ -622,7 +618,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               ),
@@ -645,7 +642,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForIndividualAndWelsh ignore {
 
           implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("123456RA")))
 
           assertPageAsExpected(
             BAD_REQUEST,
@@ -657,7 +654,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "You can get this information from your pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If you got unauthorised payments from more than one UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               ),
@@ -680,7 +678,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForAgentAndEnglish in {
 
           implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("123456RA")))
 
           assertPageAsExpected(
             BAD_REQUEST,
@@ -692,7 +690,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               ),
@@ -715,7 +714,7 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
         scenarioNameForAgentAndWelsh ignore {
 
           implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForPage(Some("123456RA")))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForPage(Some("123456RA")))
 
           assertPageAsExpected(
             BAD_REQUEST,
@@ -727,7 +726,8 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
               inputField = ExpectedInputField("#taxReferenceId", "taxReferenceId", "123456RA"),
               text = Set(
                 ExpectedText(selectorForFirstParagraph, "Your client can get this information from their pension provider."),
-                ExpectedText(selectorForSecondParagraph,
+                ExpectedText(
+                  selectorForSecondParagraph,
                   "If your client got unauthorised payments from more than UK pension provider, you can add the references later."),
                 ExpectedText(selectorForHint, "For example, ‘12345678RA’")
               ),
@@ -751,8 +751,9 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
     }
   }
 
-  private def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedPageContents)
-                                  (implicit userConfig: UserConfig, response: WSResponse): Unit = {
+  private def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedPageContents)(implicit
+      userConfig: UserConfig,
+      response: WSResponse): Unit = {
     response must haveStatus(expectedStatusCode)
     val document = parse(response.body)
     super.assertPageAsExpected(document, expectedPageContents)
@@ -764,25 +765,19 @@ class UnauthorisedPensionSchemeTaxReferenceControllerISpec
     loadPensionUserData.map(_.pensions.unauthorisedPayments)
 }
 
-case class ExpectedPageContents(
-                                 title: String,
-                                 header: String,
-                                 caption: String,
-                                 buttonForContinue: ExpectedButton,
-                                 inputField: ExpectedInputField,
-                                 errorSummarySectionOpt: Option[ErrorSummarySection] = None,
-                                 errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection] = None,
-                                 links: Set[ExpectedLink] = Set.empty,
-                                 text: Set[ExpectedText] = Set.empty,
-                                 formUrl: Option[String] = None)
-
-  extends BaseExpectedPageContents
+case class ExpectedPageContents(title: String,
+                                header: String,
+                                caption: String,
+                                buttonForContinue: ExpectedButton,
+                                inputField: ExpectedInputField,
+                                errorSummarySectionOpt: Option[ErrorSummarySection] = None,
+                                errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection] = None,
+                                links: Set[ExpectedLink] = Set.empty,
+                                text: Set[ExpectedText] = Set.empty,
+                                formUrl: Option[String] = None)
+    extends BaseExpectedPageContents
 
 case class SubmittedFormDataForPage(pstrOpt: Option[String]) extends SubmittedFormData {
 
   val asMap: Map[String, String] = pstrOpt.map(pstr => Map("taxReferenceId" -> pstr)).getOrElse(Map.empty)
 }
-
-
-
-

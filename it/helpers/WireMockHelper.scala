@@ -37,9 +37,7 @@ trait WireMockHelper {
   val wiremockHost = "localhost"
 
   lazy val wmConfig: WireMockConfiguration = wireMockConfig().port(wiremockPort)
-  lazy val wireMockServer = new WireMockServer(wmConfig)
-
-
+  lazy val wireMockServer                  = new WireMockServer(wmConfig)
 
   def startWiremock(): Unit = {
     wireMockServer.start()
@@ -54,114 +52,102 @@ trait WireMockHelper {
     val uriMapping = postRequestedFor(urlEqualTo(uri))
     val postRequest = optBody match {
       case Some(body) => uriMapping.withRequestBody(equalTo(body))
-      case None => uriMapping
+      case None       => uriMapping
     }
     verify(postRequest)
   }
 
-  def verifyGet(uri: String): Unit = {
+  def verifyGet(uri: String): Unit =
     verify(getRequestedFor(urlEqualTo(uri)))
-  }
 
   def stubGet(url: String, status: Int, body: String): StubMapping =
-    stubFor(get(urlMatching(url))
-      .willReturn(
-        aResponse().
-          withStatus(status).
-          withBody(body)
-      )
-    )
+    stubFor(
+      get(urlMatching(url))
+        .willReturn(
+          aResponse().withStatus(status).withBody(body)
+        ))
 
   def stubGetWithHeadersCheck(url: String, status: Int, body: String, sessionHeader: (String, String), mtdidHeader: (String, String)): StubMapping =
-    stubFor(get(urlMatching(url))
-      .withHeader(sessionHeader._1, equalTo(sessionHeader._2))
-      .withHeader(mtdidHeader._1, equalTo(mtdidHeader._2))
-      .willReturn(
-        aResponse().
-          withStatus(status).
-          withBody(body)
-      )
-    )
+    stubFor(
+      get(urlMatching(url))
+        .withHeader(sessionHeader._1, equalTo(sessionHeader._2))
+        .withHeader(mtdidHeader._1, equalTo(mtdidHeader._2))
+        .willReturn(
+          aResponse().withStatus(status).withBody(body)
+        ))
   def stubPutWithHeadersCheck(url: String, status: Int, body: String, sessionHeader: (String, String), mtdidHeader: (String, String)): StubMapping =
-    stubFor(put(urlMatching(url))
-      .withHeader(sessionHeader._1, equalTo(sessionHeader._2))
-      .withHeader(mtdidHeader._1, equalTo(mtdidHeader._2))
-      .willReturn(
-        aResponse().
-          withStatus(status).
-          withBody(body)
-      )
-    )
+    stubFor(
+      put(urlMatching(url))
+        .withHeader(sessionHeader._1, equalTo(sessionHeader._2))
+        .withHeader(mtdidHeader._1, equalTo(mtdidHeader._2))
+        .willReturn(
+          aResponse().withStatus(status).withBody(body)
+        ))
 
   def stubPost(url: String, status: Int, responseBody: String, requestHeaders: Seq[HttpHeader] = Seq.empty): StubMapping = {
-    val mappingWithHeaders: MappingBuilder = requestHeaders.foldLeft(post(urlMatching(url))){ (result, nxt) =>
+    val mappingWithHeaders: MappingBuilder = requestHeaders.foldLeft(post(urlMatching(url))) { (result, nxt) =>
       result.withHeader(nxt.key(), equalTo(nxt.firstValue()))
     }
 
-    stubFor(mappingWithHeaders
-      .willReturn(
-        aResponse().
-          withStatus(status).
-          withBody(responseBody)
-      )
-    )
+    stubFor(
+      mappingWithHeaders
+        .willReturn(
+          aResponse().withStatus(status).withBody(responseBody)
+        ))
   }
   def stubPut(url: String, status: Int, responseBody: String, requestHeaders: Seq[HttpHeader] = Seq.empty): StubMapping = {
-    val mappingWithHeaders: MappingBuilder = requestHeaders.foldLeft(put(urlMatching(url))){ (result, nxt) =>
+    val mappingWithHeaders: MappingBuilder = requestHeaders.foldLeft(put(urlMatching(url))) { (result, nxt) =>
       result.withHeader(nxt.key(), equalTo(nxt.firstValue()))
     }
 
-    stubFor(mappingWithHeaders
-      .willReturn(
-        aResponse().
-          withStatus(status).
-          withBody(responseBody)
-      )
-    )
+    stubFor(
+      mappingWithHeaders
+        .willReturn(
+          aResponse().withStatus(status).withBody(responseBody)
+        ))
   }
 
   def stubPatch(url: String, status: Int, responseBody: String): StubMapping =
-    stubFor(patch(urlMatching(url))
-      .willReturn(
-        aResponse().
-          withStatus(status).
-          withBody(responseBody)
-      )
-    )
+    stubFor(
+      patch(urlMatching(url))
+        .willReturn(
+          aResponse().withStatus(status).withBody(responseBody)
+        ))
 
   def stubDelete(url: String, status: Int, responseBody: String): StubMapping =
-    stubFor(delete(urlMatching(url))
-      .willReturn(
-        aResponse().
-          withStatus(status).
-          withBody(responseBody)
-      )
-    )
+    stubFor(
+      delete(urlMatching(url))
+        .willReturn(
+          aResponse().withStatus(status).withBody(responseBody)
+        ))
 
-  def stubDeleteWithHeadersCheck(url: String, status: Int, responseBody: String,
-                                 sessionHeader: (String, String), mtdidHeader: (String, String)): StubMapping =
-    stubFor(delete(urlMatching(url))
-      .withHeader(sessionHeader._1, equalTo(sessionHeader._2))
-      .withHeader(mtdidHeader._1, equalTo(mtdidHeader._2))
-      .willReturn(
-        aResponse().
-          withStatus(status).
-          withBody(responseBody)
-      )
-    )
+  def stubDeleteWithHeadersCheck(url: String,
+                                 status: Int,
+                                 responseBody: String,
+                                 sessionHeader: (String, String),
+                                 mtdidHeader: (String, String)): StubMapping =
+    stubFor(
+      delete(urlMatching(url))
+        .withHeader(sessionHeader._1, equalTo(sessionHeader._2))
+        .withHeader(mtdidHeader._1, equalTo(mtdidHeader._2))
+        .willReturn(
+          aResponse().withStatus(status).withBody(responseBody)
+        ))
 
-  def stubPostWithHeadersCheck(url: String, status: Int, requestBody: String, responseBody: String,
-                               sessionHeader: (String, String), mtdidHeader: (String, String)): StubMapping =
-    stubFor(post(urlMatching(url))
-      .withHeader(sessionHeader._1, equalTo(sessionHeader._2))
-      .withHeader(mtdidHeader._1, equalTo(mtdidHeader._2))
-      .withRequestBody(equalTo(requestBody))
-      .willReturn(
-        aResponse().
-          withStatus(status).
-          withBody(responseBody)
-      )
-    )
+  def stubPostWithHeadersCheck(url: String,
+                               status: Int,
+                               requestBody: String,
+                               responseBody: String,
+                               sessionHeader: (String, String),
+                               mtdidHeader: (String, String)): StubMapping =
+    stubFor(
+      post(urlMatching(url))
+        .withHeader(sessionHeader._1, equalTo(sessionHeader._2))
+        .withHeader(mtdidHeader._1, equalTo(mtdidHeader._2))
+        .withRequestBody(equalTo(requestBody))
+        .willReturn(
+          aResponse().withStatus(status).withBody(responseBody)
+        ))
 
   private val authoriseUri = "/auth/authorise"
 
@@ -169,7 +155,7 @@ trait WireMockHelper {
     "key" -> "HMRC-MTD-IT",
     "identifiers" -> Json.arr(
       Json.obj(
-        "key" -> "MTDITID",
+        "key"   -> "MTDITID",
         "value" -> "1234567890"
       )
     )
@@ -179,7 +165,7 @@ trait WireMockHelper {
     "key" -> "HMRC-NI",
     "identifiers" -> Json.arr(
       Json.obj(
-        "key" -> "NINO",
+        "key"   -> "NINO",
         "value" -> "AA123456A"
       )
     )
@@ -189,59 +175,70 @@ trait WireMockHelper {
     "key" -> EnrolmentKeys.Agent,
     "identifiers" -> Json.arr(
       Json.obj(
-        "key" -> EnrolmentIdentifiers.agentReference,
+        "key"   -> EnrolmentIdentifiers.agentReference,
         "value" -> "XARN1234567"
       )
     )
   )
 
-  private def successfulAuthResponse(affinityGroup: Option[AffinityGroup], confidenceLevel: ConfidenceLevel, enrolments: JsObject*): JsObject = {
+  private def successfulAuthResponse(affinityGroup: Option[AffinityGroup], confidenceLevel: ConfidenceLevel, enrolments: JsObject*): JsObject =
     affinityGroup match {
-      case Some(group) => Json.obj(
-        "affinityGroup" -> group,
-        "allEnrolments" -> enrolments,
-        "confidenceLevel" -> confidenceLevel
-      )
-      case _ => Json.obj(
-        "allEnrolments" -> enrolments,
-        "confidenceLevel" -> confidenceLevel
-      )
+      case Some(group) =>
+        Json.obj(
+          "affinityGroup"   -> group,
+          "allEnrolments"   -> enrolments,
+          "confidenceLevel" -> confidenceLevel
+        )
+      case _ =>
+        Json.obj(
+          "allEnrolments"   -> enrolments,
+          "confidenceLevel" -> confidenceLevel
+        )
     }
-  }
 
-  def authoriseIndividual(withNino: Boolean = true): StubMapping = {
-    stubPost(authoriseUri, OK, Json.prettyPrint(successfulAuthResponse(Some(AffinityGroup.Individual), ConfidenceLevel.L250,
-      enrolments = Seq(mtditEnrolment) ++ (if (withNino) Seq(ninoEnrolment) else Seq.empty[JsObject]): _*)))
-  }
+  def authoriseIndividual(withNino: Boolean = true): StubMapping =
+    stubPost(
+      authoriseUri,
+      OK,
+      Json.prettyPrint(
+        successfulAuthResponse(
+          Some(AffinityGroup.Individual),
+          ConfidenceLevel.L250,
+          enrolments = Seq(mtditEnrolment) ++ (if (withNino) Seq(ninoEnrolment) else Seq.empty[JsObject]): _*))
+    )
 
-  def authoriseIndividualUnauthorized(): StubMapping = {
-    stubPost(authoriseUri, UNAUTHORIZED, Json.prettyPrint(
-      successfulAuthResponse(Some(AffinityGroup.Individual), ConfidenceLevel.L250, Seq(mtditEnrolment, ninoEnrolment): _*)
-    ))
-  }
+  def authoriseIndividualUnauthorized(): StubMapping =
+    stubPost(
+      authoriseUri,
+      UNAUTHORIZED,
+      Json.prettyPrint(
+        successfulAuthResponse(Some(AffinityGroup.Individual), ConfidenceLevel.L250, Seq(mtditEnrolment, ninoEnrolment): _*)
+      )
+    )
 
-  def authoriseAgent(): StubMapping = {
-    stubPost(authoriseUri, OK, Json.prettyPrint(
-      successfulAuthResponse(Some(AffinityGroup.Agent), ConfidenceLevel.L250, Seq(asAgentEnrolment, mtditEnrolment): _*)
-    ))
-  }
+  def authoriseAgent(): StubMapping =
+    stubPost(
+      authoriseUri,
+      OK,
+      Json.prettyPrint(
+        successfulAuthResponse(Some(AffinityGroup.Agent), ConfidenceLevel.L250, Seq(asAgentEnrolment, mtditEnrolment): _*)
+      ))
 
-  def authoriseAgentUnauthorized(): StubMapping = {
-    stubPost(authoriseUri, UNAUTHORIZED, Json.prettyPrint(
-      successfulAuthResponse(Some(AffinityGroup.Agent), ConfidenceLevel.L250, Seq(asAgentEnrolment, mtditEnrolment): _*)
-    ))
-  }
+  def authoriseAgentUnauthorized(): StubMapping =
+    stubPost(
+      authoriseUri,
+      UNAUTHORIZED,
+      Json.prettyPrint(
+        successfulAuthResponse(Some(AffinityGroup.Agent), ConfidenceLevel.L250, Seq(asAgentEnrolment, mtditEnrolment): _*)
+      )
+    )
 
-  protected def userSessionDataStub(nino: String,
-                                    taxYear: String,
-                                    response: PensionsCYAModel): StubMapping = {
+  protected def userSessionDataStub(nino: String, taxYear: String, response: PensionsCYAModel): StubMapping =
     stubPut(
       url = s"/income-tax-submission-service/nino/$nino/sources/session?taxYear=$taxYear",
       status = OK,
       responseBody = Json.toJson(response).toString(),
-      requestHeaders = Seq(httpHeader("X-Session-ID",  aUser.sessionId), httpHeader("mtditid" , aUser.mtditid))
+      requestHeaders = Seq(httpHeader("X-Session-ID", aUser.sessionId), httpHeader("mtditid", aUser.mtditid))
     )
-  }
 
 }
-

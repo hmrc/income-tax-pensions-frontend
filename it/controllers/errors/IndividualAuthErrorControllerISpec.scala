@@ -26,7 +26,7 @@ class IndividualAuthErrorControllerISpec extends IntegrationTest with ViewHelper
 
   object Selectors {
     val paragraphSelector: String = ".govuk-body"
-    val linkSelector: String = paragraphSelector + " > a"
+    val linkSelector: String      = paragraphSelector + " > a"
   }
 
   val url = s"$appUrl/error/you-need-to-sign-up"
@@ -39,23 +39,22 @@ class IndividualAuthErrorControllerISpec extends IntegrationTest with ViewHelper
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val validTitle: String = "You cannot view this page"
+    val validTitle: String  = "You cannot view this page"
     val pageContent: String = "You need to sign up for Making Tax Digital for Income Tax before you can view this page."
     val linkContent: String = "sign up for Making Tax Digital for Income Tax"
-    val linkHref: String = "https://www.gov.uk/guidance/sign-up-your-business-for-making-tax-digital-for-income-tax"
+    val linkHref: String    = "https://www.gov.uk/guidance/sign-up-your-business-for-making-tax-digital-for-income-tax"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val validTitle: String = "Ni allwch fwrw golwg dros y dudalen hon"
-    val pageContent: String = "Mae angen cofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm cyn i chi allu bwrw golwg dros y dudalen hon."
+    val pageContent: String =
+      "Mae angen cofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm cyn i chi allu bwrw golwg dros y dudalen hon."
     val linkContent: String = "cofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm"
-    val linkHref: String = "https://www.gov.uk/guidance/sign-up-your-business-for-making-tax-digital-for-income-tax"
+    val linkHref: String    = "https://www.gov.uk/guidance/sign-up-your-business-for-making-tax-digital-for-income-tax"
   }
 
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, CommonExpectedResults]] = {
-    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN),
-      UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY))
-  }
+  val userScenarios: Seq[UserScenario[CommonExpectedResults, CommonExpectedResults]] =
+    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN), UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY))
 
   ".show" when {
     import Selectors._

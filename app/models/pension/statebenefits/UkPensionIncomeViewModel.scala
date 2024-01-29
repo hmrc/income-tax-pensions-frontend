@@ -27,18 +27,17 @@ import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEn
 import utils.{EncryptedValue, SecureGCMCipher}
 
 case class UkPensionIncomeViewModel(employmentId: Option[String] = None,
-                                     pensionId: Option[String] = None,
-                                     startDate: Option[String] = None,
-                                     endDate: Option[String] = None,
-                                     pensionSchemeName: Option[String] = None,
-                                     pensionSchemeRef: Option[String] = None,
-                                     amount: Option[BigDecimal] = None,
-                                     taxPaid: Option[BigDecimal] = None,
-                                     isCustomerEmploymentData: Option[Boolean] = None) {
+                                    pensionId: Option[String] = None,
+                                    startDate: Option[String] = None,
+                                    endDate: Option[String] = None,
+                                    pensionSchemeName: Option[String] = None,
+                                    pensionSchemeRef: Option[String] = None,
+                                    amount: Option[BigDecimal] = None,
+                                    taxPaid: Option[BigDecimal] = None,
+                                    isCustomerEmploymentData: Option[Boolean] = None) {
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUkPensionIncomeViewModel =
     EncryptedUkPensionIncomeViewModel(
-
       employmentId = employmentId.map(_.encrypted),
       pensionId = pensionId.map(_.encrypted),
       startDate = startDate.map(_.encrypted),
@@ -48,7 +47,6 @@ case class UkPensionIncomeViewModel(employmentId: Option[String] = None,
       amount = amount.map(_.encrypted),
       taxPaid = taxPaid.map(_.encrypted),
       isCustomerEmploymentData = isCustomerEmploymentData.map(_.encrypted)
-
     )
 
   def toCreateUpdateEmploymentRequest: CreateUpdateEmploymentRequest =
@@ -60,41 +58,41 @@ case class UkPensionIncomeViewModel(employmentId: Option[String] = None,
           employerName = this.pensionSchemeName.getOrElse(""),
           startDate = this.startDate.getOrElse(""),
           cessationDate = this.endDate,
-          payrollId = this.pensionId)
+          payrollId = this.pensionId
+        )
       ),
       employmentData = Some(
-        CreateUpdateEmploymentData(PayModel(
-          taxablePayToDate = this.amount.getOrElse(0.00),
-          totalTaxToDate = this.taxPaid.getOrElse(0.00)
-        ))
+        CreateUpdateEmploymentData(
+          PayModel(
+            taxablePayToDate = this.amount.getOrElse(0.00),
+            totalTaxToDate = this.taxPaid.getOrElse(0.00)
+          ))
       ),
       isHmrcEmploymentId = this.isCustomerEmploymentData.map(!_)
     )
 
-  def isFinished: Boolean = {
+  def isFinished: Boolean =
     this.pensionId.isDefined &&
-    this.startDate.isDefined &&
-    this.pensionSchemeName.isDefined &&
-    this.pensionSchemeRef.isDefined &&
-    this.amount.isDefined &&
-    this.taxPaid.isDefined
-  }
+      this.startDate.isDefined &&
+      this.pensionSchemeName.isDefined &&
+      this.pensionSchemeRef.isDefined &&
+      this.amount.isDefined &&
+      this.taxPaid.isDefined
 }
 
 object UkPensionIncomeViewModel {
   implicit val format: OFormat[UkPensionIncomeViewModel] = Json.format[UkPensionIncomeViewModel]
 }
 
-case class EncryptedUkPensionIncomeViewModel(
-                                              employmentId: Option[EncryptedValue] = None,
-                                              pensionId: Option[EncryptedValue] = None,
-                                              startDate: Option[EncryptedValue] = None,
-                                              endDate: Option[EncryptedValue] = None,
-                                              pensionSchemeName: Option[EncryptedValue] = None,
-                                              pensionSchemeRef: Option[EncryptedValue] = None,
-                                              amount: Option[EncryptedValue] = None,
-                                              taxPaid: Option[EncryptedValue] = None,
-                                              isCustomerEmploymentData: Option[EncryptedValue] = None) {
+case class EncryptedUkPensionIncomeViewModel(employmentId: Option[EncryptedValue] = None,
+                                             pensionId: Option[EncryptedValue] = None,
+                                             startDate: Option[EncryptedValue] = None,
+                                             endDate: Option[EncryptedValue] = None,
+                                             pensionSchemeName: Option[EncryptedValue] = None,
+                                             pensionSchemeRef: Option[EncryptedValue] = None,
+                                             amount: Option[EncryptedValue] = None,
+                                             taxPaid: Option[EncryptedValue] = None,
+                                             isCustomerEmploymentData: Option[EncryptedValue] = None) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): UkPensionIncomeViewModel =
     UkPensionIncomeViewModel(

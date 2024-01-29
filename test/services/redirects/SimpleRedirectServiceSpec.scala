@@ -18,7 +18,11 @@ package services.redirects
 
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
-import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController, TotalPaymentsIntoRASController}
+import controllers.pensions.paymentsIntoPensions.routes.{
+  PaymentsIntoPensionsCYAController,
+  ReliefAtSourcePensionsController,
+  TotalPaymentsIntoRASController
+}
 import controllers.pensions.unauthorisedPayments.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.http.Status.SEE_OTHER
@@ -30,20 +34,20 @@ import utils.UnitTest
 import scala.concurrent.Future
 
 class SimpleRedirectServiceSpec extends UnitTest {
-  
-  val contextualRedirect: Call = TotalPaymentsIntoRASController.show(taxYear)
-  val cyaRedirect: Call = PaymentsIntoPensionsCYAController.show(taxYear)
-  val noneRedirect: PensionsCYAModel => Option[Result] = _ => None
-  val someRedirect: PensionsCYAModel => Option[Result] = _ => Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
+
+  val contextualRedirect: Call                                         = TotalPaymentsIntoRASController.show(taxYear)
+  val cyaRedirect: Call                                                = PaymentsIntoPensionsCYAController.show(taxYear)
+  val noneRedirect: PensionsCYAModel => Option[Result]                 = _ => None
+  val someRedirect: PensionsCYAModel => Option[Result]                 = _ => Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
   val continueToContextualRedirect: PensionsUserData => Future[Result] = _ => Future.successful(Redirect(contextualRedirect))
-  val pIPCyaPageCall = PaymentsIntoPensionsCYAController.show(taxYear)
+  val pIPCyaPageCall                                                   = PaymentsIntoPensionsCYAController.show(taxYear)
 
   ".redirectBasedOnCurrentAnswers" should {
 
     "continue to attempted page when there is session data and 'shouldRedirect' is None" which {
-      val result: Future[Result] = SimpleRedirectService.redirectBasedOnCurrentAnswers(
-        taxYear, Some(aPensionsUserData), pIPCyaPageCall)(noneRedirect)(continueToContextualRedirect)
-      val statusHeader = await(result.map(_.header.status))
+      val result: Future[Result] = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData), pIPCyaPageCall)(
+        noneRedirect)(continueToContextualRedirect)
+      val statusHeader   = await(result.map(_.header.status))
       val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
       "result status is 303" in {
@@ -57,7 +61,7 @@ class SimpleRedirectServiceSpec extends UnitTest {
     "redirect to first page in journey when there is session data and 'shouldRedirect' is Some(firstPageRedirect)" which {
       val result = SimpleRedirectService
         .redirectBasedOnCurrentAnswers(taxYear, Some(aPensionsUserData), pIPCyaPageCall)(someRedirect)(continueToContextualRedirect)
-      val statusHeader = await(result.map(_.header.status))
+      val statusHeader   = await(result.map(_.header.status))
       val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
       "result status is 303" in {
@@ -70,7 +74,7 @@ class SimpleRedirectServiceSpec extends UnitTest {
 
     "redirect to CYA page when there is no session data" which {
       val result = SimpleRedirectService.redirectBasedOnCurrentAnswers(taxYear, None, pIPCyaPageCall)(someRedirect)(continueToContextualRedirect)
-      val statusHeader = await(result.map(_.header.status))
+      val statusHeader   = await(result.map(_.header.status))
       val locationHeader = await(result.map(_.header.headers).map(_.get("Location")))
 
       "result status is 303" in {
@@ -147,7 +151,8 @@ class SimpleRedirectServiceSpec extends UnitTest {
       val result = SimpleRedirectService.checkForExistingSchemes(
         nextPage = UnauthorisedPensionSchemeTaxReferenceController.show(taxYear, None),
         summaryPage = UkPensionSchemeDetailsController.show(taxYear),
-        existingSchemes)
+        existingSchemes
+      )
 
       result shouldBe UkPensionSchemeDetailsController.show(taxYear)
     }

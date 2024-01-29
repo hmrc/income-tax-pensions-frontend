@@ -31,39 +31,35 @@ object ViewUtils {
 
   case class EmploymentDataForView(fieldHeadings: String, fieldValues: Option[String], changeLink: Call, hiddenText: String)
 
-  def convertBoolToYesOrNo(employmentField: Option[Boolean])(implicit messages: Messages): Option[String] = {
+  def convertBoolToYesOrNo(employmentField: Option[Boolean])(implicit messages: Messages): Option[String] =
     employmentField.map {
-      case true => messages("common.yes")
+      case true  => messages("common.yes")
       case false => messages("common.no")
     }
-  }
 
-  def dateFormatter(date: String): Option[String] = {
-    try {
-      Some(LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.UK))
-        .format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)))
-    }
+  def dateFormatter(date: String): Option[String] =
+    try
+      Some(
+        LocalDate
+          .parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.UK))
+          .format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK)))
     catch {
       case _: Exception => None
     }
-  }
 
-  def dateFormatter(date: LocalDate): String = {
+  def dateFormatter(date: LocalDate): String =
     date.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK))
-  }
 
-  def getAgentDynamicContent(msgKey: String, isAgent: Boolean): String = {
+  def getAgentDynamicContent(msgKey: String, isAgent: Boolean): String =
     s"$msgKey.${if (isAgent) "agent" else "individual"}"
-  }
 
   def summaryListRow(key: HtmlContent,
                      value: HtmlContent,
                      keyClasses: String = "govuk-!-width-one-third",
                      valueClasses: String = "govuk-!-width-one-third",
                      actionClasses: String = "govuk-!-width-one-third",
-                     actions: Seq[(Call, String, Option[String])]): SummaryListRow = {
+                     actions: Seq[(Call, String, Option[String])]): SummaryListRow =
     SummaryListRow(
-
       key = Key(
         content = key,
         classes = keyClasses
@@ -72,29 +68,28 @@ object ViewUtils {
         content = value,
         classes = valueClasses
       ),
-      actions = Some(Actions(
-        items = actions.map { case (call, linkText, visuallyHiddenText) => ActionItem(
-          href = call.url,
-          content = ariaHiddenChangeLink(linkText),
-          visuallyHiddenText = visuallyHiddenText
-        )
-        },
-        classes = actionClasses
-      ))
+      actions = Some(
+        Actions(
+          items = actions.map { case (call, linkText, visuallyHiddenText) =>
+            ActionItem(
+              href = call.url,
+              content = ariaHiddenChangeLink(linkText),
+              visuallyHiddenText = visuallyHiddenText
+            )
+          },
+          classes = actionClasses
+        ))
     )
-  }
 
-  def ariaHiddenChangeLink(linkText: String): HtmlContent = {
+  def ariaHiddenChangeLink(linkText: String): HtmlContent =
     HtmlContent(
       s"""<span aria-hidden="true">$linkText</span>"""
     )
-  }
 
-  def bigDecimalCurrency(value: String, currencySymbol: String = "£"): String = {
+  def bigDecimalCurrency(value: String, currencySymbol: String = "£"): String =
     Try(BigDecimal(value))
       .map(amount => currencySymbol + f"$amount%1.2f".replace(".00", ""))
       .getOrElse(value)
       .replaceAll("\\B(?=(\\d{3})+(?!\\d))", ",")
 
-  }
 }

@@ -37,24 +37,26 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class ReducedAnnualAllowanceTypeController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                                     appConfig: AppConfig,
-                                                     authAction: AuthorisedAction,
-                                                     pensionSessionService: PensionSessionService,
-                                                     errorHandler: ErrorHandler,
-                                                     view: ReducedAnnualAllowanceTypeView,
-                                                     clock: Clock) extends FrontendController(mcc) with I18nSupport {
+class ReducedAnnualAllowanceTypeController @Inject() (implicit
+    val mcc: MessagesControllerComponents,
+    appConfig: AppConfig,
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    view: ReducedAnnualAllowanceTypeView,
+    clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         val checkRedirect = journeyCheck(ReducedAnnualAllowanceTypePage, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-          data =>
-            val taperedAnnualAllowance = data.pensions.pensionsAnnualAllowances.taperedAnnualAllowance
-            val moneyPurchaseAnnualAllowance = data.pensions.pensionsAnnualAllowances.moneyPurchaseAnnualAllowance
-            val form = ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceTypeForm(request.user.isAgent)
-            Future.successful(Ok(view(form, taxYear, moneyPurchaseAnnualAllowance, taperedAnnualAllowance)))
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data =>
+          val taperedAnnualAllowance       = data.pensions.pensionsAnnualAllowances.taperedAnnualAllowance
+          val moneyPurchaseAnnualAllowance = data.pensions.pensionsAnnualAllowances.moneyPurchaseAnnualAllowance
+          val form                         = ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceTypeForm(request.user.isAgent)
+          Future.successful(Ok(view(form, taxYear, moneyPurchaseAnnualAllowance, taperedAnnualAllowance)))
         }
       case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
@@ -65,22 +67,24 @@ class ReducedAnnualAllowanceTypeController @Inject()(implicit val mcc: MessagesC
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         val checkRedirect = journeyCheck(ReducedAnnualAllowanceTypePage, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-          data =>
-            ReducedAnnualAllowanceTypeQuestionForm.reducedAnnualAllowanceTypeForm(request.user.isAgent).bindFromRequest().fold(
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data =>
+          ReducedAnnualAllowanceTypeQuestionForm
+            .reducedAnnualAllowanceTypeForm(request.user.isAgent)
+            .bindFromRequest()
+            .fold(
               formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
               reducedAllowanceTypeSelections => {
 
                 val pensionsCYAModel: PensionsCYAModel = data.pensions
-                val pensionsAnnualAllowances = pensionsCYAModel.pensionsAnnualAllowances
-                val updatedCyaModel: PensionsCYAModel = {
+                val pensionsAnnualAllowances           = pensionsCYAModel.pensionsAnnualAllowances
+                val updatedCyaModel: PensionsCYAModel =
                   pensionsCYAModel.copy(pensionsAnnualAllowances = pensionsAnnualAllowances.copy(
                     moneyPurchaseAnnualAllowance = Some(reducedAllowanceTypeSelections.containsMoneyPurchase),
-                    taperedAnnualAllowance = Some(reducedAllowanceTypeSelections.containsTapered)))
-                }
+                    taperedAnnualAllowance = Some(reducedAllowanceTypeSelections.containsTapered)
+                  ))
 
-                pensionSessionService.createOrUpdateSessionData(request.user,
-                  updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+                pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                  errorHandler.internalServerError()) {
                   isFinishedCheck(updatedCyaModel.pensionsAnnualAllowances, taxYear, AboveReducedAnnualAllowanceController.show(taxYear), cyaPageCall)
                 }
               }

@@ -36,43 +36,38 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AnnualAllowanceCYAController @Inject()(auditProvider: AuditActionsProvider,
-                                             view: AnnualAllowancesCYAView,
-                                             pensionChargesService: PensionChargesService,
-                                             errorHandler: ErrorHandler)
-                                            (implicit val mcc: MessagesControllerComponents,
-                                             appConfig: AppConfig, clock: Clock,
-                                             ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+class AnnualAllowanceCYAController @Inject() (
+    auditProvider: AuditActionsProvider,
+    view: AnnualAllowancesCYAView,
+    pensionChargesService: PensionChargesService,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.annualAllowancesViewAuditing(taxYear) async {
-    implicit request =>
-      val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-        data =>
-          Future.successful(Ok(view(taxYear, data.pensions.pensionsAnnualAllowances)))
-      }
-  }
-
-  def submit(taxYear: Int): Action[AnyContent] = auditProvider.annualAllowancesUpdateAuditing(taxYear) async {
-    implicit request =>
-      val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-        sessionData =>
-          if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
-            pensionChargesService.saveAnnualAllowanceViewModel(request.user, taxYear).map {
-              case Left(_) => errorHandler.internalServerError()
-              case Right(_) => Redirect(PensionsSummaryController.show(taxYear))
-            }
-          } else {
-            Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-          }
-      }
-  }
-
-  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
-    priorData match {
-      case None => true
-      case Some(prior) => !cyaData.pensionsAnnualAllowances.equals(generateAnnualAllowanceCyaFromPrior(prior))
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.annualAllowancesViewAuditing(taxYear) async { implicit request =>
+    val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      Future.successful(Ok(view(taxYear, data.pensions.pensionsAnnualAllowances)))
     }
   }
+
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.annualAllowancesUpdateAuditing(taxYear) async { implicit request =>
+    val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
+      if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
+        pensionChargesService.saveAnnualAllowanceViewModel(request.user, taxYear).map {
+          case Left(_)  => errorHandler.internalServerError()
+          case Right(_) => Redirect(PensionsSummaryController.show(taxYear))
+        }
+      } else {
+        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      }
+    }
+  }
+
+  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
+    priorData match {
+      case None        => true
+      case Some(prior) => !cyaData.pensionsAnnualAllowances.equals(generateAnnualAllowanceCyaFromPrior(prior))
+    }
 }

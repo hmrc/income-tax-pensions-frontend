@@ -34,46 +34,43 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class TransferPensionSavingsController @Inject()(actionsProvider: ActionsProvider,
-                                                 pensionSessionService: PensionSessionService,
-                                                 view: TransferPensionSavingsView,
-                                                 errorHandler: ErrorHandler)
-                                                (implicit cc: MessagesControllerComponents,
-                                                 appConfig: AppConfig, clock: Clock)
-  extends FrontendController(cc) with I18nSupport with SessionHelper {
+class TransferPensionSavingsController @Inject() (
+    actionsProvider: ActionsProvider,
+    pensionSessionService: PensionSessionService,
+    view: TransferPensionSavingsView,
+    errorHandler: ErrorHandler)(implicit cc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(cc)
+    with I18nSupport
+    with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionData =>
-      val transferPensionSavings = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionSavings
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+    val transferPensionSavings = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionSavings
 
-      transferPensionSavings match {
-        case Some(x) => Future.successful(Ok(view(yesNoForm(sessionData.user).fill(x), taxYear)))
-        case None => Future.successful(Ok(view(yesNoForm(sessionData.user), taxYear)))
-      }
+    transferPensionSavings match {
+      case Some(x) => Future.successful(Ok(view(yesNoForm(sessionData.user).fill(x), taxYear)))
+      case None    => Future.successful(Ok(view(yesNoForm(sessionData.user), taxYear)))
+    }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionUserData =>
-      yesNoForm(sessionUserData.user).bindFromRequest().fold(
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+    yesNoForm(sessionUserData.user)
+      .bindFromRequest()
+      .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        transferPensionSavings => {
-          updateSessionData(sessionUserData.pensionsUserData, transferPensionSavings, taxYear)
-        }
+        transferPensionSavings => updateSessionData(sessionUserData.pensionsUserData, transferPensionSavings, taxYear)
       )
   }
 
-  private def updateSessionData[T](pensionUserData: PensionsUserData,
-                                   transferPensionSavings: Boolean,
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
+  private def updateSessionData[T](pensionUserData: PensionsUserData, transferPensionSavings: Boolean, taxYear: Int)(implicit
+      request: UserSessionDataRequest[T]): Future[Result] = {
 
     val cyaModel = pensionUserData.pensions
     val updateViewModel = cyaModel.copy(transfersIntoOverseasPensions =
       if (transferPensionSavings) cyaModel.transfersIntoOverseasPensions.copy(transferPensionSavings = Some(transferPensionSavings))
-      else TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(transferPensionSavings))
-    )
+      else TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(transferPensionSavings)))
 
-    pensionSessionService.createOrUpdateSessionData(request.user,
-      updateViewModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+    pensionSessionService.createOrUpdateSessionData(request.user, updateViewModel, taxYear, pensionUserData.isPriorSubmission)(
+      errorHandler.internalServerError()) {
       Redirect(
         if (transferPensionSavings) OverseasTransferChargeController.show(taxYear)
         else TransferIntoOverseasPensionsCYAController.show(taxYear)

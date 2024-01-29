@@ -21,7 +21,6 @@ import forms.FormsProvider
 import models.pension.pages.UntaxedEmployerPayments
 import utils.UnitTest
 
-
 class UntaxedEmployerPaymentsPageSpec extends UnitTest {
 
   private val anyQuestionValue = 1000
@@ -31,9 +30,9 @@ class UntaxedEmployerPaymentsPageSpec extends UnitTest {
   "UntaxedEmployerPayments.apply" should {
     "return page with pre-filled form when scheme has value existing value" in {
 
-      val index = Some(0)
-      val reliefs =   aPaymentsIntoOverseasPensionsViewModel.reliefs(index.get).copy(employerPaymentsAmount = Some(anyQuestionValue))
-      val cya = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(reliefs))
+      val index   = Some(0)
+      val reliefs = aPaymentsIntoOverseasPensionsViewModel.reliefs(index.get).copy(employerPaymentsAmount = Some(anyQuestionValue))
+      val cya     = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(reliefs))
 
       UntaxedEmployerPayments.apply(taxYear, index, cya, pageForm) shouldBe UntaxedEmployerPayments(
         taxYear = taxYear,
@@ -42,9 +41,8 @@ class UntaxedEmployerPaymentsPageSpec extends UnitTest {
       )
     }
 
-
     "return page with pre-filled form with errors when form has errors" in {
-      val index = Some(0)
+      val index          = Some(0)
       val formWithErrors = pageForm.bind(Map("wrong-key" -> "wrong-value"))
 
       UntaxedEmployerPayments.apply(taxYear, index, aPaymentsIntoOverseasPensionsViewModel, formWithErrors) shouldBe UntaxedEmployerPayments(

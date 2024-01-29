@@ -29,41 +29,40 @@ import utils.{Clock, FutureEitherOps}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+class PensionIncomeService @Inject() (pensionUserDataRepository: PensionsUserDataRepository,
+                                      pensionIncomeConnectorHelper: PensionIncomeConnectorHelper,
+                                      incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
 
-class PensionIncomeService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
-                                     pensionIncomeConnectorHelper: PensionIncomeConnectorHelper,
-                                     incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
-
-  def saveIncomeFromOverseasPensionsViewModel(user: User, taxYear: Int)
-                                             (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
-
+  def saveIncomeFromOverseasPensionsViewModel(user: User, taxYear: Int)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      clock: Clock): Future[Either[ServiceError, Unit]] = {
 
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
 
-
-    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData = {
+    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData =
       userData match {
         case Some(value) => value.copy(pensions = value.pensions.copy(incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel()))
-        case None => PensionsUserData(
-          user.sessionId,
-          user.mtditid,
-          user.nino,
-          taxYear,
-          isPriorSubmission = false,
-          PensionsCYAModel.emptyModels,
-          clock.now(DateTimeZone.UTC)
-        )
+        case None =>
+          PensionsUserData(
+            user.sessionId,
+            user.mtditid,
+            user.nino,
+            taxYear,
+            isPriorSubmission = false,
+            PensionsCYAModel.emptyModels,
+            clock.now(DateTimeZone.UTC)
+          )
       }
-    }
 
     (
       for {
         sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
-        priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector.
-          getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
+        priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](
+          incomeTaxUserDataConnector.getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
 
         viewModel = sessionData.map(_.pensions.incomeFromOverseasPensions)
-        subModel = viewModel.map(_.toForeignPension).map(ForeignPensionContainer)
+        subModel  = viewModel.map(_.toForeignPension).map(ForeignPensionContainer)
 
         updatedIncomeData = CreateUpdatePensionIncomeModel(
           foreignPension = subModel,
@@ -71,12 +70,11 @@ class PensionIncomeService @Inject()(pensionUserDataRepository: PensionsUserData
             priorData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution.map(OverseasPensionContributionContainer)))
         )
 
-        _ <- FutureEitherOps[ServiceError, Unit](pensionIncomeConnectorHelper.sendDownstream(user.nino, taxYear, subModel, viewModel, updatedIncomeData)(hcWithExtras, ec))
+        _ <- FutureEitherOps[ServiceError, Unit](
+          pensionIncomeConnectorHelper.sendDownstream(user.nino, taxYear, subModel, viewModel, updatedIncomeData)(hcWithExtras, ec))
         updatedCYA = getPensionsUserData(sessionData, user)
         result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
-      } yield {
-        result
-      }).value
+      } yield result
+    ).value
   }
 }
-

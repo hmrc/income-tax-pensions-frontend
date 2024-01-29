@@ -49,22 +49,28 @@ import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 
 // scalastyle:off number.of.methods
 // scalastyle:off number.of.types
-trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSuite with WireMockHelper
-  with WiremockStubHelpers with BeforeAndAfterAll with TaxYearHelper {
-  val nino = "AA123456A"
-  val mtditid = "1234567890"
-  val sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
+trait IntegrationTest
+    extends AnyWordSpec
+    with Matchers
+    with GuiceOneServerPerSuite
+    with WireMockHelper
+    with WiremockStubHelpers
+    with BeforeAndAfterAll
+    with TaxYearHelper {
+  val nino          = "AA123456A"
+  val mtditid       = "1234567890"
+  val sessionId     = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
   val affinityGroup = "affinityGroup"
 
   val taxYearEndOfYearMinusOne: Int = taxYearEOY - 1
 
-  val validTaxYearList: Seq[Int] = Seq(taxYearEndOfYearMinusOne, taxYearEOY, taxYear)
+  val validTaxYearList: Seq[Int]       = Seq(taxYearEndOfYearMinusOne, taxYearEOY, taxYear)
   val validTaxYearListSingle: Seq[Int] = Seq(taxYear)
 
   val defaultUser: PensionsUserData = aPensionsUserData
-  val xSessionId: (String, String) = "X-Session-ID" -> defaultUser.sessionId
+  val xSessionId: (String, String)  = "X-Session-ID" -> defaultUser.sessionId
 
-  implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
+  implicit val ec: ExecutionContext         = ExecutionContext.Implicits.global
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders("mtditid" -> mtditid)
 
   implicit val actorSystem: ActorSystem = ActorSystem()
@@ -78,49 +84,49 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   def await[T](awaitable: Awaitable[T]): T = Await.result(awaitable, Duration.Inf)
 
   def config: Map[String, String] = Map(
-    "defaultTaxYear" -> taxYear.toString,
-    "auditing.enabled" -> "false",
-    "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
+    "defaultTaxYear"                                           -> taxYear.toString,
+    "auditing.enabled"                                         -> "false",
+    "play.filters.csrf.header.bypassHeaders.Csrf-Token"        -> "nocheck",
     "microservice.services.income-tax-submission-frontend.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.auth.host" -> wiremockHost,
-    "microservice.services.auth.port" -> wiremockPort.toString,
-    "microservice.services.income-tax-pensions.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.income-tax-submission.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.income-tax-state-benefits.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.view-and-change.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.income-tax-nrs-proxy.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.income-tax-employment.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.sign-in.url" -> s"/auth-login-stub/gg-sign-in",
-    "taxYearErrorFeatureSwitch" -> "false",
-    "useEncryption" -> "true"
+    "microservice.services.auth.host"                          -> wiremockHost,
+    "microservice.services.auth.port"                          -> wiremockPort.toString,
+    "microservice.services.income-tax-pensions.url"            -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-submission.url"          -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-state-benefits.url"      -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.view-and-change.url"                -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-nrs-proxy.url"           -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-employment.url"          -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.sign-in.url"                        -> s"/auth-login-stub/gg-sign-in",
+    "taxYearErrorFeatureSwitch"                                -> "false",
+    "useEncryption"                                            -> "true"
   )
 
   def configWithInvalidEncryptionKey: Map[String, String] = Map(
-    "defaultTaxYear" -> taxYear.toString,
-    "auditing.enabled" -> "false",
-    "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
+    "defaultTaxYear"                                           -> taxYear.toString,
+    "auditing.enabled"                                         -> "false",
+    "play.filters.csrf.header.bypassHeaders.Csrf-Token"        -> "nocheck",
     "microservice.services.income-tax-submission-frontend.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.auth.host" -> wiremockHost,
-    "microservice.services.auth.port" -> wiremockPort.toString,
-    "microservice.services.income-tax-employment.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.income-tax-pensions.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.income-tax-expenses.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.income-tax-submission.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.income-tax-state-benefits.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.view-and-change.url" -> s"http://$wiremockHost:$wiremockPort",
-    "microservice.services.sign-in.url" -> s"/auth-login-stub/gg-sign-in",
-    "taxYearErrorFeatureSwitch" -> "false",
-    "useEncryption" -> "true",
-    "mongodb.encryption.key" -> "key"
+    "microservice.services.auth.host"                          -> wiremockHost,
+    "microservice.services.auth.port"                          -> wiremockPort.toString,
+    "microservice.services.income-tax-employment.url"          -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-pensions.url"            -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-expenses.url"            -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-submission.url"          -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.income-tax-state-benefits.url"      -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.view-and-change.url"                -> s"http://$wiremockHost:$wiremockPort",
+    "microservice.services.sign-in.url"                        -> s"/auth-login-stub/gg-sign-in",
+    "taxYearErrorFeatureSwitch"                                -> "false",
+    "useEncryption"                                            -> "true",
+    "mongodb.encryption.key"                                   -> "key"
   )
 
   def externalConfig: Map[String, String] = Map(
-    "defaultTaxYear" -> taxYear.toString,
-    "auditing.enabled" -> "false",
-    "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
-    "microservice.services.income-tax-submission.url" -> s"http://127.0.0.1:$wiremockPort",
+    "defaultTaxYear"                                      -> taxYear.toString,
+    "auditing.enabled"                                    -> "false",
+    "play.filters.csrf.header.bypassHeaders.Csrf-Token"   -> "nocheck",
+    "microservice.services.income-tax-submission.url"     -> s"http://127.0.0.1:$wiremockPort",
     "microservice.services.income-tax-state-benefits.url" -> s"http://127.0.0.1:$wiremockPort",
-    "metrics.enabled" -> "false"
+    "metrics.enabled"                                     -> "false"
   )
 
   lazy val agentAuthErrorPage: AgentAuthErrorPageView = app.injector.instanceOf[AgentAuthErrorPageView]
@@ -160,7 +166,6 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
 
   lazy val mcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
 
-
   val defaultAcceptedConfidenceLevels: Seq[ConfidenceLevel] = Seq(
     ConfidenceLevel.L250,
     ConfidenceLevel.L500
@@ -171,125 +176,127 @@ trait IntegrationTest extends AnyWordSpec with Matchers with GuiceOneServerPerSu
   )
 
   def authAction(
-                  stubbedRetrieval: Future[_],
-                  acceptedConfidenceLevel: Seq[ConfidenceLevel] = Seq.empty[ConfidenceLevel]
-                ): AuthorisedAction = new AuthorisedAction(
+      stubbedRetrieval: Future[_],
+      acceptedConfidenceLevel: Seq[ConfidenceLevel] = Seq.empty[ConfidenceLevel]
+  ): AuthorisedAction = new AuthorisedAction(
     appConfig
   )(
-    authService(stubbedRetrieval, if (acceptedConfidenceLevel.nonEmpty) {
-      acceptedConfidenceLevel
-    } else {
-      defaultAcceptedConfidenceLevels
-    }),
+    authService(
+      stubbedRetrieval,
+      if (acceptedConfidenceLevel.nonEmpty) {
+        acceptedConfidenceLevel
+      } else {
+        defaultAcceptedConfidenceLevels
+      }),
     mcc
   )
 
   def successfulRetrieval: Future[Enrolments ~ Some[AffinityGroup] ~ ConfidenceLevel] = Future.successful(
-    Enrolments(Set(
-      Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", "1234567890")), "Activated", None),
-      Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", "AA123456A")), "Activated", None)
-    )) and Some(AffinityGroup.Individual) and ConfidenceLevel.L250
+    Enrolments(
+      Set(
+        Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", "1234567890")), "Activated", None),
+        Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", "AA123456A")), "Activated", None)
+      )) and Some(AffinityGroup.Individual) and ConfidenceLevel.L250
   )
 
   def insufficientConfidenceRetrieval: Future[Enrolments ~ Some[AffinityGroup] ~ ConfidenceLevel] = Future.successful(
-    Enrolments(Set(
-      Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", "1234567890")), "Activated", None),
-      Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", "AA123456A")), "Activated", None)
-    )) and Some(AffinityGroup.Individual) and ConfidenceLevel.L50
+    Enrolments(
+      Set(
+        Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", "1234567890")), "Activated", None),
+        Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", "AA123456A")), "Activated", None)
+      )) and Some(AffinityGroup.Individual) and ConfidenceLevel.L50
   )
 
   def incorrectCredsRetrieval: Future[Enrolments ~ Some[AffinityGroup] ~ ConfidenceLevel] = Future.successful(
-    Enrolments(Set(
-      Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("UTR", "1234567890")), "Activated", None),
-      Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", "AA123456A")), "Activated", None)
-    )) and Some(AffinityGroup.Individual) and ConfidenceLevel.L250
+    Enrolments(
+      Set(
+        Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("UTR", "1234567890")), "Activated", None),
+        Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", "AA123456A")), "Activated", None)
+      )) and Some(AffinityGroup.Individual) and ConfidenceLevel.L250
   )
 
-  def playSessionCookies(taxYear: Int,
-                         validTaxYears: Seq[Int],
-                         extraData: Map[String, String] = Map.empty): String = PlaySessionCookieBaker.bakeSessionCookie(Map(
-    SessionKeys.authToken -> "mock-bearer-token",
-    SessionValues.TAX_YEAR -> taxYear.toString,
-    SessionValues.VALID_TAX_YEARS -> validTaxYears.mkString(","),
-    SessionKeys.sessionId -> sessionId,
-    SessionValues.CLIENT_NINO -> nino,
-    SessionValues.CLIENT_MTDITID -> mtditid
-  ) ++ extraData)
+  def playSessionCookies(taxYear: Int, validTaxYears: Seq[Int], extraData: Map[String, String] = Map.empty): String =
+    PlaySessionCookieBaker.bakeSessionCookie(
+      Map(
+        SessionKeys.authToken         -> "mock-bearer-token",
+        SessionValues.TAX_YEAR        -> taxYear.toString,
+        SessionValues.VALID_TAX_YEARS -> validTaxYears.mkString(","),
+        SessionKeys.sessionId         -> sessionId,
+        SessionValues.CLIENT_NINO     -> nino,
+        SessionValues.CLIENT_MTDITID  -> mtditid
+      ) ++ extraData)
 
-  def userDataStub(userData: IncomeTaxUserData, nino: String, taxYear: Int): StubMapping = {
+  def userDataStub(userData: IncomeTaxUserData, nino: String, taxYear: Int): StubMapping =
     stubGetWithHeadersCheck(
-      url = s"/income-tax-submission-service/income-tax/nino/$nino/sources/session\\?taxYear=$taxYear", status = OK,
+      url = s"/income-tax-submission-service/income-tax/nino/$nino/sources/session\\?taxYear=$taxYear",
+      status = OK,
       body = Json.toJson(userData).toString(),
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
-      mtdidHeader = "mtditid" -> defaultUser.mtdItId
+      mtdidHeader = "mtditid"        -> defaultUser.mtdItId
     )
-  }
 
-  def pensionChargesSessionStub(jsonBody: String, nino: String, taxYear: Int): StubMapping = {
+  def pensionChargesSessionStub(jsonBody: String, nino: String, taxYear: Int): StubMapping =
     stubPutWithHeadersCheck(
-      url = s"/income-tax-pensions/pension-charges/session-data/nino/$nino/taxYear/$taxYear", status = NO_CONTENT,
+      url = s"/income-tax-pensions/pension-charges/session-data/nino/$nino/taxYear/$taxYear",
+      status = NO_CONTENT,
       body = jsonBody,
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
-      mtdidHeader = "mtditid" -> defaultUser.mtdItId
+      mtdidHeader = "mtditid"        -> defaultUser.mtdItId
     )
-  }
 
-  def pensionIncomeSessionStub(jsonBody: String, nino: String, taxYear: Int): StubMapping = {
+  def pensionIncomeSessionStub(jsonBody: String, nino: String, taxYear: Int): StubMapping =
     stubPutWithHeadersCheck(
-      url = s"/income-tax-pensions/pension-income/session-data/nino/$nino/taxYear/$taxYear", status = NO_CONTENT,
+      url = s"/income-tax-pensions/pension-income/session-data/nino/$nino/taxYear/$taxYear",
+      status = NO_CONTENT,
       body = jsonBody,
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
-      mtdidHeader = "mtditid" -> defaultUser.mtdItId
+      mtdidHeader = "mtditid"        -> defaultUser.mtdItId
     )
-  }
 
-  def pensionReliefsSessionStub(jsonBody: String, nino: String, taxYear: Int): StubMapping = {
+  def pensionReliefsSessionStub(jsonBody: String, nino: String, taxYear: Int): StubMapping =
     stubPutWithHeadersCheck(
-      url = s"/income-tax-pensions/pension-reliefs/nino/$nino/taxYear/$taxYear", status = NO_CONTENT,
+      url = s"/income-tax-pensions/pension-reliefs/nino/$nino/taxYear/$taxYear",
+      status = NO_CONTENT,
       body = jsonBody,
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
-      mtdidHeader = "mtditid" -> defaultUser.mtdItId
+      mtdidHeader = "mtditid"        -> defaultUser.mtdItId
     )
-  }
 
-  def nrsSubmissionStub(jsonBody: String, nino: String): StubMapping = {
+  def nrsSubmissionStub(jsonBody: String, nino: String): StubMapping =
     stubPutWithHeadersCheck(
-      url = s"/income-tax-nrs-proxy/$nino/itsa-personal-income-submission", status = NO_CONTENT,
+      url = s"/income-tax-nrs-proxy/$nino/itsa-personal-income-submission",
+      status = NO_CONTENT,
       body = jsonBody,
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
-      mtdidHeader = "mtditid" -> defaultUser.mtdItId
+      mtdidHeader = "mtditid"        -> defaultUser.mtdItId
     )
-  }
-  
-  def employmentPensionStub(jsonBody: String, nino: String, stat: Int, response: String): StubMapping = {
+
+  def employmentPensionStub(jsonBody: String, nino: String, stat: Int, response: String): StubMapping =
     stubPostWithHeadersCheck(
       url = s"/income-tax-employment/income-tax/nino/$nino/sources\\?taxYear=$taxYear",
       status = stat,
       requestBody = jsonBody,
       responseBody = response,
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
-      mtdidHeader = "mtditid" -> defaultUser.mtdItId
+      mtdidHeader = "mtditid"        -> defaultUser.mtdItId
     )
-  }
 
-  def stateBenefitsSubmissionStub(jsonBody: String, nino: String): StubMapping = {
+  def stateBenefitsSubmissionStub(jsonBody: String, nino: String): StubMapping =
     stubPutWithHeadersCheck(
-      url = s"/income-tax-state-benefits/claim-data/nino/$nino", status = NO_CONTENT,
+      url = s"/income-tax-state-benefits/claim-data/nino/$nino",
+      status = NO_CONTENT,
       body = jsonBody,
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
-      mtdidHeader = "mtditid" -> defaultUser.mtdItId
+      mtdidHeader = "mtditid"        -> defaultUser.mtdItId
     )
-  }
 
   def userData(allData: String): IncomeTaxUserData = IncomeTaxUserData(Some(PensionDataStubs.fullPensionsModel))
 
-  def emptyUserDataStub(nino: String = nino, taxYear: Int = taxYear): StubMapping = {
+  def emptyUserDataStub(nino: String = nino, taxYear: Int = taxYear): StubMapping =
     userDataStub(IncomeTaxUserData(None), nino, taxYear)
-  }
 
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 }
 
 // scalastyle:off number.of.methods
 // scalastyle:off number.of.types
-

@@ -35,56 +35,55 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class StatePensionController @Inject()(actionsProvider: ActionsProvider,
-                                       pensionSessionService: PensionSessionService,
-                                       view: StatePensionView,
-                                       formsProvider: FormsProvider,
-                                       errorHandler: ErrorHandler)
-                                      (implicit val mcc: MessagesControllerComponents,
-                                       appConfig: AppConfig,
-                                       clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class StatePensionController @Inject() (
+    actionsProvider: ActionsProvider,
+    pensionSessionService: PensionSessionService,
+    view: StatePensionView,
+    formsProvider: FormsProvider,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionData =>
-      val maybeYesNo: Option[Boolean] =
-        sessionData.pensionsUserData.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion)
-      val maybeAmount: Option[BigDecimal] =
-        sessionData.pensionsUserData.pensions.incomeFromPensions.statePension.flatMap(_.amount)
-      (maybeYesNo, maybeAmount) match {
-        case (Some(yesNo), amount) =>
-          Future.successful(Ok(view(formsProvider.statePensionForm(sessionData.user).fill((yesNo, amount)), taxYear)))
-        case _ =>
-          Future.successful(Ok(view(formsProvider.statePensionForm(sessionData.user), taxYear)))
-      }
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+    val maybeYesNo: Option[Boolean] =
+      sessionData.pensionsUserData.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion)
+    val maybeAmount: Option[BigDecimal] =
+      sessionData.pensionsUserData.pensions.incomeFromPensions.statePension.flatMap(_.amount)
+    (maybeYesNo, maybeAmount) match {
+      case (Some(yesNo), amount) =>
+        Future.successful(Ok(view(formsProvider.statePensionForm(sessionData.user).fill((yesNo, amount)), taxYear)))
+      case _ =>
+        Future.successful(Ok(view(formsProvider.statePensionForm(sessionData.user), taxYear)))
+    }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionData =>
-      formsProvider.statePensionForm(sessionData.user).bindFromRequest().fold(
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+    formsProvider
+      .statePensionForm(sessionData.user)
+      .bindFromRequest()
+      .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        yesNoAmount => {
+        yesNoAmount =>
           (yesNoAmount._1, yesNoAmount._2) match {
             case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
-            case (false, _) => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
+            case (false, _)     => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
           }
-        }
       )
   }
 
-  private def updateSessionData[T](pensionUserData: PensionsUserData,
-                                   yesNo: Boolean,
-                                   amount: Option[BigDecimal],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
+  private def updateSessionData[T](pensionUserData: PensionsUserData, yesNo: Boolean, amount: Option[BigDecimal], taxYear: Int)(implicit
+      request: UserSessionDataRequest[T]): Future[Result] = {
     val viewModel: IncomeFromPensionsViewModel = pensionUserData.pensions.incomeFromPensions
     val updateStatePension: StateBenefitViewModel =
       if (yesNo) viewModel.statePension match {
         case Some(value) => value.copy(amountPaidQuestion = Some(true), amount = amount)
-        case _ => StateBenefitViewModel(amountPaidQuestion = Some(true), amount = amount)
+        case _           => StateBenefitViewModel(amountPaidQuestion = Some(true), amount = amount)
       }
       else StateBenefitViewModel(amountPaidQuestion = Some(false))
 
-    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
-      incomeFromPensions = viewModel.copy(statePension = Some(updateStatePension)))
+    val updatedCyaModel: PensionsCYAModel =
+      pensionUserData.pensions.copy(incomeFromPensions = viewModel.copy(statePension = Some(updateStatePension)))
     val redirectLocation = if (yesNo) StatePensionStartDateController.show(taxYear) else StatePensionLumpSumController.show(taxYear)
 
     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(

@@ -34,16 +34,14 @@ import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePension
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class StatePensionAddToCalculationControllerISpec extends IntegrationTest
-  with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
+class StatePensionAddToCalculationControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData =
     PensionsUserDataBuilder.aPensionsUserData.copy(
       isPriorSubmission = false,
       pensions = pensionsCyaModel
     )
-  }
 
   ".show" should {
     "return Ok response with Add to calculation Question view page if there is no data" in {
@@ -51,9 +49,10 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        urlGet(fullUrl(addToCalculationUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
-        )
+        urlGet(
+          fullUrl(addToCalculationUrl(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
     }
@@ -64,9 +63,10 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-        urlGet(fullUrl(addToCalculationUrl(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
-        )
+        urlGet(
+          fullUrl(addToCalculationUrl(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
     }
@@ -74,16 +74,20 @@ class StatePensionAddToCalculationControllerISpec extends IntegrationTest
     "redirect to the first page in journey if the previous question has not been answered" in {
       val data = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(
         incomeFromPensions = aStatePensionIncomeFromPensionsViewModel.copy(
-          statePensionLumpSum = Some(aStatePensionLumpSumViewModel.copy(
-            startDateQuestion = None
-          ))
+          statePensionLumpSum = Some(
+            aStatePensionLumpSumViewModel.copy(
+              startDateQuestion = None
+            ))
         )))
 
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(data)
-        urlGet(fullUrl(addToCalculationUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+        urlGet(
+          fullUrl(addToCalculationUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe SEE_OTHER
