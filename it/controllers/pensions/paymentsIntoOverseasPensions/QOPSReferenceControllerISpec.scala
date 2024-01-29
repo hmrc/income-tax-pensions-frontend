@@ -33,13 +33,13 @@ import utils.PageUrls.PaymentIntoOverseasPensions._
 import utils.PageUrls.pensionSummaryUrl
 import utils.{CommonUtils, PensionsDatabaseHelper}
 
-class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach with PensionsDatabaseHelper { //scalastyle:off: magic.number
+class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach with PensionsDatabaseHelper { // scalastyle:off: magic.number
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val inputSelector = "#qopsReferenceId"
-    val hintTextSelector = "#qopsReferenceId-hint"
+    val formSelector: String           = "#main-content > div > div > form"
+    val inputSelector                  = "#qopsReferenceId"
+    val hintTextSelector               = "#qopsReferenceId-hint"
 
     def labelSelector(index: Int): String = s"form > div:nth-of-type($index) > label"
 
@@ -77,25 +77,25 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle: String = "Qualifying overseas pension scheme (QOPS) reference number (optional)"
-    val expectedErrorTitle: String = s"Error: $expectedTitle"
-    val hintText: String = "For example, QOPS123456"
-    val expectedButtonText: String = "Continue"
+    val expectedCaption: Int => String       = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedTitle: String                = "Qualifying overseas pension scheme (QOPS) reference number (optional)"
+    val expectedErrorTitle: String           = s"Error: $expectedTitle"
+    val hintText: String                     = "For example, QOPS123456"
+    val expectedButtonText: String           = "Continue"
     val expectedIncorrectFormatError: String = "Enter a six digit number"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle: String = "Cyfeirnod y cynllun pensiwn tramor cymwys (QOPS) (dewisol)"
-    val expectedErrorTitle: String = s"Gwall: $expectedTitle"
-    val hintText: String = "Er enghraifft, QOPS123456"
-    val expectedButtonText: String = "Yn eich blaen"
+    val expectedCaption: Int => String       = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedTitle: String                = "Cyfeirnod y cynllun pensiwn tramor cymwys (QOPS) (dewisol)"
+    val expectedErrorTitle: String           = s"Gwall: $expectedTitle"
+    val hintText: String                     = "Er enghraifft, QOPS123456"
+    val expectedButtonText: String           = "Yn eich blaen"
     val expectedIncorrectFormatError: String = "Nodwch rif chwe digid"
   }
 
   val inputName: String = "qopsReferenceId"
-  val schemeIndex0 = 0
+  val schemeIndex0      = 0
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -119,10 +119,11 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
             qopsReference = None)
 
           implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
-          implicit lazy val result: WSResponse = showPage(user,
-            aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(
-              paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(
-                reliefs = Seq(relief)))))
+          implicit lazy val result: WSResponse = showPage(
+            user,
+            aPensionsUserData.copy(pensions =
+              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))))
+          )
 
           "has an OK status" in {
             result.status shouldBe OK
@@ -148,14 +149,13 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
             reliefType = Some(MigrantMemberRelief),
             customerReference = Some("PENSIONINCOME245"),
             employerPaymentsAmount = Some(1999.99),
-            qopsReference = Some(qopsRef),
+            qopsReference = Some(qopsRef)
           )
 
-          val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
-            reliefs = Seq(relief))
+          val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
 
-          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
-          val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+          implicit val url: Int => String      = (taxYear: Int) => qopsReferenceUrl(taxYear)
+          val pensionUserData                  = pensionUserDataWithOverseasPensions(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
           "has an OK status" in {
@@ -176,20 +176,19 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
         }
 
         "render the 'QOPS' page with correct content with pre-filling that contains reference with prefix" which {
-          val qopsRef = "QOPS123456"
+          val qopsRef         = "QOPS123456"
           val expectedQopsRef = "123456"
 
           val relief = Relief(
             reliefType = Some(MigrantMemberRelief),
             customerReference = Some("PENSIONINCOME245"),
             employerPaymentsAmount = Some(1999.99),
-            qopsReference = Some(qopsRef),
+            qopsReference = Some(qopsRef)
           )
 
-          val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
-            reliefs = Seq(relief))
-          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
-          val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+          val pensionsViewModel                = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
+          implicit val url: Int => String      = (taxYear: Int) => qopsReferenceUrl(taxYear)
+          val pensionUserData                  = pensionUserDataWithOverseasPensions(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
           "has an OK status" in {
@@ -210,20 +209,19 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
         }
 
         "render the 'QOPS' page with correct content with pre-filling that contains reference with a different (incorrect) prefix" which {
-          val qopsRef = "ABCD123456"
+          val qopsRef         = "ABCD123456"
           val expectedQopsRef = "123456"
 
           val relief = Relief(
             reliefType = Some(MigrantMemberRelief),
             customerReference = Some("PENSIONINCOME245"),
             employerPaymentsAmount = Some(1999.99),
-            qopsReference = Some(qopsRef),
+            qopsReference = Some(qopsRef)
           )
 
-          val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
-            reliefs = Seq(relief))
-          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
-          val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+          val pensionsViewModel                = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
+          implicit val url: Int => String      = (taxYear: Int) => qopsReferenceUrl(taxYear)
+          val pensionUserData                  = pensionUserDataWithOverseasPensions(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
           "has an OK status" in {
@@ -244,7 +242,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
         }
 
         "Redirect to the pension summary page if there is no session data" should {
-          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
+          implicit val url: Int => String      = (taxYear: Int) => qopsReferenceUrl(taxYear)
           implicit lazy val result: WSResponse = showPage(user, optPensionsUserData = None)
 
           s"has a SEE_OTHER status" in {
@@ -257,8 +255,8 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
           val pensionsViewModel =
             aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aTransitionalCorrespondingRelief.copy(employerPaymentsAmount = None)))
 
-          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrlWithIndex(taxYear, 100)
-          val pensionUserData = pensionUserDataWithPaymentsIntoOverseasPensions(pensionsViewModel)
+          implicit val url: Int => String      = (taxYear: Int) => qopsReferenceUrlWithIndex(taxYear, 100)
+          val pensionUserData                  = pensionUserDataWithPaymentsIntoOverseasPensions(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
           "has an SEE_OTHER status" in {
@@ -274,13 +272,13 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
             reliefType = Some(MigrantMemberRelief),
             customerReference = Some("PENSIONINCOME245"),
             employerPaymentsAmount = Some(1999.99),
-            qopsReference = Some(qopsRef),
+            qopsReference = Some(qopsRef)
           )
 
           val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
 
-          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrlWithIndex(taxYear, 100)
-          val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+          implicit val url: Int => String      = (taxYear: Int) => qopsReferenceUrlWithIndex(taxYear, 100)
+          val pensionUserData                  = pensionUserDataWithOverseasPensions(pensionsViewModel)
           implicit lazy val result: WSResponse = showPage(user, pensionUserData)
 
           "has an SEE_OTHER status" in {
@@ -300,18 +298,16 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
           reliefType = Some(MigrantMemberRelief),
           customerReference = Some("PENSIONINCOME245"),
           employerPaymentsAmount = Some(1999.99),
-          qopsReference = None,
+          qopsReference = None
         )
 
         val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
-        val pensionsUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
-
+        val pensionsUserData  = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
         s"return $BAD_REQUEST error when incorrect format is submitted" which {
           lazy val form: Map[String, String] = Map(QOPSReferenceNumberForm.qopsReferenceId -> "1234567")
-          implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
-          lazy val result: WSResponse = submitPage(user, pensionsUserData, form)
-
+          implicit val url: Int => String    = (taxYear: Int) => qopsReferenceUrl(taxYear)
+          lazy val result: WSResponse        = submitPage(user, pensionsUserData, form)
 
           "has the correct status" in {
             result.status shouldBe BAD_REQUEST
@@ -342,14 +338,14 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
         reliefType = Some(MigrantMemberRelief),
         customerReference = Some("PENSIONINCOME245"),
         employerPaymentsAmount = Some(1999.99),
-        qopsReference = None,
+        qopsReference = None
       )
 
       val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
-      val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+      val pensionUserData   = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
-      lazy val result: WSResponse = submitPage(pensionUserData, form)
+      lazy val result: WSResponse     = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -369,7 +365,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrlWithIndex(taxYear, 100)
-      lazy val result: WSResponse = submitPage(pensionUserData, form)
+      lazy val result: WSResponse     = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -384,13 +380,13 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
         reliefType = Some(MigrantMemberRelief),
         customerReference = Some("PENSIONINCOME245"),
         employerPaymentsAmount = Some(1999.99),
-        qopsReference = Some("111111"),
+        qopsReference = Some("111111")
       )
       val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
-      val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
+      val pensionUserData   = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrlWithIndex(taxYear, 100)
-      lazy val result: WSResponse = submitPage(pensionUserData, form)
+      lazy val result: WSResponse     = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -400,13 +396,13 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
 
     "redirect and update QOPS when cya data exists" which {
       lazy val form: Map[String, String] = Map(QOPSReferenceNumberForm.qopsReferenceId -> "654321")
-      val qopsRef = "123456"
+      val qopsRef                        = "123456"
 
       val relief = Relief(
         reliefType = Some(MigrantMemberRelief),
         customerReference = Some("PENSIONINCOME245"),
         employerPaymentsAmount = Some(1999.99),
-        qopsReference = Some(qopsRef),
+        qopsReference = Some(qopsRef)
       )
 
       val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
@@ -414,8 +410,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
       val pensionUserData = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
-      lazy val result: WSResponse = submitPage(pensionUserData, form)
-
+      lazy val result: WSResponse     = submitPage(pensionUserData, form)
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
@@ -432,7 +427,7 @@ class QOPSReferenceControllerISpec extends CommonUtils with BeforeAndAfterEach w
       lazy val form: Map[String, String] = Map(QOPSReferenceNumberForm.qopsReferenceId -> "123456")
 
       implicit val url: Int => String = (taxYear: Int) => qopsReferenceUrl(taxYear)
-      lazy val result: WSResponse = submitPageNoSessionData(form)
+      lazy val result: WSResponse     = submitPageNoSessionData(form)
 
       "has an SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
