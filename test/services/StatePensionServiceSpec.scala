@@ -44,7 +44,6 @@ class StatePensionServiceSpec
 
   val sessionCya: PensionsCYAModel      = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions)
   val sessionUserData: PensionsUserData = aPensionsUserData.copy(pensions = sessionCya)
-  val userWithEmptySaveIncomeFromPensionsCya: PensionsUserData = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
   ".persistIncomeFromPensionsViewModel" should {
 
@@ -55,7 +54,7 @@ class StatePensionServiceSpec
 
         mockSaveClaimData(nino, aCreateStatePensionBenefitsUD, Right(()))
         mockSaveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD, Right(()))
-        mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionsCya, Right(()))
+        mockCreateOrUpdate(sessionUserData, Right(()))
 
         val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))
         result shouldBe Right(())
@@ -70,7 +69,7 @@ class StatePensionServiceSpec
         mockFind(taxYear, aUser, Right(Option(statePensionOnlySessionData)))
 
         mockSaveClaimData(nino, anUpdateStatePensionBenefitsUD, Right(()))
-        mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionsCya, Right(()))
+        mockCreateOrUpdate(statePensionOnlySessionData, Right(()))
 
         val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))
         result shouldBe Right(())
@@ -86,7 +85,7 @@ class StatePensionServiceSpec
         mockFind(taxYear, aUser, Right(Option(statePensionLumpSumOnlySessionData)))
 
         mockSaveClaimData(nino, anUpdateStatePensionLumpSumBenefitsUD, Right(()))
-        mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionsCya, Right(()))
+        mockCreateOrUpdate(statePensionLumpSumOnlySessionData, Right(()))
 
         val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))
         result shouldBe Right(())
@@ -114,7 +113,7 @@ class StatePensionServiceSpec
 
       mockSaveClaimData(nino, aCreateStatePensionBenefitsUD, Right(()))
       mockSaveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD, Right(()))
-      mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionsCya, Left(DataNotUpdated))
+      mockCreateOrUpdate(sessionUserData, Left(DataNotUpdated))
 
       val result = await(statePensionService.persistStatePensionIncomeViewModel(aUser, taxYear))
       result shouldBe Left(DataNotUpdated)

@@ -39,20 +39,19 @@ class StatePensionService @Inject() (pensionUserDataRepository: PensionsUserData
     // scalastyle:off method.length
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
 
-    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData =
-      userData match {
-        case Some(value) => value.copy(pensions = value.pensions.copy(incomeFromPensions = IncomeFromPensionsViewModel()))
-        case None =>
-          PensionsUserData(
-            user.sessionId,
-            user.mtditid,
-            user.nino,
-            taxYear,
-            isPriorSubmission = false,
-            PensionsCYAModel.emptyModels,
-            clock.now(DateTimeZone.UTC)
-          )
-      }
+    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData = {
+      userData.getOrElse(
+        PensionsUserData(
+          user.sessionId,
+          user.mtditid,
+          user.nino,
+          taxYear,
+          isPriorSubmission = false,
+          PensionsCYAModel.emptyModels,
+          clock.now(DateTimeZone.UTC)
+        )
+      )
+    }
 
     def buildStateBenefitsUserData(sessionData: PensionsUserData,
                                    stateBenefit: Option[StateBenefitViewModel],

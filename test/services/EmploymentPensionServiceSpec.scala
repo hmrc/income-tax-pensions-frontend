@@ -81,11 +81,8 @@ class EmploymentPensionServiceSpec extends UnitTest with MockPensionUserDataRepo
           .map(_.toCreateUpdateEmploymentRequest)
           .foreach(cuer => mockSaveEmploymentPensionsData(nino, taxYear, cuer, saveResponse))
 
-      lazy val userWithEmptySaveIncomeFromPensionCya = aPensionsUserData
-        .copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = Nil)))
-
       def mockUpdateSession(): Unit =
-        mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionCya, updateSessionResponse)
+        mockCreateOrUpdate(sessionUserData, updateSessionResponse)
 
     }
   }
