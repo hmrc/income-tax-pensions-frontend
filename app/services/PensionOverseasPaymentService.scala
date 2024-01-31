@@ -37,9 +37,7 @@ class PensionOverseasPaymentService @Inject() (pensionUserDataRepository: Pensio
 
   private def getPensionsUserData(userData: Option[PensionsUserData], user: User, taxYear: Int)(implicit clock: Clock): PensionsUserData =
     userData match {
-      // TODO: Do we want to clear down the journey from the session everytime we save and continue?
-      // This is done in other journeys in this repository.
-      case Some(value) => value
+      case Some(value) => value.copy(pensions = value.pensions.copy(paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel()))
       case None =>
         PensionsUserData(
           user.sessionId,

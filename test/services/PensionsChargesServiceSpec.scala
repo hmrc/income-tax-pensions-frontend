@@ -239,7 +239,7 @@ class PensionsChargesServiceSpec
       mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
 
       mockSavePensionChargesSessionData(nino, taxYear, annualAllowanceRequestModel, Right(()))
-      mockCreateOrUpdate(annualAllowanceSessionUserData, Right(()))
+      mockCreateOrUpdate(userWithEmptyCya, Right(()))
 
       val result = await(pensionChargesService.saveAnnualAllowanceViewModel(aUser, taxYear))
       result shouldBe Right(())
@@ -273,7 +273,7 @@ class PensionsChargesServiceSpec
       mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
 
       mockSavePensionChargesSessionData(nino, taxYear, annualAllowanceRequestModel, Right(()))
-      mockCreateOrUpdate(annualAllowanceSessionUserData, Left(DataNotUpdated))
+      mockCreateOrUpdate(userWithEmptyCya, Left(DataNotUpdated))
 
       val result = await(pensionChargesService.saveAnnualAllowanceViewModel(aUser, taxYear))
       result shouldBe Left(DataNotUpdated)
