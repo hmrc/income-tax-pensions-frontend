@@ -34,11 +34,11 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val inputSelector = "#taxReferenceId"
-    val hintTextSelector = "#taxReferenceId-hint"
+    val formSelector: String           = "#main-content > div > div > form"
+    val inputSelector                  = "#taxReferenceId"
+    val hintTextSelector               = "#taxReferenceId-hint"
 
     def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
@@ -71,7 +71,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     val expectedNoEntryError: String = "Enter your client’s Pension Scheme Tax Reference"
-    val expectedParagraph1: String = "If more than one of your client’s pension schemes paid the tax, you can add these details later."
+    val expectedParagraph1: String   = "If more than one of your client’s pension schemes paid the tax, you can add these details later."
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
@@ -81,33 +81,32 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val yesText = "Yes"
-    val noText = "No"
-    val expectedTitle = "Tell us the pension scheme that paid or agreed to pay the tax"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val hintText = "For example, ‘12345678RA’"
-    val expectedParagraph1: String = "If more than one pension scheme paid or agreed to pay the tax, you can add them later."
-    val expectedParagraph2: String = "Pension Scheme Tax Reference"
+    val expectedCaption: Int => String       = (taxYear: Int) => s"Annual allowance for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedButtonText                   = "Continue"
+    val yesText                              = "Yes"
+    val noText                               = "No"
+    val expectedTitle                        = "Tell us the pension scheme that paid or agreed to pay the tax"
+    val expectedErrorTitle                   = s"Error: $expectedTitle"
+    val hintText                             = "For example, ‘12345678RA’"
+    val expectedParagraph1: String           = "If more than one pension scheme paid or agreed to pay the tax, you can add them later."
+    val expectedParagraph2: String           = "Pension Scheme Tax Reference"
     val expectedIncorrectFormatError: String = "Enter a reference with 8 numbers and 2 letters, such as ‘12345678AB’"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Lwfans blynyddol ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Yn eich blaen"
-    val yesText = "Iawn"
-    val noText = "Na"
-    val expectedTitle = "Rhowch wybod i ni’r cynllun pensiwn a dalodd neu a gytunwyd i dalu’r dreth"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val hintText = "Er enghraifft, ‘12345678RA’"
+    val expectedButtonText             = "Yn eich blaen"
+    val yesText                        = "Iawn"
+    val noText                         = "Na"
+    val expectedTitle                  = "Rhowch wybod i ni’r cynllun pensiwn a dalodd neu a gytunwyd i dalu’r dreth"
+    val expectedErrorTitle             = s"Gwall: $expectedTitle"
+    val hintText                       = "Er enghraifft, ‘12345678RA’"
     val expectedParagraph1: String = "Os bydd mwy nag un cynllun pensiwn yn talu neu wedi cytuno i dalu’r dreth, gallwch eu hychwanegu nes ymlaen."
     val expectedParagraph2: String = "Cyfeirnod Treth y Cynllun Pensiwn"
     val expectedIncorrectFormatError: String = "Nodwch gyfeirnod sydd ag 8 rhif a 2 lythyren, megis ‘12345678AB’"
   }
 
   val inputName: String = "taxReferenceId"
-
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
@@ -129,8 +128,12 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
             dropPensionsDB()
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq.empty))
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-            urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {
@@ -153,14 +156,16 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
         "render the 'PSTR' page with correct content with pre-filling and a PSTR index" which {
           val taxSchemeRef = "12345678RB"
-          val index = 0
+          val index        = 0
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(taxSchemeRef)))
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, index)), user.isWelsh,
+            urlGet(
+              fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, index)),
+              user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -184,14 +189,16 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
         "render the 'PSTR' page with correct content with pre-filling and an invalid PSTR using correct index" which {
           val taxSchemeRef = "1234567RB"
-          val index = 0
+          val index        = 0
 
           implicit lazy val result: WSResponse = {
             dropPensionsDB()
             val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq(taxSchemeRef)))
             insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
             authoriseAgentOrIndividual(user.isAgent)
-            urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, index)), user.isWelsh,
+            urlGet(
+              fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, index)),
+              user.isWelsh,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -222,7 +229,9 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678AB")))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 2)), follow = false,
+        urlGet(
+          fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 2)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -236,7 +245,9 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -254,7 +265,9 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(taxPaidByPensionProvider = None)
           insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-          urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -271,7 +284,9 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
           insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-          urlGet(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -295,8 +310,13 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+              body = form,
+              follow = false,
+              welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has the correct status" in {
@@ -326,8 +346,13 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false, welsh = user.isWelsh,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+              body = form,
+              follow = false,
+              welsh = user.isWelsh,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has the correct status" in {
@@ -361,8 +386,12 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq.empty))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -384,8 +413,12 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB")))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 0)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 0)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -408,8 +441,12 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB", "12345678RC")))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -432,8 +469,12 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
         authoriseAgentOrIndividual()
         val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionSchemeTaxReferences = Some(Seq("12345678RB")))
         insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
-        urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 3)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY, 3)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -456,8 +497,12 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = None)
           insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-          urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has a SEE_OTHER status" in {
@@ -473,8 +518,12 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
           val pensionsViewModel = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
           insertCyaData(pensionsUserDataWithAnnualAllowances(pensionsViewModel))
 
-          urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlPost(
+            fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+            body = form,
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has a SEE_OTHER status" in {
@@ -489,8 +538,12 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
 
       lazy val result: WSResponse = {
         dropPensionsDB()
-        urlPost(fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)), body = form, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlPost(
+          fullUrl(pensionSchemeTaxReferenceUrl(taxYearEOY)),
+          body = form,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       "has an SEE_OTHER status" in {

@@ -22,7 +22,7 @@ class QOPSReferenceNumberFormSpec extends UnitTest {
   "The QOPS Reference Number Form regex" when {
 
     "provided a correct QOPS that contains 6 numbers" should {
-      val qops = "123456"
+      val qops  = "123456"
       val qops2 = "435627"
 
       "return true" in {
@@ -40,7 +40,7 @@ class QOPSReferenceNumberFormSpec extends UnitTest {
     }
 
     "provided a incorrect QOPS that contains 7 numbers" should {
-      val qops = "1234567"
+      val qops  = "1234567"
       val qops2 = "4356287"
 
       "return false" in {
@@ -50,7 +50,7 @@ class QOPSReferenceNumberFormSpec extends UnitTest {
     }
 
     "provided a incorrect QOPS that contains 6 letters" should {
-      val qops = "abcdef"
+      val qops  = "abcdef"
       val qops2 = "nmvdks"
 
       "return false" in {
@@ -61,7 +61,6 @@ class QOPSReferenceNumberFormSpec extends UnitTest {
 //CASE where QOPS contains padding
   }
 
-  private def checkRegex(input: String) = {
+  private def checkRegex(input: String) =
     input.matches(QOPSReferenceNumberForm.regex)
-  }
 }

@@ -37,38 +37,40 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc: MessagesControllerComponents,
-                                                                authAction: AuthorisedAction,
-                                                                pensionSchemeTaxReferenceView: PensionSchemeTaxReferenceView,
-                                                                appConfig: AppConfig,
-                                                                pensionSessionService: PensionSessionService,
-                                                                errorHandler: ErrorHandler,
-                                                                clock: Clock,
-                                                                ec: ExecutionContext) extends FrontendController(cc) with I18nSupport {
+class UnauthorisedPensionSchemeTaxReferenceController @Inject() (implicit
+    val cc: MessagesControllerComponents,
+    authAction: AuthorisedAction,
+    pensionSchemeTaxReferenceView: PensionSchemeTaxReferenceView,
+    appConfig: AppConfig,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    clock: Clock,
+    ec: ExecutionContext)
+    extends FrontendController(cc)
+    with I18nSupport {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
+    implicit request =>
+      val errorMsgDetails = (
+        s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
+        "common.pensionSchemeTaxReference.error.incorrectFormat"
+      )
+      val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
 
-    val errorMsgDetails = (
-      s"common.pensionSchemeTaxReference.error.noEntry.${if (request.user.isAgent) "agent" else "individual"}",
-      "common.pensionSchemeTaxReference.error.incorrectFormat"
-    )
-    val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
-
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      case Right(optData) =>
-        val checkRedirect = journeyCheck(PSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
-        redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
-
-          val pstrList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
-          checkIndexScheme(pensionSchemeIndex, pstrList) match {
-            case Some(scheme) =>
-              Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm.fill(scheme), pensionSchemeIndex, taxYear)))
-            case None =>
-              Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm, pensionSchemeIndex, taxYear)))
+      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+        case Right(optData) =>
+          val checkRedirect = journeyCheck(PSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
+          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+            val pstrList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
+            checkIndexScheme(pensionSchemeIndex, pstrList) match {
+              case Some(scheme) =>
+                Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm.fill(scheme), pensionSchemeIndex, taxYear)))
+              case None =>
+                Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm, pensionSchemeIndex, taxYear)))
+            }
           }
-        }
-    }
+      }
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
@@ -77,46 +79,46 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject()(implicit val cc:
       "common.pensionSchemeTaxReference.error.incorrectFormat"
     )
 
-    PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2).bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, pensionSchemeIndex, taxYear))),
-      pstr => {
-        pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-          case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-          case Right(optData) =>
-            val checkRedirect = journeyCheck(PSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
-            redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+    PensionSchemeTaxReferenceForm
+      .pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, pensionSchemeIndex, taxYear))),
+        pstr =>
+          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+            case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+            case Right(optData) =>
+              val checkRedirect = journeyCheck(PSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
+              redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+                val viewModel = data.pensions.unauthorisedPayments
+                val updatedList =
+                  (viewModel.pensionSchemeTaxReference, pensionSchemeIndex) match {
+                    case (Some(pstrList), Some(pensionSchemeIndex)) =>
+                      pstrList.updated(pensionSchemeIndex, pstr)
+                    case (Some(pstrList), None) =>
+                      pstrList ++ Seq(pstr)
+                    case (None, _) =>
+                      Seq(pstr)
+                  }
 
-              val viewModel = data.pensions.unauthorisedPayments
-              val updatedList =
-                (viewModel.pensionSchemeTaxReference, pensionSchemeIndex) match {
-                  case (Some(pstrList), Some(pensionSchemeIndex)) =>
-                    pstrList.updated(pensionSchemeIndex, pstr)
-                  case (Some(pstrList), None) =>
-                    pstrList ++ Seq(pstr)
-                  case (None, _) =>
-                    Seq(pstr)
+                val updatedCyaModel = data.pensions.copy(
+                  unauthorisedPayments = viewModel.copy(
+                    pensionSchemeTaxReference = Some(updatedList)
+                  ))
+                pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                  errorHandler.internalServerError()) {
+                  Redirect(UkPensionSchemeDetailsController.show(taxYear))
                 }
-
-              val updatedCyaModel = data.pensions.copy(
-                unauthorisedPayments = viewModel.copy(
-                  pensionSchemeTaxReference = Some(updatedList)
-                ))
-              pensionSessionService.createOrUpdateSessionData(request.user,
-                updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-                Redirect(UkPensionSchemeDetailsController.show(taxYear))
               }
-            }
-        }
-      }
-    )
+          }
+      )
   }
 
-  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Option[String] = {
+  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Option[String] =
     pensionSchemeIndex match {
       case Some(index) if pensionSchemesList.size > index =>
         Some(pensionSchemesList(index))
       case _ =>
         None
     }
-  }
 }

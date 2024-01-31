@@ -16,7 +16,10 @@
 
 package builders
 
-import builders.OverseasRefundPensionSchemeBuilder.{anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge}
+import builders.OverseasRefundPensionSchemeBuilder.{
+  anOverseasRefundPensionSchemeWithUkRefundCharge,
+  anOverseasRefundPensionSchemeWithoutUkRefundCharge
+}
 import models.pension.charges.{OverseasRefundPensionScheme, ShortServiceRefundsViewModel}
 
 object ShortServiceRefundsViewModelBuilder {

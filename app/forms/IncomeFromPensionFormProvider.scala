@@ -27,4 +27,3 @@ class IncomeFromPensionFormProvider {
     missingInputError = s"incomeFromPensionsGateway.statusPage.error.${if (isAgent) "agent" else "individual"}"
   )
 }
-

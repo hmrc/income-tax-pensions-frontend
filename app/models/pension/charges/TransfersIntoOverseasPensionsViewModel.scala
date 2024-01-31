@@ -30,24 +30,25 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
                                                   overseasTransferChargeAmount: Option[BigDecimal] = None,
                                                   pensionSchemeTransferCharge: Option[Boolean] = None,
                                                   pensionSchemeTransferChargeAmount: Option[BigDecimal] = None,
-                                                  transferPensionScheme: Seq[TransferPensionScheme] = Nil) extends PensionCYABaseModel {
+                                                  transferPensionScheme: Seq[TransferPensionScheme] = Nil)
+    extends PensionCYABaseModel {
 
   def isEmpty: Boolean = transferPensionSavings.isEmpty && overseasTransferCharge.isEmpty && overseasTransferChargeAmount.isEmpty &&
     pensionSchemeTransferCharge.isEmpty && pensionSchemeTransferChargeAmount.isEmpty && transferPensionScheme.isEmpty
 
-  def isFinished: Boolean = {
+  def isFinished: Boolean =
     transferPensionSavings.exists(x =>
       if (x)
-        overseasTransferCharge.exists(x => if (!x) true else
-          overseasTransferChargeAmount.isDefined &&
-            pensionSchemeTransferCharge.exists(x => if (!x) true else
-              pensionSchemeTransferChargeAmount.isDefined &&
-                transferPensionScheme.nonEmpty && transferPensionScheme.forall(tps => tps.isFinished)
-            )
-        )
-      else true
-    )
-  }
+        overseasTransferCharge.exists(x =>
+          if (!x) true
+          else
+            overseasTransferChargeAmount.isDefined &&
+            pensionSchemeTransferCharge.exists(x =>
+              if (!x) true
+              else
+                pensionSchemeTransferChargeAmount.isDefined &&
+                transferPensionScheme.nonEmpty && transferPensionScheme.forall(tps => tps.isFinished)))
+      else true)
 
   def toTransfersIOP: PensionSchemeOverseasTransfers = PensionSchemeOverseasTransfers(
     overseasSchemeProvider = fromTransferPensionScheme(this.transferPensionScheme),
@@ -55,7 +56,7 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
     transferChargeTaxPaid = this.pensionSchemeTransferChargeAmount.getOrElse(0.00)
   )
 
-  private def fromTransferPensionScheme(tps: Seq[TransferPensionScheme]): Seq[OverseasSchemeProvider] = {
+  private def fromTransferPensionScheme(tps: Seq[TransferPensionScheme]): Seq[OverseasSchemeProvider] =
     tps.map(x =>
       OverseasSchemeProvider(
         providerName = x.name.getOrElse(""),
@@ -63,10 +64,8 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
         providerCountryCode = x.alphaThreeCountryCode.getOrElse(""),
         qualifyingRecognisedOverseasPensionScheme = if (x.qops.nonEmpty) Some(Seq(s"Q${x.qops.get}")) else None,
         pensionSchemeTaxReference = if (x.pstr.nonEmpty && x.alphaThreeCountryCode.isEmpty) Some(Seq(x.pstr.get)) else None
-        //TODO: remove above alpha check when field get cleared out when changing between PSTR and QOPS
-      )
-    )
-  }
+        // TODO: remove above alpha check when field get cleared out when changing between PSTR and QOPS
+      ))
 
   def journeyIsNo: Boolean = this.transferPensionSavings.contains(false)
 
@@ -87,13 +86,12 @@ object TransfersIntoOverseasPensionsViewModel {
   implicit val format: OFormat[TransfersIntoOverseasPensionsViewModel] = Json.format[TransfersIntoOverseasPensionsViewModel]
 }
 
-case class EncryptedTransfersIntoOverseasPensionsViewModel(
-                                                            transferPensionSavings: Option[EncryptedValue] = None,
-                                                            overseasTransferCharge: Option[EncryptedValue] = None,
-                                                            overseasTransferChargeAmount: Option[EncryptedValue] = None,
-                                                            pensionSchemeTransferCharge: Option[EncryptedValue] = None,
-                                                            pensionSchemeTransferChargeAmount: Option[EncryptedValue] = None,
-                                                            transferPensionScheme: Seq[EncryptedTransferPensionScheme] = Nil) {
+case class EncryptedTransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option[EncryptedValue] = None,
+                                                           overseasTransferCharge: Option[EncryptedValue] = None,
+                                                           overseasTransferChargeAmount: Option[EncryptedValue] = None,
+                                                           pensionSchemeTransferCharge: Option[EncryptedValue] = None,
+                                                           pensionSchemeTransferChargeAmount: Option[EncryptedValue] = None,
+                                                           transferPensionScheme: Seq[EncryptedTransferPensionScheme] = Nil) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TransfersIntoOverseasPensionsViewModel =
     TransfersIntoOverseasPensionsViewModel(
@@ -111,24 +109,23 @@ object EncryptedTransfersIntoOverseasPensionsViewModel {
 }
 
 case class TransferPensionScheme(ukTransferCharge: Option[Boolean] = None,
-                                  name: Option[String] = None,
-                                  pstr: Option[String] = None,
-                                  qops: Option[String] = None,
-                                  providerAddress: Option[String] = None,
-                                  alphaTwoCountryCode: Option[String] = None,
-                                  alphaThreeCountryCode: Option[String] = None) {
+                                 name: Option[String] = None,
+                                 pstr: Option[String] = None,
+                                 qops: Option[String] = None,
+                                 providerAddress: Option[String] = None,
+                                 alphaTwoCountryCode: Option[String] = None,
+                                 alphaThreeCountryCode: Option[String] = None) {
 
-  def isFinished: Boolean = {
+  def isFinished: Boolean =
     this.name.isDefined && this.providerAddress.isDefined &&
       this.ukTransferCharge.exists(x =>
-        if (x){
+        if (x) {
           this.pstr.isDefined
-        }else{
+        } else {
           this.qops.isDefined && this.alphaThreeCountryCode.isDefined
         })
-  }
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransferPensionScheme = {
+  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransferPensionScheme =
     EncryptedTransferPensionScheme(
       ukTransferCharge = ukTransferCharge.map(_.encrypted),
       name = name.map(_.encrypted),
@@ -138,17 +135,15 @@ case class TransferPensionScheme(ukTransferCharge: Option[Boolean] = None,
       alphaTwoCountryCode = alphaTwoCountryCode.map(_.encrypted),
       alphaThreeCountryCode = alphaThreeCountryCode.map(_.encrypted)
     )
-  }
 }
 
-case class EncryptedTransferPensionScheme(
-                                           ukTransferCharge: Option[EncryptedValue],
-                                           name: Option[EncryptedValue],
-                                           pensionSchemeTaxReference: Option[EncryptedValue],
-                                           qualifyingRecognisedOverseasPensionScheme: Option[EncryptedValue],
-                                           providerAddress: Option[EncryptedValue],
-                                           alphaTwoCountryCode: Option[EncryptedValue],
-                                           alphaThreeCountryCode: Option[EncryptedValue]) {
+case class EncryptedTransferPensionScheme(ukTransferCharge: Option[EncryptedValue],
+                                          name: Option[EncryptedValue],
+                                          pensionSchemeTaxReference: Option[EncryptedValue],
+                                          qualifyingRecognisedOverseasPensionScheme: Option[EncryptedValue],
+                                          providerAddress: Option[EncryptedValue],
+                                          alphaTwoCountryCode: Option[EncryptedValue],
+                                          alphaThreeCountryCode: Option[EncryptedValue]) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TransferPensionScheme =
     TransferPensionScheme(

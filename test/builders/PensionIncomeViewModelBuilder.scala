@@ -24,28 +24,30 @@ object PensionIncomeViewModelBuilder {
     PensionIncome(
       submittedOn = "2022-07-28T07:59:39.041Z",
       deletedOn = Some("2022-07-28T07:59:39.041Z"),
-      foreignPension = Some(Seq(
-        ForeignPension(
-          countryCode = "FRA",
-          taxableAmount = 1999.99,
-          amountBeforeTax = Some(1999.99),
-          taxTakenOff = Some(1999.99),
-          specialWithholdingTax = Some(1999.99),
-          foreignTaxCreditRelief = Some(true)
-        )
-      )),
-      overseasPensionContribution = Some(Seq(
-        OverseasPensionContribution(
-          customerReference = Some("PENSIONINCOME245"),
-          exemptEmployersPensionContribs = 1999.99,
-          migrantMemReliefQopsRefNo = None,
-          dblTaxationRelief = None,
-          dblTaxationCountry = None,
-          dblTaxationArticle = None,
-          dblTaxationTreaty = None,
-          sf74Reference = Some("SF74-123456")
-        )
-      ))
+      foreignPension = Some(
+        Seq(
+          ForeignPension(
+            countryCode = "FRA",
+            taxableAmount = 1999.99,
+            amountBeforeTax = Some(1999.99),
+            taxTakenOff = Some(1999.99),
+            specialWithholdingTax = Some(1999.99),
+            foreignTaxCreditRelief = Some(true)
+          )
+        )),
+      overseasPensionContribution = Some(
+        Seq(
+          OverseasPensionContribution(
+            customerReference = Some("PENSIONINCOME245"),
+            exemptEmployersPensionContribs = 1999.99,
+            migrantMemReliefQopsRefNo = None,
+            dblTaxationRelief = None,
+            dblTaxationCountry = None,
+            dblTaxationArticle = None,
+            dblTaxationTreaty = None,
+            sf74Reference = Some("SF74-123456")
+          )
+        ))
     )
 
 }

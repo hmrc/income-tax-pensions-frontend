@@ -40,7 +40,8 @@ trait Cypher[A] {
 object Cypher {
 
   implicit val stringCypher: Cypher[String] = new Cypher[String] {
-    override def encrypt(value: String)(implicit aesGcmAdCrypto: AesGcmAdCrypto, associatedText: String): EncryptedValue = aesGcmAdCrypto.encrypt(value)
+    override def encrypt(value: String)(implicit aesGcmAdCrypto: AesGcmAdCrypto, associatedText: String): EncryptedValue =
+      aesGcmAdCrypto.encrypt(value)
 
     override def decrypt(encryptedValue: EncryptedValue)(implicit aesGcmAdCrypto: AesGcmAdCrypto, associatedText: String): String =
       aesGcmAdCrypto.decrypt(encryptedValue)

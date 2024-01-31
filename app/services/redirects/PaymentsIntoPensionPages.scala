@@ -55,4 +55,3 @@ object PaymentsIntoPensionPages {
     override val journeyNo: Int = 11
   }
 }
-

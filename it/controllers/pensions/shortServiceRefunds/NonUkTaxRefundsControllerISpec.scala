@@ -30,12 +30,10 @@ import utils.PageUrls.ShortServiceRefunds.{nonUkTaxRefundsUrl, shortServiceRefun
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
-  with PensionsDatabaseHelper {
+class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
-  }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
@@ -45,7 +43,10 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        urlGet(fullUrl(nonUkTaxRefundsUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+        urlGet(
+          fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
@@ -58,7 +59,10 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
           insertCyaData(pensionsUsersData(incompleteCYAModel))
-          urlGet(fullUrl(nonUkTaxRefundsUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+          urlGet(
+            fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
+            !aUser.isAgent,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -71,7 +75,10 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
           insertCyaData(pensionsUsersData(incompleteCYAModel))
-          urlGet(fullUrl(nonUkTaxRefundsUrl(taxYearEOY)), !aUser.isAgent, follow = false,
+          urlGet(
+            fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),
+            !aUser.isAgent,
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -147,9 +154,8 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
-          val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
-            shortServiceRefundCharge = None, shortServiceRefund = Some(true))
-          val form = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "jhvgfxk")
+          val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(shortServiceRefundCharge = None, shortServiceRefund = Some(true))
+          val form                        = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "jhvgfxk")
           insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
           urlPost(
             fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),

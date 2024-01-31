@@ -37,12 +37,14 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest {
         aPaymentsIntoPensionViewModel.isFinished
       }
       "all required questions are answered" in {
-        aPaymentsIntoPensionViewModel.copy(
-          retirementAnnuityContractPaymentsQuestion = Some(false),
-          totalRetirementAnnuityContractPayments = None,
-          workplacePensionPaymentsQuestion = Some(false),
-          totalWorkplacePensionPayments = None
-        ).isFinished
+        aPaymentsIntoPensionViewModel
+          .copy(
+            retirementAnnuityContractPaymentsQuestion = Some(false),
+            totalRetirementAnnuityContractPayments = None,
+            workplacePensionPaymentsQuestion = Some(false),
+            totalWorkplacePensionPayments = None
+          )
+          .isFinished
       }
     }
 

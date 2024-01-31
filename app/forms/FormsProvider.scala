@@ -72,37 +72,39 @@ class FormsProvider() {
 
   def pensionAmountForm(user: User): Form[(Option[BigDecimal], Option[BigDecimal])] = {
     val agentIndividual = if (user.isAgent) "agent" else "individual"
-    OptionalTupleAmountForm.amountForm(OptionalTupleAmountFormErrorMessage(
-      emptyFieldKey1 = s"pensions.pensionAmount.totalTax.error.noEntry.$agentIndividual",
-      wrongFormatKey1 = s"pensions.pensionAmount.totalTax.error.incorrectFormat",
-      exceedsMaxAmountKey1 = s"pensions.pensionAmount.totalTax.error.overMaximum",
-      emptyFieldKey2 = s"pensions.pensionAmount.taxPaid.error.noEntry.$agentIndividual",
-      wrongFormatKey2 = s"pensions.pensionAmount.taxPaid.error.incorrectFormat.$agentIndividual",
-      exceedsMaxAmountKey2 = s"pensions.pensionAmount.taxPaid.error.overMaximum"
-    ))
+    OptionalTupleAmountForm.amountForm(
+      OptionalTupleAmountFormErrorMessage(
+        emptyFieldKey1 = s"pensions.pensionAmount.totalTax.error.noEntry.$agentIndividual",
+        wrongFormatKey1 = s"pensions.pensionAmount.totalTax.error.incorrectFormat",
+        exceedsMaxAmountKey1 = s"pensions.pensionAmount.totalTax.error.overMaximum",
+        emptyFieldKey2 = s"pensions.pensionAmount.taxPaid.error.noEntry.$agentIndividual",
+        wrongFormatKey2 = s"pensions.pensionAmount.taxPaid.error.incorrectFormat.$agentIndividual",
+        exceedsMaxAmountKey2 = s"pensions.pensionAmount.taxPaid.error.overMaximum"
+      ))
   }
 
   def pensionLumpSumAmountForm(isAgent: Boolean): Form[(Option[BigDecimal], Option[BigDecimal])] =
-    OptionalTupleAmountForm.amountForm(OptionalTupleAmountFormErrorMessage(
-      emptyFieldKey1 = s"lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.${if (isAgent) "agent" else "individual"}",
-      wrongFormatKey1 = s"lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat",
-      exceedsMaxAmountKey1 = s"common.beforeTax.error.overMaximum",
-      emptyFieldKey2 = s"lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.${if (isAgent) "agent" else "individual"}",
-      wrongFormatKey2 = s"common.taxPaid.error.incorrectFormat",
-      exceedsMaxAmountKey2 = s"common.taxPaid.error.overMaximum"
-    ))
+    OptionalTupleAmountForm.amountForm(
+      OptionalTupleAmountFormErrorMessage(
+        emptyFieldKey1 = s"lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.noEntry.${if (isAgent) "agent" else "individual"}",
+        wrongFormatKey1 = s"lifetimeAllowance.pensionLumpSumDetails.beforeTax.error.incorrectFormat",
+        exceedsMaxAmountKey1 = s"common.beforeTax.error.overMaximum",
+        emptyFieldKey2 = s"lifetimeAllowance.pensionLumpSumDetails.taxPaid.error.noEntry.${if (isAgent) "agent" else "individual"}",
+        wrongFormatKey2 = s"common.taxPaid.error.incorrectFormat",
+        exceedsMaxAmountKey2 = s"common.taxPaid.error.overMaximum"
+      ))
 
-  def pensionPaymentsForm(user: User): Form[(Option[BigDecimal], Option[BigDecimal])] = {
-    OptionalTupleAmountForm.amountForm(OptionalTupleAmountFormErrorMessage(
-      emptyFieldKey1 = "overseasPension.pensionPayments.amountBeforeTax.noEntry",
-      wrongFormatKey1 = s"overseasPension.pensionPayments.amountBeforeTax.incorrectFormat.${userType(user.isAgent)}",
-      exceedsMaxAmountKey1 = "overseasPension.pensionPayments.amountBeforeTax.tooBig",
-      emptyFieldKey2 = "common.pensions.error.amount.noEntry",
-      wrongFormatKey2 = "overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat",
-      exceedsMaxAmountKey2 = "common.pensions.error.amount.overMaximum",
-      taxPaidLessThanAmountBeforeTaxErrorMessage = "overseasPension.pensionPayments.nonUkTaxPaidLessThanAmountBeforeTax"
-    ))
-  }
+  def pensionPaymentsForm(user: User): Form[(Option[BigDecimal], Option[BigDecimal])] =
+    OptionalTupleAmountForm.amountForm(
+      OptionalTupleAmountFormErrorMessage(
+        emptyFieldKey1 = "overseasPension.pensionPayments.amountBeforeTax.noEntry",
+        wrongFormatKey1 = s"overseasPension.pensionPayments.amountBeforeTax.incorrectFormat.${userType(user.isAgent)}",
+        exceedsMaxAmountKey1 = "overseasPension.pensionPayments.amountBeforeTax.tooBig",
+        emptyFieldKey2 = "common.pensions.error.amount.noEntry",
+        wrongFormatKey2 = "overseasPension.pensionPayments.nonUkTaxPaid.incorrectFormat",
+        exceedsMaxAmountKey2 = "common.pensions.error.amount.overMaximum",
+        taxPaidLessThanAmountBeforeTaxErrorMessage = "overseasPension.pensionPayments.nonUkTaxPaidLessThanAmountBeforeTax"
+      ))
 
   def statePensionForm(user: User): Form[(Boolean, Option[BigDecimal])] = {
     val agentOrIndividual = userType(user.isAgent)
@@ -116,14 +118,15 @@ class FormsProvider() {
 
   def pensionTakenAnotherWayAmountForm(isAgent: Boolean): Form[(Option[BigDecimal], Option[BigDecimal])] = {
     val agentOrIndividual = userType(isAgent)
-    OptionalTupleAmountForm.amountForm(OptionalTupleAmountFormErrorMessage(
-      emptyFieldKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.$agentOrIndividual",
-      wrongFormatKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.$agentOrIndividual",
-      exceedsMaxAmountKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.overMax.$agentOrIndividual",
-      emptyFieldKey2 = s"lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.$agentOrIndividual",
-      wrongFormatKey2 = "common.taxPaid.error.incorrectFormat",
-      exceedsMaxAmountKey2 = "common.taxPaid.error.overMaximum"
-    ))
+    OptionalTupleAmountForm.amountForm(
+      OptionalTupleAmountFormErrorMessage(
+        emptyFieldKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.noEntry.$agentOrIndividual",
+        wrongFormatKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.incorrectFormat.$agentOrIndividual",
+        exceedsMaxAmountKey1 = s"lifetimeAllowance.pensionTakenAnotherWay.beforeTax.error.overMax.$agentOrIndividual",
+        emptyFieldKey2 = s"lifetimeAllowance.pensionTakenAnotherWay.taxPaid.error.noEntry.$agentOrIndividual",
+        wrongFormatKey2 = "common.taxPaid.error.incorrectFormat",
+        exceedsMaxAmountKey2 = "common.taxPaid.error.overMaximum"
+      ))
   }
 
   def untaxedEmployerPayments(isAgent: Boolean): Form[BigDecimal] = {
@@ -142,9 +145,7 @@ class FormsProvider() {
 
   def overseasPensionsReliefTypeForm(user: User): Form[String] = {
     val agentOrIndividual = userType(user.isAgent)
-    RadioButtonForm.radioButtonForm(
-      s"overseasPension.pensionReliefType.error.noEntry.$agentOrIndividual",
-      TaxReliefQuestion.validTaxList)
+    RadioButtonForm.radioButtonForm(s"overseasPension.pensionReliefType.error.noEntry.$agentOrIndividual", TaxReliefQuestion.validTaxList)
   }
 
   def taxPaidOnStatePensionLumpSum(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
@@ -177,17 +178,14 @@ class FormsProvider() {
     )
   }
 
-  def stateBenefitDateForm: Form[DateForm.DateModel] = {
+  def stateBenefitDateForm: Form[DateForm.DateModel] =
     DateForm.dateForm("stateBenefitStartDate")
-  }
 
-  def statePensionLumpSumStartDateForm: Form[DateForm.DateModel] = {
+  def statePensionLumpSumStartDateForm: Form[DateForm.DateModel] =
     DateForm.dateForm("statePensionLumpSumStartDate")
-  }
 
-  def pensionSchemeDateForm: Form[DateForm.DateModel] = {
+  def pensionSchemeDateForm: Form[DateForm.DateModel] =
     DateForm.dateForm("pensionStartDate")
-  }
 
   def statePensionAddToCalculationForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"pensions.statePension.addToCalculation.noEntry.${if (isAgent) "agent" else "individual"}"

@@ -27,7 +27,7 @@ import org.jsoup.Jsoup.parse
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 
 class PensionOverseasIncomeStatusISpec
-  extends YesNoControllerSpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status") {
+    extends YesNoControllerSpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status") {
 
   val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
 
@@ -42,7 +42,8 @@ class PensionOverseasIncomeStatusISpec
     text = Set.empty
   )
   val expectedYesNoPageContentsAgent: ExpectedYesNoPageContents = expectedYesNoPageContentsIndividual
-    .copy(title = "Did your client get payments from an overseas pension scheme?",
+    .copy(
+      title = "Did your client get payments from an overseas pension scheme?",
       header = "Did your client get payments from an overseas pension scheme?")
 
   "This page" when {
@@ -55,7 +56,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, None)
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
@@ -69,7 +70,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
@@ -77,7 +78,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
@@ -86,7 +87,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
@@ -95,7 +96,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
@@ -115,7 +116,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
@@ -124,7 +125,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
@@ -133,7 +134,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
@@ -142,7 +143,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
@@ -163,7 +164,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForIndividualAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
@@ -172,7 +173,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForIndividualAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
@@ -181,7 +182,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForAgentAndEnglish in {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
@@ -190,7 +191,7 @@ class PensionOverseasIncomeStatusISpec
           scenarioNameForAgentAndWelsh ignore {
 
             implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-            val response = getPage
+            val response                        = getPage
 
             response must haveStatus(OK)
             assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
@@ -213,7 +214,7 @@ class PensionOverseasIncomeStatusISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              val response                        = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCya)
@@ -223,7 +224,7 @@ class PensionOverseasIncomeStatusISpec
             scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              val response                        = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCya)
@@ -233,7 +234,7 @@ class PensionOverseasIncomeStatusISpec
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              val response                        = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCya)
@@ -241,10 +242,10 @@ class PensionOverseasIncomeStatusISpec
 
             }
             scenarioNameForAgentAndWelsh ignore {
-              val sessionData = pensionsUserData(aPensionsCYAModel)
-              val expectedViewModel = IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion = Some(false))
+              val sessionData                     = pensionsUserData(aPensionsCYAModel)
+              val expectedViewModel               = IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion = Some(false))
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+              val response                        = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCya)
@@ -264,7 +265,7 @@ class PensionOverseasIncomeStatusISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              val response                        = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCountry)
@@ -274,7 +275,7 @@ class PensionOverseasIncomeStatusISpec
             scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              val response                        = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCountry)
@@ -284,7 +285,7 @@ class PensionOverseasIncomeStatusISpec
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              val response                        = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCountry)
@@ -294,7 +295,7 @@ class PensionOverseasIncomeStatusISpec
             scenarioNameForAgentAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+              val response                        = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
               response must haveStatus(SEE_OTHER)
               response must haveALocationHeaderValue(PageRelativeURLs.incomeFromOverseasPensionsCountry)
@@ -332,15 +333,19 @@ class PensionOverseasIncomeStatusISpec
           val expectedYesNoPageContentsAgent = expectedYesNoPageContentsIndividual.copy(
             title = "Error: Did your client get payments from an overseas pension scheme?",
             header = "Did your client get payments from an overseas pension scheme?",
-            errorSummarySectionOpt = Some(ErrorSummarySection(
-              title = "There is a problem", body = "Select yes if your client had income from an overseas pension scheme", link = "#value")),
-            errorAboveElementCheckSectionOpt = Some(ErrorAboveElementCheckSection(
-              title = "Error: Select yes if your client had income from an overseas pension scheme", idOpt = Some("value")))
+            errorSummarySectionOpt = Some(
+              ErrorSummarySection(
+                title = "There is a problem",
+                body = "Select yes if your client had income from an overseas pension scheme",
+                link = "#value")),
+            errorAboveElementCheckSectionOpt = Some(
+              ErrorAboveElementCheckSection(
+                title = "Error: Select yes if your client had income from an overseas pension scheme",
+                idOpt = Some("value")))
           )
 
           def welshTitle(epc: ExpectedYesNoPageContents): Option[ErrorSummarySection] =
             epc.errorSummarySectionOpt.map(ess => ess.copy(title = "Mae problem wedi codi"))
-
 
           "the user has selected neither 'Yes' nor 'No' and" when {
 
@@ -349,7 +354,7 @@ class PensionOverseasIncomeStatusISpec
             scenarioNameForIndividualAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(None))
+              val response                        = submitForm(SubmittedFormDataForYesNoPage(None))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
@@ -358,17 +363,18 @@ class PensionOverseasIncomeStatusISpec
             scenarioNameForIndividualAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Individual, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(None))
+              val response                        = submitForm(SubmittedFormDataForYesNoPage(None))
 
               response must haveStatus(BAD_REQUEST)
-              assertPageAsExpected(parse(response.body),
+              assertPageAsExpected(
+                parse(response.body),
                 expectedYesNoPageContentsIndividual.copy(errorSummarySectionOpt = welshTitle(expectedYesNoPageContentsIndividual)))
             }
 
             scenarioNameForAgentAndEnglish in {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, English, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(None))
+              val response                        = submitForm(SubmittedFormDataForYesNoPage(None))
 
               response must haveStatus(BAD_REQUEST)
               assertPageAsExpected(parse(response.body), expectedYesNoPageContentsAgent)
@@ -377,10 +383,11 @@ class PensionOverseasIncomeStatusISpec
             scenarioNameForAgentAndWelsh ignore {
 
               implicit val userConfig: UserConfig = UserConfig(Agent, Welsh, Some(sessionData))
-              val response = submitForm(SubmittedFormDataForYesNoPage(None))
+              val response                        = submitForm(SubmittedFormDataForYesNoPage(None))
 
               response must haveStatus(BAD_REQUEST)
-              assertPageAsExpected(parse(response.body),
+              assertPageAsExpected(
+                parse(response.body),
                 expectedYesNoPageContentsAgent.copy(errorSummarySectionOpt = welshTitle(expectedYesNoPageContentsAgent)))
 
             }
@@ -394,10 +401,3 @@ class PensionOverseasIncomeStatusISpec
     loadPensionUserData.map(_.pensions.incomeFromOverseasPensions)
 
 }
-
-
-
-
-
-
-

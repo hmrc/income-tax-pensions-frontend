@@ -23,7 +23,7 @@ import builders.PensionSchemeOverseasTransfersBuilder.anPensionSchemeOverseasTra
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 
 object CreateUpdatePensionChargesRequestBuilder {
-  
+
   val priorPensionChargesData = anIncomeTaxUserData.pensions.flatMap(_.pensionCharges)
 
   val priorPensionChargesRM: CreateUpdatePensionChargesRequestModel = CreateUpdatePensionChargesRequestModel(
@@ -36,11 +36,11 @@ object CreateUpdatePensionChargesRequestBuilder {
   val transferChargeSubmissionCRM = priorPensionChargesRM.copy(
     pensionSchemeOverseasTransfers = Some(anPensionSchemeOverseasTransfers.copy(transferCharge = 500.20, transferChargeTaxPaid = 200.50))
   )
-  
- val shortServiceRefundSubmissionCRM = priorPensionChargesRM.copy(
+
+  val shortServiceRefundSubmissionCRM = priorPensionChargesRM.copy(
     overseasPensionContributions = Some(anOverseasPensionContributions.copy(shortServiceRefund = 1000.20, shortServiceRefundTaxPaid = 250.00))
   )
-  
+
   val annualAllowanceSubmissionCRM = priorPensionChargesRM.copy(
     pensionSavingsTaxCharges =
       Some(aPensionSavingsTaxCharges.copy(lumpSumBenefitTakenInExcessOfLifetimeAllowance = None, benefitInExcessOfLifetimeAllowance = None))

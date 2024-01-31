@@ -25,8 +25,7 @@ import play.api.http.Status.BAD_REQUEST
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.TransferIntoOverseasPensions.checkYourDetailsPensionUrl
 
-class TransferPensionSavingsControllerISpec
-  extends YesNoControllerSpec("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings") {
+class TransferPensionSavingsControllerISpec extends YesNoControllerSpec("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings") {
 
   "This page" when {
     ".show" should {
@@ -34,7 +33,7 @@ class TransferPensionSavingsControllerISpec
         "the user has no stored session data at all" in {
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse = getPage
+          implicit val response: WSResponse   = getPage
 
           assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
         }
@@ -45,7 +44,7 @@ class TransferPensionSavingsControllerISpec
         "the user has no stored session data at all" in {
 
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+          implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
           assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
           getTransferPensionsViewModel mustBe None
@@ -63,7 +62,7 @@ class TransferPensionSavingsControllerISpec
             )
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(Some(true)))
 
             assertRedirectionAsExpected(redirectPage)
             getTransferPensionsViewModel mustBe Some(expectedViewModel)
@@ -71,7 +70,7 @@ class TransferPensionSavingsControllerISpec
 
           "the user has selected 'No'" in {
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
             assertRedirectionAsExpected(checkYourDetailsPensionUrl(taxYearEOY))
             getTransferPensionsViewModel mustBe Some(TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(false)))
@@ -80,7 +79,7 @@ class TransferPensionSavingsControllerISpec
           "the user has not selected any option" in {
 
             implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-            implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(None))
+            implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(None))
 
             response must haveStatus(BAD_REQUEST)
           }

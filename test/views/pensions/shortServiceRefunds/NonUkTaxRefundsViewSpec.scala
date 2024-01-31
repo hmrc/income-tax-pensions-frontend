@@ -30,14 +30,14 @@ import views.html.pensions.shortServiceRefunds.NonUkTaxRefundsView
 class NonUkTaxRefundsViewSpec extends ViewUnitTest {
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val amountLabelSelector = "#conditional-value > div > label"
-    val amountTextSelector = "#amount-2"
-    val p1Selector = "#main-content > div > div > p:nth-child(2)"
-    val p2Selector = "#main-content > div > div > p:nth-child(3)"
-    val questionSelector = "#main-content > div > div > h2"
-    val yesSelector = "#value"
-    val noSelector = "#value-no"
+    val captionSelector: String        = "#main-content > div > div > header > p"
+    val amountLabelSelector            = "#conditional-value > div > label"
+    val amountTextSelector             = "#amount-2"
+    val p1Selector                     = "#main-content > div > div > p:nth-child(2)"
+    val p2Selector                     = "#main-content > div > div > p:nth-child(3)"
+    val questionSelector               = "#main-content > div > div > h2"
+    val yesSelector                    = "#value"
+    val noSelector                     = "#value-no"
     val continueButtonSelector: String = "#continue"
   }
 
@@ -60,83 +60,88 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
   }
 
   object ExpectedContentsIndividualEN extends ExpectedContents {
-    val expectedTitle: String = "Non-UK tax on short service refunds"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedPara1: String = "If you paid non-UK tax on more than one refund, add the amounts together."
-    val expectedPara2: String = "If you do not know this information, you can check with the employer or pension scheme provider."
-    val expectedQuestion: String = "Did you pay non-UK tax on short service refunds?"
-    val expectedAmountText: String = "Total non-UK tax on short service refunds, in pounds"
-    val expectedAmountHint: String = "For example, £193.54"
-    val yes: String = "Yes"
-    val no: String = "No"
-    val continue: String = "Continue"
-    val errorMessage: String = "Select yes if you paid non-UK tax on this short service refund"
-    val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund"
+    val expectedTitle: String                    = "Non-UK tax on short service refunds"
+    val expectedErrorTitle                       = s"Error: $expectedTitle"
+    val expectedCaption: Int => String           = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedPara1: String                    = "If you paid non-UK tax on more than one refund, add the amounts together."
+    val expectedPara2: String                    = "If you do not know this information, you can check with the employer or pension scheme provider."
+    val expectedQuestion: String                 = "Did you pay non-UK tax on short service refunds?"
+    val expectedAmountText: String               = "Total non-UK tax on short service refunds, in pounds"
+    val expectedAmountHint: String               = "For example, £193.54"
+    val yes: String                              = "Yes"
+    val no: String                               = "No"
+    val continue: String                         = "Continue"
+    val errorMessage: String                     = "Select yes if you paid non-UK tax on this short service refund"
+    val expectedNoAmountEntryErrorText: String   = "Enter the amount of non-UK tax you paid on this short service refund"
     val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax you paid on this short service refund in pounds"
-    val expectedTooBigErrorText: String = "The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000"
+    val expectedTooBigErrorText: String          = "The amount of non-UK tax you paid on this short service refund must be less than £100,000,000,000"
   }
 
   object ExpectedContentsAgentEN extends ExpectedContents {
-    val expectedTitle: String = "Non-UK tax on short service refunds"
-    val expectedErrorTitle = s"Error: $expectedTitle"
+    val expectedTitle: String          = "Non-UK tax on short service refunds"
+    val expectedErrorTitle             = s"Error: $expectedTitle"
     val expectedCaption: Int => String = (taxYear: Int) => s"Short service refunds for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedPara1: String = "If your client paid non-UK tax on more than one refund, add the amounts together."
+    val expectedPara1: String          = "If your client paid non-UK tax on more than one refund, add the amounts together."
     val expectedPara2: String = "If you do not know this information, you can ask your client to check with the employer or pension scheme provider."
-    val expectedQuestion: String = "Did your client pay non-UK tax on short service refunds?"
-    val expectedAmountText: String = "Total non-UK tax on short service refunds, in pounds"
-    val expectedAmountHint: String = "For example, £193.54"
-    val yes: String = "Yes"
-    val no: String = "No"
-    val continue: String = "Continue"
-    val errorMessage: String = "Select yes if your client paid non-UK tax on this short service refund"
-    val expectedNoAmountEntryErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund"
+    val expectedQuestion: String                 = "Did your client pay non-UK tax on short service refunds?"
+    val expectedAmountText: String               = "Total non-UK tax on short service refunds, in pounds"
+    val expectedAmountHint: String               = "For example, £193.54"
+    val yes: String                              = "Yes"
+    val no: String                               = "No"
+    val continue: String                         = "Continue"
+    val errorMessage: String                     = "Select yes if your client paid non-UK tax on this short service refund"
+    val expectedNoAmountEntryErrorText: String   = "Enter the amount of non-UK tax your client paid on this short service refund"
     val expectedIncorrectFormatErrorText: String = "Enter the amount of non-UK tax your client paid on this short service refund in pounds"
     val expectedTooBigErrorText: String = "The amount of non-UK tax your client paid on this short service refund must be less than £100,000,000,000"
   }
 
   object ExpectedContentsAgentCY extends ExpectedContents {
-    val expectedTitle: String = "Treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val expectedTitle: String          = "Treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr"
+    val expectedErrorTitle             = s"Gwall: $expectedTitle"
     val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedPara1: String = "Os gwnaeth eich cleient dalu treth y tu allan i’r DU ar fwy nag un ad-daliad, ychwanegwch y symiau at ei gilydd."
     val expectedPara2: String = "Os nad yw’r wybodaeth hon gennych, gallwch ofyn i’ch cleient wirio gyda’r cyflogwr neu’r darparwr cynllun pensiwn."
-    val expectedQuestion: String = "A wnaeth eich cleient dalu treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr?"
+    val expectedQuestion: String   = "A wnaeth eich cleient dalu treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr?"
     val expectedAmountText: String = "Cyfanswm treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr, mewn punnoedd"
     val expectedAmountHint: String = "For example, £193.54"
-    val yes: String = "Iawn"
-    val no: String = "Na"
-    val continue: String = "Yn eich blaen"
-    val errorMessage: String = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr"
-    val expectedNoAmountEntryErrorText: String = "Nodwch swm y dreth y gwnaeth eich cleient ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr"
-    val expectedIncorrectFormatErrorText: String = "Nodwch swm y dreth y gwnaeth eich cleient ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr yn y fformat cywir"
-    val expectedTooBigErrorText: String = "Mae’n rhaid i swm y dreth y gwnaeth eich cleient ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr fod yn llai na £100,000,000,000"
+    val yes: String                = "Iawn"
+    val no: String                 = "Na"
+    val continue: String           = "Yn eich blaen"
+    val errorMessage: String       = "Dewiswch ‘Iawn’ os gwnaeth eich cleient dalu treth y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr"
+    val expectedNoAmountEntryErrorText: String =
+      "Nodwch swm y dreth y gwnaeth eich cleient ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr"
+    val expectedIncorrectFormatErrorText: String =
+      "Nodwch swm y dreth y gwnaeth eich cleient ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr yn y fformat cywir"
+    val expectedTooBigErrorText: String =
+      "Mae’n rhaid i swm y dreth y gwnaeth eich cleient ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr fod yn llai na £100,000,000,000"
   }
 
   object ExpectedContentsIndividualCY extends ExpectedContents {
-    val expectedTitle: String = "Treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
+    val expectedTitle: String          = "Treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr"
+    val expectedErrorTitle             = s"Gwall: $expectedTitle"
     val expectedCaption: Int => String = (taxYear: Int) => s"Ad-daliadau am wasanaeth byr ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedPara1: String = "Os gwnaethoch dalu treth y tu allan i’r DU ar fwy nag un ad-daliad, ychwanegwch y symiau at ei gilydd."
-    val expectedPara2: String = "Os nad yw’r wybodaeth hon gennych, gallwch wirio gyda’r cyflogwr neu’r darparwr cynllun pensiwn."
-    val expectedQuestion: String = "A wnaethoch dalu treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr?"
-    val expectedAmountText: String = "Cyfanswm treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr, mewn punnoedd"
-    val expectedAmountHint: String = "For example, £193.54"
-    val yes: String = "Iawn"
-    val no: String = "Na"
-    val continue: String = "Yn eich blaen"
-    val errorMessage: String = "Dewiswch ‘Iawn’ os gwnaethoch dalu treth y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr"
+    val expectedPara1: String          = "Os gwnaethoch dalu treth y tu allan i’r DU ar fwy nag un ad-daliad, ychwanegwch y symiau at ei gilydd."
+    val expectedPara2: String          = "Os nad yw’r wybodaeth hon gennych, gallwch wirio gyda’r cyflogwr neu’r darparwr cynllun pensiwn."
+    val expectedQuestion: String       = "A wnaethoch dalu treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr?"
+    val expectedAmountText: String     = "Cyfanswm treth y tu allan i’r DU ar ad-daliadau am wasanaeth byr, mewn punnoedd"
+    val expectedAmountHint: String     = "For example, £193.54"
+    val yes: String                    = "Iawn"
+    val no: String                     = "Na"
+    val continue: String               = "Yn eich blaen"
+    val errorMessage: String           = "Dewiswch ‘Iawn’ os gwnaethoch dalu treth y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr"
     val expectedNoAmountEntryErrorText: String = "Nodwch swm y dreth y gwnaethoch ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr"
-    val expectedIncorrectFormatErrorText: String = "Nodwch swm y dreth y gwnaethoch ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr yn y fformat cywir"
-    val expectedTooBigErrorText: String = "Mae’n rhaid i swm y dreth y gwnaethoch ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr fod yn llai na £100,000,000,000"
+    val expectedIncorrectFormatErrorText: String =
+      "Nodwch swm y dreth y gwnaethoch ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr yn y fformat cywir"
+    val expectedTooBigErrorText: String =
+      "Mae’n rhaid i swm y dreth y gwnaethoch ei thalu y tu allan i’r DU ar yr ad-daliad hwn am wasanaeth byr fod yn llai na £100,000,000,000"
   }
 
   protected val userScenarios: Seq[UserScenario[ExpectedContents, Unit]] = Seq(
-      UserScenario(isWelsh = false, isAgent = false, ExpectedContentsIndividualEN),
-      UserScenario(isWelsh = false, isAgent = true, ExpectedContentsAgentEN),
-      UserScenario(isWelsh = true, isAgent = false, ExpectedContentsIndividualCY),
-      UserScenario(isWelsh = true, isAgent = true, ExpectedContentsAgentCY)
-    )
+    UserScenario(isWelsh = false, isAgent = false, ExpectedContentsIndividualEN),
+    UserScenario(isWelsh = false, isAgent = true, ExpectedContentsAgentEN),
+    UserScenario(isWelsh = true, isAgent = false, ExpectedContentsIndividualCY),
+    UserScenario(isWelsh = true, isAgent = true, ExpectedContentsAgentCY)
+  )
 
   private lazy val underTest = inject[NonUkTaxRefundsView]
 
@@ -144,11 +149,11 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "show the Non UK tax on short service refund page" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                                         = getMessages(userScenario.isWelsh)
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
 
-        val htmlFormat = underTest(form, taxYearEOY)
+        val htmlFormat                  = underTest(form, taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
@@ -165,7 +170,7 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
       }
       "show the Non UK tax on short service refund page when yes is selected" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                                         = getMessages(userScenario.isWelsh)
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
 
@@ -187,11 +192,11 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
       }
       "show the Non UK tax on short service refund page when no is selected" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                                         = getMessages(userScenario.isWelsh)
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
 
-        val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "false")), taxYearEOY)
+        val htmlFormat                  = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "false")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.commonExpectedResults.expectedTitle, userScenario.isWelsh)
@@ -209,11 +214,11 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
       }
       "show an error message when page is submitted without any input" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                                         = getMessages(userScenario.isWelsh)
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
 
-        val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "")), taxYearEOY)
+        val htmlFormat                  = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.commonExpectedResults.expectedErrorTitle, userScenario.isWelsh)
@@ -224,11 +229,11 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
       }
       "show an error message when page is submitted without amount input" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                                         = getMessages(userScenario.isWelsh)
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
 
-        val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true")), taxYearEOY)
+        val htmlFormat                  = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.commonExpectedResults.expectedErrorTitle, userScenario.isWelsh)
@@ -240,7 +245,7 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
       }
       "show an error message when page is submitted with amount in wrong format" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                                         = getMessages(userScenario.isWelsh)
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
 
@@ -253,11 +258,12 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
       }
       "show an error message when page is submitted that exceeds maximum amount allowed" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                                         = getMessages(userScenario.isWelsh)
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().nonUkTaxRefundsForm(if (userScenario.isAgent) anAgentUser else aUser)
 
-        val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "999999999999999999999.99")), taxYearEOY)
+        val htmlFormat =
+          underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "999999999999999999999.99")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.commonExpectedResults.expectedErrorTitle, userScenario.isWelsh)

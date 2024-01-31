@@ -25,9 +25,11 @@ object PensionCustomerReferenceNumberForm extends InputFilters {
 
   val pensionsCustomerReferenceNumberId: String = "pensionsCustomerReferenceNumberId"
 
-  def pensionCustomerReferenceNumberForm(incorrectFormatMsg : String): Form[String] = Form(
-    pensionsCustomerReferenceNumberId -> trimmedText.transform[String](filter, identity).verifying(
-      nonEmpty(incorrectFormatMsg)
-    )
+  def pensionCustomerReferenceNumberForm(incorrectFormatMsg: String): Form[String] = Form(
+    pensionsCustomerReferenceNumberId -> trimmedText
+      .transform[String](filter, identity)
+      .verifying(
+        nonEmpty(incorrectFormatMsg)
+      )
   )
 }

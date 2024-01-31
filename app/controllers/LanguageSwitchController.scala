@@ -27,23 +27,25 @@ import utils.{RedirectUtils, SessionHelper}
 import javax.inject.Singleton
 
 @Singleton
-class LanguageSwitchController @Inject()(appConfig: AppConfig,
-                                         override implicit val messagesApi: MessagesApi,
-                                         val controllerComponents: MessagesControllerComponents
-                                        ) extends FrontendBaseController with I18nSupport with SessionHelper {
+class LanguageSwitchController @Inject() (appConfig: AppConfig,
+                                          override implicit val messagesApi: MessagesApi,
+                                          val controllerComponents: MessagesControllerComponents)
+    extends FrontendBaseController
+    with I18nSupport
+    with SessionHelper {
 
   private def fallbackURL(implicit request: Request[_]): String = getFromSession(SessionValues.TAX_YEAR) match {
     case Some(taxYear) => appConfig.incomeTaxSubmissionStartUrl(taxYear.toInt)
-    case None => appConfig.incomeTaxSubmissionStartUrl(appConfig.defaultTaxYear)
+    case None          => appConfig.incomeTaxSubmissionStartUrl(appConfig.defaultTaxYear)
   }
 
   private def languageMap: Map[String, Lang] = appConfig.languageMap
 
   def switchToLanguage(language: String): Action[AnyContent] = Action { implicit request =>
-
     val lang = languageMap.getOrElse(language, Lang.defaultLang)
 
-    val redirectURL = request.headers.get(REFERER)
+    val redirectURL = request.headers
+      .get(REFERER)
       .flatMap(RedirectUtils.asRelativeUrl)
       .getOrElse(fallbackURL)
     Redirect(redirectURL).withLang(Lang.apply(lang.code))

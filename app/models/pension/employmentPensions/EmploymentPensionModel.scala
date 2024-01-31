@@ -27,8 +27,7 @@ case class EmploymentPensionModel(employmentId: String,
                                   endDate: Option[String],
                                   amount: Option[BigDecimal],
                                   taxPaid: Option[BigDecimal],
-                                  isCustomerEmploymentData: Option[Boolean]
-                                 )
+                                  isCustomerEmploymentData: Option[Boolean])
 
 object EmploymentPensionModel {
   implicit val format: OFormat[EmploymentPensionModel] = Json.format[EmploymentPensionModel]
@@ -42,8 +41,7 @@ case class EncryptedEmploymentPensionModel(employmentId: EncryptedValue,
                                            endDate: Option[EncryptedValue],
                                            amount: Option[EncryptedValue],
                                            taxPaid: Option[EncryptedValue],
-                                           isCustomerEmploymentData: Option[EncryptedValue]
-                                          )
+                                           isCustomerEmploymentData: Option[EncryptedValue])
 
 object EncryptedEmploymentPensionModel {
   implicit val format: OFormat[EncryptedEmploymentPensionModel] = Json.format[EncryptedEmploymentPensionModel]

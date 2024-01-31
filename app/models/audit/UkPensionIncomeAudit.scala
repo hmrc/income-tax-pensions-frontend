@@ -30,25 +30,23 @@ case class UkPensionIncomeAudit(taxYear: Int,
                                 ukPensionIncome: AuditUkPensionIncome,
                                 priorUkPensionIncome: Option[AuditUkPensionIncome] = None) {
 
-    private val amend = "AmendUkPensionIncome"
-    private val create = "CreateUkPensionIncome"
-    private val view = "ViewUkPensionIncome"
+  private val amend  = "AmendUkPensionIncome"
+  private val create = "CreateUkPensionIncome"
+  private val view   = "ViewUkPensionIncome"
 
-    def toAuditModelAmend: AuditModel[UkPensionIncomeAudit] = toAuditModel(amend)
+  def toAuditModelAmend: AuditModel[UkPensionIncomeAudit] = toAuditModel(amend)
 
-    def toAuditModelCreate: AuditModel[UkPensionIncomeAudit] = toAuditModel(create)
+  def toAuditModelCreate: AuditModel[UkPensionIncomeAudit] = toAuditModel(create)
 
-    def toAuditModelView: AuditModel[UkPensionIncomeAudit] = toAuditModel(view)
+  def toAuditModelView: AuditModel[UkPensionIncomeAudit] = toAuditModel(view)
 
-    private def toAuditModel(name: String): AuditModel[UkPensionIncomeAudit] = AuditModel(name, name, this)
+  private def toAuditModel(name: String): AuditModel[UkPensionIncomeAudit] = AuditModel(name, name, this)
 }
 
-
 object UkPensionIncomeAudit {
-  
-  case class AuditUkPensionIncome(uKPensionIncomesQuestion: Option[Boolean] = None,
-                                  uKPensionIncomes: Seq[UkPensionIncomeViewModel] = Seq.empty)
-  
+
+  case class AuditUkPensionIncome(uKPensionIncomesQuestion: Option[Boolean] = None, uKPensionIncomes: Seq[UkPensionIncomeViewModel] = Seq.empty)
+
   object AuditUkPensionIncome {
     implicit val auditUkPensionIncomeWrites: OWrites[AuditUkPensionIncome] = Json.writes[AuditUkPensionIncome]
   }
@@ -56,12 +54,15 @@ object UkPensionIncomeAudit {
   def apply(taxYear: Int,
             user: User,
             ukPensionIncome: AuditUkPensionIncome,
-            priorUkPensionIncome: Option[AuditUkPensionIncome]): UkPensionIncomeAudit = {
-
+            priorUkPensionIncome: Option[AuditUkPensionIncome]): UkPensionIncomeAudit =
     UkPensionIncomeAudit(
-      taxYear, user.affinityGroup, user.nino, user.mtditid, ukPensionIncome, priorUkPensionIncome
+      taxYear,
+      user.affinityGroup,
+      user.nino,
+      user.mtditid,
+      ukPensionIncome,
+      priorUkPensionIncome
     )
-  }
 
   implicit val writes: OWrites[UkPensionIncomeAudit] = Json.writes[UkPensionIncomeAudit]
 
@@ -74,8 +75,9 @@ object UkPensionIncomeAudit {
       ukPensionIncome = AuditUkPensionIncome(
         sessionData.pensions.incomeFromPensions.uKPensionIncomesQuestion,
         sessionData.pensions.incomeFromPensions.uKPensionIncomes),
-      priorUkPensionIncome =  priorData.map(pd => AllPensionsData.generateUkPensionCyaFromPrior(pd))
-          .map({case (ukPensionIncomeQ, ukPensionIncomes) => AuditUkPensionIncome(ukPensionIncomeQ, ukPensionIncomes)})
+      priorUkPensionIncome = priorData
+        .map(pd => AllPensionsData.generateUkPensionCyaFromPrior(pd))
+        .map { case (ukPensionIncomeQ, ukPensionIncomes) => AuditUkPensionIncome(ukPensionIncomeQ, ukPensionIncomes) }
     )
 
   def standardAudit(user: User, sessionData: PensionsUserData): UkPensionIncomeAudit =

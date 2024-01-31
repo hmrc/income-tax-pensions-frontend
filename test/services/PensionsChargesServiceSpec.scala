@@ -28,12 +28,12 @@ import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.BAD_REQUEST
 import utils.UnitTest
 
-class PensionsChargesServiceSpec extends UnitTest
-  with MockPensionUserDataRepository
-  with MockPensionsConnector
-  with MockIncomeTaxUserDataConnector
-  with ScalaFutures {
-
+class PensionsChargesServiceSpec
+    extends UnitTest
+    with MockPensionUserDataRepository
+    with MockPensionsConnector
+    with MockIncomeTaxUserDataConnector
+    with ScalaFutures {
 
   val pensionChargesService = new PensionChargesService(mockPensionUserDataRepository, mockPensionConnectorHelper, mockUserDataConnector)
 
@@ -42,13 +42,14 @@ class PensionsChargesServiceSpec extends UnitTest
   val unauthorisedSessionUserData =
     aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(unauthorisedPayments = aPensionsUserData.pensions.unauthorisedPayments))
   val transferIOPSessionUserData =
-    aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(transfersIntoOverseasPensions = aPensionsUserData.pensions.transfersIntoOverseasPensions))
+    aPensionsUserData.copy(pensions =
+      aPensionsCYAEmptyModel.copy(transfersIntoOverseasPensions = aPensionsUserData.pensions.transfersIntoOverseasPensions))
 
   val shortServiceRefundsSessionUserData =
     aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(shortServiceRefunds = aPensionsUserData.pensions.shortServiceRefunds))
-    
+
   val annualAllowanceSessionUserData =
-     aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(pensionsAnnualAllowances = aPensionsUserData.pensions.pensionsAnnualAllowances))
+    aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(pensionsAnnualAllowances = aPensionsUserData.pensions.pensionsAnnualAllowances))
 
   val priorPensionChargesData = IncomeTaxUserData(Some(anAllPensionsData)).pensions.flatMap(_.pensionCharges)
   val unauthorisedPaymentsRequestModel = CreateUpdatePensionChargesRequestModel(
@@ -73,7 +74,7 @@ class PensionsChargesServiceSpec extends UnitTest
     pensionContributions = priorPensionChargesData.flatMap(_.pensionContributions),
     overseasPensionContributions = Some(shortServiceRefundsSessionUserData.pensions.shortServiceRefunds.toOverseasPensionContributions)
   )
-  
+
   val annualAllowanceRequestModel = {
     val annualAllowanceChargesModel = annualAllowanceSessionUserData.pensions.pensionsAnnualAllowances
       .toAnnualAllowanceChargesModel(Some(anAllPensionsData))
@@ -82,7 +83,7 @@ class PensionsChargesServiceSpec extends UnitTest
       pensionSchemeOverseasTransfers = priorPensionChargesData.flatMap(_.pensionSchemeOverseasTransfers),
       pensionSchemeUnauthorisedPayments = priorPensionChargesData.flatMap(_.pensionSchemeUnauthorisedPayments),
       pensionContributions = annualAllowanceChargesModel.pensionContributions,
-        overseasPensionContributions = priorPensionChargesData.flatMap(_.overseasPensionContributions)
+      overseasPensionContributions = priorPensionChargesData.flatMap(_.overseasPensionContributions)
     )
   }
 
@@ -112,7 +113,10 @@ class PensionsChargesServiceSpec extends UnitTest
       mockFind(taxYear, aUser, Right(Option(unauthorisedSessionUserData)))
       mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
 
-      mockSavePensionChargesSessionData(nino, taxYear, unauthorisedPaymentsRequestModel,
+      mockSavePensionChargesSessionData(
+        nino,
+        taxYear,
+        unauthorisedPaymentsRequestModel,
         Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
       mockCreateOrUpdate(userWithEmptyCya, Left(MongoError("Failed to connect to database")))
 
@@ -158,7 +162,11 @@ class PensionsChargesServiceSpec extends UnitTest
       mockFind(taxYear, aUser, Right(Option(transferIOPSessionUserData)))
       mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
 
-      mockSavePensionChargesSessionData(nino, taxYear, transferIOPRequestModel, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+      mockSavePensionChargesSessionData(
+        nino,
+        taxYear,
+        transferIOPRequestModel,
+        Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
       mockCreateOrUpdate(userWithEmptyCya, Left(MongoError("Failed to connect to database")))
 
       val result = await(pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(aUser, taxYear))
@@ -202,7 +210,11 @@ class PensionsChargesServiceSpec extends UnitTest
       mockFind(taxYear, aUser, Right(Option(shortServiceRefundsSessionUserData)))
       mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
 
-      mockSavePensionChargesSessionData(nino, taxYear, shortServiceRefundsRequestModel, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+      mockSavePensionChargesSessionData(
+        nino,
+        taxYear,
+        shortServiceRefundsRequestModel,
+        Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
       mockCreateOrUpdate(userWithEmptyCya, Left(MongoError("Failed to connect to database")))
 
       val result = await(pensionChargesService.saveShortServiceRefundsViewModel(aUser, taxYear))
@@ -221,7 +233,7 @@ class PensionsChargesServiceSpec extends UnitTest
     }
   }
   ".saveAnnualAllowanceViewModel" should {
-    
+
     "return Right(Unit) when model is saved successfully and shortServiceRefunds cya is cleared from DB" in {
       mockFind(taxYear, aUser, Right(Option(annualAllowanceSessionUserData)))
       mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
@@ -245,7 +257,11 @@ class PensionsChargesServiceSpec extends UnitTest
       mockFind(taxYear, aUser, Right(Option(annualAllowanceSessionUserData)))
       mockFind(aUser.nino, taxYear, IncomeTaxUserData(Some(anAllPensionsData)))
 
-      mockSavePensionChargesSessionData(nino, taxYear, annualAllowanceRequestModel, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+      mockSavePensionChargesSessionData(
+        nino,
+        taxYear,
+        annualAllowanceRequestModel,
+        Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
       mockCreateOrUpdate(userWithEmptyCya, Left(MongoError("Failed to connect to database")))
 
       val result = await(pensionChargesService.saveAnnualAllowanceViewModel(aUser, taxYear))

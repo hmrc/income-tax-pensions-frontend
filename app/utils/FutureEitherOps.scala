@@ -21,20 +21,20 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class FutureEitherOps[E <: ServiceError, R](value: Future[Either[E, R]])(implicit ec: ExecutionContext, hc: HeaderCarrier){
+case class FutureEitherOps[E <: ServiceError, R](value: Future[Either[E, R]])(implicit ec: ExecutionContext, hc: HeaderCarrier) {
 
-  def map[B](mappingFunction: R => B): FutureEitherOps[E, B] = {
+  def map[B](mappingFunction: R => B): FutureEitherOps[E, B] =
     FutureEitherOps(value.map {
       case Right(mappedValue) => Right(mappingFunction(mappedValue))
-      case Left(error) => Left(error)
+      case Left(error)        => Left(error)
     })
-  }
 
-  def flatMap[O](mappingFunction: R => FutureEitherOps[E, O]): FutureEitherOps[E, O] = FutureEitherOps(value.flatMap{
-    case Right(currentRight) => mappingFunction(currentRight).value.map {
-      case Right(nextRight) => Right(nextRight)
-      case left@Left(_) => left
-    }
+  def flatMap[O](mappingFunction: R => FutureEitherOps[E, O]): FutureEitherOps[E, O] = FutureEitherOps(value.flatMap {
+    case Right(currentRight) =>
+      mappingFunction(currentRight).value.map {
+        case Right(nextRight) => Right(nextRight)
+        case left @ Left(_)   => left
+      }
     case Left(currentLeft) => Future.successful(Left(currentLeft))
   })
 }

@@ -19,7 +19,4 @@ package models.requests
 import models.{IncomeTaxUserData, User}
 import play.api.mvc.{Request, WrappedRequest}
 
-case class UserPriorDataRequest[T](incomeTaxUserData: IncomeTaxUserData,
-                                   user: User,
-                                   request: Request[T]) extends WrappedRequest[T](request)
-
+case class UserPriorDataRequest[T](incomeTaxUserData: IncomeTaxUserData, user: User, request: Request[T]) extends WrappedRequest[T](request)

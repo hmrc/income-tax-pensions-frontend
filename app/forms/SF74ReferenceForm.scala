@@ -24,19 +24,21 @@ import play.api.data.Form
 import play.api.data.validation.Constraint
 import play.api.data.validation.Constraints.nonEmpty
 
-object SF74ReferenceForm  extends InputFilters {
+object SF74ReferenceForm extends InputFilters {
 
   val sf74ReferenceId: String = "sf74ReferenceId"
-  val regex: String = "^[0-9]{1,10}$"
+  val regex: String           = "^[0-9]{1,10}$"
 
-  def notEmpty(message : String): Constraint[String] = nonEmpty(message)
+  def notEmpty(message: String): Constraint[String] = nonEmpty(message)
 
-  def validateFormat(message : String): Constraint[String] = validateChar(regex)(message)
+  def validateFormat(message: String): Constraint[String] = validateChar(regex)(message)
 
-  def sf74ReferenceIdForm(noEntryMsg : String, incorrectFormatMsg : String): Form[String] = Form(
-    sf74ReferenceId -> trimmedText.transform[String](filter, identity).verifying(
-      notEmpty(noEntryMsg) andThen validateFormat(incorrectFormatMsg)
-    )
+  def sf74ReferenceIdForm(noEntryMsg: String, incorrectFormatMsg: String): Form[String] = Form(
+    sf74ReferenceId -> trimmedText
+      .transform[String](filter, identity)
+      .verifying(
+        notEmpty(noEntryMsg) andThen validateFormat(incorrectFormatMsg)
+      )
   )
 
 }

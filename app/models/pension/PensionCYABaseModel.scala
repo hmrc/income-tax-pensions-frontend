@@ -33,7 +33,6 @@ trait PensionIncomeSubRequestModel extends PensionSubRequestModel
 
 trait PensionReliefsSubRequestModel extends PensionSubRequestModel
 
-
 trait PensionRequestModel {
   def otherSubRequestModelsEmpty[T <: PensionSubRequestModel](subModel: Option[T]): Boolean
   def createSubModel: PensionRequestModel

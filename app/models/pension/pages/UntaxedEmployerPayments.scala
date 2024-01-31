@@ -19,10 +19,7 @@ package models.pension.pages
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import play.api.data.Form
 
-
-case class UntaxedEmployerPayments(taxYear: Int,
-                                   pensionSchemeIndex: Option[Int],
-                                   form: Form[BigDecimal])
+case class UntaxedEmployerPayments(taxYear: Int, pensionSchemeIndex: Option[Int], form: Form[BigDecimal])
 
 object UntaxedEmployerPayments {
 
@@ -33,7 +30,7 @@ object UntaxedEmployerPayments {
 
     val optQuestionValue: Option[BigDecimal] = pensionSchemeIndex match {
       case Some(value) => dataModel.reliefs(value).employerPaymentsAmount
-      case None => None
+      case None        => None
     }
 
     UntaxedEmployerPayments(

@@ -16,7 +16,12 @@
 
 package builders
 
-import builders.StateBenefitViewModelBuilder.{aStatePensionLumpSumNoAddToCalculationViewModel, aStatePensionLumpSumViewModel, aStatePensionNoAddToCalculationViewModel, aStatePensionViewModel}
+import builders.StateBenefitViewModelBuilder.{
+  aStatePensionLumpSumNoAddToCalculationViewModel,
+  aStatePensionLumpSumViewModel,
+  aStatePensionNoAddToCalculationViewModel,
+  aStatePensionViewModel
+}
 import builders.UkPensionIncomeViewModelBuilder.{anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo}
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 

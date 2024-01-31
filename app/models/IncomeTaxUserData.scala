@@ -19,7 +19,7 @@ package models
 import models.pension.AllPensionsData
 import play.api.libs.json.{Json, OFormat}
 
-case class  IncomeTaxUserData(pensions: Option[AllPensionsData] = None)
+case class IncomeTaxUserData(pensions: Option[AllPensionsData] = None)
 
 object IncomeTaxUserData {
   implicit val formats: OFormat[IncomeTaxUserData] = Json.format[IncomeTaxUserData]

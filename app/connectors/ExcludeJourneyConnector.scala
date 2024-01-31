@@ -26,10 +26,11 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ExcludeJourneyConnector @Inject()(
-                                         http: HttpClient,
-                                         appConfig: AppConfig
-                                       )(implicit ec: ExecutionContext) extends Logging {
+class ExcludeJourneyConnector @Inject() (
+    http: HttpClient,
+    appConfig: AppConfig
+)(implicit ec: ExecutionContext)
+    extends Logging {
 
   def excludeJourney(journeyKey: String, taxYear: Int, nino: String)(implicit hc: HeaderCarrier): Future[ExcludeJourneyResponse] = {
     val url = s"${appConfig.incomeTaxSubmissionBEBaseUrl}/income-tax/nino/$nino/sources/exclude-journey/$taxYear"

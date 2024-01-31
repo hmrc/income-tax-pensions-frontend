@@ -29,30 +29,30 @@ import java.time.{Instant, LocalDate}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+class StatePensionService @Inject() (pensionUserDataRepository: PensionsUserDataRepository, stateBenefitsConnector: StateBenefitsConnector) {
 
-class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataRepository, stateBenefitsConnector: StateBenefitsConnector) {
+  def persistStatePensionIncomeViewModel(user: User, taxYear: Int)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      clock: Clock): Future[Either[ServiceError, Unit]] = {
 
-  def persistStatePensionIncomeViewModel(user: User, taxYear: Int)
-                                        (implicit hc: HeaderCarrier, ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
-
-
-    //scalastyle:off method.length
+    // scalastyle:off method.length
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
 
-    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData = {
+    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData =
       userData match {
         case Some(value) => value.copy(pensions = value.pensions.copy(incomeFromPensions = IncomeFromPensionsViewModel()))
-        case None => PensionsUserData(
-          user.sessionId,
-          user.mtditid,
-          user.nino,
-          taxYear,
-          isPriorSubmission = false,
-          PensionsCYAModel.emptyModels,
-          clock.now(DateTimeZone.UTC)
-        )
+        case None =>
+          PensionsUserData(
+            user.sessionId,
+            user.mtditid,
+            user.nino,
+            taxYear,
+            isPriorSubmission = false,
+            PensionsCYAModel.emptyModels,
+            clock.now(DateTimeZone.UTC)
+          )
       }
-    }
 
     def buildStateBenefitsUserData(sessionData: PensionsUserData,
                                    stateBenefit: Option[StateBenefitViewModel],
@@ -67,7 +67,8 @@ class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataR
         submittedOn = stateBenefit.flatMap(_.submittedOn),
         amount = stateBenefit.flatMap(_.amount),
         taxPaidQuestion = stateBenefit.flatMap(_.taxPaidQuestion),
-        taxPaid = stateBenefit.flatMap(_.taxPaid))
+        taxPaid = stateBenefit.flatMap(_.taxPaid)
+      )
 
       StateBenefitsUserData(
         benefitType = benefitType,
@@ -88,10 +89,14 @@ class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataR
       sessionData = optSessionData.getOrElse(throw new RuntimeException("Session data is empty"))
 
       statePensionSubmission = buildStateBenefitsUserData(
-        sessionData, sessionData.pensions.incomeFromPensions.statePension, "statePension"
+        sessionData,
+        sessionData.pensions.incomeFromPensions.statePension,
+        "statePension"
       )
       statePensionLumpSumSubmission = buildStateBenefitsUserData(
-        sessionData, sessionData.pensions.incomeFromPensions.statePensionLumpSum, "statePensionLumpSum"
+        sessionData,
+        sessionData.pensions.incomeFromPensions.statePensionLumpSum,
+        "statePensionLumpSum"
       )
 
       _ <- FutureEitherOps[ServiceError, Unit] {
@@ -111,9 +116,7 @@ class StatePensionService @Inject()(pensionUserDataRepository: PensionsUserDataR
 
       updatedCYA = getPensionsUserData(Some(sessionData), user)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
-    } yield {
-      result
-    }).value
+    } yield result).value
 
   }
 }

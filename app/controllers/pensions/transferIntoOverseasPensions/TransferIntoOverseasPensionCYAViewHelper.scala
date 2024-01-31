@@ -23,10 +23,8 @@ import utils.CYABaseHelper
 
 object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
 
-
-  def summaryListRows(
-                       transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel,
-                       taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] =
+  def summaryListRows(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit
+      messages: Messages): Seq[SummaryListRow] =
     Seq(
       summaryRowForTransferIntoOverseasPensions(transfersIntoOverseasPensionsViewModel, taxYear),
       summaryRowForAmountCharged(transfersIntoOverseasPensionsViewModel, taxYear),
@@ -34,18 +32,18 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
       summaryRowForSchemesPayingTax(transfersIntoOverseasPensionsViewModel, taxYear)
     ).flatten
 
-  private def summaryRowForTransferIntoOverseasPensions(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)
-                                                       (implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForTransferIntoOverseasPensions(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(
+      implicit messages: Messages): Option[SummaryListRow] =
     Some(
       summaryListRowWithBooleanValue(
         "transferIntoOverseasPensions.cya.transferIntoOverseasPensions",
         transfersIntoOverseasPensionsViewModel.transferPensionSavings,
-        routes.TransferPensionSavingsController.show(taxYear))(messages)
+        routes.TransferPensionSavingsController.show(taxYear)
+      )(messages)
     )
-  }
 
-  private def summaryRowForAmountCharged(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)
-                                        (implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForAmountCharged(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     transfersIntoOverseasPensionsViewModel.transferPensionSavings
       .filter(_ == true)
       .map(_ =>
@@ -54,50 +52,50 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
             summaryListRowWithOptionalAmountValue(
               "transferIntoOverseasPensions.cya.amountCharged",
               transfersIntoOverseasPensionsViewModel.overseasTransferChargeAmount,
-              routes.OverseasTransferChargeController.show(taxYear))(messages)
+              routes.OverseasTransferChargeController.show(taxYear)
+            )(messages)
           case _ =>
             summaryListRowWithString(
               "transferIntoOverseasPensions.cya.amountCharged",
               Some(messages("transferIntoOverseasPensions.cya.noAmountCharged")),
               routes.OverseasTransferChargeController.show(taxYear)
             )(messages)
-        }
-      )
-  }
+        })
 
-  private def summaryRowForTaxOnAmountCharged(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)
-                                             (implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForTaxOnAmountCharged(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     transfersIntoOverseasPensionsViewModel.transferPensionSavings.filter(_ == true).flatMap { _ =>
-      transfersIntoOverseasPensionsViewModel.overseasTransferCharge.filter(_ == true).map(_ =>
-        transfersIntoOverseasPensionsViewModel.pensionSchemeTransferCharge match {
-          case Some(true) if transfersIntoOverseasPensionsViewModel.pensionSchemeTransferChargeAmount.isDefined =>
-            summaryListRowWithOptionalAmountValue(
-              "transferIntoOverseasPensions.cya.taxOnAmountCharged",
-              transfersIntoOverseasPensionsViewModel.pensionSchemeTransferChargeAmount,
-              routes.PensionSchemeTaxTransferController.show(taxYear))(messages)
-          case _ =>
-            summaryListRowWithString(
-              "transferIntoOverseasPensions.cya.taxOnAmountCharged",
-              Some(messages("common.noTaxPaid")),
-              routes.PensionSchemeTaxTransferController.show(taxYear)
-            )(messages)
-        }
-      )
+      transfersIntoOverseasPensionsViewModel.overseasTransferCharge
+        .filter(_ == true)
+        .map(_ =>
+          transfersIntoOverseasPensionsViewModel.pensionSchemeTransferCharge match {
+            case Some(true) if transfersIntoOverseasPensionsViewModel.pensionSchemeTransferChargeAmount.isDefined =>
+              summaryListRowWithOptionalAmountValue(
+                "transferIntoOverseasPensions.cya.taxOnAmountCharged",
+                transfersIntoOverseasPensionsViewModel.pensionSchemeTransferChargeAmount,
+                routes.PensionSchemeTaxTransferController.show(taxYear)
+              )(messages)
+            case _ =>
+              summaryListRowWithString(
+                "transferIntoOverseasPensions.cya.taxOnAmountCharged",
+                Some(messages("common.noTaxPaid")),
+                routes.PensionSchemeTaxTransferController.show(taxYear)
+              )(messages)
+          })
     }
-  }
 
-
-  private def summaryRowForSchemesPayingTax(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)
-                                           (implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForSchemesPayingTax(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     transfersIntoOverseasPensionsViewModel.transferPensionSavings.filter(_ == true).flatMap { _ =>
       transfersIntoOverseasPensionsViewModel.overseasTransferCharge.filter(_ == true).flatMap { _ =>
-        transfersIntoOverseasPensionsViewModel.pensionSchemeTransferCharge.filter(_ == true).map(_ =>
-          summaryListRowWithStrings(
-            "transferIntoOverseasPensions.cya.schemesPayingTax",
-            Some(transfersIntoOverseasPensionsViewModel.transferPensionScheme.flatMap(_.name)),
-            routes.TransferChargeSummaryController.show(taxYear))(messages)
-        )
+        transfersIntoOverseasPensionsViewModel.pensionSchemeTransferCharge
+          .filter(_ == true)
+          .map(_ =>
+            summaryListRowWithStrings(
+              "transferIntoOverseasPensions.cya.schemesPayingTax",
+              Some(transfersIntoOverseasPensionsViewModel.transferPensionScheme.flatMap(_.name)),
+              routes.TransferChargeSummaryController.show(taxYear)
+            )(messages))
       }
     }
-  }
 }

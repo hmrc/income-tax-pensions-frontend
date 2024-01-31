@@ -143,7 +143,6 @@ class UnauthorisedPaymentsCYAViewSpec extends AnyWordSpec with Matchers {
         assertRowTaxOnAmountNotSurcharged(summaryListRows(2), "£0")
         assertRowForUKPensionSchemes(summaryListRows(3), "")
 
-
       }
 
       "we have only partially completed the 'not surcharged' section (only the initial question) and pass 0 for amounts" in {
@@ -164,7 +163,6 @@ class UnauthorisedPaymentsCYAViewSpec extends AnyWordSpec with Matchers {
         assertRowAmountNotSurcharged(summaryListRows(1), "£0")
         assertRowTaxOnAmountNotSurcharged(summaryListRows(2), "£0")
         assertRowForUKPensionSchemes(summaryListRows(3), "")
-
 
       }
 
@@ -229,73 +227,98 @@ class UnauthorisedPaymentsCYAViewSpec extends AnyWordSpec with Matchers {
     }
   }
 
-  private def assertRowForUnauthorisedPayments(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Unauthorised payments",
-      expectedValue,
-      "Change",
-      "/2022/unauthorised-payments-from-pensions/unauthorised-payments",
-      "unauthorisedPayments.common.title.hidden"))
-  }
+  private def assertRowForUnauthorisedPayments(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Unauthorised payments",
+        expectedValue,
+        "Change",
+        "/2022/unauthorised-payments-from-pensions/unauthorised-payments",
+        "unauthorisedPayments.common.title.hidden"
+      )
+    )
 
-  private def assertRowAmountSurcharged(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Amount surcharged",
-      expectedValue,
-      "Change",
-      "/2022/unauthorised-payments-from-pensions/amount-surcharged",
-      "unauthorisedPayments.cya.amountSurcharged.hidden"))
-  }
+  private def assertRowAmountSurcharged(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Amount surcharged",
+        expectedValue,
+        "Change",
+        "/2022/unauthorised-payments-from-pensions/amount-surcharged",
+        "unauthorisedPayments.cya.amountSurcharged.hidden"
+      )
+    )
 
-  private def assertRowTaxOnAmountSurcharged(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Non UK-tax on amount surcharged",
-      expectedValue,
-      "Change",
-      "/2022/unauthorised-payments-from-pensions/tax-on-amount-surcharged",
-      "unauthorisedPayments.cya.nonUkTaxAmountSurcharged.hidden"))
-  }
+  private def assertRowTaxOnAmountSurcharged(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Non UK-tax on amount surcharged",
+        expectedValue,
+        "Change",
+        "/2022/unauthorised-payments-from-pensions/tax-on-amount-surcharged",
+        "unauthorisedPayments.cya.nonUkTaxAmountSurcharged.hidden"
+      )
+    )
 
-  private def assertRowAmountNotSurcharged(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Amount not surcharged",
-      expectedValue,
-      "Change",
-      "/2022/unauthorised-payments-from-pensions/amount-not-surcharged",
-      "unauthorisedPayments.cya.amountNotSurcharged.hidden"))
-  }
+  private def assertRowAmountNotSurcharged(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Amount not surcharged",
+        expectedValue,
+        "Change",
+        "/2022/unauthorised-payments-from-pensions/amount-not-surcharged",
+        "unauthorisedPayments.cya.amountNotSurcharged.hidden"
+      )
+    )
 
-  private def assertRowTaxOnAmountNotSurcharged(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Non UK-tax on amount not surcharged",
-      expectedValue,
-      "Change",
-      "/2022/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged",
-      "unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged.hidden"))
-  }
+  private def assertRowTaxOnAmountNotSurcharged(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Non UK-tax on amount not surcharged",
+        expectedValue,
+        "Change",
+        "/2022/unauthorised-payments-from-pensions/tax-on-amount-not-surcharged",
+        "unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged.hidden"
+      )
+    )
 
-  private def assertRowForUKPensionSchemes(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "UK pension schemes",
-      expectedValue,
-      "Change",
-      "/2022/unauthorised-payments-from-pensions/uk-pension-scheme",
-      "unauthorisedPayments.common.ukPensionSchemes.hidden"))
-  }
+  private def assertRowForUKPensionSchemes(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "UK pension schemes",
+        expectedValue,
+        "Change",
+        "/2022/unauthorised-payments-from-pensions/uk-pension-scheme",
+        "unauthorisedPayments.common.ukPensionSchemes.hidden"
+      )
+    )
 
-  private def assertRowForUKPensionSchemeTaxReferences(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Pension Scheme Tax References",
-      expectedValue,
-      "Change",
-      "/2022/unauthorised-payments-from-pensions/uk-pension-scheme-details",
-      "unauthorisedPayments.cya.pensionSchemeTaxReferences.hidden"))
-  }
+  private def assertRowForUKPensionSchemeTaxReferences(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Pension Scheme Tax References",
+        expectedValue,
+        "Change",
+        "/2022/unauthorised-payments-from-pensions/uk-pension-scheme-details",
+        "unauthorisedPayments.cya.pensionSchemeTaxReferences.hidden"
+      )
+    )
 
   private def assertSummaryListRow(summaryListRow: SummaryListRow, expectedSummaryRowContents: ExpectedSummaryRowContents): Unit = {
     assertLabel(summaryListRow, expectedSummaryRowContents.label)
     assertValue(summaryListRow, expectedSummaryRowContents.value)
-    assertAction(summaryListRow, expectedSummaryRowContents.linkLabel, expectedSummaryRowContents.linkPathEnding, expectedSummaryRowContents.hiddenText)
+    assertAction(
+      summaryListRow,
+      expectedSummaryRowContents.linkLabel,
+      expectedSummaryRowContents.linkPathEnding,
+      expectedSummaryRowContents.hiddenText)
   }
 
   private def assertAction(summaryListRow: SummaryListRow, expectedLabel: String, expectedPath: String, expectedHiddenText: String): Unit = {
@@ -312,17 +335,15 @@ class UnauthorisedPaymentsCYAViewSpec extends AnyWordSpec with Matchers {
     firstAction.visuallyHiddenText.get shouldBe expectedHiddenText
   }
 
-  private def assertLabel(summaryListRow: SummaryListRow, expectedLabel: String) = {
+  private def assertLabel(summaryListRow: SummaryListRow, expectedLabel: String) =
     withClue(s"We had expected the label to be '$expectedLabel':") {
       summaryListRow.key shouldBe Key(HtmlContent(expectedLabel), "govuk-!-width-one-third")
     }
-  }
 
-  private def assertValue(summaryListRow: SummaryListRow, expectedValue: String): Assertion = {
+  private def assertValue(summaryListRow: SummaryListRow, expectedValue: String): Assertion =
     withClue(s"We had expected the value to be '$expectedValue':") {
       summaryListRow.value shouldBe Value(HtmlContent(expectedValue), "govuk-!-width-one-third")
     }
-  }
 
   private def stubbedMessages() = {
     import scala.jdk.CollectionConverters._
@@ -331,20 +352,20 @@ class UnauthorisedPaymentsCYAViewSpec extends AnyWordSpec with Matchers {
       Map(
         Lang.defaultLang.code ->
           Map(
-            "unauthorisedPayments.common.title" -> "Unauthorised payments",
-            "common.yes" -> "Yes",
-            "common.no" -> "No",
-            "common.change" -> "Change",
-            "unauthorisedPayments.cya.amountSurcharged" -> "Amount surcharged",
-            "unauthorisedPayments.cya.nonUkTaxAmountSurcharged" -> "Non UK-tax on amount surcharged",
-            "unauthorisedPayments.cya.amountNotSurcharged" -> "Amount not surcharged",
+            "unauthorisedPayments.common.title"                    -> "Unauthorised payments",
+            "common.yes"                                           -> "Yes",
+            "common.no"                                            -> "No",
+            "common.change"                                        -> "Change",
+            "unauthorisedPayments.cya.amountSurcharged"            -> "Amount surcharged",
+            "unauthorisedPayments.cya.nonUkTaxAmountSurcharged"    -> "Non UK-tax on amount surcharged",
+            "unauthorisedPayments.cya.amountNotSurcharged"         -> "Amount not surcharged",
             "unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged" -> "Non UK-tax on amount not surcharged",
-            "unauthorisedPayments.common.ukPensionSchemes" -> "UK pension schemes",
-            "unauthorisedPayments.cya.pensionSchemeTaxReferences" -> "Pension Scheme Tax References"
-          )
-            .asJava
+            "unauthorisedPayments.common.ukPensionSchemes"         -> "UK pension schemes",
+            "unauthorisedPayments.cya.pensionSchemeTaxReferences"  -> "Pension Scheme Tax References"
+          ).asJava
       ).asJava,
-      new Langs(new play.api.i18n.DefaultLangs()))
+      new Langs(new play.api.i18n.DefaultLangs())
+    )
     messagesApi.preferred(new Langs(new play.api.i18n.DefaultLangs()).availables())
   }
 

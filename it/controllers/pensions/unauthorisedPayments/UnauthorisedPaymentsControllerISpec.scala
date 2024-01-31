@@ -39,18 +39,18 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
   private val externalHref = "https://www.gov.uk/guidance/pension-schemes-and-unauthorised-payments"
 
   object Selectors {
-    val checkboxHintSelector = "#unauthorisedPayments-hint"
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val paragraphTextSelector: String = "#paymentsOutside"
+    val checkboxHintSelector           = "#unauthorisedPayments-hint"
+    val captionSelector: String        = "#main-content > div > div > header > p"
+    val paragraphTextSelector: String  = "#paymentsOutside"
     val paragraphText1Selector: String = "#moreThanOneUnauthorisedPayment"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val yesSurchargeSelector = "#unauthorisedPayments"
-    val yesNotSurchargeSelector = "#unauthorisedPayments-2"
-    val noSelector = "#unauthorisedPayments-4"
-    val expectedDetailsLinkSelector = "#unauthorised-find-out-more-link"
-    val subHeadingSelector = "#didYouGetAnUnauthorisedPayment"
-    val errorSelector = "#unauthorisedPayments-error"
+    val formSelector: String           = "#main-content > div > div > form"
+    val yesSurchargeSelector           = "#unauthorisedPayments"
+    val yesNotSurchargeSelector        = "#unauthorisedPayments-2"
+    val noSelector                     = "#unauthorisedPayments-4"
+    val expectedDetailsLinkSelector    = "#unauthorised-find-out-more-link"
+    val subHeadingSelector             = "#didYouGetAnUnauthorisedPayment"
+    val errorSelector                  = "#unauthorisedPayments-error"
 
     def labelIndex(index: Int): String = s"#main-content > div > div > form > div:nth-child($index) > label"
 
@@ -81,36 +81,36 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedButtonText = "Continue"
-    val expectedTitle = "Unauthorised payments"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedSubHeading = "Did you get an unauthorised payment from a pension scheme?"
-    val expectedParagraphText = "Unauthorised payments are made outside the tax rules"
+    val expectedButtonText             = "Continue"
+    val expectedTitle                  = "Unauthorised payments"
+    val expectedErrorTitle             = s"Error: $expectedTitle"
+    val expectedSubHeading             = "Did you get an unauthorised payment from a pension scheme?"
+    val expectedParagraphText          = "Unauthorised payments are made outside the tax rules"
     val expectedParagraphText1: String = "If you got more than one unauthorised payment, you might " +
       "have paid a surcharge (an extra fee) on some of them. It all " +
       "depends on if you’ve taken 25% or more of your pension pots."
-    val expectedYesSurchargeCheckboxText = "Yes, unauthorised payments that resulted in a surcharge"
+    val expectedYesSurchargeCheckboxText    = "Yes, unauthorised payments that resulted in a surcharge"
     val expectedYesNotSurchargeCheckboxText = "Yes, unauthorised payments that did not result in a surcharge"
-    val expectedNoSurchargeCheckboxText = "No"
-    val checkboxHint = "Select all that apply."
-    val expectedDetailsExternalLinkText = "Find out more about unauthorised payments (opens in new tab)"
+    val expectedNoSurchargeCheckboxText     = "No"
+    val checkboxHint                        = "Select all that apply."
+    val expectedDetailsExternalLinkText     = "Find out more about unauthorised payments (opens in new tab)"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedButtonText = "Yn eich blaen"
-    val expectedTitle = "Taliadau heb awdurdod"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedSubHeading = "A gawsoch daliad heb awdurdod o gynllun pensiwn?"
-    val expectedParagraphText = "Gwneir taliadau heb awdurdod y tu allan i’r rheolau treth"
+    val expectedButtonText             = "Yn eich blaen"
+    val expectedTitle                  = "Taliadau heb awdurdod"
+    val expectedErrorTitle             = s"Gwall: $expectedTitle"
+    val expectedSubHeading             = "A gawsoch daliad heb awdurdod o gynllun pensiwn?"
+    val expectedParagraphText          = "Gwneir taliadau heb awdurdod y tu allan i’r rheolau treth"
     val expectedParagraphText1: String = "Os cawsoch fwy nag un taliad heb awdurdod, mae’n bosibl " +
       "eich bod wedi talu gordal (ffi ychwanegol) ar rai ohonynt. Mae’n " +
       "dibynnu p’un a ydych wedi cymryd 25% neu fwy o’ch cronfeydd pensiwn."
-    val expectedYesSurchargeCheckboxText = "Iawn, taliadau heb awdurdod a wnaeth arwain at ordal"
+    val expectedYesSurchargeCheckboxText    = "Iawn, taliadau heb awdurdod a wnaeth arwain at ordal"
     val expectedYesNotSurchargeCheckboxText = "Iawn, taliadau heb awdurdod na wnaethant arwain at ordal"
-    val expectedNoSurchargeCheckboxText = "Na"
-    val checkboxHint = "Dewiswch bob un sy’n berthnasol."
-    val expectedDetailsExternalLinkText = "Dysgwch ragor am daliadau heb awdurdod (yn agor tab newydd)"
+    val expectedNoSurchargeCheckboxText     = "Na"
+    val checkboxHint                        = "Dewiswch bob un sy’n berthnasol."
+    val expectedDetailsExternalLinkText     = "Dysgwch ragor am daliadau heb awdurdod (yn agor tab newydd)"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -152,8 +152,12 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
               val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
 
               insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-              urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlGet(
+                fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+                user.isWelsh,
+                follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              )
             }
 
             "has an OK status" in {
@@ -189,8 +193,12 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
               val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true))
 
               insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-              urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlGet(
+                fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+                user.isWelsh,
+                follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              )
             }
 
             "has an OK status" in {
@@ -226,8 +234,12 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
               val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(noSurchargeQuestion = Some(true))
 
               insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-              urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlGet(
+                fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+                user.isWelsh,
+                follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              )
             }
 
             "has an OK status" in {
@@ -260,12 +272,16 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
               authoriseAgentOrIndividual(user.isAgent)
               dropPensionsDB()
 
-              val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true),
-                noSurchargeQuestion = Some(true))
+              val pensionsViewModel: UnauthorisedPaymentsViewModel =
+                UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true), noSurchargeQuestion = Some(true))
 
               insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-              urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlGet(
+                fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+                user.isWelsh,
+                follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              )
             }
 
             "has an OK status" in {
@@ -299,12 +315,17 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
               dropPensionsDB()
 
               val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(
-                surchargeQuestion = Some(false), noSurchargeQuestion = Some(false)
+                surchargeQuestion = Some(false),
+                noSurchargeQuestion = Some(false)
               )
 
               insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-              urlGet(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), user.isWelsh, follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+              urlGet(
+                fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+                user.isWelsh,
+                follow = false,
+                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              )
             }
 
             "has an OK status" in {
@@ -338,7 +359,6 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
   ".submit" should {
     userScenarios.foreach { user =>
-
       import Selectors._
       import user.commonExpectedResults._
 
@@ -358,8 +378,13 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-            urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+              body = form,
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an BAD_REQUEST status" in {
@@ -394,105 +419,120 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
       s"redirects to surchargeAmountUrl when ${agentTest(user.isAgent)} submits a valid form with " +
         s"yesSurcharge checkboxes checked in Language${welshTest(user.isWelsh)}" which {
 
-        val form = {
-          Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesSurchargeValue))
+          val form =
+            Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesSurchargeValue))
+
+          implicit lazy val result: WSResponse = {
+
+            authoriseAgentOrIndividual(user.isAgent)
+            dropPensionsDB()
+
+            val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
+
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
+            urlPost(
+              fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+              body = form,
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
+          }
+
+          "has a SEE_OTHER(303) status" in {
+            result.status shouldBe SEE_OTHER
+            result.header("location").contains(surchargeAmountUrl(taxYearEOY)) shouldBe true
+          }
         }
-
-        implicit lazy val result: WSResponse = {
-
-          authoriseAgentOrIndividual(user.isAgent)
-          dropPensionsDB()
-
-          val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
-
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-          urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
-
-        "has a SEE_OTHER(303) status" in {
-          result.status shouldBe SEE_OTHER
-          result.header("location").contains(surchargeAmountUrl(taxYearEOY)) shouldBe true
-        }
-      }
 
       s"redirects to noSurchargeAmountUrl when ${agentTest(user.isAgent)} submits a valid form with " +
         s"yesNotSurchargeValue checkboxes checked in Language ${welshTest(user.isWelsh)}" which {
-        val form = {
-          Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq("", yesNotSurchargeValue))
+          val form =
+            Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq("", yesNotSurchargeValue))
+
+          implicit lazy val result: WSResponse = {
+
+            authoriseAgentOrIndividual(user.isAgent)
+            dropPensionsDB()
+
+            val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
+
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
+            urlPost(
+              fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+              body = form,
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
+          }
+
+          "has a SEE_OTHER(303) status" in {
+            result.status shouldBe SEE_OTHER
+            result.header("location").contains(noSurchargeAmountUrl(taxYearEOY)) shouldBe true
+          }
         }
-
-        implicit lazy val result: WSResponse = {
-
-          authoriseAgentOrIndividual(user.isAgent)
-          dropPensionsDB()
-
-          val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
-
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-          urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
-
-        "has a SEE_OTHER(303) status" in {
-          result.status shouldBe SEE_OTHER
-          result.header("location").contains(noSurchargeAmountUrl(taxYearEOY)) shouldBe true
-        }
-      }
 
       s"redirects to CYA page when ${agentTest(user.isAgent)} submits a valid form with " +
         s"noValue checkboxes checked in Language ${welshTest(user.isWelsh)}" which {
-        val form = {
-          Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq("", "", noValue))
+          val form =
+            Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq("", "", noValue))
+
+          implicit lazy val result: WSResponse = {
+
+            authoriseAgentOrIndividual(user.isAgent)
+            dropPensionsDB()
+
+            val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
+
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
+            urlPost(
+              fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+              body = form,
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
+          }
+
+          "has a SEE_OTHER(303) status" in {
+            result.status shouldBe SEE_OTHER
+            result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
+          }
         }
-
-        implicit lazy val result: WSResponse = {
-
-          authoriseAgentOrIndividual(user.isAgent)
-          dropPensionsDB()
-
-          val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
-
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-          urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
-
-        "has a SEE_OTHER(303) status" in {
-          result.status shouldBe SEE_OTHER
-          result.header("location").contains(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)) shouldBe true
-        }
-      }
 
       s"redirects to surchargeAmountUrl when ${agentTest(user.isAgent)} submits a valid form with both yesSurcharge " +
         s"and yesNotSurchargeValue checkboxes checked in Language ${welshTest(user.isWelsh)}" which {
-        val form = {
-          Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesSurchargeValue, yesNotSurchargeValue))
+          val form =
+            Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesSurchargeValue, yesNotSurchargeValue))
+
+          implicit lazy val result: WSResponse = {
+
+            authoriseAgentOrIndividual(user.isAgent)
+            dropPensionsDB()
+
+            val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
+
+            insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
+            urlPost(
+              fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+              body = form,
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
+          }
+
+          "has a SEE_OTHER(303) status" in {
+            result.status shouldBe SEE_OTHER
+            result.header("location").contains(surchargeAmountUrl(taxYearEOY)) shouldBe true
+          }
         }
-
-        implicit lazy val result: WSResponse = {
-
-          authoriseAgentOrIndividual(user.isAgent)
-          dropPensionsDB()
-
-          val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
-
-          insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-          urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, user.isWelsh, follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
-
-        "has a SEE_OTHER(303) status" in {
-          result.status shouldBe SEE_OTHER
-          result.header("location").contains(surchargeAmountUrl(taxYearEOY)) shouldBe true
-        }
-      }
     }
 
     "clear the 'surcharge' content if the 'surcharge' question is not marked" in {
-      val form = {
+      val form =
         Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesNotSurchargeValue))
-      }
 
       implicit lazy val result: WSResponse = {
 
@@ -502,7 +542,10 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-        urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(
+          fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -515,9 +558,8 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
     }
 
     "clear the 'no surcharge' content if the 'no surcharge' question is not marked" in {
-      val form = {
+      val form =
         Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(yesSurchargeValue))
-      }
 
       implicit lazy val result: WSResponse = {
 
@@ -527,7 +569,10 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-        urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(
+          fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -540,9 +585,8 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
     }
 
     "clear both the 'surcharge' and the 'no surcharge' content if the 'no' option is marked" in {
-      val form = {
+      val form =
         Map(s"${UnAuthorisedPaymentsForm.unauthorisedPaymentsType}[]" -> Seq(noValue))
-      }
 
       implicit lazy val result: WSResponse = {
 
@@ -552,7 +596,10 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-        urlPost(fullUrl(unauthorisedPaymentsUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(
+          fullUrl(unauthorisedPaymentsUrl(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 

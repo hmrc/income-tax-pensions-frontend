@@ -27,7 +27,7 @@ import scala.concurrent.Future
 class NrsServiceSpec extends UnitTest {
 
   val connector: NrsConnector = mock[NrsConnector]
-  val service: NrsService = new NrsService(connector)
+  val service: NrsService     = new NrsService(connector)
 
   implicit val writesObject: Writes[String] = (o: String) => JsString(o)
 
@@ -41,8 +41,13 @@ class NrsServiceSpec extends UnitTest {
 
         val headerCarrierWithTrueClientDetails = headerCarrierWithSession.copy(trueClientIp = Some("127.0.0.1"), trueClientPort = Some("80"))
 
-        (connector.postNrsConnector(_: String, _: String)(_: HeaderCarrier, _: Writes[String]))
-          .expects(nino, "pensions", headerCarrierWithTrueClientDetails.withExtraHeaders("mtditid" -> mtditid, "clientIP" -> "127.0.0.1", "clientPort" -> "80"), writesObject)
+        (connector
+          .postNrsConnector(_: String, _: String)(_: HeaderCarrier, _: Writes[String]))
+          .expects(
+            nino,
+            "pensions",
+            headerCarrierWithTrueClientDetails.withExtraHeaders("mtditid" -> mtditid, "clientIP" -> "127.0.0.1", "clientPort" -> "80"),
+            writesObject)
           .returning(Future.successful(expectedResult))
 
         val result = await(service.submit(nino, "pensions", mtditid)(headerCarrierWithTrueClientDetails, writesObject))
@@ -55,9 +60,10 @@ class NrsServiceSpec extends UnitTest {
 
       "return the connector response" in {
 
-        val expectedResult: NrsSubmissionResponse = Right(():Unit)
+        val expectedResult: NrsSubmissionResponse = Right((): Unit)
 
-        (connector.postNrsConnector(_: String, _: String)(_: HeaderCarrier, _: Writes[String]))
+        (connector
+          .postNrsConnector(_: String, _: String)(_: HeaderCarrier, _: Writes[String]))
           .expects(nino, "pensions", headerCarrierWithSession.withExtraHeaders("mtditid" -> mtditid), writesObject)
           .returning(Future.successful(expectedResult))
 

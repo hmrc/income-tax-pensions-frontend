@@ -19,19 +19,15 @@ package models.pension.statebenefits
 import play.api.libs.json.{Json, OFormat}
 
 case class StateBenefits(
-                          incapacityBenefit: Option[Seq[StateBenefit]],
-                          statePension: Option[StateBenefit],
-                          statePensionLumpSum: Option[StateBenefit],
-                          employmentSupportAllowance: Option[Seq[StateBenefit]],
-                          jobSeekersAllowance: Option[Seq[StateBenefit]],
-                          bereavementAllowance: Option[StateBenefit],
-                          otherStateBenefits: Option[StateBenefit]
-                        )
+    incapacityBenefit: Option[Seq[StateBenefit]],
+    statePension: Option[StateBenefit],
+    statePensionLumpSum: Option[StateBenefit],
+    employmentSupportAllowance: Option[Seq[StateBenefit]],
+    jobSeekersAllowance: Option[Seq[StateBenefit]],
+    bereavementAllowance: Option[StateBenefit],
+    otherStateBenefits: Option[StateBenefit]
+)
 
 object StateBenefits {
   implicit val format: OFormat[StateBenefits] = Json.format[StateBenefits]
 }
-
-
-
-

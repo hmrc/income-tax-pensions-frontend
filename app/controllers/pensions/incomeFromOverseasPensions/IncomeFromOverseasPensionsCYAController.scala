@@ -36,38 +36,33 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeFromOverseasPensionsCYAController @Inject()(auditProvider: AuditActionsProvider,
-                                                        view: IncomeFromOverseasPensionsCYAView,
-                                                        pensionIncomeService: PensionIncomeService,
-                                                        errorHandler: ErrorHandler)
-                                                       (implicit val mcc: MessagesControllerComponents,
-                                                        appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport {
+class IncomeFromOverseasPensionsCYAController @Inject() (
+    auditProvider: AuditActionsProvider,
+    view: IncomeFromOverseasPensionsCYAView,
+    pensionIncomeService: PensionIncomeService,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   lazy val logger: Logger = Logger(this.getClass.getName)
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsViewAuditing(taxYear) async {
-    implicit request =>
-    val cya = Some(request.pensionsUserData)
-      val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, cya, PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) {
-        data => Future.successful(Ok(view(taxYear, data.pensions.incomeFromOverseasPensions)))
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsViewAuditing(taxYear) async { implicit request =>
+    val cya           = Some(request.pensionsUserData)
+    val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, cya, PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) { data =>
+      Future.successful(Ok(view(taxYear, data.pensions.incomeFromOverseasPensions)))
     }
   }
 
-
-  def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsUpdateAuditing(taxYear) async {
-    implicit request =>
-      //TODO: missing the comparison of session with Prior data
-      val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) {
-        sessionData =>
-            pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
-              case Left(_) =>
-                errorHandler.internalServerError()
-              case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
-            }
-          }
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsUpdateAuditing(taxYear) async { implicit request =>
+    // TODO: missing the comparison of session with Prior data
+    val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) { sessionData =>
+      pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
+        case Left(_) =>
+          errorHandler.internalServerError()
+        case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
       }
+    }
   }
-
+}

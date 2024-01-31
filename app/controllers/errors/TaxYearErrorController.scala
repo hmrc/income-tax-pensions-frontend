@@ -28,11 +28,14 @@ import views.html.templates.TaxYearErrorTemplate
 
 import scala.concurrent.Future
 
-class TaxYearErrorController @Inject()(val authorisedAction: AuthorisedAction,
+class TaxYearErrorController @Inject() (val authorisedAction: AuthorisedAction,
                                         val mcc: MessagesControllerComponents,
-                                       implicit val appConfig: AppConfig,
-                                       taxYearErrorTemplate: TaxYearErrorTemplate)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper with TaxYearHelper {
+                                        implicit val appConfig: AppConfig,
+                                        taxYearErrorTemplate: TaxYearErrorTemplate)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper
+    with TaxYearHelper {
 
   def show(): Action[AnyContent] = authorisedAction.async { implicit request =>
     Future.successful(Ok(taxYearErrorTemplate(firstClientTaxYear, latestClientTaxYear, singleValidTaxYear)))

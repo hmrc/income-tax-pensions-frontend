@@ -37,45 +37,47 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class RemoveAnnualAllowancePstrController @Inject()(implicit val mcc: MessagesControllerComponents,
-                                                    authAction: AuthorisedAction,
-                                                    removePensionSchemeView: RemoveAnnualAllowancesPstrView,
-                                                    appConfig: AppConfig,
-                                                    pensionSessionService: PensionSessionService,
-                                                    errorHandler: ErrorHandler,
-                                                    clock: Clock) extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class RemoveAnnualAllowancePstrController @Inject() (implicit
+    val mcc: MessagesControllerComponents,
+    authAction: AuthorisedAction,
+    removePensionSchemeView: RemoveAnnualAllowancesPstrView,
+    appConfig: AppConfig,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
-      case Some(data) =>
-        val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
-        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-          data =>
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
+    implicit request =>
+      pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
+        case Some(data) =>
+          val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
+          redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data =>
             val scheme = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences.get(pensionSchemeIndex.get)
             Future.successful(Ok(removePensionSchemeView(taxYear, scheme, pensionSchemeIndex)))
-        }
-      case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-    }
+          }
+        case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+      }
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
-        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-          data =>
-            val viewModel: PensionAnnualAllowancesViewModel = data.pensions.pensionsAnnualAllowances
-            val rawPstrList: Seq[String] =
-              viewModel.pensionSchemeTaxReferences.getOrElse(Seq.empty).patch(pensionSchemeIndex.get, Nil, 1)
-            val updatedPstrList: Option[Seq[String]] = if (rawPstrList.isEmpty) None else Some(rawPstrList)
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data =>
+          val viewModel: PensionAnnualAllowancesViewModel = data.pensions.pensionsAnnualAllowances
+          val rawPstrList: Seq[String] =
+            viewModel.pensionSchemeTaxReferences.getOrElse(Seq.empty).patch(pensionSchemeIndex.get, Nil, 1)
+          val updatedPstrList: Option[Seq[String]] = if (rawPstrList.isEmpty) None else Some(rawPstrList)
 
-            val updatedCyaModel = data.pensions.copy(pensionsAnnualAllowances = viewModel.copy(
-              pensionSchemeTaxReferences = updatedPstrList))
+          val updatedCyaModel = data.pensions.copy(pensionsAnnualAllowances = viewModel.copy(pensionSchemeTaxReferences = updatedPstrList))
 
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              Redirect(PstrSummaryController.show(taxYear))
-            }
+          pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+            errorHandler.internalServerError()) {
+            Redirect(PstrSummaryController.show(taxYear))
+          }
         }
       case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }

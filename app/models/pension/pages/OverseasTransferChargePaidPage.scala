@@ -19,10 +19,7 @@ package models.pension.pages
 import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import play.api.data.Form
 
-
-case class OverseasTransferChargePaidPage(taxYear: Int,
-                                          pensionSchemeIndex: Option[Int],
-                                          form: Form[Boolean])
+case class OverseasTransferChargePaidPage(taxYear: Int, pensionSchemeIndex: Option[Int], form: Form[Boolean])
 
 object OverseasTransferChargePaidPage {
 
@@ -32,7 +29,7 @@ object OverseasTransferChargePaidPage {
             form: Form[Boolean]): OverseasTransferChargePaidPage = {
     val optQuestionValue: Option[Boolean] = pensionSchemeIndex match {
       case Some(value) => dataModel.transferPensionScheme(value).ukTransferCharge
-      case None => None
+      case None        => None
     }
 
     OverseasTransferChargePaidPage(

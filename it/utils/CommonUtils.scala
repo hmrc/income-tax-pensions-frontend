@@ -23,40 +23,42 @@ import play.api.libs.ws.WSResponse
 import utils.PageUrls.fullUrl
 
 trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
-  
-  def showPage[A, B](user: UserScenario[A, B],
-                     optPensionsUserData: Option[PensionsUserData])
-                    (implicit url: Int => String): WSResponse = {
+
+  def showPage[A, B](user: UserScenario[A, B], optPensionsUserData: Option[PensionsUserData])(implicit url: Int => String): WSResponse = {
     lazy val result: WSResponse = {
       dropPensionsDB()
       authoriseAgentOrIndividual(user.isAgent)
       optPensionsUserData.fold(())(insertCyaData)
-      urlGet(fullUrl(url(taxYearEOY)), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      urlGet(
+        fullUrl(url(taxYearEOY)),
+        user.isWelsh,
+        follow = false,
+        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
     result
   }
-  
-  def showPage[A, B](user: UserScenario[A, B],
-                     pensionsUserData: PensionsUserData)
-                    (implicit url: Int => String): WSResponse = showPage(user, Some(pensionsUserData))
 
-  def showPage[A, B](user: UserScenario[A, B],
-                     pensionsUserData: PensionsUserData,
-                     userData: IncomeTaxUserData)
-                    (implicit url: Int => String): WSResponse = {
+  def showPage[A, B](user: UserScenario[A, B], pensionsUserData: PensionsUserData)(implicit url: Int => String): WSResponse =
+    showPage(user, Some(pensionsUserData))
+
+  def showPage[A, B](user: UserScenario[A, B], pensionsUserData: PensionsUserData, userData: IncomeTaxUserData)(implicit
+      url: Int => String): WSResponse = {
     lazy val result: WSResponse = {
       dropPensionsDB()
       authoriseAgentOrIndividual(user.isAgent)
       insertCyaData(pensionsUserData)
       userDataStub(userData, nino, taxYearEOY)
-      urlGet(fullUrl(url(taxYearEOY)), user.isWelsh, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      urlGet(
+        fullUrl(url(taxYearEOY)),
+        user.isWelsh,
+        follow = false,
+        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
     result
   }
-  
-  def showPage(optPensionsUserData: Option[PensionsUserData] = None)
-              (implicit url: Int => String): WSResponse = {
-    
+
+  def showPage(optPensionsUserData: Option[PensionsUserData] = None)(implicit url: Int => String): WSResponse = {
+
     lazy val result: WSResponse = {
       dropPensionsDB()
       authoriseAgentOrIndividual()
@@ -65,43 +67,48 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
     }
     result
   }
-  
+
   def showPage(pensionsUserData: PensionsUserData)(implicit url: Int => String): WSResponse =
     showPage(Some(pensionsUserData))
 
-  def showUnauthorisedPage[A, B](userScenario: UserScenario[A, B])
-                                (implicit url: Int => String): WSResponse = {
+  def showUnauthorisedPage[A, B](userScenario: UserScenario[A, B])(implicit url: Int => String): WSResponse = {
     lazy val result: WSResponse = {
       unauthorisedAgentOrIndividual(userScenario.isAgent)
-      urlGet(fullUrl(url(taxYear)), welsh = userScenario.isWelsh,
+      urlGet(
+        fullUrl(url(taxYear)),
+        welsh = userScenario.isWelsh,
         headers = Seq(Predef.ArrowAssoc(HeaderNames.COOKIE) -> playSessionCookies(taxYear, validTaxYearList)))
     }
     result
   }
 
-  def submitPage[A, B](user: UserScenario[A, B],
-                       pensionsUserData: PensionsUserData,
-                       form: Map[String, String])
-                      (implicit url: Int => String): WSResponse = {
+  def submitPage[A, B](user: UserScenario[A, B], pensionsUserData: PensionsUserData, form: Map[String, String])(implicit
+      url: Int => String): WSResponse = {
     val result: WSResponse = {
       dropPensionsDB()
       insertCyaData(pensionsUserData)
       authoriseAgentOrIndividual(user.isAgent)
-      urlPost(fullUrl(url(taxYearEOY)), body = form, welsh = user.isWelsh, follow = false,
+      urlPost(
+        fullUrl(url(taxYearEOY)),
+        body = form,
+        welsh = user.isWelsh,
+        follow = false,
         headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
 
     result
   }
 
-  def submitPage(pensionsUserData: PensionsUserData,
-                 form: Map[String, String])
-                (implicit url: Int => String): WSResponse = {
+  def submitPage(pensionsUserData: PensionsUserData, form: Map[String, String])(implicit url: Int => String): WSResponse = {
     val result: WSResponse = {
       dropPensionsDB()
       insertCyaData(pensionsUserData)
       authoriseAgentOrIndividual()
-      urlPost(fullUrl(url(taxYearEOY)), body = form, follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+      urlPost(
+        fullUrl(url(taxYearEOY)),
+        body = form,
+        follow = false,
+        headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
 
     result
@@ -111,7 +118,10 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
     val result: WSResponse = {
       dropPensionsDB()
       authoriseAgentOrIndividual()
-      urlPost(fullUrl(url(taxYearEOY)), body = form, follow = false,
+      urlPost(
+        fullUrl(url(taxYearEOY)),
+        body = form,
+        follow = false,
         headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
     }
     result

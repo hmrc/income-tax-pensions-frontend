@@ -33,45 +33,44 @@ import utils.{Clock, FutureEitherOps}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+class PensionChargesService @Inject() (pensionUserDataRepository: PensionsUserDataRepository,
+                                       pensionChargesHelper: PensionChargesConnectorHelper,
+                                       incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
 
-class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
-                                      pensionChargesHelper: PensionChargesConnectorHelper,
-                                      incomeTaxUserDataConnector: IncomeTaxUserDataConnector) {
-
-
-  def saveUnauthorisedViewModel(user: User, taxYear: Int)(implicit hc: HeaderCarrier,
-                                                          ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
-
+  def saveUnauthorisedViewModel(user: User, taxYear: Int)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      clock: Clock): Future[Either[ServiceError, Unit]] =
     (for {
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
       priorData <-
-        FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector
-          .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
+        FutureEitherOps[ServiceError, IncomeTaxUserData](
+          incomeTaxUserDataConnector
+            .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
 
-      viewModel: Option[UnauthorisedPaymentsViewModel] = sessionData.map(_.pensions.unauthorisedPayments)
+      viewModel: Option[UnauthorisedPaymentsViewModel]       = sessionData.map(_.pensions.unauthorisedPayments)
       unauthModel: Option[PensionSchemeUnauthorisedPayments] = viewModel.map(_.toUnauth)
 
-
       result <-
-        FutureEitherOps[ServiceError, Unit](savePensionChargesData(
-          user = user,
-          taxYear = taxYear,
-          subModel = unauthModel,
-          cya = viewModel,
-          submissionModel = createUnauthorisedChargesModel(viewModel, priorData),
-          updatedCYA = getUnauthorisedPaymentsUserData(sessionData, user, taxYear, clock)
-        ))
-    } yield {
-      result
-    }).value
-  }
+        FutureEitherOps[ServiceError, Unit](
+          savePensionChargesData(
+            user = user,
+            taxYear = taxYear,
+            subModel = unauthModel,
+            cya = viewModel,
+            submissionModel = createUnauthorisedChargesModel(viewModel, priorData),
+            updatedCYA = getUnauthorisedPaymentsUserData(sessionData, user, taxYear, clock)
+          ))
+    } yield result).value
 
-  def saveTransfersIntoOverseasPensionsViewModel(user: User, taxYear: Int)(implicit hc: HeaderCarrier,
-                                                                           ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
-
+  def saveTransfersIntoOverseasPensionsViewModel(user: User, taxYear: Int)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      clock: Clock): Future[Either[ServiceError, Unit]] =
     (for {
-      priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector
-        .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
+      priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](
+        incomeTaxUserDataConnector
+          .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
 
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
 
@@ -80,47 +79,49 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
       overseasTransfersModel: Option[PensionSchemeOverseasTransfers] = viewModel.map(_.toTransfersIOP)
 
       result <-
-        FutureEitherOps[ServiceError, Unit](savePensionChargesData(
-          user = user,
-          taxYear = taxYear,
-          subModel = overseasTransfersModel,
-          cya = viewModel,
-          submissionModel = createTransfersIOPChargesModel(viewModel, priorData),
-          updatedCYA = getTransfersIntoOverseasUserData(sessionData, user, taxYear, clock)
-        ))
-    } yield {
-      result
-    }).value
-  }
+        FutureEitherOps[ServiceError, Unit](
+          savePensionChargesData(
+            user = user,
+            taxYear = taxYear,
+            subModel = overseasTransfersModel,
+            cya = viewModel,
+            submissionModel = createTransfersIOPChargesModel(viewModel, priorData),
+            updatedCYA = getTransfersIntoOverseasUserData(sessionData, user, taxYear, clock)
+          ))
+    } yield result).value
 
-  def saveShortServiceRefundsViewModel(user: User, taxYear: Int)(implicit hc: HeaderCarrier,
-                                                                 ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
+  def saveShortServiceRefundsViewModel(user: User, taxYear: Int)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      clock: Clock): Future[Either[ServiceError, Unit]] =
     (for {
-      priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector
-        .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
+      priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](
+        incomeTaxUserDataConnector
+          .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
-      viewModel = sessionData.map(_.pensions.shortServiceRefunds)
+      viewModel                                      = sessionData.map(_.pensions.shortServiceRefunds)
       subModel: Option[OverseasPensionContributions] = viewModel.map(_.toOverseasPensionContributions)
 
       result <-
-        FutureEitherOps[ServiceError, Unit](savePensionChargesData(
-          user = user,
-          taxYear = taxYear,
-          subModel = subModel,
-          cya = viewModel,
-          submissionModel = createShortServiceRefundsChargesModel(viewModel, priorData),
-          updatedCYA = getShortServiceRefundsUserData(sessionData, user, taxYear, clock)
-        ))
-    } yield {
-      result
-    }).value
-  }
+        FutureEitherOps[ServiceError, Unit](
+          savePensionChargesData(
+            user = user,
+            taxYear = taxYear,
+            subModel = subModel,
+            cya = viewModel,
+            submissionModel = createShortServiceRefundsChargesModel(viewModel, priorData),
+            updatedCYA = getShortServiceRefundsUserData(sessionData, user, taxYear, clock)
+          ))
+    } yield result).value
 
-  def saveAnnualAllowanceViewModel(user: User, taxYear: Int)(implicit hc: HeaderCarrier,
-                                                             ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
+  def saveAnnualAllowanceViewModel(user: User, taxYear: Int)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      clock: Clock): Future[Either[ServiceError, Unit]] =
     (for {
-      priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector
-        .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
+      priorData <- FutureEitherOps[ServiceError, IncomeTaxUserData](
+        incomeTaxUserDataConnector
+          .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
 
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
 
@@ -129,39 +130,36 @@ class PensionChargesService @Inject()(pensionUserDataRepository: PensionsUserDat
       annualAllowanceSubModel = viewModel.map(_.toAnnualAllowanceChargesModel(priorData.pensions))
 
       result <-
-        FutureEitherOps[ServiceError, Unit](savePensionChargesData(
-          user = user,
-          taxYear = taxYear,
-          subModel = annualAllowanceSubModel,
-          cya = viewModel,
-          submissionModel = createAnnualAllowanceChargesModel(viewModel, priorData),
-          updatedCYA = getAnnualAllowanceUserData(sessionData, user, taxYear, clock)
-        ))
-    } yield {
-      result
-    }).value
-  }
+        FutureEitherOps[ServiceError, Unit](
+          savePensionChargesData(
+            user = user,
+            taxYear = taxYear,
+            subModel = annualAllowanceSubModel,
+            cya = viewModel,
+            submissionModel = createAnnualAllowanceChargesModel(viewModel, priorData),
+            updatedCYA = getAnnualAllowanceUserData(sessionData, user, taxYear, clock)
+          ))
+    } yield result).value
 
-  private def savePensionChargesData(user: User, taxYear: Int,
-                                     subModel: Option[PensionChargesSubRequestModel],
-                                     cya: Option[PensionCYABaseModel],
-                                     submissionModel: CreateUpdatePensionChargesRequestModel,
-                                     updatedCYA: PensionsUserData)
-                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
-
+  private def savePensionChargesData(
+      user: User,
+      taxYear: Int,
+      subModel: Option[PensionChargesSubRequestModel],
+      cya: Option[PensionCYABaseModel],
+      submissionModel: CreateUpdatePensionChargesRequestModel,
+      updatedCYA: PensionsUserData)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] =
     (for {
-      _ <- FutureEitherOps[ServiceError, Unit](pensionChargesHelper.sendDownstream(user.nino, taxYear, subModel, cya, submissionModel)(
-        hc.withExtraHeaders("mtditid" -> user.mtditid), ec))
+      _ <- FutureEitherOps[ServiceError, Unit](
+        pensionChargesHelper.sendDownstream(user.nino, taxYear, subModel, cya, submissionModel)(hc.withExtraHeaders("mtditid" -> user.mtditid), ec))
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
     } yield result).value
-  }
 }
 
 object PensionChargesService {
 
   object AnnualAllowance {
     def createAnnualAllowanceChargesModel(viewModel: Option[PensionAnnualAllowancesViewModel],
-                                          priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel = {
+                                          priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel =
       CreateUpdatePensionChargesRequestModel(
         pensionSavingsTaxCharges = viewModel.map(_.toPensionSavingsTaxCharges(priorData.pensions)),
         pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
@@ -169,43 +167,45 @@ object PensionChargesService {
         pensionContributions = viewModel.map(_.toPensionContributions),
         overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
       )
-    }
 
-    def getAnnualAllowanceUserData(userData: Option[PensionsUserData],
-                                   user: User, taxYear: Int, clock: Clock): PensionsUserData = {
+    def getAnnualAllowanceUserData(userData: Option[PensionsUserData], user: User, taxYear: Int, clock: Clock): PensionsUserData =
       userData match {
         case Some(value) => value
 
-        case None => PensionsUserData(
-          user.sessionId, user.mtditid,
-          user.nino, taxYear,
-          isPriorSubmission = false,
-          PensionsCYAModel.emptyModels,
-          clock.now(DateTimeZone.UTC)
-        )
+        case None =>
+          PensionsUserData(
+            user.sessionId,
+            user.mtditid,
+            user.nino,
+            taxYear,
+            isPriorSubmission = false,
+            PensionsCYAModel.emptyModels,
+            clock.now(DateTimeZone.UTC)
+          )
       }
-    }
   }
 
   object UnauthorisedPayments {
-    def getUnauthorisedPaymentsUserData(userData: Option[PensionsUserData],
-                                        user: User, taxYear: Int, clock: Clock): PensionsUserData = {
+    def getUnauthorisedPaymentsUserData(userData: Option[PensionsUserData], user: User, taxYear: Int, clock: Clock): PensionsUserData =
       userData match {
-        case Some(value) => value.copy(pensions = value.pensions.copy(
-          unauthorisedPayments = UnauthorisedPaymentsViewModel()
-        ))
-        case None => PensionsUserData(
-          user.sessionId, user.mtditid,
-          user.nino, taxYear,
-          isPriorSubmission = false,
-          PensionsCYAModel.emptyModels,
-          clock.now(DateTimeZone.UTC)
-        )
+        case Some(value) =>
+          value.copy(pensions = value.pensions.copy(
+            unauthorisedPayments = UnauthorisedPaymentsViewModel()
+          ))
+        case None =>
+          PensionsUserData(
+            user.sessionId,
+            user.mtditid,
+            user.nino,
+            taxYear,
+            isPriorSubmission = false,
+            PensionsCYAModel.emptyModels,
+            clock.now(DateTimeZone.UTC)
+          )
       }
-    }
 
     def createUnauthorisedChargesModel(viewModel: Option[UnauthorisedPaymentsViewModel],
-                                       priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel = {
+                                       priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel =
       CreateUpdatePensionChargesRequestModel(
         pensionSavingsTaxCharges = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)),
         pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
@@ -213,28 +213,29 @@ object PensionChargesService {
         pensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
         overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
       )
-    }
   }
 
   object OverseasTransferCharge {
-    def getTransfersIntoOverseasUserData(userData: Option[PensionsUserData],
-                                         user: User, taxYear: Int, clock: Clock): PensionsUserData = {
+    def getTransfersIntoOverseasUserData(userData: Option[PensionsUserData], user: User, taxYear: Int, clock: Clock): PensionsUserData =
       userData match {
-        case Some(value) => value.copy(pensions = value.pensions.copy(
-          transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel()
-        ))
-        case None => PensionsUserData(
-          user.sessionId, user.mtditid,
-          user.nino, taxYear,
-          isPriorSubmission = false,
-          PensionsCYAModel.emptyModels,
-          clock.now(DateTimeZone.UTC)
-        )
+        case Some(value) =>
+          value.copy(pensions = value.pensions.copy(
+            transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel()
+          ))
+        case None =>
+          PensionsUserData(
+            user.sessionId,
+            user.mtditid,
+            user.nino,
+            taxYear,
+            isPriorSubmission = false,
+            PensionsCYAModel.emptyModels,
+            clock.now(DateTimeZone.UTC)
+          )
       }
-    }
 
     def createTransfersIOPChargesModel(viewModel: Option[TransfersIntoOverseasPensionsViewModel],
-                                       priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel = {
+                                       priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel =
       CreateUpdatePensionChargesRequestModel(
         pensionSavingsTaxCharges = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)),
         pensionSchemeOverseasTransfers = viewModel.map(_.toTransfersIOP),
@@ -242,12 +243,11 @@ object PensionChargesService {
         pensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
         overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
       )
-    }
   }
 
   object ShortServiceRefund {
     def createShortServiceRefundsChargesModel(viewModel: Option[ShortServiceRefundsViewModel],
-                                              priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel = {
+                                              priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel =
       CreateUpdatePensionChargesRequestModel(
         pensionSavingsTaxCharges = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)),
         pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
@@ -255,27 +255,24 @@ object PensionChargesService {
         pensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
         overseasPensionContributions = viewModel.map(_.toOverseasPensionContributions)
       )
-    }
 
-    def getShortServiceRefundsUserData(userData: Option[PensionsUserData],
-                                       user: User, taxYear: Int, clock: Clock): PensionsUserData = {
+    def getShortServiceRefundsUserData(userData: Option[PensionsUserData], user: User, taxYear: Int, clock: Clock): PensionsUserData =
       userData match {
-        case Some(value) => value.copy(pensions = value.pensions.copy(
-          shortServiceRefunds = ShortServiceRefundsViewModel()
-        ))
-        case None => PensionsUserData(
-          user.sessionId, user.mtditid,
-          user.nino, taxYear,
-          isPriorSubmission = false,
-          PensionsCYAModel.emptyModels,
-          clock.now(DateTimeZone.UTC)
-        )
+        case Some(value) =>
+          value.copy(pensions = value.pensions.copy(
+            shortServiceRefunds = ShortServiceRefundsViewModel()
+          ))
+        case None =>
+          PensionsUserData(
+            user.sessionId,
+            user.mtditid,
+            user.nino,
+            taxYear,
+            isPriorSubmission = false,
+            PensionsCYAModel.emptyModels,
+            clock.now(DateTimeZone.UTC)
+          )
       }
-    }
   }
 
 }
-
-
-
-

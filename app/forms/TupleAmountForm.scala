@@ -20,22 +20,21 @@ import forms.validation.mappings.MappingUtil._
 import play.api.data.Form
 import play.api.data.Forms.tuple
 
-
 object TupleAmountForm {
 
-  val amount = "amount-1"
+  val amount  = "amount-1"
   val amount2 = "amount-2"
 
   def amountForm(
-                  emptyFieldKey1: String,
-                  wrongFormatKey1: String = "common.error.invalid_currency_format",
-                  exceedsMaxAmountKey1: String = "common.error.amountMaxLimit",
-                  emptyFieldArguments1: Seq[String] = Seq.empty[String],
-                  emptyFieldKey2: String,
-                  wrongFormatKey2: String = "common.error.invalid_currency_format",
-                  exceedsMaxAmountKey2: String = "common.error.amountMaxLimit",
-                  emptyFieldArguments2: Seq[String] = Seq.empty[String]
-                ): Form[(BigDecimal, BigDecimal)] =
+      emptyFieldKey1: String,
+      wrongFormatKey1: String = "common.error.invalid_currency_format",
+      exceedsMaxAmountKey1: String = "common.error.amountMaxLimit",
+      emptyFieldArguments1: Seq[String] = Seq.empty[String],
+      emptyFieldKey2: String,
+      wrongFormatKey2: String = "common.error.invalid_currency_format",
+      exceedsMaxAmountKey2: String = "common.error.amountMaxLimit",
+      emptyFieldArguments2: Seq[String] = Seq.empty[String]
+  ): Form[(BigDecimal, BigDecimal)] =
     Form(
       tuple(
         amount -> currency(
@@ -43,7 +42,6 @@ object TupleAmountForm {
           wrongFormatKey = wrongFormatKey1,
           maxAmountKey = exceedsMaxAmountKey1,
           args = emptyFieldArguments1
-
         ),
         amount2 -> currency(
           requiredKey = emptyFieldKey2,

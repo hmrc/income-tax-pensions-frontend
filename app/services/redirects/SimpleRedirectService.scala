@@ -26,37 +26,35 @@ import scala.concurrent.Future
 
 object SimpleRedirectService extends Logging {
 
-  def redirectBasedOnCurrentAnswers(taxYear: Int, data: Option[PensionsUserData], cyaPage: Call)
-                                   (shouldRedirect: PensionsCYAModel => Option[Result])
-                                   (continue: PensionsUserData => Future[Result]): Future[Result] = {
+  def redirectBasedOnCurrentAnswers(taxYear: Int, data: Option[PensionsUserData], cyaPage: Call)(shouldRedirect: PensionsCYAModel => Option[Result])(
+      continue: PensionsUserData => Future[Result]): Future[Result] = {
 
     val redirectOrData = data match {
-      case Some(cya) => shouldRedirect(cya.pensions) match {
-        case None => Right(cya)
-        case Some(redirect) =>
-          logger.info(s"[RedirectService][calculateRedirect]" +
-            s" Some data is missing / in the wrong state for the requested page. Routing to ${
-              redirect.header.headers.getOrElse("Location", "")
-            }")
-          Left(redirect)
-      }
+      case Some(cya) =>
+        shouldRedirect(cya.pensions) match {
+          case None => Right(cya)
+          case Some(redirect) =>
+            logger.info(
+              s"[RedirectService][calculateRedirect]" +
+                s" Some data is missing / in the wrong state for the requested page. Routing to ${redirect.header.headers.getOrElse("Location", "")}")
+            Left(redirect)
+        }
       case None =>
         Left(Redirect(cyaPage))
     }
 
     redirectOrData match {
-      case Right(cya) => continue(cya)
+      case Right(cya)     => continue(cya)
       case Left(redirect) => Future.successful(redirect)
     }
   }
 
-  def isFinishedCheck(cya: PensionCYABaseModel, taxYear: Int, continueRedirect: Call, cyaRedirectFn: Int => Call): Result = {
+  def isFinishedCheck(cya: PensionCYABaseModel, taxYear: Int, continueRedirect: Call, cyaRedirectFn: Int => Call): Result =
     if (cya.isFinished) {
       Redirect(cyaRedirectFn(taxYear))
     } else {
       Redirect(continueRedirect)
     }
-  }
 
   def checkForExistingSchemes[T](nextPage: Call, summaryPage: Call, schemes: Seq[T]): Call =
     if (schemes.isEmpty) nextPage else summaryPage

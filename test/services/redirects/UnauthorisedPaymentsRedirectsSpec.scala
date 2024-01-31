@@ -27,7 +27,7 @@ import utils.UnitTest
 class UnauthorisedPaymentsRedirectsSpec extends UnitTest {
 
   private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
-  private val someRedirect = Some(Redirect(UnauthorisedPaymentsController.show(taxYear)))
+  private val someRedirect              = Some(Redirect(UnauthorisedPaymentsController.show(taxYear)))
 
   ".journeyCheck" should {
     "return None if page is valid and all previous questions have been answered" when {
@@ -58,7 +58,7 @@ class UnauthorisedPaymentsRedirectsSpec extends UnitTest {
         result shouldBe None
       }
       "current page is pre-filled and mid-journey" in {
-        val data = cyaData.copy(unauthorisedPayments = anUnauthorisedPaymentsViewModel)
+        val data   = cyaData.copy(unauthorisedPayments = anUnauthorisedPaymentsViewModel)
         val result = journeyCheck(PSTRPage, data, taxYear)
 
         result shouldBe None
@@ -71,7 +71,7 @@ class UnauthorisedPaymentsRedirectsSpec extends UnitTest {
             surchargeAmount = None,
             surchargeTaxAmountQuestion = None,
             surchargeTaxAmount = None,
-            noSurchargeAmount = None,
+            noSurchargeAmount = None
           )
         )
         val result = journeyCheck(NotSurchargedAmountPage, data, taxYear)
@@ -112,4 +112,3 @@ class UnauthorisedPaymentsRedirectsSpec extends UnitTest {
     }
   }
 }
-

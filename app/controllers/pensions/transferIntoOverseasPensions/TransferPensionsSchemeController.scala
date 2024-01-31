@@ -40,23 +40,24 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvider,
-                                                 pensionSessionService: PensionSessionService,
-                                                 view: TransferPensionsSchemeView,
-                                                 errorHandler: ErrorHandler)
-                                                (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class TransferPensionsSchemeController @Inject() (
+    actionsProvider: ActionsProvider,
+    pensionSessionService: PensionSessionService,
+    view: TransferPensionsSchemeView,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
       val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear, index)
-      redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-        data =>
+      redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
         val tcPensionSchemes = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
         validatedIndex(index, tcPensionSchemes.size) match {
           case Some(idx) =>
             val isUKScheme = tcPensionSchemes(idx).ukTransferCharge.contains(true)
-            val form = tcPensionSchemeForm(userSessionDataRequest.user, isUKScheme).fill(updateFormModel(tcPensionSchemes(idx)))
+            val form       = tcPensionSchemeForm(userSessionDataRequest.user, isUKScheme).fill(updateFormModel(tcPensionSchemes(idx)))
             Future.successful(Ok(view(form, taxYear, isUKScheme, idx)))
           case _ =>
             Future.successful(Redirect(redirectForSchemeLoop(tcPensionSchemes, taxYear)))
@@ -66,36 +67,34 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>
+      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, index, DidAUKPensionSchemePayTransferChargePage, taxYear) { data =>
+        val tcPensionSchemes = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
+        validatedIndex(index, tcPensionSchemes.size) match {
 
-      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, index,DidAUKPensionSchemePayTransferChargePage, taxYear) {
-        data =>
-      val tcPensionSchemes = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
-      validatedIndex(index, tcPensionSchemes.size) match {
-
-        case Some(idx) =>
-          val isUKScheme = tcPensionSchemes(idx).ukTransferCharge.contains(true)
-          tcPensionSchemeForm(userSessionDataRequest.user, isUKScheme).bindFromRequest().fold(
-            formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, taxYear, isUKScheme, idx)))
-            ,
-            tcPensionScheme => {
-              val updatedCYAModel = updateViewModel(data, tcPensionScheme, idx)
-              pensionSessionService.createOrUpdateSessionData(userSessionDataRequest.user, updatedCYAModel, taxYear,
-                data.isPriorSubmission)(errorHandler.internalServerError()) {
-                Redirect(TransferChargeSummaryController.show(taxYear)) //TODO: redirect to Overseas Transfer charge Pensions list
-              }
-            }
-          )
-        case _ =>
-          Future.successful(Redirect(redirectForSchemeLoop(tcPensionSchemes, taxYear)))
+          case Some(idx) =>
+            val isUKScheme = tcPensionSchemes(idx).ukTransferCharge.contains(true)
+            tcPensionSchemeForm(userSessionDataRequest.user, isUKScheme)
+              .bindFromRequest()
+              .fold(
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, isUKScheme, idx))),
+                tcPensionScheme => {
+                  val updatedCYAModel = updateViewModel(data, tcPensionScheme, idx)
+                  pensionSessionService.createOrUpdateSessionData(userSessionDataRequest.user, updatedCYAModel, taxYear, data.isPriorSubmission)(
+                    errorHandler.internalServerError()) {
+                    Redirect(TransferChargeSummaryController.show(taxYear)) // TODO: redirect to Overseas Transfer charge Pensions list
+                  }
+                }
+              )
+          case _ =>
+            Future.successful(Redirect(redirectForSchemeLoop(tcPensionSchemes, taxYear)))
+        }
       }
-    }
   }
-
 
   private def tcPensionSchemeForm(user: User, isUKScheme: Boolean): Form[TcSsrPensionsSchemeFormModel] =
     tcSsrPensionSchemeForm(
-      agentOrIndividual = if (user.isAgent) "agent" else "individual", isUKScheme
+      agentOrIndividual = if (user.isAgent) "agent" else "individual",
+      isUKScheme
     )
 
   private def updateFormModel(scheme: TransferPensionScheme) =
@@ -106,15 +105,16 @@ class TransferPensionsSchemeController @Inject()(actionsProvider: ActionsProvide
       providerAddress = scheme.providerAddress.getOrElse(""),
       countryId = scheme.alphaTwoCountryCode.fold {
         Countries.get2AlphaCodeFrom3AlphaCode(scheme.alphaThreeCountryCode)
-      } {
-        alpha2 => Some(alpha2)
+      } { alpha2 =>
+        Some(alpha2)
       }
     )
 
   private def updateViewModel(pensionsUserdata: PensionsUserData, scheme: TcSsrPensionsSchemeFormModel, index: Int) = {
     val viewModel = pensionsUserdata.pensions.transfersIntoOverseasPensions
     val updatedScheme = {
-      val commonUpdatedScheme = viewModel.transferPensionScheme(index)
+      val commonUpdatedScheme = viewModel
+        .transferPensionScheme(index)
         .copy(name = Some(scheme.providerName), providerAddress = Some(scheme.providerAddress))
 
       if (commonUpdatedScheme.ukTransferCharge.contains(true)) {

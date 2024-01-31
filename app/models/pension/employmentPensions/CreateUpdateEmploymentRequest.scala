@@ -20,34 +20,34 @@ import models.pension.employmentPensions.CreateUpdateEmploymentRequest.{CreateUp
 import play.api.libs.json.{Json, OFormat}
 
 case class CreateUpdateEmploymentRequest(
-  employmentId: Option[String],
-  employment: Option[CreateUpdateEmployment],
-  employmentData: Option[CreateUpdateEmploymentData],
-  isHmrcEmploymentId: Option[Boolean]
+    employmentId: Option[String],
+    employment: Option[CreateUpdateEmployment],
+    employmentData: Option[CreateUpdateEmploymentData],
+    isHmrcEmploymentId: Option[Boolean]
 )
 
 object CreateUpdateEmploymentRequest {
   implicit val format: OFormat[CreateUpdateEmploymentRequest] = Json.format[CreateUpdateEmploymentRequest]
 
   case class CreateUpdateEmployment(
-    employerRef: Option[String],
-    employerName: String,
-    startDate: String,
-    cessationDate: Option[String],
-    payrollId: Option[String]
+      employerRef: Option[String],
+      employerName: String,
+      startDate: String,
+      cessationDate: Option[String],
+      payrollId: Option[String]
   )
   object CreateUpdateEmployment {
     implicit val format: OFormat[CreateUpdateEmployment] = Json.format[CreateUpdateEmployment]
   }
-  
+
   case class CreateUpdateEmploymentData(pay: PayModel)
   object CreateUpdateEmploymentData {
     implicit val formats: OFormat[CreateUpdateEmploymentData] = Json.format[CreateUpdateEmploymentData]
   }
 
   case class PayModel(
-    taxablePayToDate: BigDecimal,
-    totalTaxToDate: BigDecimal
+      taxablePayToDate: BigDecimal,
+      totalTaxToDate: BigDecimal
   )
   object PayModel {
     implicit val formats: OFormat[PayModel] = Json.format[PayModel]
@@ -59,6 +59,3 @@ object CreateUpdateEmploymentRequest {
     implicit val formats: OFormat[CreatedEmployment] = Json.format[CreatedEmployment]
   }
 }
-
-
-

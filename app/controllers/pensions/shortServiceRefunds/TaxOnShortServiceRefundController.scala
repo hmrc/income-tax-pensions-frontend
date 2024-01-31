@@ -37,64 +37,73 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxOnShortServiceRefundController @Inject()(actionsProvider: ActionsProvider,
-                                                  view: TaxPaidOnShortServiceRefundView,
-                                                  formsProvider: FormsProvider,
-                                                  errorHandler: ErrorHandler,
-                                                  shortServiceRefundsService: ShortServiceRefundsService)
-                                                 (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class TaxOnShortServiceRefundController @Inject() (actionsProvider: ActionsProvider,
+                                                   view: TaxPaidOnShortServiceRefundView,
+                                                   formsProvider: FormsProvider,
+                                                   errorHandler: ErrorHandler,
+                                                   shortServiceRefundsService: ShortServiceRefundsService)(implicit
+    val mcc: MessagesControllerComponents,
+    appConfig: AppConfig,
+    ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
   def show(taxYear: Int, refundPensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
-
       validatedSchemes(refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme) match {
         case Left(_) =>
-          Future.successful(Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme, taxYear)))
+          Future.successful(
+            Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme, taxYear)))
         case Right(_) =>
-
           val checkRedirect = journeyCheck(SchemePaidTaxOnRefundsPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-            data =>
-              Future.successful(Ok(view(TaxOnShortServiceRefundPage(
-                taxYear, refundPensionSchemeIndex,
-                data.pensions.shortServiceRefunds,
-                formsProvider.shortServiceTaxOnShortServiceRefundForm
-              ))))
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+            Future.successful(
+              Ok(
+                view(
+                  TaxOnShortServiceRefundPage(
+                    taxYear,
+                    refundPensionSchemeIndex,
+                    data.pensions.shortServiceRefunds,
+                    formsProvider.shortServiceTaxOnShortServiceRefundForm
+                  ))))
           }
       }
   }
 
   def submit(taxYear: Int, refundPensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
-
       validatedSchemes(refundPensionSchemeIndex, sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme) match {
         case Left(_) =>
-          Future.successful(Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme, taxYear)))
+          Future.successful(
+            Redirect(redirectForSchemeLoop(sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme, taxYear)))
         case Right(_) =>
+          formsProvider.shortServiceTaxOnShortServiceRefundForm
+            .bindFromRequest()
+            .fold(
+              formWithErrors =>
+                Future.successful(
+                  BadRequest(
+                    view(
+                      TaxOnShortServiceRefundPage(
+                        taxYear,
+                        refundPensionSchemeIndex,
+                        sessionUserData.pensionsUserData.pensions.shortServiceRefunds,
+                        formWithErrors)))),
+              yesNoValue => {
 
-          formsProvider.shortServiceTaxOnShortServiceRefundForm.bindFromRequest().fold(
-            formWithErrors =>
-
-              Future.successful(BadRequest(view(TaxOnShortServiceRefundPage(
-                taxYear, refundPensionSchemeIndex,
-                sessionUserData.pensionsUserData.pensions.shortServiceRefunds, formWithErrors)
-              ))),
-            yesNoValue => {
-
-              val checkRedirect = journeyCheck(SchemePaidTaxOnRefundsPage, _: PensionsCYAModel, taxYear)
-              redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-                data =>
+                val checkRedirect = journeyCheck(SchemePaidTaxOnRefundsPage, _: PensionsCYAModel, taxYear)
+                redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
                   shortServiceRefundsService.createOrUpdateShortServiceRefundQuestion(data, yesNoValue, refundPensionSchemeIndex).map {
-                    case Left(_) => errorHandler.internalServerError()
+                    case Left(_)         => errorHandler.internalServerError()
                     case Right(userData) =>
-                      //The collection will always have a value
+                      // The collection will always have a value
                       val index = Some(refundPensionSchemeIndex.getOrElse(userData.pensions.shortServiceRefunds.refundPensionScheme.size - 1))
                       Redirect(ShortServicePensionsSchemeController.show(taxYear, index))
                   }
+                }
               }
-            }
-          )
+            )
       }
   }
 

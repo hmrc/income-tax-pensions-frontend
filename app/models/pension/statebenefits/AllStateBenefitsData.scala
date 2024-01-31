@@ -25,19 +25,14 @@ case class AllStateBenefitsData(stateBenefitsData: Option[StateBenefitsData],
 
 object AllStateBenefitsData {
 
-  implicit val allStateBenefitsDataWrites: OWrites[AllStateBenefitsData] = (data: AllStateBenefitsData) => {
+  implicit val allStateBenefitsDataWrites: OWrites[AllStateBenefitsData] = (data: AllStateBenefitsData) =>
     jsonObjNoNulls(
-      "stateBenefits" -> data.stateBenefitsData,
+      "stateBenefits"              -> data.stateBenefitsData,
       "customerAddedStateBenefits" -> data.customerAddedStateBenefitsData
     )
-  }
 
   implicit val allStateBenefitsDataReads: Reads[AllStateBenefitsData] = (
     (JsPath \ "stateBenefits").readNullable[StateBenefitsData] and
       (JsPath \ "customerAddedStateBenefits").readNullable[CustomerAddedStateBenefitsData]
-    ) (AllStateBenefitsData.apply _)
+  )(AllStateBenefitsData.apply _)
 }
-
-
-
-

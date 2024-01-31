@@ -16,7 +16,7 @@
 
 package builders
 
-import models.pension.charges.{PensionAnnualAllowancesViewModel}
+import models.pension.charges.PensionAnnualAllowancesViewModel
 
 object PensionAnnualAllowanceViewModelBuilder {
 
@@ -28,7 +28,7 @@ object PensionAnnualAllowanceViewModelBuilder {
     aboveAnnualAllowance = Some(12.44),
     pensionProvidePaidAnnualAllowanceQuestion = Some(true),
     taxPaidByPensionProvider = Some(14.55),
-    pensionSchemeTaxReferences = Some(Seq("1234567CRC","12345678RB","1234567DRD"))
+    pensionSchemeTaxReferences = Some(Seq("1234567CRC", "12345678RB", "1234567DRD"))
   )
 
   val aPensionAnnualAllowanceEmptyViewModel: PensionAnnualAllowancesViewModel = PensionAnnualAllowancesViewModel()

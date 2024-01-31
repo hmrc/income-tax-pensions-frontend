@@ -23,12 +23,12 @@ import play.api.data.validation.{Constraints, Invalid, Valid}
 
 class StringConstraintsSpec extends Constraints with AnyWordSpecLike with Matchers {
 
-  val maxLength = 15
-  val errMsgMaxLength = "Too Long"
-  val errMsgNonEmpty = "it is empty"
-  val errMsgInvalidChar = "there are invalid chars"
+  val maxLength            = 15
+  val errMsgMaxLength      = "Too Long"
+  val errMsgNonEmpty       = "it is empty"
+  val errMsgInvalidChar    = "there are invalid chars"
   val errMsgNoLeadingSpace = "there are leading spaces"
-  val errMsgInvalidInt = "contains non numerical chars"
+  val errMsgInvalidInt     = "contains non numerical chars"
 
   "The StringConstraints.nonEmpty method" when {
 
@@ -56,11 +56,12 @@ class StringConstraintsSpec extends Constraints with AnyWordSpecLike with Matche
       "return valid" in {
         val lowerCaseAlphabet = ('a' to 'z').mkString
         val upperCaseAlphabet = lowerCaseAlphabet.toUpperCase()
-        val oneToNine = (1 to 9).mkString
-        val otherChar = "&@£$€¥#.,:;-"
-        val space = ""
+        val oneToNine         = (1 to 9).mkString
+        val otherChar         = "&@£$€¥#.,:;-"
+        val space             = ""
 
-        StringConstraints.validateChar("""^([ A-Za-z0-9&@£$€¥#.,:;-])*$""")(errMsgInvalidChar)(lowerCaseAlphabet + upperCaseAlphabet + space + oneToNine + otherChar + space) shouldBe Valid
+        StringConstraints.validateChar("""^([ A-Za-z0-9&@£$€¥#.,:;-])*$""")(errMsgInvalidChar)(
+          lowerCaseAlphabet + upperCaseAlphabet + space + oneToNine + otherChar + space) shouldBe Valid
       }
     }
 

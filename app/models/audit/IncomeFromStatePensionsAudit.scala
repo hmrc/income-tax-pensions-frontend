@@ -27,11 +27,11 @@ case class IncomeFromStatePensionsAudit(taxYear: Int,
                                         nino: String,
                                         mtdItId: String,
                                         incomeFromStatePensions: IncomeFromPensionsViewModel,
-                                        priorIncomeFromStatePensions: Option[IncomeFromPensionsViewModel] = None){
+                                        priorIncomeFromStatePensions: Option[IncomeFromPensionsViewModel] = None) {
 
-  private val amend = "AmendIncomeFromStatePensions"
+  private val amend  = "AmendIncomeFromStatePensions"
   private val create = "CreateIncomeFromStatePensions"
-  private val view = "ViewIncomeFromStatePensions"
+  private val view   = "ViewIncomeFromStatePensions"
 
   def toAuditModelAmend: AuditModel[IncomeFromStatePensionsAudit] = toAuditModel(amend)
 
@@ -47,12 +47,15 @@ object IncomeFromStatePensionsAudit {
   def apply(taxYear: Int,
             user: User,
             incomeFromStatePensions: IncomeFromPensionsViewModel,
-            priorIncomeFromStatePensions: Option[IncomeFromPensionsViewModel]): IncomeFromStatePensionsAudit = {
-
+            priorIncomeFromStatePensions: Option[IncomeFromPensionsViewModel]): IncomeFromStatePensionsAudit =
     IncomeFromStatePensionsAudit(
-      taxYear, user.affinityGroup, user.nino, user.mtditid, incomeFromStatePensions, priorIncomeFromStatePensions
+      taxYear,
+      user.affinityGroup,
+      user.nino,
+      user.mtditid,
+      incomeFromStatePensions,
+      priorIncomeFromStatePensions
     )
-  }
 
   implicit val writes: OWrites[IncomeFromStatePensionsAudit] = Json.writes[IncomeFromStatePensionsAudit]
 

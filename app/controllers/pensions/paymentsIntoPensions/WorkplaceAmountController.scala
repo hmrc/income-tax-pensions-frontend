@@ -36,19 +36,19 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class WorkplaceAmountController @Inject()(authAction: AuthorisedAction,
-                                          workplaceAmountView: WorkplaceAmountView,
-                                          pensionSessionService: PensionSessionService,
-                                          errorHandler: ErrorHandler,
-                                          formProvider: PaymentsIntoPensionFormProvider)
-                                         (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport {
+class WorkplaceAmountController @Inject() (
+    authAction: AuthorisedAction,
+    workplaceAmountView: WorkplaceAmountView,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    formProvider: PaymentsIntoPensionFormProvider)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
       val checkRedirect = journeyCheck(WorkplacePensionAmountPage, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
-
         val amountForm = formProvider.workplacePensionAmountForm
         data.pensions.paymentsIntoPension.totalWorkplacePensionPayments match {
           case Some(amount) =>
@@ -61,30 +61,25 @@ class WorkplaceAmountController @Inject()(authAction: AuthorisedAction,
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    formProvider.workplacePensionAmountForm.bindFromRequest().fold(
-      formWithErrors => Future.successful(BadRequest(workplaceAmountView(formWithErrors, taxYear))),
-      amount => {
-        pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
-          val checkRedirect = journeyCheck(WorkplacePensionAmountPage, _, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
-
-            val pensionsCYAModel: PensionsCYAModel = data.pensions
-            val viewModel: PaymentsIntoPensionsViewModel = pensionsCYAModel.paymentsIntoPension
-            val updatedCyaModel: PensionsCYAModel = {
-              pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(totalWorkplacePensionPayments = Some(amount)))
-            }
-            pensionSessionService.createOrUpdateSessionData(request.user,
-              updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
-              isFinishedCheck(
-                updatedCyaModel.paymentsIntoPension,
-                taxYear,
-                PaymentsIntoPensionsCYAController.show(taxYear),
-                cyaPageCall)
+    formProvider.workplacePensionAmountForm
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(workplaceAmountView(formWithErrors, taxYear))),
+        amount =>
+          pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
+            val checkRedirect = journeyCheck(WorkplacePensionAmountPage, _, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
+              val pensionsCYAModel: PensionsCYAModel       = data.pensions
+              val viewModel: PaymentsIntoPensionsViewModel = pensionsCYAModel.paymentsIntoPension
+              val updatedCyaModel: PensionsCYAModel =
+                pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(totalWorkplacePensionPayments = Some(amount)))
+              pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+                errorHandler.internalServerError()) {
+                isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, PaymentsIntoPensionsCYAController.show(taxYear), cyaPageCall)
+              }
             }
           }
-        }
-      }
-    )
+      )
   }
 
 }

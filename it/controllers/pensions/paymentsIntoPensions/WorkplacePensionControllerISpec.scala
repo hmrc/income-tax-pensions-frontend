@@ -54,7 +54,10 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
         dropPensionsDB()
         authoriseAgentOrIndividual()
         insertCyaData(noWorkplaceCYAModel)
-        urlGet(fullUrl(workplacePensionUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(workplacePensionUrl(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an OK status" in {
@@ -82,7 +85,10 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
         authoriseAgentOrIndividual()
         val viewModel = aPaymentsIntoPensionViewModel.copy(workplacePensionPaymentsQuestion = Some(true))
         insertCyaData(pensionsUserDataWithPaymentsIntoPensions(viewModel))
-        urlGet(fullUrl(workplacePensionUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(workplacePensionUrl(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an OK status" in {
@@ -110,7 +116,10 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
         authoriseAgentOrIndividual()
         val viewModel = aPaymentsIntoPensionViewModel.copy(workplacePensionPaymentsQuestion = Some(false), totalWorkplacePensionPayments = None)
         insertCyaData(pensionsUserDataWithPaymentsIntoPensions(viewModel))
-        urlGet(fullUrl(workplacePensionUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(workplacePensionUrl(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an OK status" in {
@@ -135,7 +144,10 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(workplacePensionUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(workplacePensionUrl(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an 303 SEE_OTHER status" in {
@@ -154,7 +166,10 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
         authoriseAgentOrIndividual()
         val viewModel = aPaymentsIntoPensionViewModel.copy(workplacePensionPaymentsQuestion = None)
         insertCyaData(pensionsUserDataWithPaymentsIntoPensions(viewModel))
-        urlPost(fullUrl(workplacePensionUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(
+          fullUrl(workplacePensionUrl(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -178,7 +193,6 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
       errorAboveElementCheck(expectedErrorMessage, Some("value"))
     }
 
-
     "redirect to Workplace Pension Amount page when user submits 'Yes' and updates the session value to yes" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
 
@@ -187,7 +201,10 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
         authoriseAgentOrIndividual()
         val viewModel = aPaymentsIntoPensionViewModel.copy(workplacePensionPaymentsQuestion = Some(false), totalWorkplacePensionPayments = None)
         insertCyaData(pensionsUserDataWithPaymentsIntoPensions(viewModel))
-        urlPost(fullUrl(workplacePensionUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(
+          fullUrl(workplacePensionUrl(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -207,9 +224,13 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val viewModel = aPaymentsIntoPensionViewModel.copy(workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = Some(123.12))
+        val viewModel =
+          aPaymentsIntoPensionViewModel.copy(workplacePensionPaymentsQuestion = Some(true), totalWorkplacePensionPayments = Some(123.12))
         insertCyaData(pensionsUserDataWithPaymentsIntoPensions(viewModel))
-        urlPost(fullUrl(workplacePensionUrl(taxYearEOY)), body = form, follow = false,
+        urlPost(
+          fullUrl(workplacePensionUrl(taxYearEOY)),
+          body = form,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 

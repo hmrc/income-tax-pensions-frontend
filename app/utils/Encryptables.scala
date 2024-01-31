@@ -28,11 +28,13 @@ trait Encryptable[A] {
 object EncryptorInstances {
 
   implicit val booleanEncryptor: Encryptable[Boolean] = new Encryptable[Boolean] {
-    override def encrypt(value: Boolean)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedValue = secureGCMCipher.encrypt(value)
+    override def encrypt(value: Boolean)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedValue =
+      secureGCMCipher.encrypt(value)
   }
 
   implicit val stringEncryptor: Encryptable[String] = new Encryptable[String] {
-    override def encrypt(value: String)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedValue = secureGCMCipher.encrypt(value)
+    override def encrypt(value: String)(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedValue =
+      secureGCMCipher.encrypt(value)
   }
 
   implicit val bigDecimalEncryptor: Encryptable[BigDecimal] = new Encryptable[BigDecimal] {

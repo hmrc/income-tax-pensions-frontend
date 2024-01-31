@@ -27,13 +27,15 @@ import utils.UnitTest
 
 class LanguageSwitchControllerSpec extends UnitTest with GuiceOneAppPerSuite {
 
-  private val env = Environment.simple()
+  private val env           = Environment.simple()
   private val configuration = Configuration.load(env)
 
-  private val serviceConfig = new ServicesConfig(configuration)
+  private val serviceConfig         = new ServicesConfig(configuration)
   private val mockFrontendAppConfig = new AppConfig(serviceConfig)
 
-  private val controller = new LanguageSwitchController(appConfig = mockFrontendAppConfig, controllerComponents = stubMessagesControllerComponents(),
+  private val controller = new LanguageSwitchController(
+    appConfig = mockFrontendAppConfig,
+    controllerComponents = stubMessagesControllerComponents(),
     messagesApi = stubMessagesApi())
 
   "calling the SwitchToLanguage method" when {

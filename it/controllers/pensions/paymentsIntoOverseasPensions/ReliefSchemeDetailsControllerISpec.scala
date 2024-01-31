@@ -31,21 +31,24 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) = {
+  private def pensionsUsersData(isPrior: Boolean, pensionsCyaModel: PensionsCYAModel) =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
-  }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
 
-  ".show" should { //scalastyle:off magic.number
+  ".show" should { // scalastyle:off magic.number
 
     "show page when EOY" in {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
-        urlGet(fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 1)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 1)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe OK
     }
@@ -57,8 +60,12 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionUserDataWithPaymentsIntoOverseasPensions(pensionsNoSchemesViewModel))
-        urlGet(fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe SEE_OTHER
       result.headers("Location").head shouldBe paymentsIntoPensionSchemeUrl(taxYearEOY)
@@ -69,8 +76,12 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(isPrior = false, aPensionsCYAModel))
-        urlGet(fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe SEE_OTHER
       result.headers("Location").head shouldBe pensionReliefSchemeSummaryUrl(taxYearEOY)
@@ -90,7 +101,8 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
           fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = "")
+          body = ""
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -107,7 +119,8 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
           fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 100)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = "")
+          body = ""
+        )
       }
 
       result.status shouldBe SEE_OTHER
@@ -123,7 +136,8 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
           fullUrl(pensionReliefSchemeDetailsUrl(taxYearEOY, 0)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = "")
+          body = ""
+        )
       }
       result.status shouldBe SEE_OTHER
       result.headers("Location").head shouldBe pensionReliefSchemeSummaryUrl(taxYearEOY)

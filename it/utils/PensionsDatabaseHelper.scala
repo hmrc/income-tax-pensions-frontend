@@ -30,15 +30,13 @@ trait PensionsDatabaseHelper {
     await(pensionsDatabase.ensureIndexes())
   }
 
-  def insertCyaData(cya: PensionsUserData): Unit = {
+  def insertCyaData(cya: PensionsUserData): Unit =
     await(pensionsDatabase.createOrUpdate(cya))
-  }
 
-  def findCyaData(taxYear: Int, user: User): Option[PensionsUserData] = {
+  def findCyaData(taxYear: Int, user: User): Option[PensionsUserData] =
     await(pensionsDatabase.find(taxYear, user).map {
-      case Left(_) => None
+      case Left(_)      => None
       case Right(value) => value
     })
-  }
 
 }

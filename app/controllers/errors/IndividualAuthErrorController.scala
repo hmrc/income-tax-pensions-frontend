@@ -23,11 +23,12 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.templates.IndividualUnauthorisedView
 
-class IndividualAuthErrorController @Inject()(
-                                               val mcc: MessagesControllerComponents,
-                                               implicit val appConfig: AppConfig,
-                                               view: IndividualUnauthorisedView
-                                             ) extends FrontendController(mcc) with I18nSupport {
+class IndividualAuthErrorController @Inject() (
+    val mcc: MessagesControllerComponents,
+    implicit val appConfig: AppConfig,
+    view: IndividualUnauthorisedView
+) extends FrontendController(mcc)
+    with I18nSupport {
 
   def show(): Action[AnyContent] = Action { implicit request =>
     Unauthorized(view())

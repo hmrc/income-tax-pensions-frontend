@@ -50,7 +50,4 @@ object ShortServiceRefundsPages {
     override val journeyNo: Int = 7
   }
 
-
-
-
 }

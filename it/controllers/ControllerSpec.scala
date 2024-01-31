@@ -44,27 +44,27 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 // scalastyle:off magic.number number.of.methods line.size.limit method.length
 
-class ControllerSpec(val pathForThisPage: String) extends PlaySpec
-  with GuiceOneServerPerSuite
-  with WiremockStubHelpers
-  with WireMockHelper
-  with BeforeAndAfterAll
-  with DocumentMatchers
-  with ResponseMatchers {
+class ControllerSpec(val pathForThisPage: String)
+    extends PlaySpec
+    with GuiceOneServerPerSuite
+    with WiremockStubHelpers
+    with WireMockHelper
+    with BeforeAndAfterAll
+    with DocumentMatchers
+    with ResponseMatchers {
 
-  private val validMtdItId = "1234567890"
-  private val validNino = "AA123456A"
-  private val languageCodes = Map(PreferredLanguages.English -> "en", PreferredLanguages.Welsh -> "cy")
-  protected val taxYear = taxYearEOY
+  private val validMtdItId                             = "1234567890"
+  private val validNino                                = "AA123456A"
+  private val languageCodes                            = Map(PreferredLanguages.English -> "en", PreferredLanguages.Welsh -> "cy")
+  protected val taxYear                                = taxYearEOY
   private val database: PensionsUserDataRepositoryImpl = app.injector.instanceOf[PensionsUserDataRepositoryImpl]
-  private lazy val wiremockBaseUrl = s"http://$wiremockHost:$wiremockPort"
-  private val validTaxYearsHeaderValue = Seq(taxYear).mkString(",")
+  private lazy val wiremockBaseUrl                     = s"http://$wiremockHost:$wiremockPort"
+  private val validTaxYearsHeaderValue                 = Seq(taxYear).mkString(",")
 
   protected val scenarioNameForIndividualAndEnglish = "is an individual with a preferred language of English"
-  protected val scenarioNameForIndividualAndWelsh = "is an individual with a preferred language of Welsh"
-  protected val scenarioNameForAgentAndEnglish = "is an agent with a preferred language of English"
-  protected val scenarioNameForAgentAndWelsh = "is an agent with a preferred language of Welsh"
-
+  protected val scenarioNameForIndividualAndWelsh   = "is an individual with a preferred language of Welsh"
+  protected val scenarioNameForAgentAndEnglish      = "is an agent with a preferred language of English"
+  protected val scenarioNameForAgentAndWelsh        = "is an agent with a preferred language of Welsh"
 
   protected implicit val wsClient: WSClient = app.injector.instanceOf[WSClient]
 
@@ -73,78 +73,80 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
 
     val overseasPensionsSummary: String = relativeUrl("/overseas-pensions")
 
-    val paymentsIntoPensionsCYAPage: String = relativeUrl("/payments-into-pensions/check-payments-into-pensions")
-    val paymentsIntoPensionsOneNoTaxRelief: String = relativeUrl("/payments-into-pensions/no-tax-relief")
-    val paymentsIntoPensionsOneOffPaymentsPage: String = relativeUrl("/payments-into-pensions/one-off-payments")
-    val paymentsIntoPensionsOneOffPaymentsAmountPage: String = relativeUrl("/payments-into-pensions/one-off-payments-amount")
-    val paymentsIntoPensionsRetirementAnnuityPage: String = relativeUrl("/payments-into-pensions/no-tax-relief/retirement-annuity")
-    val paymentsIntoPensionsReliefAtSourcePage: String = relativeUrl("/payments-into-pensions/relief-at-source")
-    val paymentsIntoPensionsReliefAtSourceAmountPage: String = relativeUrl("/payments-into-pensions/relief-at-source-amount")
+    val paymentsIntoPensionsCYAPage: String                      = relativeUrl("/payments-into-pensions/check-payments-into-pensions")
+    val paymentsIntoPensionsOneNoTaxRelief: String               = relativeUrl("/payments-into-pensions/no-tax-relief")
+    val paymentsIntoPensionsOneOffPaymentsPage: String           = relativeUrl("/payments-into-pensions/one-off-payments")
+    val paymentsIntoPensionsOneOffPaymentsAmountPage: String     = relativeUrl("/payments-into-pensions/one-off-payments-amount")
+    val paymentsIntoPensionsRetirementAnnuityPage: String        = relativeUrl("/payments-into-pensions/no-tax-relief/retirement-annuity")
+    val paymentsIntoPensionsReliefAtSourcePage: String           = relativeUrl("/payments-into-pensions/relief-at-source")
+    val paymentsIntoPensionsReliefAtSourceAmountPage: String     = relativeUrl("/payments-into-pensions/relief-at-source-amount")
     val paymentsIntoPensionsTotalReliefAtSourceCheckPage: String = relativeUrl("/payments-into-pensions/total-relief-at-source-check")
 
-    val unauthorisedPaymentsPage: String = relativeUrl("/unauthorised-payments-from-pensions/unauthorised-payments")
+    val unauthorisedPaymentsPage: String    = relativeUrl("/unauthorised-payments-from-pensions/unauthorised-payments")
     val unauthorisedPaymentsCYAPage: String = relativeUrl("/unauthorised-payments-from-pensions/check-unauthorised-payments")
 
     val overseasSummaryPage: String = relativeUrl("/overseas-pensions")
 
-    val piopPaymentsIntoSchemePage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes")
-    val piopSchemeEmployerPaymentsPage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes")
-    val piopCustomerReferencePage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number")
+    val piopPaymentsIntoSchemePage: String      = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/payments-into-schemes")
+    val piopSchemeEmployerPaymentsPage: String  = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/employer-payments-into-schemes")
+    val piopCustomerReferencePage: String       = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number")
     val piopUntaxedEmployerPaymentsPage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments")
     val piopPensionsReliefTypePage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-emp-relief-status")
-    val piopSchemeSummaryPage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary")
-    val piopCheckPiopPage: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details")
+    val piopSchemeSummaryPage: String      = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary")
+    val piopCheckPiopPage: String          = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details")
 
-
-    val incomeFromOverseasPensionsStatus: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status")
+    val incomeFromOverseasPensionsStatus: String  = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status")
     val incomeFromOverseasPensionsCountry: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country")
     val incomeFromOverseasPensionsAmounts: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-amounts")
-    val incomeFromOverseasPensionsSwt: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt")
-    val incomeFromOverseasPensionsFtcr: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr")
+    val incomeFromOverseasPensionsSwt: String     = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-swt")
+    val incomeFromOverseasPensionsFtcr: String    = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-ftcr")
     val incomeFromOverseasPensionstaxable: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/taxable-amount")
-    val incomeFromOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary")
-    val incomeFromOverseasPensionsCountrySummary: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary")
+    val incomeFromOverseasPensionsScheme: String  = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary")
+    val incomeFromOverseasPensionsCountrySummary: String = relativeUrl(
+      "/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary")
     val incomeFromOverseasPensionsCya: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya")
 
     val pensionSchemeTaxReferenceSummary: String = relativeUrl("/annual-allowance/pension-schemes-paying-annual-allowance-tax")
-    val pensionSchemeTaxReference: String = relativeUrl("/annual-lifetime-allowances/pension-scheme-tax-reference")
+    val pensionSchemeTaxReference: String        = relativeUrl("/annual-lifetime-allowances/pension-scheme-tax-reference")
 
-    val transferPensionSavings: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
+    val transferPensionSavings: String     = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-pension-savings")
     val overseasTransferChargePaid: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-paid")
-    val transferIntoOverseasPensionsScheme: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme")
-    val transferChargeSchemeSummary: String = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")
+    val transferIntoOverseasPensionsScheme: String = relativeUrl(
+      "/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-pension-scheme")
+    val transferChargeSchemeSummary: String       = relativeUrl("/overseas-pensions/overseas-transfer-charges/transfer-charges-summary")
     val taxOnShortServiceRefundController: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax")
 
     val taxableShortServiceRefunds: String = relativeUrl("/overseas-pensions/short-service-refunds/taxable-short-service-refunds")
-    val taxOnShortServiceRefunds: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax")
+    val taxOnShortServiceRefunds: String   = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-uk-tax")
     val shortServicePensionsScheme: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme")
-    val shortServiceRefundSummary: String = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refund-summary")
+    val shortServiceRefundSummary: String  = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refund-summary")
 
     val reliefsSchemeSummary: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/untaxed-schemes-summary")
     val reliefsSchemeDetails: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-details-summary")
-    val removeReliefsScheme: String = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/remove-schemes")
+    val removeReliefsScheme: String  = relativeUrl("/overseas-pensions/payments-into-overseas-pensions/remove-schemes")
   }
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
     .configure(
       Map(
-        "defaultTaxYear" -> taxYear.toString,
-        "auditing.enabled" -> "false",
-        "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
+        "defaultTaxYear"                                           -> taxYear.toString,
+        "auditing.enabled"                                         -> "false",
+        "play.filters.csrf.header.bypassHeaders.Csrf-Token"        -> "nocheck",
         "microservice.services.income-tax-submission-frontend.url" -> wiremockBaseUrl,
-        "microservice.services.auth.host" -> wiremockHost,
-        "microservice.services.auth.port" -> wiremockPort.toString,
-        "microservice.services.income-tax-pensions.url" -> wiremockBaseUrl,
-        "microservice.services.income-tax-submission.url" -> wiremockBaseUrl,
-        "microservice.services.income-tax-state-benefits.url" -> wiremockBaseUrl,
-        "microservice.services.view-and-change.url" -> wiremockBaseUrl,
-        "microservice.services.income-tax-nrs-proxy.url" -> wiremockBaseUrl,
-        "microservice.services.sign-in.url" -> "/auth-login-stub/gg-sign-in",
-        "taxYearErrorFeatureSwitch" -> "false",
-        "useEncryption" -> "true"
+        "microservice.services.auth.host"                          -> wiremockHost,
+        "microservice.services.auth.port"                          -> wiremockPort.toString,
+        "microservice.services.income-tax-pensions.url"            -> wiremockBaseUrl,
+        "microservice.services.income-tax-submission.url"          -> wiremockBaseUrl,
+        "microservice.services.income-tax-state-benefits.url"      -> wiremockBaseUrl,
+        "microservice.services.view-and-change.url"                -> wiremockBaseUrl,
+        "microservice.services.income-tax-nrs-proxy.url"           -> wiremockBaseUrl,
+        "microservice.services.sign-in.url"                        -> "/auth-login-stub/gg-sign-in",
+        "taxYearErrorFeatureSwitch"                                -> "false",
+        "useEncryption"                                            -> "true"
       )
-    ).build()
+    )
+    .build()
 
   override def beforeAll(): Unit = {
     super.beforeAll()
@@ -156,8 +158,9 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     super.afterAll()
   }
 
-  def assertPageAsExpected(document: Document, expectedPageContents: BaseExpectedPageContents)
-                          (implicit userConfig: UserConfig, isWelsh: Boolean = false): Unit =
+  def assertPageAsExpected(document: Document, expectedPageContents: BaseExpectedPageContents)(implicit
+      userConfig: UserConfig,
+      isWelsh: Boolean = false): Unit =
     assertPageAsExpected(document, expectedPageContents, userConfig.preferredLanguage)
 
   def assertRedirectionAsExpected(expectedLocation: String)(implicit response: WSResponse): Unit = {
@@ -165,11 +168,11 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     response must haveALocationHeaderValue(expectedLocation)
   }
 
-
   protected def assertRadioButtonAsExpected(document: Document, index: Int, expectedRadioButton: ExpectedRadioButton): Unit = {
     document must haveARadioButtonAtIndex(index)
     document must haveARadioButtonAtIndexWithLabel(index, expectedRadioButton.label)
-    if (expectedRadioButton.isChecked) document must haveACheckedRadioButtonAtIndex(index) else document must not(haveACheckedRadioButtonAtIndex(index))
+    if (expectedRadioButton.isChecked) document must haveACheckedRadioButtonAtIndex(index)
+    else document must not(haveACheckedRadioButtonAtIndex(index))
   }
 
   protected def assertTextInputAsExpected(document: Document, expectedInputField: ExpectedInputField): Unit = {
@@ -183,24 +186,25 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     document must haveAContinueButtonWithLink(expectedButton.link)
   }
 
-  protected def givenAuthorised(userConfig: UserConfig): Unit = {
+  protected def givenAuthorised(userConfig: UserConfig): Unit =
     userConfig.userType match {
       case UserTypes.Agent => authoriseAgent()
-      case _ => authoriseIndividual()
+      case _               => authoriseIndividual()
     }
-  }
 
-  protected def submitForm(submittedFormData: SubmittedFormData, queryParams: Map[String, String] = Map.empty)
-                          (implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+  protected def submitForm(submittedFormData: SubmittedFormData, queryParams: Map[String, String] = Map.empty)(implicit
+      userConfig: UserConfig,
+      wsClient: WSClient): WSResponse =
     submitForm(submittedFormData.asMap, queryParams)
-  }
 
-  protected def submitForm(dataMap: Map[String, String], queryParams: Map[String, String])
-                          (implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+  protected def submitForm(dataMap: Map[String, String], queryParams: Map[String, String])(implicit
+      userConfig: UserConfig,
+      wsClient: WSClient): WSResponse = {
     givenAuthorised(userConfig)
     givenStoredSessionData(userConfig)
     await(
-      wsClient.url(fullUrl(pathForThisPage))
+      wsClient
+        .url(fullUrl(pathForThisPage))
         .withFollowRedirects(false)
         .withQueryStringParameters(queryParams.toList: _*)
         .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)) ++ Seq("Csrf-Token" -> "nocheck"): _*)
@@ -214,7 +218,7 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
 
   protected def relativeUrl(pathStartingWithSlash: String): String = s"/update-and-submit-income-tax-return/pensions/$taxYear$pathStartingWithSlash"
 
-  protected def pensionsUserData(pensionsSessionData: PensionsCYAModel): PensionsUserData = {
+  protected def pensionsUserData(pensionsSessionData: PensionsCYAModel): PensionsUserData =
     PensionsUserData(
       sessionId = generateSessionId(),
       mtdItId = validMtdItId,
@@ -223,7 +227,6 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
       isPriorSubmission = true,
       pensions = pensionsSessionData
     )
-  }
 
   protected def loadPensionUserData(implicit userConfig: UserConfig): Option[PensionsUserData] =
     userConfig.sessionDataOpt.flatMap(originalSessionData => loadPensionUserData(originalSessionData, userConfig.userType))
@@ -232,22 +235,22 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
 
   protected def getPage(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = getPage(pathForThisPage)
 
-  protected def getPage(queryParams: Map[String, String])(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = getPage(pathForThisPage, queryParams)
+  protected def getPage(queryParams: Map[String, String])(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse =
+    getPage(pathForThisPage, queryParams)
 
   protected def getPage(sessionDataOpt: Option[PensionsUserData])(implicit wsClient: WSClient): WSResponse = {
     implicit val userConfig: UserConfig = UserConfig(Individual, English, sessionDataOpt)
     getPage(pathForThisPage)
   }
 
-  def getPageWithIndex(index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+  def getPageWithIndex(index: Int = 0)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse =
     getPage(Map("index" -> index.toString))
-  }
 
   protected def userConfigWhenIrrelevant(sessionDataOpt: Option[PensionsUserData]): UserConfig =
     UserConfig(Individual, English, sessionDataOpt)
 
-  private def assertPageAsExpected(document: Document, expectedPageContents: BaseExpectedPageContents, preferredLanguage: PreferredLanguage)
-                                  (implicit isWelsh: Boolean): Unit = {
+  private def assertPageAsExpected(document: Document, expectedPageContents: BaseExpectedPageContents, preferredLanguage: PreferredLanguage)(implicit
+      isWelsh: Boolean): Unit = {
 
     document must haveTitle(expectedPageContents.title)
     document must haveHeader(expectedPageContents.header)
@@ -256,11 +259,13 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     val expectedPreferredLanguageTitle = if (preferredLanguage == PreferredLanguages.English) "English" else "Cymraeg"
     document must havePreferredLanguageSelectorTitle(preferredLanguage, expectedPreferredLanguageTitle)
     val expectedOtherLanguage = if (preferredLanguage == PreferredLanguages.English) PreferredLanguages.Welsh else PreferredLanguages.English
-    val expectedOtherLanguageTitle = if (expectedOtherLanguage == PreferredLanguages.English) "Change the language to English English" else "Newid yr iaith ir Gymraeg Cymraeg"
+    val expectedOtherLanguageTitle =
+      if (expectedOtherLanguage == PreferredLanguages.English) "Change the language to English English" else "Newid yr iaith ir Gymraeg Cymraeg"
     document must haveOtherLanguageSelectorTitle(expectedOtherLanguage, expectedOtherLanguageTitle)
-    val expectedLanguageSelectorLink = if (preferredLanguage == PreferredLanguages.English) "/update-and-submit-income-tax-return/pensions/language/cymraeg" else "/update-and-submit-income-tax-return/pensions/language/english"
+    val expectedLanguageSelectorLink =
+      if (preferredLanguage == PreferredLanguages.English) "/update-and-submit-income-tax-return/pensions/language/cymraeg"
+      else "/update-and-submit-income-tax-return/pensions/language/english"
     document must haveLanguageSelectorLink(expectedLanguageSelectorLink)
-
 
     document must haveAFormWithTargetAction(expectedPageContents.formUrl.getOrElse(relativeUrlForThisPage))
 
@@ -268,13 +273,11 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
       case Some(expectedErrorSummarySection) =>
         document must haveAnErrorSummarySection
 
-
         document must haveAnErrorSummaryTitle(expectedErrorSummarySection.title)
 
         document must haveAnErrorSummaryBody(expectedErrorSummarySection.errorSummaryMessage.map(_.body).mkString(" "))
-        expectedErrorSummarySection.errorSummaryMessage.foreach {
-          a =>
-            document must haveAnErrorSummaryLink(a.link, a.body)
+        expectedErrorSummarySection.errorSummaryMessage.foreach { a =>
+          document must haveAnErrorSummaryLink(a.link, a.body)
         }
       case None =>
         document must not(haveAnErrorSummarySection)
@@ -288,28 +291,28 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
         document must not(haveAnErrorAboveElementSection())
     }
 
-    expectedPageContents.links.foreach(link => {
+    expectedPageContents.links.foreach { link =>
       document must haveLinkForId(link.id)
       document must haveLinkLabel(link.id, link.label)
       document must haveLinkHref(link.id, link.href)
     }
-    )
 
-    expectedPageContents.text.foreach(text => {
+    expectedPageContents.text.foreach { text =>
       document must haveTextForSelector(text.selector)
       document must haveTextContents(text.selector, text.contents)
-    })
+    }
   }
 
-  private def getPage(path: String, queryParam: Map[String, String] = Map.empty)
-                     (implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
+  private def getPage(path: String, queryParam: Map[String, String] = Map.empty)(implicit userConfig: UserConfig, wsClient: WSClient): WSResponse = {
     givenAuthorised(userConfig)
     givenStoredSessionData(userConfig)
-    await(wsClient.url(fullUrl(path))
-      .withFollowRedirects(false)
-      .withQueryStringParameters(queryParam.toList: _*)
-      .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)): _*).get()
-    )
+    await(
+      wsClient
+        .url(fullUrl(path))
+        .withFollowRedirects(false)
+        .withQueryStringParameters(queryParam.toList: _*)
+        .withHttpHeaders(Seq(cookieHeader(userConfig), languageHeader(userConfig)): _*)
+        .get())
   }
 
   def getTransferPensionsViewModel(implicit userConfig: UserConfig): Option[TransfersIntoOverseasPensionsViewModel] =
@@ -321,23 +324,23 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
   def getShortServiceViewModel(implicit userConfig: UserConfig): Option[ShortServiceRefundsViewModel] =
     loadPensionUserData.map(_.pensions.shortServiceRefunds)
 
-  def getPaymentsIntoOverseasPensionsViewModel(implicit userConfig: UserConfig): Option[PaymentsIntoOverseasPensionsViewModel] = {
+  def getPaymentsIntoOverseasPensionsViewModel(implicit userConfig: UserConfig): Option[PaymentsIntoOverseasPensionsViewModel] =
     loadPensionUserData.map(_.pensions.paymentsIntoOverseasPensions)
-  }
 
-  private def loadPensionUserData(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): Option[PensionsUserData]
-  = await(
-    database.find(
-      taxYear,
-      User(
-        mtditid = pensionsUserData.mtdItId,
-        arn = None,
-        nino = pensionsUserData.nino,
-        sessionId = pensionsUserData.sessionId,
-        affinityGroup = userType.toString))
+  private def loadPensionUserData(pensionsUserData: PensionsUserData, userType: UserTypes.UserType): Option[PensionsUserData] = await(
+    database
+      .find(
+        taxYear,
+        User(
+          mtditid = pensionsUserData.mtdItId,
+          arn = None,
+          nino = pensionsUserData.nino,
+          sessionId = pensionsUserData.sessionId,
+          affinityGroup = userType.toString)
+      )
       .map {
         case Left(problem) => fail(s"Unable to get the updated session data: $problem")
-        case Right(value) => value
+        case Right(value)  => value
       })
 
   private def cookieHeader(userConfig: UserConfig): (String, String) = {
@@ -352,36 +355,32 @@ class ControllerSpec(val pathForThisPage: String) extends PlaySpec
     (HeaderNames.ACCEPT_LANGUAGE, languageCodes.getOrElse(userConfig.preferredLanguage, "?"))
 
   private def cookieContents(pensionsUserData: PensionsUserData): String =
-    PlaySessionCookieBaker.bakeSessionCookie(Map(
-      SessionKeys.authToken -> generateBearerToken(),
-      SessionValues.TAX_YEAR -> taxYear.toString,
-      SessionValues.VALID_TAX_YEARS -> validTaxYearsHeaderValue,
-      SessionKeys.sessionId -> pensionsUserData.sessionId,
-      SessionValues.CLIENT_NINO -> pensionsUserData.nino,
-      SessionValues.CLIENT_MTDITID -> pensionsUserData.mtdItId
-    ))
+    PlaySessionCookieBaker.bakeSessionCookie(
+      Map(
+        SessionKeys.authToken         -> generateBearerToken(),
+        SessionValues.TAX_YEAR        -> taxYear.toString,
+        SessionValues.VALID_TAX_YEARS -> validTaxYearsHeaderValue,
+        SessionKeys.sessionId         -> pensionsUserData.sessionId,
+        SessionValues.CLIENT_NINO     -> pensionsUserData.nino,
+        SessionValues.CLIENT_MTDITID  -> pensionsUserData.mtdItId
+      ))
 
   private def minimalCookieContentsForAccessingPensions(): String =
     PlaySessionCookieBaker.bakeSessionCookie(
       Map(
-        SessionKeys.authToken -> generateBearerToken(),
-        SessionKeys.sessionId -> generateSessionId(),
-        SessionValues.CLIENT_MTDITID -> validMtdItId,
-        SessionValues.TAX_YEAR -> taxYear.toString,
+        SessionKeys.authToken         -> generateBearerToken(),
+        SessionKeys.sessionId         -> generateSessionId(),
+        SessionValues.CLIENT_MTDITID  -> validMtdItId,
+        SessionValues.TAX_YEAR        -> taxYear.toString,
         SessionValues.VALID_TAX_YEARS -> validTaxYearsHeaderValue
       ))
-
 
   private def generateSessionId(): String = UUID.randomUUID().toString
 
   private def generateBearerToken(): String = s"Bearer ${UUID.randomUUID()}"
 
-  private def givenStoredSessionData(userConfig: UserConfig): Unit = {
-    userConfig.sessionDataOpt.foreach(sessionData =>
-      await(database.createOrUpdate(
-        sessionData))
-    )
-  }
+  private def givenStoredSessionData(userConfig: UserConfig): Unit =
+    userConfig.sessionDataOpt.foreach(sessionData => await(database.createOrUpdate(sessionData)))
 
   private def fullUrl(pathStartingWithSlash: String): String = s"http://localhost:$port${relativeUrl(pathStartingWithSlash)}"
 }
@@ -393,12 +392,12 @@ object ControllerSpec {
     class HasTitle(partialTitle: String)(implicit isWelsh: Boolean = false) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val fullTitle = s"$partialTitle - Update and submit an Income Tax Return - GOV.UK"
-        val errorMessageIfExpected = s"The page didn't have the expected title '$fullTitle'. The actual title was '${document.title()}'"
+        val fullTitle                 = s"$partialTitle - Update and submit an Income Tax Return - GOV.UK"
+        val errorMessageIfExpected    = s"The page didn't have the expected title '$fullTitle'. The actual title was '${document.title()}'"
         val errorMessageIfNotExpected = s"The page did indeed have the title '$fullTitle', which was not expected."
 
-        val fullTitleCy = s"$partialTitle - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK"
-        val errorMessageIfExpectedCy = s"The page didn't have the expected title '$fullTitleCy'. The actual title was '${document.title()}'"
+        val fullTitleCy                 = s"$partialTitle - Diweddaru a chyflwyno Ffurflen Dreth Incwm - GOV.UK"
+        val errorMessageIfExpectedCy    = s"The page didn't have the expected title '$fullTitleCy'. The actual title was '${document.title()}'"
         val errorMessageIfNotExpectedCy = s"The page did indeed have the title '$fullTitleCy', which was not expected."
 
         MatchResult(
@@ -412,8 +411,8 @@ object ControllerSpec {
     class HasHeader(header: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val actualValue = document.select(s".govuk-heading-l").text()
-        val errorMessageIfExpected = s"The page didn't have the expected header '$header'. The actual header was '$actualValue'"
+        val actualValue               = document.select(s".govuk-heading-l").text()
+        val errorMessageIfExpected    = s"The page didn't have the expected header '$header'. The actual header was '$actualValue'"
         val errorMessageIfNotExpected = s"The page did indeed have the header '$header', which was not expected."
         MatchResult(
           actualValue.equals(header),
@@ -426,8 +425,8 @@ object ControllerSpec {
     class HasCaption(caption: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val actualValue = document.select(".govuk-caption-l").text()
-        val errorMessageIfExpected = s"The page didn't have the expected caption '$caption'. The actual caption was '$actualValue'"
+        val actualValue               = document.select(".govuk-caption-l").text()
+        val errorMessageIfExpected    = s"The page didn't have the expected caption '$caption'. The actual caption was '$actualValue'"
         val errorMessageIfNotExpected = s"The page did indeed have the caption '$caption', which was not expected."
         MatchResult(
           actualValue.equals(caption),
@@ -440,9 +439,9 @@ object ControllerSpec {
     class HaveOtherLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val listItemIndex = if (preferredLanguage == PreferredLanguages.English) 0 else 1
-        val actualValue = document.select(".hmrc-language-select__list-item").get(listItemIndex).text()
-        val errorMessageIfExpected = s"The page didn't have the expected language selector title '$title'. The actual title was '$actualValue'"
+        val listItemIndex             = if (preferredLanguage == PreferredLanguages.English) 0 else 1
+        val actualValue               = document.select(".hmrc-language-select__list-item").get(listItemIndex).text()
+        val errorMessageIfExpected    = s"The page didn't have the expected language selector title '$title'. The actual title was '$actualValue'"
         val errorMessageIfNotExpected = s"The page did indeed have the expected language selector title '$title', which was not expected."
         MatchResult(
           actualValue.equals(title),
@@ -456,8 +455,9 @@ object ControllerSpec {
 
       override def apply(document: Document): MatchResult = {
         val listItemIndex = if (preferredLanguage == PreferredLanguages.English) 0 else 1
-        val actualValue = document.select(".hmrc-language-select__list-item").get(listItemIndex).text()
-        val errorMessageIfExpected = s"The page didn't have the expected preferred language selector title '$title'. The actual title was '$actualValue'"
+        val actualValue   = document.select(".hmrc-language-select__list-item").get(listItemIndex).text()
+        val errorMessageIfExpected =
+          s"The page didn't have the expected preferred language selector title '$title'. The actual title was '$actualValue'"
         val errorMessageIfNotExpected = s"The page did indeed have the expected preferred language selector title '$title', which was not expected."
         MatchResult(
           actualValue.equals(title),
@@ -467,12 +467,11 @@ object ControllerSpec {
       }
     }
 
-
     class HaveLanguageSelectorLink(link: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val actualLink = document.select(".hmrc-language-select__list-item > a").attr("href")
-        val errorMessageIfExpected = s"The page didn't have the expected other language selector link '$link'. The actual link was '$actualLink'"
+        val actualLink                = document.select(".hmrc-language-select__list-item > a").attr("href")
+        val errorMessageIfExpected    = s"The page didn't have the expected other language selector link '$link'. The actual link was '$actualLink'"
         val errorMessageIfNotExpected = s"The page did indeed have the expected other language selector link '$link', which was not expected."
         MatchResult(
           actualLink.equals(link),
@@ -485,8 +484,8 @@ object ControllerSpec {
     class HaveARadioButtonAtIndex(index: Int) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val inputType = document.select(".govuk-radios__item > input").get(index).attr("type")
-        val errorMessageIfExpected = s"The page doesn't have a radio button at that index ($index)"
+        val inputType                 = document.select(".govuk-radios__item > input").get(index).attr("type")
+        val errorMessageIfExpected    = s"The page doesn't have a radio button at that index ($index)"
         val errorMessageIfNotExpected = s"The page does indeed have a radio button at that index ($index), which was not expected."
         MatchResult(
           inputType.equals("radio"),
@@ -499,8 +498,8 @@ object ControllerSpec {
     class HaveARadioButtonAtIndexWithLabel(index: Int, label: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val actualLabel = document.select(".govuk-radios__item > label").get(index).text()
-        val errorMessageIfExpected = s"The page doesn't have a radio button at index ($index) with the expected label '$label'"
+        val actualLabel               = document.select(".govuk-radios__item > label").get(index).text()
+        val errorMessageIfExpected    = s"The page doesn't have a radio button at index ($index) with the expected label '$label'"
         val errorMessageIfNotExpected = s"The page does indeed have a radio button at index ($index) with the label '$label', which was not expected."
         MatchResult(
           actualLabel.equals(label),
@@ -513,10 +512,11 @@ object ControllerSpec {
     class HaveACheckedRadioButtonAtIndex(index: Int) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val isChecked = document.select(".govuk-radios__item > input").get(index).hasAttr("checked")
-        val label = document.select(".govuk-radios__item > label").get(index).text()
+        val isChecked              = document.select(".govuk-radios__item > input").get(index).hasAttr("checked")
+        val label                  = document.select(".govuk-radios__item > label").get(index).text()
         val errorMessageIfExpected = s"The page doesn't have a radio button at index ($index) which is checked'; the label is '$label'."
-        val errorMessageIfNotExpected = s"The page does indeed have a radio button at index ($index) which is checked, which was not expected; the label is '$label'."
+        val errorMessageIfNotExpected =
+          s"The page does indeed have a radio button at index ($index) which is checked, which was not expected; the label is '$label'."
         MatchResult(
           isChecked,
           errorMessageIfExpected,
@@ -528,9 +528,9 @@ object ControllerSpec {
     class HaveAContinueButtonWithLabel(label: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val isAButton = document.select("#continue").attr("class").contains("govuk-button")
-        val actualLabel = document.select("#continue").text()
-        val errorMessageIfExpected = s"The page doesn't have a continue button with the label '$label'"
+        val isAButton                 = document.select("#continue").attr("class").contains("govuk-button")
+        val actualLabel               = document.select("#continue").text()
+        val errorMessageIfExpected    = s"The page doesn't have a continue button with the label '$label'"
         val errorMessageIfNotExpected = s"The page does indeed have a continue button with the label '$label', which was not expected."
         MatchResult(
           isAButton && actualLabel.equals(label),
@@ -543,9 +543,9 @@ object ControllerSpec {
     class HaveAContinueButtonWithLink(link: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val isAButton = document.select("#continue").attr("class").contains("govuk-button")
-        val actualLink = document.select("#continue").attr("href")
-        val errorMessageIfExpected = s"The page doesn't have a continue button with the link '$link'. It was actually '$actualLink'"
+        val isAButton                 = document.select("#continue").attr("class").contains("govuk-button")
+        val actualLink                = document.select("#continue").attr("href")
+        val errorMessageIfExpected    = s"The page doesn't have a continue button with the link '$link'. It was actually '$actualLink'"
         val errorMessageIfNotExpected = s"The page does indeed have a continue button with the link '$link', which was not expected."
         MatchResult(
           isAButton && actualLink.equals(link),
@@ -558,8 +558,8 @@ object ControllerSpec {
     class HaveAnAmountLabel(label: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val actualLabel = document.select("#conditional-value > div > label").text()
-        val errorMessageIfExpected = s"The page doesn't have an amount label of '$label'; the actual value is '$actualLabel'"
+        val actualLabel               = document.select("#conditional-value > div > label").text()
+        val errorMessageIfExpected    = s"The page doesn't have an amount label of '$label'; the actual value is '$actualLabel'"
         val errorMessageIfNotExpected = s"The page does indeed have an amount label of '$actualLabel', which was not expected."
         MatchResult(
           actualLabel.equals(label),
@@ -572,8 +572,8 @@ object ControllerSpec {
     class HaveAnAmountHint(hint: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val actualHint = document.select("#amount-2-hint").text()
-        val errorMessageIfExpected = s"The page doesn't have an amount hint of '$hint'; the actual hint is '$actualHint'."
+        val actualHint                = document.select("#amount-2-hint").text()
+        val errorMessageIfExpected    = s"The page doesn't have an amount hint of '$hint'; the actual hint is '$actualHint'."
         val errorMessageIfNotExpected = s"The page does indeed have an amount hint of '$hint', which was not expected."
         MatchResult(
           actualHint.equals(hint),
@@ -586,8 +586,8 @@ object ControllerSpec {
     class HaveAnAmountValue(value: String, name: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val actualValue = document.select("#" + name).attr("value")
-        val errorMessageIfExpected = s"The page doesn't have an amount value of '$value'; the actual value is '$actualValue'."
+        val actualValue               = document.select("#" + name).attr("value")
+        val errorMessageIfExpected    = s"The page doesn't have an amount value of '$value'; the actual value is '$actualValue'."
         val errorMessageIfNotExpected = s"The page does indeed have an amount value of '$value', which was not expected."
         MatchResult(
           actualValue.equals(value),
@@ -600,8 +600,8 @@ object ControllerSpec {
     class HaveAnAmountName(name: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val actualName = document.select("#" + name).attr("name")
-        val errorMessageIfExpected = s"The page doesn't have an amount name of '$name'; the actual name is '$actualName'."
+        val actualName                = document.select("#" + name).attr("name")
+        val errorMessageIfExpected    = s"The page doesn't have an amount name of '$name'; the actual name is '$actualName'."
         val errorMessageIfNotExpected = s"The page does indeed have an amount name of '$actualName', which was not expected."
         MatchResult(
           actualName.equals(name),
@@ -617,7 +617,8 @@ object ControllerSpec {
         val formSelector = "#main-content > div > div > form"
         val actualAction = document.select(formSelector).attr("action")
         val actualMethod = document.select(formSelector).attr("method")
-        val errorMessageIfExpected = s"The page doesn't have a form with a POST action of '$action'; the actual method is '$actualMethod' and the action is '$actualAction'."
+        val errorMessageIfExpected =
+          s"The page doesn't have a form with a POST action of '$action'; the actual method is '$actualMethod' and the action is '$actualAction'."
         val errorMessageIfNotExpected = s"The page does indeed have a form with a POST action of '$action', which was not expected."
         MatchResult(
           actualMethod.equalsIgnoreCase("POST") && actualAction.equals(action),
@@ -630,7 +631,7 @@ object ControllerSpec {
     class HaveAnErrorSummarySection extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val errorMessageIfExpected = "The page doesn't have an error summary section."
+        val errorMessageIfExpected    = "The page doesn't have an error summary section."
         val errorMessageIfNotExpected = "The page does indeed have an error summary section."
         MatchResult(
           !document.select(".govuk-error-summary").isEmpty,
@@ -643,8 +644,8 @@ object ControllerSpec {
     class HaveAnErrorSummaryTitle(title: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val actualTitle = document.select(".govuk-error-summary__title").text()
-        val errorMessageIfExpected = s"The page doesn't have an error summary title '$title'; it was actually '$actualTitle'"
+        val actualTitle               = document.select(".govuk-error-summary__title").text()
+        val errorMessageIfExpected    = s"The page doesn't have an error summary title '$title'; it was actually '$actualTitle'"
         val errorMessageIfNotExpected = s"The page does indeed have an error summary title of '$title', which was not expected."
         MatchResult(
           actualTitle.equals(title),
@@ -654,12 +655,11 @@ object ControllerSpec {
       }
     }
 
-
     class HaveAnErrorSummaryBody(body: String) extends Matcher[Document] {
 
       override def apply(document: Document): MatchResult = {
-        val actualBody = document.select(".govuk-error-summary__body").text()
-        val errorMessageIfExpected = s"The page doesn't have an error summary body '$body'; it was actually '$actualBody'"
+        val actualBody                = document.select(".govuk-error-summary__body").text()
+        val errorMessageIfExpected    = s"The page doesn't have an error summary body '$body'; it was actually '$actualBody'"
         val errorMessageIfNotExpected = s"The page does indeed have an error summary body of '$body', which was not expected."
         MatchResult(
           actualBody.equals(body),
@@ -671,9 +671,9 @@ object ControllerSpec {
 
     class HaveAnErrorSummaryLink(link: String, body: String) extends Matcher[Document] {
       override def apply(document: Document): MatchResult = {
-        val actualLink = document.select(".govuk-error-summary__body > ul > li > a")
-        val expectedLink = s"""<a href="$link">$body</a>"""
-        val errorMessageIfExpected = s"The page doesn't have an error summary link '$link'; it was actually '$actualLink'"
+        val actualLink                = document.select(".govuk-error-summary__body > ul > li > a")
+        val expectedLink              = s"""<a href="$link">$body</a>"""
+        val errorMessageIfExpected    = s"The page doesn't have an error summary link '$link'; it was actually '$actualLink'"
         val errorMessageIfNotExpected = s"The page does indeed have an error summary link of '$link', which was not expected."
         MatchResult(
           actualLink.toString.contains(expectedLink),
@@ -685,9 +685,9 @@ object ControllerSpec {
 
     class HaveAnErrorAboveElementSection(idOpt: Option[String]) extends Matcher[Document] {
       override def apply(document: Document): MatchResult = {
-        val selector = idOpt.map(id => s"#$id-error").getOrElse(".govuk-error-message")
-        val exists = !document.select(selector).isEmpty
-        val errorMessageIfExpected = s"The page doesn't have an error above element section"
+        val selector                  = idOpt.map(id => s"#$id-error").getOrElse(".govuk-error-message")
+        val exists                    = !document.select(selector).isEmpty
+        val errorMessageIfExpected    = s"The page doesn't have an error above element section"
         val errorMessageIfNotExpected = s"The page does indeed have an error above element section, which was not expected."
         MatchResult(
           exists,
@@ -699,10 +699,10 @@ object ControllerSpec {
 
     class HaveAnErrorAboveElementTitle(idOpt: Option[String], title: String) extends Matcher[Document] {
       override def apply(document: Document): MatchResult = {
-        val selector = idOpt.map(id => s"#$id-error").getOrElse(".govuk-error-message")
-        val exists = !document.select(selector).isEmpty
-        val actualTitle = document.select(selector).text()
-        val errorMessageIfExpected = s"The page doesn't have an error above element title '$title'; it was actually '$actualTitle'"
+        val selector                  = idOpt.map(id => s"#$id-error").getOrElse(".govuk-error-message")
+        val exists                    = !document.select(selector).isEmpty
+        val actualTitle               = document.select(selector).text()
+        val errorMessageIfExpected    = s"The page doesn't have an error above element title '$title'; it was actually '$actualTitle'"
         val errorMessageIfNotExpected = s"The page does indeed have an above about element title '$title', which was not expected."
         MatchResult(
           exists && actualTitle.equals(title),
@@ -714,8 +714,8 @@ object ControllerSpec {
 
     class HaveLinkForId(id: String) extends Matcher[Document] {
       override def apply(document: Document): MatchResult = {
-        val exists = document.select(s"#$id").attr("href").nonEmpty
-        val errorMessageIfExpected = s"The page doesn't have a link with id '$id'."
+        val exists                    = document.select(s"#$id").attr("href").nonEmpty
+        val errorMessageIfExpected    = s"The page doesn't have a link with id '$id'."
         val errorMessageIfNotExpected = s"The page does indeed have a link with id '$id', which was not expected."
         MatchResult(
           exists,
@@ -727,9 +727,9 @@ object ControllerSpec {
 
     class HaveLinkLabel(id: String, label: String) extends Matcher[Document] {
       override def apply(document: Document): MatchResult = {
-        val exists = document.select(s"#$id").attr("href").nonEmpty
-        val actualLabel = document.select(s"#$id").text()
-        val errorMessageIfExpected = s"The page doesn't have a link with label '$label' with id '$id'; the actual label was '$actualLabel'"
+        val exists                    = document.select(s"#$id").attr("href").nonEmpty
+        val actualLabel               = document.select(s"#$id").text()
+        val errorMessageIfExpected    = s"The page doesn't have a link with label '$label' with id '$id'; the actual label was '$actualLabel'"
         val errorMessageIfNotExpected = s"The page does indeed have a link with label '$label' with id '$id', which was not expected."
         MatchResult(
           exists && actualLabel.equals(label),
@@ -741,9 +741,9 @@ object ControllerSpec {
 
     class HaveLinkHref(id: String, href: String) extends Matcher[Document] {
       override def apply(document: Document): MatchResult = {
-        val exists = document.select(s"#$id").attr("href").nonEmpty
-        val actualHref = document.select(s"#$id").attr("href")
-        val errorMessageIfExpected = s"The page doesn't have a link with href '$href' with id '$id'; the actual href was '$actualHref'."
+        val exists                    = document.select(s"#$id").attr("href").nonEmpty
+        val actualHref                = document.select(s"#$id").attr("href")
+        val errorMessageIfExpected    = s"The page doesn't have a link with href '$href' with id '$id'; the actual href was '$actualHref'."
         val errorMessageIfNotExpected = s"The page does indeed have a link with href '$href' with id '$id', which was not expected."
         MatchResult(
           exists && actualHref.equals(href),
@@ -755,8 +755,8 @@ object ControllerSpec {
 
     class HaveTextForSelector(selector: String) extends Matcher[Document] {
       override def apply(document: Document): MatchResult = {
-        val exists = !document.select(selector).isEmpty
-        val errorMessageIfExpected = s"The page doesn't have text for selector '$selector'."
+        val exists                    = !document.select(selector).isEmpty
+        val errorMessageIfExpected    = s"The page doesn't have text for selector '$selector'."
         val errorMessageIfNotExpected = s"The page does indeed have text for selector '$selector'., which was not expected."
         MatchResult(
           exists,
@@ -768,9 +768,10 @@ object ControllerSpec {
 
     class HaveTextContents(selector: String, contents: String) extends Matcher[Document] {
       override def apply(document: Document): MatchResult = {
-        val exists = !document.select(selector).isEmpty
+        val exists         = !document.select(selector).isEmpty
         val actualContents = document.select(selector).text()
-        val errorMessageIfExpected = s"The page doesn't have text contents '$contents' for selector '$selector'; the actual contents were '$actualContents'."
+        val errorMessageIfExpected =
+          s"The page doesn't have text contents '$contents' for selector '$selector'; the actual contents were '$actualContents'."
         val errorMessageIfNotExpected = s"The page does indeed have text for selector '$selector'., which was not expected."
         MatchResult(
           exists && actualContents.equals(contents),
@@ -782,9 +783,9 @@ object ControllerSpec {
 
     class HaveATextInputForSelector(selector: String) extends Matcher[Document] {
       override def apply(document: Document): MatchResult = {
-        val exists = !document.select(selector).isEmpty
-        val inputType = document.select(selector).attr("type")
-        val errorMessageIfExpected = s"The page doesn't have a text input for selector '$selector'."
+        val exists                    = !document.select(selector).isEmpty
+        val inputType                 = document.select(selector).attr("type")
+        val errorMessageIfExpected    = s"The page doesn't have a text input for selector '$selector'."
         val errorMessageIfNotExpected = s"The page does indeed have a text input for selector '$selector', which was not expected."
         MatchResult(
           exists && inputType.equals("text"),
@@ -796,8 +797,8 @@ object ControllerSpec {
 
     class HaveATextInputName(selector: String, name: String) extends Matcher[Document] {
       override def apply(document: Document): MatchResult = {
-        val exists = !document.select(selector).isEmpty
-        val actualName = document.select(selector).attr("name")
+        val exists                 = !document.select(selector).isEmpty
+        val actualName             = document.select(selector).attr("name")
         val errorMessageIfExpected = s"The page doesn't have a text input for selector '$selector' with name '$name', actual name was '$actualName'"
         val errorMessageIfNotExpected = s"The page does indeed have a text input for selector '$selector' with name '$name', which was not expected."
         MatchResult(
@@ -810,9 +811,10 @@ object ControllerSpec {
 
     class HaveATextInputValue(selector: String, name: String) extends Matcher[Document] {
       override def apply(document: Document): MatchResult = {
-        val exists = !document.select(selector).isEmpty
+        val exists      = !document.select(selector).isEmpty
         val actualValue = document.select(selector).attr("value")
-        val errorMessageIfExpected = s"The page doesn't have a text input for selector '$selector' with value '$name', actual value was '$actualValue'"
+        val errorMessageIfExpected =
+          s"The page doesn't have a text input for selector '$selector' with value '$name', actual value was '$actualValue'"
         val errorMessageIfNotExpected = s"The page does indeed have a text input for selector '$selector' with value '$name', which was not expected."
         MatchResult(
           exists && actualValue.equals(name),
@@ -828,15 +830,18 @@ object ControllerSpec {
 
     def haveCaption(header: String): HasCaption = new HasCaption(header)
 
-    def havePreferredLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title: String): HavePreferredLanguageSelectorTitle = new HavePreferredLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title)
+    def havePreferredLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title: String): HavePreferredLanguageSelectorTitle =
+      new HavePreferredLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title)
 
-    def haveOtherLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title: String): HaveOtherLanguageSelectorTitle = new HaveOtherLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title)
+    def haveOtherLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title: String): HaveOtherLanguageSelectorTitle =
+      new HaveOtherLanguageSelectorTitle(preferredLanguage: PreferredLanguage, title)
 
     def haveLanguageSelectorLink(link: String): HaveLanguageSelectorLink = new HaveLanguageSelectorLink(link)
 
     def haveARadioButtonAtIndex(index: Int): HaveARadioButtonAtIndex = new HaveARadioButtonAtIndex(index)
 
-    def haveARadioButtonAtIndexWithLabel(index: Int, label: String): HaveARadioButtonAtIndexWithLabel = new HaveARadioButtonAtIndexWithLabel(index, label)
+    def haveARadioButtonAtIndexWithLabel(index: Int, label: String): HaveARadioButtonAtIndexWithLabel =
+      new HaveARadioButtonAtIndexWithLabel(index, label)
 
     def haveACheckedRadioButtonAtIndex(index: Int): HaveACheckedRadioButtonAtIndex = new HaveACheckedRadioButtonAtIndex(index)
 
@@ -864,7 +869,8 @@ object ControllerSpec {
 
     def haveAnErrorAboveElementSection(idOpt: Option[String] = None): HaveAnErrorAboveElementSection = new HaveAnErrorAboveElementSection(idOpt)
 
-    def haveAnErrorAboveElementTitle(idOpt: Option[String] = None, title: String): HaveAnErrorAboveElementTitle = new HaveAnErrorAboveElementTitle(idOpt, title)
+    def haveAnErrorAboveElementTitle(idOpt: Option[String] = None, title: String): HaveAnErrorAboveElementTitle =
+      new HaveAnErrorAboveElementTitle(idOpt, title)
 
     def haveLinkForId(id: String): HaveLinkForId = new HaveLinkForId(id)
 
@@ -883,14 +889,14 @@ object ControllerSpec {
     def haveATextInputValue(selector: String, value: String): HaveATextInputValue = new HaveATextInputValue(selector, value)
   }
 
-
   trait ResponseMatchers {
 
     class HaveALocationHeaderValue(value: String) extends Matcher[WSResponse] {
 
       override def apply(response: WSResponse): MatchResult = {
         val actualLocationHeaderValue = response.header("location")
-        val errorMessageIfExpected = s"The response doesn't have a location header value of '${Some(value)}'. It is actually '$actualLocationHeaderValue'"
+        val errorMessageIfExpected =
+          s"The response doesn't have a location header value of '${Some(value)}'. It is actually '$actualLocationHeaderValue'"
         val errorMessageIfNotExpected = s"The response does indeed have a location header value of '$value', which was not expected."
         MatchResult(
           actualLocationHeaderValue.contains(value),
@@ -900,12 +906,11 @@ object ControllerSpec {
       }
     }
 
-
     class MustHaveStatus(status: Int) extends Matcher[WSResponse] {
 
       override def apply(response: WSResponse): MatchResult = {
-        val actualStatus = response.status
-        val errorMessageIfExpected = s"The response doesn't have a status of '$status'. It is actually '$actualStatus'"
+        val actualStatus              = response.status
+        val errorMessageIfExpected    = s"The response doesn't have a status of '$status'. It is actually '$actualStatus'"
         val errorMessageIfNotExpected = s"The response does indeed have a status of '$status', which was not expected."
         MatchResult(
           actualStatus == status,
@@ -920,9 +925,7 @@ object ControllerSpec {
     def haveStatus(status: Int): MustHaveStatus = new MustHaveStatus(status)
   }
 
-  case class UserConfig(userType: UserTypes.UserType,
-                        preferredLanguage: PreferredLanguage,
-                        sessionDataOpt: Option[PensionsUserData])
+  case class UserConfig(userType: UserTypes.UserType, preferredLanguage: PreferredLanguage, sessionDataOpt: Option[PensionsUserData])
 
   object UserTypes extends Enumeration {
     type UserType = Value
@@ -961,13 +964,11 @@ object ControllerSpec {
   case class ErrorSummarySection(title: String, errorSummaryMessage: Seq[ErrorSummaryMessage])
 
   object ErrorSummarySection {
-    def apply(title: String, body: String, link: String): ErrorSummarySection = {
+    def apply(title: String, body: String, link: String): ErrorSummarySection =
       new ErrorSummarySection(title, Seq(ErrorSummaryMessage(body, link)))
-    }
   }
 
   case class ErrorSummaryMessage(body: String, link: String)
-
 
   case class ErrorAboveElementCheckSection(title: String, idOpt: Option[String])
 
@@ -984,13 +985,13 @@ object ControllerSpec {
   trait SubmittedFormDataWithYesNo extends SubmittedFormData {
 
     private val fieldNameForYesNoSelection = "value"
-    private val valueForYesSelection = "true"
-    private val valueForNoSelection = "false"
+    private val valueForYesSelection       = "true"
+    private val valueForNoSelection        = "false"
 
     def yesOrNoAsMap(yesOrNoOpt: Option[Boolean]): Map[String, String] = yesOrNoOpt match {
-      case Some(true) => Map(fieldNameForYesNoSelection -> valueForYesSelection)
+      case Some(true)  => Map(fieldNameForYesNoSelection -> valueForYesSelection)
       case Some(false) => Map(fieldNameForYesNoSelection -> valueForNoSelection)
-      case None => Map.empty
+      case None        => Map.empty
     }
   }
 
@@ -1001,9 +1002,9 @@ object ControllerSpec {
     def amountsAsMap(amount1: Option[String], amount2: Option[String]): Map[String, String] =
       (amount1, amount2) match {
         case (Some(a), Some(b)) => Map(amount1FieldName -> a, amount2FieldName -> b)
-        case (Some(a), None) => Map(amount1FieldName -> a)
-        case (None, Some(b)) => Map(amount2FieldName -> b)
-        case _ => Map.empty
+        case (Some(a), None)    => Map(amount1FieldName -> a)
+        case (None, Some(b))    => Map(amount2FieldName -> b)
+        case _                  => Map.empty
       }
   }
 }

@@ -22,7 +22,8 @@ import utils.EncryptedValue
 
 case class PensionSchemeOverseasTransfers(overseasSchemeProvider: Seq[OverseasSchemeProvider],
                                           transferCharge: BigDecimal,
-                                          transferChargeTaxPaid: BigDecimal) extends PensionChargesSubRequestModel {
+                                          transferChargeTaxPaid: BigDecimal)
+    extends PensionChargesSubRequestModel {
   override def isEmpty: Boolean = false
 }
 
@@ -37,4 +38,3 @@ case class EncryptedPensionSchemeOverseasTransfers(overseasSchemeProvider: Seq[E
 object EncryptedPensionSchemeOverseasTransfers {
   implicit val format: OFormat[EncryptedPensionSchemeOverseasTransfers] = Json.format[EncryptedPensionSchemeOverseasTransfers]
 }
-

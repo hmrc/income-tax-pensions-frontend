@@ -23,8 +23,7 @@ import utils.CYABaseHelper
 
 object ReliefsSchemeDetailsHelper extends CYABaseHelper {
 
-
-  def summaryListRows(relief :Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Seq[SummaryListRow] =
+  def summaryListRows(relief: Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       pensionSchemeName(relief, taxYear, index),
       unTaxedPayerEmployments(relief, taxYear, index),
@@ -32,84 +31,80 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
       schemeDetails(relief, taxYear, index)
     ).flatten
 
-  def pensionSchemeName(relief : Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
-   Some(relief.customerReference.fold{
+  def pensionSchemeName(relief: Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] =
+    Some(relief.customerReference.fold {
       summaryListRowWithString(
         "overseasPension.reliefDetails.pensionSchemeName",
         Some(messages("common.no")),
         routes.PensionsCustomerReferenceNumberController.show(taxYear, index))
-    }{cRNQ =>
+    } { cRNQ =>
       summaryListRowWithString(
         "overseasPension.reliefDetails.pensionSchemeName",
         Some(cRNQ),
         routes.PensionsCustomerReferenceNumberController.show(taxYear, index))
     })
-  }
 
-  def unTaxedPayerEmployments(relief : Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
-    Some(relief.employerPaymentsAmount.fold{
+  def unTaxedPayerEmployments(relief: Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] =
+    Some(relief.employerPaymentsAmount.fold {
       summaryListRowWithString(
         "overseasPension.reliefDetails.amount",
         Some(messages("common.no")),
         routes.UntaxedEmployerPaymentsController.show(taxYear, index))
-    }{ePA =>
-      summaryListRowWithAmountValue(
-        "overseasPension.reliefDetails.amount",
-        ePA,
-        routes.UntaxedEmployerPaymentsController.show(taxYear, index))
+    } { ePA =>
+      summaryListRowWithAmountValue("overseasPension.reliefDetails.amount", ePA, routes.UntaxedEmployerPaymentsController.show(taxYear, index))
     })
-  }
 
-
-  def typeOfRelief(relief : Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
-    Some(relief.reliefType.fold{
+  def typeOfRelief(relief: Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] =
+    Some(relief.reliefType.fold {
       summaryListRowWithString(
         "overseasPension.reliefDetails.typeOfRelief",
         Some(messages("overseasPension.reliefDetails.noTaxRelief")),
-        routes.PensionReliefTypeController.show(taxYear, index))
-    }{rT =>
+        routes.PensionReliefTypeController.show(taxYear, index)
+      )
+    } { rT =>
       summaryListRowWithString(
         "overseasPension.reliefDetails.typeOfRelief",
         Some(typeOfReliefToMessage(rT)),
         routes.PensionReliefTypeController.show(taxYear, index))
     })
-  }
 
-  def typeOfReliefToMessage(reliefType: String)(implicit messages: Messages): String = {
+  def typeOfReliefToMessage(reliefType: String)(implicit messages: Messages): String =
     reliefType match {
-      case TaxReliefQuestion.DoubleTaxationRelief => messages("overseasPension.pensionReliefType.DTR")
-      case TaxReliefQuestion.MigrantMemberRelief => messages("overseasPension.pensionReliefType.MMR")
+      case TaxReliefQuestion.DoubleTaxationRelief            => messages("overseasPension.pensionReliefType.DTR")
+      case TaxReliefQuestion.MigrantMemberRelief             => messages("overseasPension.pensionReliefType.MMR")
       case TaxReliefQuestion.TransitionalCorrespondingRelief => messages("overseasPension.pensionReliefType.TCR")
-      case _ => messages("overseasPension.reliefDetails.noTaxRelief")
+      case _                                                 => messages("overseasPension.reliefDetails.noTaxRelief")
     }
-  }
 
-  def schemeDetails(relief : Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] = {
-
+  def schemeDetails(relief: Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] =
     relief.reliefType.flatMap {
       case TaxReliefQuestion.MigrantMemberRelief =>
-        Some(summaryListRowWithString(
-          "overseasPension.reliefDetails.schemeDetail",
-          relief.qopsReference,
-          routes.QOPSReferenceController.show(taxYear, index)))
+        Some(
+          summaryListRowWithString(
+            "overseasPension.reliefDetails.schemeDetail",
+            relief.qopsReference,
+            routes.QOPSReferenceController.show(taxYear, index)))
       case TaxReliefQuestion.TransitionalCorrespondingRelief =>
-        Some(summaryListRowWithString(
-          "overseasPension.reliefDetails.schemeDetail",
-          relief.sf74Reference,
-          routes.SF74ReferenceController.show(taxYear, index)))
+        Some(
+          summaryListRowWithString(
+            "overseasPension.reliefDetails.schemeDetail",
+            relief.sf74Reference,
+            routes.SF74ReferenceController.show(taxYear, index)))
       case TaxReliefQuestion.DoubleTaxationRelief =>
-        Some(summaryListRowWithStrings(
-          "overseasPension.reliefDetails.schemeDetail",
-          Some(Seq(
-            messages("overseasPension.reliefDetails.countryCode") + s" ${relief.alphaTwoCountryCode.getOrElse("")}<br>" +
-            messages("overseasPension.reliefDetails.article") + s"  ${relief.doubleTaxationArticle.getOrElse("")}<br>" +
-            messages("overseasPension.reliefDetails.treaty") + s" ${relief.doubleTaxationTreaty.getOrElse("")}<br>" +
-            messages("overseasPension.reliefDetails.relief") + s" ${displayedValueForOptionalAmount(relief.doubleTaxationReliefAmount)}"
-          )),
-          routes.DoubleTaxationAgreementController.show(taxYear, index)))
+        Some(
+          summaryListRowWithStrings(
+            "overseasPension.reliefDetails.schemeDetail",
+            Some(
+              Seq(
+                messages("overseasPension.reliefDetails.countryCode") + s" ${relief.alphaTwoCountryCode.getOrElse("")}<br>" +
+                  messages("overseasPension.reliefDetails.article") + s"  ${relief.doubleTaxationArticle.getOrElse("")}<br>" +
+                  messages("overseasPension.reliefDetails.treaty") + s" ${relief.doubleTaxationTreaty.getOrElse("")}<br>" +
+                  messages("overseasPension.reliefDetails.relief") + s" ${displayedValueForOptionalAmount(relief.doubleTaxationReliefAmount)}"
+              )),
+            routes.DoubleTaxationAgreementController.show(taxYear, index)
+          ))
 
       case TaxReliefQuestion.NoTaxRelief => Option.empty[SummaryListRow]
     }
 
-  }
 }

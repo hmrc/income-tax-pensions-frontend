@@ -52,50 +52,50 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val yesText = "Yes"
-    val noText = "No"
-    val buttonText = "Continue"
-    val amountSubheading = "Total amount this tax year"
-    val amountExample = "For example, £193.54"
+    val expectedCaption: Int => String       = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val yesText                              = "Yes"
+    val noText                               = "No"
+    val buttonText                           = "Continue"
+    val amountSubheading                     = "Total amount this tax year"
+    val amountExample                        = "For example, £193.54"
     val expectedIncorrectOrEmptyErrorMessage = "Enter the total amount of State Pension payments in pounds"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val yesText = "Iawn"
-    val noText = "Na"
-    val buttonText = "Yn eich blaen"
-    val amountSubheading = "Cyfanswm ar gyfer y flwyddyn dreth hon"
-    val amountExample = "Er enghraifft, £193.54"
+    val expectedCaption: Int => String       = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val yesText                              = "Iawn"
+    val noText                               = "Na"
+    val buttonText                           = "Yn eich blaen"
+    val amountSubheading                     = "Cyfanswm ar gyfer y flwyddyn dreth hon"
+    val amountExample                        = "Er enghraifft, £193.54"
     val expectedIncorrectOrEmptyErrorMessage = "Enter the total amount of State Pension payments in pounds"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "Do you get regular State Pension payments?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedNoEntryErrorMessage = "Select yes if you got regular State Pension payments"
+    val expectedTitle                   = "Do you get regular State Pension payments?"
+    val expectedErrorTitle              = s"Error: $expectedTitle"
+    val expectedNoEntryErrorMessage     = "Select yes if you got regular State Pension payments"
     val expectedOverMaximumErrorMessage = "Your State Pension amount must be less than £100,000,000,000"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "A ydych chi’n cael taliadau rheolaidd o Bensiwn y Wladwriaeth?"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedNoEntryErrorMessage = "Dewiswch ‘Iawn’ os cawsoch Bensiwn y Wladwriaeth y flwyddyn hon"
+    val expectedTitle                   = "A ydych chi’n cael taliadau rheolaidd o Bensiwn y Wladwriaeth?"
+    val expectedErrorTitle              = s"Gwall: $expectedTitle"
+    val expectedNoEntryErrorMessage     = "Dewiswch ‘Iawn’ os cawsoch Bensiwn y Wladwriaeth y flwyddyn hon"
     val expectedOverMaximumErrorMessage = "Mae’n rhaid i swm eich Pensiwn y Wladwriaeth fod yn llai na £100,000,000,000"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "Does your client get regular State Pension payments?"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val expectedNoEntryErrorMessage = "Select yes if your client got regular State Pension payments"
+    val expectedTitle                   = "Does your client get regular State Pension payments?"
+    val expectedErrorTitle              = s"Error: $expectedTitle"
+    val expectedNoEntryErrorMessage     = "Select yes if your client got regular State Pension payments"
     val expectedOverMaximumErrorMessage = "Your client’s State Pension amount must be less than £100,000,000,000"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "A yw’ch cleient yn cael taliadau rheolaidd o Bensiwn y Wladwriaeth?"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val expectedNoEntryErrorMessage = "Dewiswch ‘Iawn’ os cafodd eich cleient Pensiwn y Wladwriaeth y flwyddyn hon"
+    val expectedTitle                   = "A yw’ch cleient yn cael taliadau rheolaidd o Bensiwn y Wladwriaeth?"
+    val expectedErrorTitle              = s"Gwall: $expectedTitle"
+    val expectedNoEntryErrorMessage     = "Dewiswch ‘Iawn’ os cafodd eich cleient Pensiwn y Wladwriaeth y flwyddyn hon"
     val expectedOverMaximumErrorMessage = "Mae’n rhaid i swm Pensiwn y Wladwriaeth eich cleient fod yn llai na £100,000,000,000"
   }
 
@@ -107,11 +107,11 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
   )
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val continueButtonSelector: String = "#continue"
+    val captionSelector: String          = "#main-content > div > div > header > p"
+    val continueButtonSelector: String   = "#continue"
     val amountSubheadingSelector: String = "#conditional-value > div > label"
-    val amountExampleSelector: String = "#amount-2-hint"
-    val amountValueSelector: String = "#amount-2"
+    val amountExampleSelector: String    = "#amount-2-hint"
+    val amountValueSelector: String      = "#amount-2"
   }
 
   private lazy val underTest = inject[StatePensionView]
@@ -121,16 +121,16 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
       "render page with no pre-filled data" which {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = {
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        }
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().statePensionForm(if (userScenario.isAgent) anAgentUser else aUser)
 
-        val htmlFormat = underTest(form, taxYearEOY)
+        val htmlFormat                  = underTest(form, taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
@@ -149,10 +149,11 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().statePensionForm(if (userScenario.isAgent) anAgentUser else aUser)
 
@@ -175,10 +176,11 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().statePensionForm(if (userScenario.isAgent) anAgentUser else aUser)
 
@@ -193,10 +195,11 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().statePensionForm(if (userScenario.isAgent) anAgentUser else aUser)
 
@@ -212,10 +215,11 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().statePensionForm(if (userScenario.isAgent) anAgentUser else aUser)
 
@@ -231,14 +235,16 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+          UserSessionDataRequest(
+            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
         def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().statePensionForm(if (userScenario.isAgent) anAgentUser else aUser)
 
-        val htmlFormat = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "£100,000,000,042")), taxYearEOY)
+        val htmlFormat =
+          underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "£100,000,000,042")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedErrorTitle, userScenario.isWelsh)

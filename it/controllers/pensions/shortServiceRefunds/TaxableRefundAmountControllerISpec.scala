@@ -16,10 +16,17 @@
 
 package controllers.pensions.shortServiceRefunds
 
-import builders.OverseasRefundPensionSchemeBuilder.{anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge}
+import builders.OverseasRefundPensionSchemeBuilder.{
+  anOverseasRefundPensionSchemeWithUkRefundCharge,
+  anOverseasRefundPensionSchemeWithoutUkRefundCharge
+}
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel, minimalShortServiceRefundsViewModel}
+import builders.ShortServiceRefundsViewModelBuilder.{
+  aShortServiceRefundsViewModel,
+  emptyShortServiceRefundsViewModel,
+  minimalShortServiceRefundsViewModel
+}
 import builders.UserBuilder.{aUser, aUserRequest}
 import forms.RadioButtonAmountForm
 import models.mongo.PensionsCYAModel
@@ -30,34 +37,36 @@ import utils.PageUrls.ShortServiceRefunds.{nonUkTaxRefundsUrl, shortServiceRefun
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
+class TaxableRefundAmountControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
-class TaxableRefundAmountControllerISpec
-  extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
-
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel) =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = false, pensions = pensionsCyaModel)
-  }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
   ".show" should {
     "show page when EOY" which {
       val incompleteViewModel = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
-        anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge.copy(providerAddress = None)
+        anOverseasRefundPensionSchemeWithUkRefundCharge,
+        anOverseasRefundPensionSchemeWithoutUkRefundCharge.copy(providerAddress = None)
       ))
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = incompleteViewModel)))
-        urlGet(fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       "returns an Ok status" in {
         result.status shouldBe OK
       }
       "filters out any incomplete schemes and updates the session data" in {
         val filteredSchemes = incompleteViewModel.copy(refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithUkRefundCharge))
-        lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
+        lazy val cyaModel   = findCyaData(taxYearEOY, aUserRequest).get
 
         cyaModel.pensions.shortServiceRefunds shouldBe filteredSchemes
       }
@@ -75,7 +84,8 @@ class TaxableRefundAmountControllerISpec
           fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
           follow = false,
-          body = formData)
+          body = formData
+        )
       }
 
       "has a SEE_OTHER(303) status" in {
@@ -86,7 +96,8 @@ class TaxableRefundAmountControllerISpec
       "submitted data is persisted" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.shortServiceRefunds shouldBe emptyShortServiceRefundsViewModel.copy(
-          shortServiceRefund = Some(true), shortServiceRefundCharge = Some(100))
+          shortServiceRefund = Some(true),
+          shortServiceRefundCharge = Some(100))
       }
     }
 
@@ -101,7 +112,8 @@ class TaxableRefundAmountControllerISpec
             fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = formData)
+            body = formData
+          )
         }
 
         "has a SEE_OTHER(303) status" in {
@@ -125,7 +137,8 @@ class TaxableRefundAmountControllerISpec
             fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = formData)
+            body = formData
+          )
         }
 
         "has a SEE_OTHER(303) status" in {
@@ -149,7 +162,8 @@ class TaxableRefundAmountControllerISpec
             fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = formData)
+            body = formData
+          )
         }
 
         "has a SEE_OTHER(303) status" in {
@@ -169,15 +183,16 @@ class TaxableRefundAmountControllerISpec
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
-          val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
-            shortServiceRefundCharge = Some(BigDecimal("100")), shortServiceRefund = Some(true))
+          val shortServiceRefundViewModel =
+            aShortServiceRefundsViewModel.copy(shortServiceRefundCharge = Some(BigDecimal("100")), shortServiceRefund = Some(true))
           val form = Map(RadioButtonAmountForm.yesNo -> "", RadioButtonAmountForm.amount2 -> "")
           insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
           urlPost(
             fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = form)
+            body = form
+          )
         }
         "status is bad request" in {
           result.status shouldBe BAD_REQUEST
@@ -188,15 +203,16 @@ class TaxableRefundAmountControllerISpec
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
-          val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(
-            shortServiceRefundCharge = Some(BigDecimal("100")), shortServiceRefund = Some(true))
+          val shortServiceRefundViewModel =
+            aShortServiceRefundsViewModel.copy(shortServiceRefundCharge = Some(BigDecimal("100")), shortServiceRefund = Some(true))
           val form = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "jhvgfxk")
           insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
           urlPost(
             fullUrl(shortServiceTaxableRefundUrl(taxYearEOY)),
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)),
             follow = false,
-            body = form)
+            body = form
+          )
         }
         "status is bad request" in {
           result.status shouldBe BAD_REQUEST

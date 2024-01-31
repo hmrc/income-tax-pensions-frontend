@@ -40,10 +40,8 @@ case class EncryptedStateBenefit(benefitId: EncryptedValue,
                                  submittedOn: Option[EncryptedValue],
                                  endDate: Option[EncryptedValue],
                                  amount: Option[EncryptedValue],
-                                 taxPaid: Option[EncryptedValue]
-                                )
+                                 taxPaid: Option[EncryptedValue])
 
 object EncryptedStateBenefit {
   implicit val format: OFormat[EncryptedStateBenefit] = Json.format[EncryptedStateBenefit]
 }
-

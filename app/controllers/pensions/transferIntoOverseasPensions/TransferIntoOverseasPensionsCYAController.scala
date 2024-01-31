@@ -36,22 +36,22 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TransferIntoOverseasPensionsCYAController @Inject()(auditProvider: AuditActionsProvider,
-                                                          view: TransferIntoOverseasPensionsCYAView,
-                                                          pensionSessionService: PensionSessionService,
-                                                          pensionChargesService: PensionChargesService,
-                                                          errorHandler: ErrorHandler)
-                                                         (implicit val mcc: MessagesControllerComponents,
-                                                          appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
-
+class TransferIntoOverseasPensionsCYAController @Inject() (
+    auditProvider: AuditActionsProvider,
+    view: TransferIntoOverseasPensionsCYAView,
+    pensionSessionService: PensionSessionService,
+    pensionChargesService: PensionChargesService,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsViewAuditing(taxYear) async { implicit sessionDataRequest =>
     val cyaData = sessionDataRequest.pensionsUserData
     if (!cyaData.pensions.transfersIntoOverseasPensions.isFinished) {
       val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(cyaData), cyaPageCall(taxYear))(checkRedirect) { data =>
-          Future.successful(Ok(view(taxYear, data.pensions.transfersIntoOverseasPensions)))
+        Future.successful(Ok(view(taxYear, data.pensions.transfersIntoOverseasPensions)))
       }
     } else {
       pensionSessionService.createOrUpdateSessionData(sessionDataRequest.user, cyaData.pensions, taxYear, isPriorSubmission = false)(
@@ -59,28 +59,24 @@ class TransferIntoOverseasPensionsCYAController @Inject()(auditProvider: AuditAc
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsUpdateAuditing(taxYear) async {
-    implicit request =>
-      val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-        sessionData =>
-          if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
-            pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(request.user, taxYear).map {
-              case Left(_) => errorHandler.internalServerError()
-              case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
-            }
-          } else {
-            Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
-          }
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsUpdateAuditing(taxYear) async { implicit request =>
+    val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
+      if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
+        pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(request.user, taxYear).map {
+          case Left(_)  => errorHandler.internalServerError()
+          case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
+        }
+      } else {
+        Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
       }
-  }
-
-
-  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean = {
-    priorData match {
-      case None => true
-      case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
     }
   }
+
+  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
+    priorData match {
+      case None        => true
+      case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
+    }
 
 }

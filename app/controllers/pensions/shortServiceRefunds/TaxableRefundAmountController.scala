@@ -35,69 +35,65 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxableRefundAmountController @Inject()(actionsProvider: ActionsProvider,
-                                              pensionSessionService: PensionSessionService,
-                                              shortServiceRefundsService: ShortServiceRefundsService,
-                                              view: TaxableRefundAmountView,
-                                              formsProvider: FormsProvider,
-                                              errorHandler: ErrorHandler)
-                                             (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig,
-                                              clock: Clock, ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class TaxableRefundAmountController @Inject() (
+    actionsProvider: ActionsProvider,
+    pensionSessionService: PensionSessionService,
+    shortServiceRefundsService: ShortServiceRefundsService,
+    view: TaxableRefundAmountView,
+    formsProvider: FormsProvider,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionData =>
-      cleanUpSchemes(sessionData.pensionsUserData).map({
-        case Right(_) =>
-          val shortServiceRefundCharge: Option[BigDecimal] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefundCharge
-          val refundOpt: Option[Boolean] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefund
-          (refundOpt, shortServiceRefundCharge) match {
-            case (Some(a), amount) => Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user).fill((a, amount)), taxYear))
-            case _ => Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user), taxYear))
-          }
-      })
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+    cleanUpSchemes(sessionData.pensionsUserData).map { case Right(_) =>
+      val shortServiceRefundCharge: Option[BigDecimal] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefundCharge
+      val refundOpt: Option[Boolean]                   = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefund
+      (refundOpt, shortServiceRefundCharge) match {
+        case (Some(a), amount) => Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user).fill((a, amount)), taxYear))
+        case _                 => Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user), taxYear))
+      }
+    }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionUserData =>
-      formsProvider.shortServiceTaxableRefundForm(sessionUserData.user).bindFromRequest().fold(
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+    formsProvider
+      .shortServiceTaxableRefundForm(sessionUserData.user)
+      .bindFromRequest()
+      .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        yesNoAmount => {
+        yesNoAmount =>
           (yesNoAmount._1, yesNoAmount._2) match {
             case (true, amount) => updateSessionData(sessionUserData.pensionsUserData, yesNo = true, amount, taxYear)
-            case (false, _) => updateSessionData(sessionUserData.pensionsUserData, yesNo = false, None, taxYear)
+            case (false, _)     => updateSessionData(sessionUserData.pensionsUserData, yesNo = false, None, taxYear)
           }
-        }
       )
   }
 
-  private def updateSessionData[T](pensionUserData: PensionsUserData,
-                                   yesNo: Boolean,
-                                   amount: Option[BigDecimal],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
+  private def updateSessionData[T](pensionUserData: PensionsUserData, yesNo: Boolean, amount: Option[BigDecimal], taxYear: Int)(implicit
+      request: UserSessionDataRequest[T]): Future[Result] = {
 
-    val updatedCyaModel: PensionsCYAModel = shortServiceRefundsService.updateCyaWithShortServiceRefundGatewayQuestion(
-      pensionUserData, yesNo, amount)
-    val redirectLocation = {
+    val updatedCyaModel: PensionsCYAModel = shortServiceRefundsService.updateCyaWithShortServiceRefundGatewayQuestion(pensionUserData, yesNo, amount)
+    val redirectLocation =
       if (updatedCyaModel.shortServiceRefunds.isFinished) cyaPageCall(taxYear)
       else if (yesNo) NonUkTaxRefundsController.show(taxYear)
       else ShortServiceRefundsCYAController.show(taxYear)
-    }
 
-    pensionSessionService.createOrUpdateSessionData(request.user,
-      updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
+      errorHandler.internalServerError()) {
 
       Redirect(redirectLocation)
     }
   }
 
-  private def cleanUpSchemes(pensionsUserData: PensionsUserData)
-                            (implicit ec: ExecutionContext): Future[Either[DatabaseError, Seq[OverseasRefundPensionScheme]]] = {
-    val schemes = pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
-    val filteredSchemes = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
-    val updatedViewModel = pensionsUserData.pensions.shortServiceRefunds.copy(refundPensionScheme = filteredSchemes)
+  private def cleanUpSchemes(pensionsUserData: PensionsUserData)(implicit
+      ec: ExecutionContext): Future[Either[DatabaseError, Seq[OverseasRefundPensionScheme]]] = {
+    val schemes            = pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
+    val filteredSchemes    = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
+    val updatedViewModel   = pensionsUserData.pensions.shortServiceRefunds.copy(refundPensionScheme = filteredSchemes)
     val updatedPensionData = pensionsUserData.pensions.copy(shortServiceRefunds = updatedViewModel)
-    val updatedUserData = pensionsUserData.copy(pensions = updatedPensionData)
+    val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
     pensionSessionService.createOrUpdateSessionData(updatedUserData).map(_.map(_ => filteredSchemes))
   }
 }

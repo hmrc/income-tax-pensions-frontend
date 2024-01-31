@@ -27,44 +27,42 @@ import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEn
 import utils.{EncryptedValue, SecureGCMCipher}
 
 object TaxReliefQuestion {
-  val NoTaxRelief = "No tax relief"
+  val NoTaxRelief                     = "No tax relief"
   val TransitionalCorrespondingRelief = "Transitional corresponding relief"
-  val DoubleTaxationRelief = "Double taxation relief"
-  val MigrantMemberRelief = "Migrant member relief"
+  val DoubleTaxationRelief            = "Double taxation relief"
+  val MigrantMemberRelief             = "Migrant member relief"
 
   def validTaxList: Seq[String] = Seq(MigrantMemberRelief, DoubleTaxationRelief, TransitionalCorrespondingRelief, NoTaxRelief)
 }
 
-
 case class Relief(
-                   customerReference: Option[String] = None,
-                   employerPaymentsAmount: Option[BigDecimal] = None,
-                   reliefType: Option[String] = None,
-                   alphaTwoCountryCode: Option[String] = None,
-                   alphaThreeCountryCode: Option[String] = None,
-                   doubleTaxationArticle: Option[String] = None,
-                   doubleTaxationTreaty: Option[String] = None,
-                   doubleTaxationReliefAmount: Option[BigDecimal] = None,
-                   qopsReference: Option[String] = None,
-                   sf74Reference: Option[String] = None
-                 ) {
+    customerReference: Option[String] = None,
+    employerPaymentsAmount: Option[BigDecimal] = None,
+    reliefType: Option[String] = None,
+    alphaTwoCountryCode: Option[String] = None,
+    alphaThreeCountryCode: Option[String] = None,
+    doubleTaxationArticle: Option[String] = None,
+    doubleTaxationTreaty: Option[String] = None,
+    doubleTaxationReliefAmount: Option[BigDecimal] = None,
+    qopsReference: Option[String] = None,
+    sf74Reference: Option[String] = None
+) {
 
-  def isFinished: Boolean = {
+  def isFinished: Boolean =
     customerReference.isDefined &&
       employerPaymentsAmount.isDefined &&
       reliefType.exists { reliefType =>
         reliefType match {
-          case TaxReliefQuestion.MigrantMemberRelief => qopsReference.isDefined
+          case TaxReliefQuestion.MigrantMemberRelief => true // As the only question in the Migrant Member Relief sub-journey is optional.
           case TaxReliefQuestion.DoubleTaxationRelief =>
             alphaTwoCountryCode.isDefined &&
-              alphaThreeCountryCode.isDefined &&
-              doubleTaxationReliefAmount.isDefined
+            alphaThreeCountryCode.isDefined &&
+            doubleTaxationReliefAmount.isDefined
           case TaxReliefQuestion.TransitionalCorrespondingRelief => sf74Reference.isDefined
-          case TaxReliefQuestion.NoTaxRelief => true
-          case _ => false
+          case TaxReliefQuestion.NoTaxRelief                     => true
+          case _                                                 => false
         }
       }
-  }
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedRelief =
     EncryptedRelief(
@@ -86,17 +84,17 @@ object Relief {
 }
 
 case class EncryptedRelief(
-                            customerReference: Option[EncryptedValue] = None,
-                            employerPaymentsAmount: Option[EncryptedValue] = None,
-                            reliefType: Option[EncryptedValue] = None,
-                            alphaTwoCountryCode: Option[EncryptedValue] = None,
-                            alphaThreeCountryCode: Option[EncryptedValue] = None,
-                            doubleTaxationArticle: Option[EncryptedValue] = None,
-                            doubleTaxationTreaty: Option[EncryptedValue] = None,
-                            doubleTaxationReliefAmount: Option[EncryptedValue] = None,
-                            sf74Reference: Option[EncryptedValue] = None,
-                            qualifyingOverseasPensionSchemeReferenceNumber: Option[EncryptedValue] = None
-                          ) {
+    customerReference: Option[EncryptedValue] = None,
+    employerPaymentsAmount: Option[EncryptedValue] = None,
+    reliefType: Option[EncryptedValue] = None,
+    alphaTwoCountryCode: Option[EncryptedValue] = None,
+    alphaThreeCountryCode: Option[EncryptedValue] = None,
+    doubleTaxationArticle: Option[EncryptedValue] = None,
+    doubleTaxationTreaty: Option[EncryptedValue] = None,
+    doubleTaxationReliefAmount: Option[EncryptedValue] = None,
+    sf74Reference: Option[EncryptedValue] = None,
+    qualifyingOverseasPensionSchemeReferenceNumber: Option[EncryptedValue] = None
+) {
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): Relief =
     Relief(
       customerReference = customerReference.map(_.decrypted[String]),
@@ -116,25 +114,23 @@ object EncryptedRelief {
   implicit val format: OFormat[EncryptedRelief] = Json.format[EncryptedRelief]
 }
 
-
 case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions: Option[Boolean] = None,
                                                  paymentsIntoOverseasPensionsAmount: Option[BigDecimal] = None,
                                                  employerPaymentsQuestion: Option[Boolean] = None,
                                                  taxPaidOnEmployerPaymentsQuestion: Option[Boolean] = None,
-                                                 reliefs: Seq[Relief] = Seq.empty[Relief]
-                                                ) extends PensionCYABaseModel {
+                                                 reliefs: Seq[Relief] = Seq.empty[Relief])
+    extends PensionCYABaseModel {
 
   def isEmpty: Boolean = paymentsIntoOverseasPensionsQuestions.isEmpty && paymentsIntoOverseasPensionsAmount.isEmpty &&
     employerPaymentsQuestion.isEmpty && taxPaidOnEmployerPaymentsQuestion.isEmpty && reliefs.isEmpty
 
-  def isFinished: Boolean = {
+  def isFinished: Boolean =
     paymentsIntoOverseasPensionsQuestions.exists(x =>
-      if (!x) true else paymentsIntoOverseasPensionsAmount.isDefined &&
-      employerPaymentsQuestion.exists(x =>
-        if (!x) true else taxPaidOnEmployerPaymentsQuestion.exists(x =>
-          if (x) true else reliefs.nonEmpty && reliefs.forall(_.isFinished)
-        )))
-  }
+      if (!x) true
+      else
+        paymentsIntoOverseasPensionsAmount.isDefined &&
+        employerPaymentsQuestion.exists(x =>
+          if (!x) true else taxPaidOnEmployerPaymentsQuestion.exists(x => if (x) true else reliefs.nonEmpty && reliefs.forall(_.isFinished))))
 
   def journeyIsNo: Boolean =
     (!paymentsIntoOverseasPensionsQuestions.getOrElse(true)
@@ -145,21 +141,19 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
 
   def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
 
-  def toPensionContributions: Seq[OverseasPensionContribution] = {
-    reliefs.map {
-      relief =>
-        OverseasPensionContribution(
-          customerReference = relief.customerReference,
-          exemptEmployersPensionContribs = relief.employerPaymentsAmount.getOrElse(0),
-          migrantMemReliefQopsRefNo = relief.qopsReference,
-          dblTaxationRelief = relief.doubleTaxationReliefAmount,
-          dblTaxationCountry = relief.alphaThreeCountryCode,
-          dblTaxationArticle = relief.doubleTaxationArticle,
-          dblTaxationTreaty = relief.doubleTaxationTreaty,
-          sf74Reference = relief.sf74Reference
-        )
+  def toPensionContributions: Seq[OverseasPensionContribution] =
+    reliefs.map { relief =>
+      OverseasPensionContribution(
+        customerReference = relief.customerReference,
+        exemptEmployersPensionContribs = relief.employerPaymentsAmount.getOrElse(0),
+        migrantMemReliefQopsRefNo = relief.qopsReference,
+        dblTaxationRelief = relief.doubleTaxationReliefAmount,
+        dblTaxationCountry = relief.alphaThreeCountryCode,
+        dblTaxationArticle = relief.doubleTaxationArticle,
+        dblTaxationTreaty = relief.doubleTaxationTreaty,
+        sf74Reference = relief.sf74Reference
+      )
     }
-  }
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPaymentsIntoOverseasPensionsViewModel =
     EncryptedPaymentsIntoOverseasPensionsViewModel(
@@ -171,11 +165,9 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
     )
 }
 
-
 object PaymentsIntoOverseasPensionsViewModel {
   implicit val format: OFormat[PaymentsIntoOverseasPensionsViewModel] = Json.format[PaymentsIntoOverseasPensionsViewModel]
 }
-
 
 case class EncryptedPaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions: Option[EncryptedValue] = None,
                                                           paymentsIntoOverseasPensionsAmount: Option[EncryptedValue] = None,
@@ -183,8 +175,7 @@ case class EncryptedPaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPe
                                                           taxPaidOnEmployerPaymentsQuestion: Option[EncryptedValue] = None,
                                                           customerReference: Option[EncryptedValue] = None,
                                                           employerPaymentsAmount: Option[EncryptedValue] = None,
-                                                          reliefs: Seq[EncryptedRelief] = Seq.empty[EncryptedRelief]
-                                                         ) {
+                                                          reliefs: Seq[EncryptedRelief] = Seq.empty[EncryptedRelief]) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): PaymentsIntoOverseasPensionsViewModel =
     PaymentsIntoOverseasPensionsViewModel(
@@ -199,4 +190,3 @@ case class EncryptedPaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPe
 object EncryptedPaymentsIntoOverseasPensionsViewModel {
   implicit val format: OFormat[EncryptedPaymentsIntoOverseasPensionsViewModel] = Json.format[EncryptedPaymentsIntoOverseasPensionsViewModel]
 }
-

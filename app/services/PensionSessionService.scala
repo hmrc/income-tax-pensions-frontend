@@ -35,45 +35,42 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
-                                      incomeTaxUserDataConnector: IncomeTaxUserDataConnector,
-                                      implicit private val appConfig: AppConfig,
-                                      errorHandler: ErrorHandler,
-                                      implicit val ec: ExecutionContext) extends Logging {
+class PensionSessionService @Inject() (pensionUserDataRepository: PensionsUserDataRepository,
+                                       incomeTaxUserDataConnector: IncomeTaxUserDataConnector,
+                                       implicit private val appConfig: AppConfig,
+                                       errorHandler: ErrorHandler,
+                                       implicit val ec: ExecutionContext)
+    extends Logging {
 
-
-  def getPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] = {
+  def getPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] =
     incomeTaxUserDataConnector.getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid))
-  }
 
-  private def getSessionData(taxYear: Int, user: User)(implicit request: Request[_]): Future[Either[Result, Option[PensionsUserData]]] = {
+  private def getSessionData(taxYear: Int, user: User)(implicit request: Request[_]): Future[Either[Result, Option[PensionsUserData]]] =
     pensionUserDataRepository.find(taxYear, user).map {
-      case Left(_) => Left(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Left(_)      => Left(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(value) => Right(value)
     }
-  }
 
-  def getPensionSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[PensionsUserData]]] = {
+  def getPensionSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[PensionsUserData]]] =
     pensionUserDataRepository.find(taxYear, user).map {
-      case Left(_) => Left(())
+      case Left(_)     => Left(())
       case Right(data) => Right(data)
     }
-  }
 
   @deprecated("We should avoid using this method, as it's more difficult to mock. use 'getPensionSessionData' above", since = "0001228")
-  def getPensionsSessionDataResult(taxYear: Int, user: User)(result: Option[PensionsUserData] => Future[Result])
-                                  (implicit request: Request[_]): Future[Result] = {
+  def getPensionsSessionDataResult(taxYear: Int, user: User)(result: Option[PensionsUserData] => Future[Result])(implicit
+      request: Request[_]): Future[Result] =
     pensionUserDataRepository.find(taxYear, user).flatMap {
-      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+      case Left(_)      => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(value) => result(value)
     }
-  }
 
-  def getAndHandle(taxYear: Int, user: User, redirectWhenNoPrior: Boolean = false)
-                  (block: (Option[PensionsUserData], Option[AllPensionsData]) => Future[Result])
-                  (implicit request: Request[_], hc: HeaderCarrier): Future[Result] = {
+  def getAndHandle(taxYear: Int, user: User, redirectWhenNoPrior: Boolean = false)(
+      block: (Option[PensionsUserData], Option[AllPensionsData]) => Future[Result])(implicit
+      request: Request[_],
+      hc: HeaderCarrier): Future[Result] = {
     val result = for {
-      optionalCya <- getSessionData(taxYear, user)
+      optionalCya       <- getSessionData(taxYear, user)
       priorDataResponse <- getPriorData(taxYear, user)
     } yield {
       if (optionalCya.isRight) {
@@ -83,20 +80,22 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
       }
       val pensionDataResponse = priorDataResponse.map(_.pensions)
       (optionalCya, pensionDataResponse) match {
-        case (Right(None), Right(None)) if redirectWhenNoPrior => logger.info(s"[PensionSessionService][getAndHandle] No pension data found for user." +
-          s"Redirecting to overview page. SessionId: ${user.sessionId}")
+        case (Right(None), Right(None)) if redirectWhenNoPrior =>
+          logger.info(
+            s"[PensionSessionService][getAndHandle] No pension data found for user." +
+              s"Redirecting to overview page. SessionId: ${user.sessionId}")
           Future(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
         case (Right(optionalCya), Right(pensionData)) => block(optionalCya, pensionData)
-        case (_, Left(error)) => Future(errorHandler.handleError(error.status))
-        case (Left(_), _) => Future(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+        case (_, Left(error))                         => Future(errorHandler.handleError(error.status))
+        case (Left(_), _)                             => Future(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       }
     }
     result.flatten
   }
 
-  //scalastyle:off
-  def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)
-                                  (onFail: A)(onSuccess: A)(implicit clock: Clock): Future[A] = {
+  // scalastyle:off
+  def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)(onFail: A)(onSuccess: A)(implicit
+      clock: Clock): Future[A] = {
 
     val userData = PensionsUserData(
       user.sessionId,
@@ -110,16 +109,13 @@ class PensionSessionService @Inject()(pensionUserDataRepository: PensionsUserDat
 
     pensionUserDataRepository.createOrUpdate(userData).map {
       case Right(_) => onSuccess
-      case Left(_) => onFail
+      case Left(_)  => onFail
     }
   }
 
-
-  def createOrUpdateSessionData(pensionsUserData: PensionsUserData): Future[Either[DatabaseError, Unit]] = {
+  def createOrUpdateSessionData(pensionsUserData: PensionsUserData): Future[Either[DatabaseError, Unit]] =
     pensionUserDataRepository.createOrUpdate(pensionsUserData).map {
       case Left(error: DatabaseError) => Left(error)
-      case Right(_) => Right(())
+      case Right(_)                   => Right(())
     }
-  }
 }
-

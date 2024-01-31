@@ -27,18 +27,17 @@ import utils.{Clock, FutureEitherOps}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
+class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDataRepository,
+                                       pensionReliefsConnectorHelper: PensionReliefsConnectorHelper) {
 
-class PensionReliefsService @Inject()(pensionUserDataRepository: PensionsUserDataRepository,
-                                      pensionReliefsConnectorHelper: PensionReliefsConnectorHelper) {
+  def persistPaymentIntoPensionViewModel(user: User, taxYear: Int)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext,
+      clock: Clock): Future[Either[ServiceError, Unit]] = {
 
-  def persistPaymentIntoPensionViewModel(user: User, taxYear: Int)
-                                        (implicit hc: HeaderCarrier,
-                                         ec: ExecutionContext, clock: Clock): Future[Either[ServiceError, Unit]] = {
-
-    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData = {
-      userData match {
-        case Some(value) => value.copy(pensions = value.pensions.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel()))
-        case None => PensionsUserData(
+    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData =
+      userData.getOrElse(
+        PensionsUserData(
           user.sessionId,
           user.mtditid,
           user.nino,
@@ -46,9 +45,7 @@ class PensionReliefsService @Inject()(pensionUserDataRepository: PensionsUserDat
           isPriorSubmission = false,
           PensionsCYAModel.emptyModels,
           clock.now(DateTimeZone.UTC)
-        )
-      }
-    }
+        ))
 
     (for {
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
@@ -64,15 +61,13 @@ class PensionReliefsService @Inject()(pensionUserDataRepository: PensionsUserDat
         )
       )
 
-      _ <- FutureEitherOps[ServiceError, Unit](pensionReliefsConnectorHelper.sendDownstream(user.nino, taxYear,
-        subRequestModel = None,
-        cya = viewModel,
-        requestModel = updatedReliefsData)(hc.withExtraHeaders("mtditid" -> user.mtditid), ec))
+      _ <- FutureEitherOps[ServiceError, Unit](
+        pensionReliefsConnectorHelper.sendDownstream(user.nino, taxYear, subRequestModel = None, cya = viewModel, requestModel = updatedReliefsData)(
+          hc.withExtraHeaders("mtditid" -> user.mtditid),
+          ec))
 
       updatedCYA = getPensionsUserData(sessionData, user)
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
-    } yield {
-      result
-    }).value
+    } yield result).value
   }
 }

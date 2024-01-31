@@ -26,12 +26,12 @@ object TypeCaster {
   }
 
   object Converter {
-    implicit val stringLoader: Converter[String] = (v: String) => v
-    implicit val booleanLoader: Converter[Boolean] = (v: String) => v.toBoolean
+    implicit val stringLoader: Converter[String]         = (v: String) => v
+    implicit val booleanLoader: Converter[Boolean]       = (v: String) => v.toBoolean
     implicit val bigDecimalLoader: Converter[BigDecimal] = (v: String) => BigDecimal(v)
-    implicit val monthLoader: Converter[Month] = (v: String) => Month.valueOf(v)
-    implicit val uuidLoader: Converter[UUID] = (v: String) => UUID.fromString(v)
-    implicit val instantLoader: Converter[Instant] = (v: String) => Instant.parse(v)
-    implicit val localDateLoader: Converter[LocalDate] = (v: String) => LocalDate.parse(v)
+    implicit val monthLoader: Converter[Month]           = (v: String) => Month.valueOf(v)
+    implicit val uuidLoader: Converter[UUID]             = (v: String) => UUID.fromString(v)
+    implicit val instantLoader: Converter[Instant]       = (v: String) => Instant.parse(v)
+    implicit val localDateLoader: Converter[LocalDate]   = (v: String) => LocalDate.parse(v)
   }
 }

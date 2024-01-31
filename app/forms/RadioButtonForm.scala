@@ -25,18 +25,16 @@ object RadioButtonForm {
   val value = "value"
 
   def formatter(missingInputError: String, radioButtonOptions: Seq[String]): Formatter[String] = new Formatter[String] {
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
       data.get(key) match {
         case Some(res) => if (radioButtonOptions.contains(res)) Right(res) else Left(Seq(FormError(key, missingInputError)))
-        case _ => Left(Seq(FormError(key, missingInputError)))
+        case _         => Left(Seq(FormError(key, missingInputError)))
       }
-    }
 
     override def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
   }
 
-  def radioButtonForm(missingInputError: String, radioButtonOptions: Seq[String]): Form[String] = {
+  def radioButtonForm(missingInputError: String, radioButtonOptions: Seq[String]): Form[String] =
     Form(value -> of(formatter(missingInputError, radioButtonOptions)))
-  }
 
-  }
+}

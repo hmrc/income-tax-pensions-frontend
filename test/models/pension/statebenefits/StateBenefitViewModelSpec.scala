@@ -21,7 +21,6 @@ import support.UnitTest
 
 class StateBenefitViewModelSpec extends UnitTest {
 
-
   ".isEmpty" should {
     "return true when no questions have been answered" in {
       anEmptyStateBenefitViewModel.isEmpty
@@ -39,11 +38,13 @@ class StateBenefitViewModelSpec extends UnitTest {
         aStatePensionLumpSumViewModel.isFinished shouldBe true
       }
       "all required questions are answered" in {
-        aStatePensionLumpSumViewModel.copy(
-          taxPaidQuestion = Some(false),
-          taxPaid = None,
-          addToCalculation = Some(false)
-        ).isFinished
+        aStatePensionLumpSumViewModel
+          .copy(
+            taxPaidQuestion = Some(false),
+            taxPaid = None,
+            addToCalculation = Some(false)
+          )
+          .isFinished
       }
     }
 

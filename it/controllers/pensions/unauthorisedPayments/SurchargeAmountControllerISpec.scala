@@ -26,20 +26,26 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, surchargeAmountUrl, taxOnAmountSurchargedUrl, unauthorisedPaymentsUrl}
+import utils.PageUrls.UnauthorisedPaymentsPages.{
+  checkUnauthorisedPaymentsCyaUrl,
+  surchargeAmountUrl,
+  taxOnAmountSurchargedUrl,
+  unauthorisedPaymentsUrl
+}
 import utils.PageUrls.fullUrl
 import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper}
 
 class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] =
-    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
+    Seq(
+      UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
       UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
       UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-      UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
-  private val poundPrefixText = "£"
-  private val amountInputName = "amount"
+      UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
+    )
+  private val poundPrefixText             = "£"
+  private val amountInputName             = "amount"
   private implicit val url: Int => String = surchargeAmountUrl
 
   trait CommonExpectedResults {
@@ -60,42 +66,42 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
   }
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val hintTextSelector = "#amount-hint"
-    val poundPrefixSelector = ".govuk-input__prefix"
-    val inputSelector = "#amount"
-    val expectedErrorHref = "#amount"
+    val formSelector: String           = "#main-content > div > div > form"
+    val hintTextSelector               = "#amount-hint"
+    val poundPrefixSelector            = ".govuk-input__prefix"
+    val inputSelector                  = "#amount"
+    val expectedErrorHref              = "#amount"
 
     def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Unauthorised payments from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle = "Amount that resulted in a surcharge"
-    val expectedHeading = "Amount that resulted in a surcharge"
-    val expectedErrorTitle = s"Error: $expectedTitle"
-    val hintText = "For example, £193.52"
-    val noEntryErrorMessage = "Enter the total amount of unauthorised payment that resulted in a surcharge"
-    val invalidFormatErrorText = "Enter the total amount in pounds"
-    val maxAmountErrorText = "The amount entered must be less than £100,000,000,000"
-    val buttonText = "Continue"
-    val expectedParagraph = "Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes."
-    val expectedParagraphTwo = "You can tell us about unauthorised payments that did not result in a surcharge later."
+    val expectedTitle                  = "Amount that resulted in a surcharge"
+    val expectedHeading                = "Amount that resulted in a surcharge"
+    val expectedErrorTitle             = s"Error: $expectedTitle"
+    val hintText                       = "For example, £193.52"
+    val noEntryErrorMessage            = "Enter the total amount of unauthorised payment that resulted in a surcharge"
+    val invalidFormatErrorText         = "Enter the total amount in pounds"
+    val maxAmountErrorText             = "The amount entered must be less than £100,000,000,000"
+    val buttonText                     = "Continue"
+    val expectedParagraph              = "Give a total of unauthorised payments that resulted in surcharges from all your client’s pension schemes."
+    val expectedParagraphTwo           = "You can tell us about unauthorised payments that did not result in a surcharge later."
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau heb awdurdod o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle = "Y swm a wnaeth arwain at ordal"
-    val expectedHeading = "Y swm a wnaeth arwain at ordal"
-    val expectedErrorTitle = s"Gwall: $expectedTitle"
-    val hintText = "Er enghraifft, £193.52"
-    val noEntryErrorMessage = "Nodwch gyfanswm y taliadau heb awdurdod a wnaeth arwain at ordal"
-    val invalidFormatErrorText = "Nodwch y cyfanswm yn y fformat cywir"
-    val maxAmountErrorText = "The amount entered must be less than £100,000,000,000"
-    val buttonText = "Yn eich blaen"
-    val expectedParagraph = "Rhowch gyfanswm y taliadau heb awdurdod o bob un o gynlluniau pensiwn eich cleient a wnaeth arwain at ordaliadau."
+    val expectedTitle                  = "Y swm a wnaeth arwain at ordal"
+    val expectedHeading                = "Y swm a wnaeth arwain at ordal"
+    val expectedErrorTitle             = s"Gwall: $expectedTitle"
+    val hintText                       = "Er enghraifft, £193.52"
+    val noEntryErrorMessage            = "Nodwch gyfanswm y taliadau heb awdurdod a wnaeth arwain at ordal"
+    val invalidFormatErrorText         = "Nodwch y cyfanswm yn y fformat cywir"
+    val maxAmountErrorText             = "The amount entered must be less than £100,000,000,000"
+    val buttonText                     = "Yn eich blaen"
+    val expectedParagraph    = "Rhowch gyfanswm y taliadau heb awdurdod o bob un o gynlluniau pensiwn eich cleient a wnaeth arwain at ordaliadau."
     val expectedParagraphTwo = "Gallwch roi gwybod i ni am daliadau heb awdurdod na wnaethant arwain at ordal yn nes ymlaen."
   }
 
@@ -126,7 +132,10 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
             authoriseAgentOrIndividual(user.isAgent)
             val viewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false))
-            urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
+            urlGet(
+              fullUrl(surchargeAmountUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -156,7 +165,10 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
             authoriseAgentOrIndividual(user.isAgent)
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = Some(existingAmount))
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
-            urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), user.isWelsh, follow = false,
+            urlGet(
+              fullUrl(surchargeAmountUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
               headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
           }
 
@@ -181,19 +193,22 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
     }
 
     "redirect to the first page in journey when current page is invalid in journey" in {
-        val viewModel = anUnauthorisedPaymentsViewModel.copy(surchargeQuestion = None, noSurchargeQuestion = None)
-        val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
-        lazy val result: WSResponse = showPage(pensionUserData)
+      val viewModel               = anUnauthorisedPaymentsViewModel.copy(surchargeQuestion = None, noSurchargeQuestion = None)
+      val pensionUserData         = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+      lazy val result: WSResponse = showPage(pensionUserData)
 
-        result.status shouldBe SEE_OTHER
-        result.header("location").contains(unauthorisedPaymentsUrl(taxYearEOY))
+      result.status shouldBe SEE_OTHER
+      result.header("location").contains(unauthorisedPaymentsUrl(taxYearEOY))
     }
 
     "redirect to the CYA page if there is no session data" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(surchargeAmountUrl(taxYearEOY)), follow = false, headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(surchargeAmountUrl(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" in {
@@ -210,7 +225,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
       import user.commonExpectedResults._
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         "return an error when form is submitted with no input entry" which {
-          val amountEmpty = ""
+          val amountEmpty                    = ""
           val emptyForm: Map[String, String] = Map(AmountForm.amount -> amountEmpty)
 
           lazy val result: WSResponse = {
@@ -218,8 +233,13 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             authoriseAgentOrIndividual(user.isAgent)
-            urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = emptyForm, welsh = user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(surchargeAmountUrl(taxYearEOY)),
+              body = emptyForm,
+              welsh = user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has the correct status" in {
@@ -244,7 +264,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
         }
 
         "return an error when form is submitted with an invalid format input" which {
-          val amountInvalidFormat = "invalid"
+          val amountInvalidFormat                    = "invalid"
           val invalidFormatForm: Map[String, String] = Map(AmountForm.amount -> amountInvalidFormat)
 
           lazy val result: WSResponse = {
@@ -252,8 +272,13 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             authoriseAgentOrIndividual(user.isAgent)
-            urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = invalidFormatForm, welsh = user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(surchargeAmountUrl(taxYearEOY)),
+              body = invalidFormatForm,
+              welsh = user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has the correct status" in {
@@ -278,7 +303,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
         }
 
         "return an error when form is submitted with input over maximum allowed value" which {
-          val amountOverMaximum = "100,000,000,000"
+          val amountOverMaximum                    = "100,000,000,000"
           val overMaximumForm: Map[String, String] = Map(AmountForm.amount -> amountOverMaximum)
 
           lazy val result: WSResponse = {
@@ -286,8 +311,13 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
             authoriseAgentOrIndividual(user.isAgent)
-            urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = overMaximumForm, welsh = user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(surchargeAmountUrl(taxYearEOY)),
+              body = overMaximumForm,
+              welsh = user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has the correct status" in {
@@ -314,17 +344,21 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
     }
 
     "redirect to the Non-UK Tax on Surcharged Amount page when a valid amount is submitted and update the session data" which {
-      val validAmount = "100.22"
+      val validAmount                    = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
 
       lazy val result: WSResponse = {
         dropPensionsDB()
         val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy(
-          surchargeQuestion = Some(true), surchargeAmount = None
+          surchargeQuestion = Some(true),
+          surchargeAmount = None
         )
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = validForm, follow = false,
+        urlPost(
+          fullUrl(surchargeAmountUrl(taxYearEOY)),
+          body = validForm,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -342,7 +376,7 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
     }
 
     "redirect to the CYA page when a valid amount is submitted and update the session amount, completing the journey" which {
-      val validAmount = "100.22"
+      val validAmount                    = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
 
       lazy val result: WSResponse = {
@@ -350,7 +384,10 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy(surchargeAmount = None)
         insertCyaData(pensionsUserDataWithUnauthorisedPayments(pensionsViewModel, isPriorSubmission = false))
         authoriseAgentOrIndividual()
-        urlPost(fullUrl(surchargeAmountUrl(taxYearEOY)), body = validForm, follow = false,
+        urlPost(
+          fullUrl(surchargeAmountUrl(taxYearEOY)),
+          body = validForm,
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -368,11 +405,11 @@ class SurchargeAmountControllerISpec extends IntegrationTest with CommonUtils wi
     }
 
     "redirect to the first page in journey if submission is invalid in journey" in {
-      val viewModel = anUnauthorisedPaymentsViewModel.copy(noSurchargeQuestion = None)
-      val pensionUserData = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
-      val validAmount = "100.22"
+      val viewModel                      = anUnauthorisedPaymentsViewModel.copy(noSurchargeQuestion = None)
+      val pensionUserData                = pensionsUserDataWithUnauthorisedPayments(viewModel, isPriorSubmission = false)
+      val validAmount                    = "100.22"
       val validForm: Map[String, String] = Map(AmountForm.amount -> validAmount)
-      lazy val result: WSResponse = submitPage(pensionUserData, validForm)
+      lazy val result: WSResponse        = submitPage(pensionUserData, validForm)
 
       result.status shouldBe SEE_OTHER
       result.header("location").contains(unauthorisedPaymentsUrl(taxYearEOY))

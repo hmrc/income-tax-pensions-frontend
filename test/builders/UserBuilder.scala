@@ -20,26 +20,28 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import models.User
 import uk.gov.hmrc.auth.core.AffinityGroup
 
-
 object UserBuilder {
   val aUserRequest: User = User(
     mtditid = aPensionsUserData.mtdItId,
     arn = None,
     nino = aPensionsUserData.nino,
     sessionId = aPensionsUserData.sessionId,
-    affinityGroup = AffinityGroup.Individual.toString)
+    affinityGroup = AffinityGroup.Individual.toString
+  )
 
   val aUser: User = User(
     mtditid = aPensionsUserData.mtdItId,
     arn = None,
     nino = aPensionsUserData.nino,
     sessionId = aPensionsUserData.sessionId,
-    affinityGroup = AffinityGroup.Individual.toString)
+    affinityGroup = AffinityGroup.Individual.toString
+  )
 
   val anAgentUser: User = User(
     mtditid = aPensionsUserData.mtdItId,
     arn = Some(""),
     nino = aPensionsUserData.nino,
     sessionId = aPensionsUserData.sessionId,
-    affinityGroup = AffinityGroup.Agent.toString)
+    affinityGroup = AffinityGroup.Agent.toString
+  )
 }

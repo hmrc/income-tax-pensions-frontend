@@ -36,12 +36,11 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData = {
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel): PensionsUserData =
     PensionsUserDataBuilder.aPensionsUserData.copy(
       isPriorSubmission = false,
       pensions = pensionsCyaModel
     )
-  }
 
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
@@ -51,9 +50,10 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        urlGet(fullUrl(statePension(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
-        )
+        urlGet(
+          fullUrl(statePension(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
     }
@@ -64,9 +64,10 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
         userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-        urlGet(fullUrl(statePension(taxYearEOY)), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
-        )
+        urlGet(
+          fullUrl(statePension(taxYearEOY)),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
       result.status shouldBe OK
     }
@@ -111,8 +112,7 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "false")
-        val pensionsViewModel = anIncomeFromPensionsViewModel.copy(
-          statePension = Some(aStatePensionViewModel))
+        val pensionsViewModel         = anIncomeFromPensionsViewModel.copy(statePension = Some(aStatePensionViewModel))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
         urlPost(
           fullUrl(statePension(taxYearEOY)),
@@ -143,4 +143,3 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
     }
   }
 }
-

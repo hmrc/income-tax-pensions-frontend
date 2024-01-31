@@ -30,24 +30,24 @@ trait MockIncomeTaxUserDataConnector extends MockFactory {
 
   val mockUserDataConnector: IncomeTaxUserDataConnector = mock[IncomeTaxUserDataConnector]
 
-  def mockFind(nino: String, taxYear: Int, userData: IncomeTaxUserData): CallHandler3[String, Int, HeaderCarrier, Future[IncomeTaxUserDataResponse]] = {
-    (mockUserDataConnector.getUserData(_: String, _: Int)(_: HeaderCarrier))
+  def mockFind(nino: String, taxYear: Int, userData: IncomeTaxUserData): CallHandler3[String, Int, HeaderCarrier, Future[IncomeTaxUserDataResponse]] =
+    (mockUserDataConnector
+      .getUserData(_: String, _: Int)(_: HeaderCarrier))
       .expects(nino, taxYear, *)
       .returns(Future.successful(Right(userData)))
       .anyNumberOfTimes()
-  }
 
-  def mockFindNoContent(nino: String, taxYear: Int): CallHandler3[String, Int, HeaderCarrier, Future[IncomeTaxUserDataResponse]] = {
-    (mockUserDataConnector.getUserData(_: String, _: Int)(_: HeaderCarrier))
+  def mockFindNoContent(nino: String, taxYear: Int): CallHandler3[String, Int, HeaderCarrier, Future[IncomeTaxUserDataResponse]] =
+    (mockUserDataConnector
+      .getUserData(_: String, _: Int)(_: HeaderCarrier))
       .expects(nino, taxYear, *)
       .returns(Future.successful(Right(IncomeTaxUserData())))
       .anyNumberOfTimes()
-  }
 
-  def mockFindFail(nino: String, taxYear: Int): CallHandler3[String, Int, HeaderCarrier, Future[IncomeTaxUserDataResponse]] = {
-    (mockUserDataConnector.getUserData(_: String, _: Int)(_: HeaderCarrier))
+  def mockFindFail(nino: String, taxYear: Int): CallHandler3[String, Int, HeaderCarrier, Future[IncomeTaxUserDataResponse]] =
+    (mockUserDataConnector
+      .getUserData(_: String, _: Int)(_: HeaderCarrier))
       .expects(nino, taxYear, *)
       .returns(Future.successful(Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))))
       .anyNumberOfTimes()
-  }
 }

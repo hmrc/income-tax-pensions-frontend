@@ -16,7 +16,6 @@
 
 package controllers.pensions.incomeFromPensions
 
-
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
@@ -31,7 +30,7 @@ import utils.CommonUtils
 import utils.PageUrls.IncomeFromPensionsPages.pensionIncomeSummaryUrl
 import utils.PageUrls.pensionSummaryUrl
 
-class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach{
+class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
@@ -45,47 +44,47 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
   }
 
   trait SpecificExpectedResults {
-    val expectedParagraph : String
+    val expectedParagraph: String
   }
 
-  def statePensionsLink(taxYear: Int = taxYear) : String = s"/update-and-submit-income-tax-return/pensions/$taxYear/pension-income/state-pension"
-  def otherUkPensionsLink(taxYear: Int = taxYear) : String = s"/update-and-submit-income-tax-return/pensions/$taxYear/pension-income/state-pension"
-  
+  def statePensionsLink(taxYear: Int = taxYear): String   = s"/update-and-submit-income-tax-return/pensions/$taxYear/pension-income/state-pension"
+  def otherUkPensionsLink(taxYear: Int = taxYear): String = s"/update-and-submit-income-tax-return/pensions/$taxYear/pension-income/state-pension"
+
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val hintTextSelector = "#amount-hint"
-    val statePensionsLinkSelector = "#state-pensions-link"
+    val captionSelector: String             = "#main-content > div > div > header > p"
+    val continueButtonSelector: String      = "#continue"
+    val formSelector: String                = "#main-content > div > div > form"
+    val hintTextSelector                    = "#amount-hint"
+    val statePensionsLinkSelector           = "#state-pensions-link"
     val statePensionsStatusSelector: String = "#state-Pensions-row > dd > strong"
-    val otherUkPensionsLinkSelector = "#other-uk-Pensions-row > dd > strong"
-    val poundPrefixSelector = ".govuk-input__prefix"
-    val inputSelector = "#amount"
-    val expectedErrorHref = "#amount"
+    val otherUkPensionsLinkSelector         = "#other-uk-Pensions-row > dd > strong"
+    val poundPrefixSelector                 = ".govuk-input__prefix"
+    val inputSelector                       = "#amount"
+    val expectedErrorHref                   = "#amount"
 
     def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedTitle = "Income from pensions"
-    val notStartedText = "Not Started"
-    val updatedText = "Updated"
-    val statePensionLinkText = "State pension"
-    val otherUKPensionsLinktext = "Other UK pensions"
-    val expectedHeading = "Income from pensions"
-    val buttonText = "Return to overview"
+    val expectedTitle                  = "Income from pensions"
+    val notStartedText                 = "Not Started"
+    val updatedText                    = "Updated"
+    val statePensionLinkText           = "State pension"
+    val otherUKPensionsLinktext        = "Other UK pensions"
+    val expectedHeading                = "Income from pensions"
+    val buttonText                     = "Return to overview"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Pensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedTitle = "Incwm o bensiynau"
-    val notStartedText = "Heb ddechrau"
-    val updatedText = "Wedi diweddaru"
-    val statePensionLinkText = "State pension"
-    val otherUKPensionsLinktext = "Other UK pensions"
-    val expectedHeading = expectedTitle
-    val buttonText = "Yn ôl i’r trosolwg"
+    val expectedTitle                  = "Incwm o bensiynau"
+    val notStartedText                 = "Heb ddechrau"
+    val updatedText                    = "Wedi diweddaru"
+    val statePensionLinkText           = "State pension"
+    val otherUKPensionsLinktext        = "Other UK pensions"
+    val expectedHeading                = expectedTitle
+    val buttonText                     = "Yn ôl i’r trosolwg"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -105,10 +104,12 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] =
-    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
+    Seq(
+      UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
       UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
       UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-      UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY)))
+      UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
+    )
 
   private implicit val url: Int => String = pensionIncomeSummaryUrl
 
@@ -116,12 +117,13 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
     userScenarios.foreach { user =>
       import Selectors._
       import user.commonExpectedResults._
-      
+
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
         "render page when both values are updated " which {
 
           val viewModel = anIncomeFromPensionsViewModel
-          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
+          lazy val result: WSResponse =
+            showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
           "has an OK status" in {
@@ -147,7 +149,8 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
 
         "render page when statePension are not started " which {
           val viewModel = anIncomeFromPensionsViewModel.copy(statePension = Some(anEmptyStateBenefitViewModel))
-          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
+          lazy val result: WSResponse =
+            showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -176,7 +179,8 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
 
           val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = None)
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false))
-          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
+          lazy val result: WSResponse =
+            showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -204,10 +208,9 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
         "render page when other UK pension are started and the user selected no" which {
 
           val anUpdatedStatePensionModel = anStateBenefitViewModelOne.copy(amountPaidQuestion = Some(false))
-          val viewModel = anIncomeFromPensionsViewModel.copy(
-            statePension = Some(anUpdatedStatePensionModel),
-            uKPensionIncomesQuestion = Some(false))
-          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
+          val viewModel = anIncomeFromPensionsViewModel.copy(statePension = Some(anUpdatedStatePensionModel), uKPensionIncomesQuestion = Some(false))
+          lazy val result: WSResponse =
+            showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -235,8 +238,9 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
         "render page when StateBenefitViewModel is None " which {
 
           val anUpdatedStatePensionModel = StateBenefitViewModel()
-          val viewModel = anIncomeFromPensionsViewModel.copy(statePension = Some(anUpdatedStatePensionModel))
-          lazy val result: WSResponse = showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
+          val viewModel                  = anIncomeFromPensionsViewModel.copy(statePension = Some(anUpdatedStatePensionModel))
+          lazy val result: WSResponse =
+            showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 

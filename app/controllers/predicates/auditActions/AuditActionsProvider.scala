@@ -28,103 +28,82 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class AuditActionsProvider @Inject()(authAction: AuthorisedAction,
-                                     pensionSessionService: PensionSessionService,
-                                     errorHandler: ErrorHandler,
-                                     appConfig: AppConfig,
-                                     auditService: AuditService)
-                                    (implicit ec: ExecutionContext, messagesApi: MessagesApi)
-  extends ActionsProvider(authAction, pensionSessionService, errorHandler, appConfig) {
+class AuditActionsProvider @Inject() (authAction: AuthorisedAction,
+                                      pensionSessionService: PensionSessionService,
+                                      errorHandler: ErrorHandler,
+                                      appConfig: AppConfig,
+                                      auditService: AuditService)(implicit ec: ExecutionContext, messagesApi: MessagesApi)
+    extends ActionsProvider(authAction, pensionSessionService, errorHandler, appConfig) {
 
-  def paymentsIntoPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+  def paymentsIntoPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
     userSessionDataFor(taxYear)
       .andThen(PaymentsIntoPensionsViewAuditAction(auditService))
-  }
 
-  def paymentsIntoPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+  def paymentsIntoPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
     userPriorAndSessionDataFor(taxYear)
       .andThen(PaymentsIntoPensionsUpdateAuditAction(auditService))
-  }
 
-  def unauthorisedPaymentsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+  def unauthorisedPaymentsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
     userSessionDataFor(taxYear)
       .andThen(UnauthorisedPaymentsViewAuditAction(auditService))
-  }
 
-  def unauthorisedPaymentsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+  def unauthorisedPaymentsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
     userPriorAndSessionDataFor(taxYear)
       .andThen(UnauthorisedPaymentsUpdateAuditAction(auditService))
-  }
 
-  def incomeFromOverseasPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+  def incomeFromOverseasPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
     userSessionDataFor(taxYear)
       .andThen(IncomeFromOverseasPensionsViewAuditAction(auditService))
-  }
 
-  def incomeFromOverseasPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+  def incomeFromOverseasPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
     userPriorAndSessionDataFor(taxYear)
       .andThen(IncomeFromOverseasPensionsUpdateAuditAction(auditService))
-  }
 
-  def paymentsIntoOverseasPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+  def paymentsIntoOverseasPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
     userSessionDataFor(taxYear)
       .andThen(PaymentsIntoOverseasPensionsViewAuditAction(auditService))
-  }
 
-  def paymentsIntoOverseasPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+  def paymentsIntoOverseasPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
     userPriorAndSessionDataFor(taxYear)
       .andThen(PaymentsIntoOverseasPensionsUpdateAuditAction(auditService))
-  }
 
-  def shortServiceRefundsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+  def shortServiceRefundsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
     userSessionDataFor(taxYear)
       .andThen(ShortServiceRefundsViewAuditAction(auditService))
-  }
 
-  def shortServiceRefundsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+  def shortServiceRefundsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
     userPriorAndSessionDataFor(taxYear)
       .andThen(ShortServiceRefundsUpdateAuditAction(auditService))
-  }
 
-  def incomeFromStatePensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+  def incomeFromStatePensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
     userSessionDataFor(taxYear)
       .andThen(IncomeFromStatePensionsViewAuditAction(auditService))
-  }
 
-  def incomeFromStatePensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+  def incomeFromStatePensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
     userPriorAndSessionDataFor(taxYear)
       .andThen(IncomeFromStatePensionsUpdateAuditAction(auditService))
 
-  }
-
-  def ukPensionIncomeViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+  def ukPensionIncomeViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
     userSessionDataFor(taxYear)
       .andThen(UkPensionIncomeViewAuditAction(auditService))
-  }
 
-  def ukPensionIncomeUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+  def ukPensionIncomeUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
     userPriorAndSessionDataFor(taxYear)
       .andThen(UkPensionIncomeUpdateAuditAction(auditService))
-  }
 
-  def annualAllowancesViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+  def annualAllowancesViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
     userSessionDataFor(taxYear)
       .andThen(AnnualAllowancesViewAuditAction(auditService))
-  }
 
-  def annualAllowancesUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+  def annualAllowancesUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
     userPriorAndSessionDataFor(taxYear)
       .andThen(AnnualAllowancesUpdateAuditAction(auditService))
-  }
 
-  def transfersIntoOverseasPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] = {
+  def transfersIntoOverseasPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
     userSessionDataFor(taxYear)
       .andThen(TransfersIntoOverseasPensionsViewAuditAction(auditService))
-  }
 
-  def transfersIntoOverseasPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] = {
+  def transfersIntoOverseasPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
     userPriorAndSessionDataFor(taxYear)
       .andThen(TransfersIntoOverseasPensionsUpdateAuditAction(auditService))
-  }
 }
-

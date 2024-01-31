@@ -19,10 +19,7 @@ package models.pension.pages.shortServiceRefunds
 import models.pension.charges.ShortServiceRefundsViewModel
 import play.api.data.Form
 
-
-case class TaxOnShortServiceRefundPage(taxYear: Int,
-                                          pensionSchemeIndex: Option[Int],
-                                          form: Form[Boolean])
+case class TaxOnShortServiceRefundPage(taxYear: Int, pensionSchemeIndex: Option[Int], form: Form[Boolean])
 
 object TaxOnShortServiceRefundPage {
 
@@ -32,7 +29,7 @@ object TaxOnShortServiceRefundPage {
             form: Form[Boolean]): TaxOnShortServiceRefundPage = {
     val optQuestionValue: Option[Boolean] = pensionSchemeIndex match {
       case Some(value) => dataModel.refundPensionScheme(value).ukRefundCharge
-      case None => None
+      case None        => None
     }
 
     TaxOnShortServiceRefundPage(

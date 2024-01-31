@@ -22,24 +22,24 @@ class TransferPensionSchemeSpec extends UnitTest {
 
   "isFinished" should {
     "return true when all questions are populated" in {
-        TransferPensionScheme(
-          ukTransferCharge = Some(true),
-          name = Some("UK TPS"),
-          pstr = Some("12345678RA"),
-          qops = None,
-          providerAddress = Some("Some address 1"),
-          alphaTwoCountryCode = None,
-          alphaThreeCountryCode = None
-        ).isFinished shouldBe true
-        TransferPensionScheme(
-          ukTransferCharge = Some(false),
-          name = Some("Non-UK TPS"),
-          pstr = None,
-          qops = Some("QOPS123456"),
-          providerAddress = Some("Some address 2"),
-          alphaTwoCountryCode = Some("FR"),
-          alphaThreeCountryCode = Some("FRA")
-        ).isFinished shouldBe true
+      TransferPensionScheme(
+        ukTransferCharge = Some(true),
+        name = Some("UK TPS"),
+        pstr = Some("12345678RA"),
+        qops = None,
+        providerAddress = Some("Some address 1"),
+        alphaTwoCountryCode = None,
+        alphaThreeCountryCode = None
+      ).isFinished shouldBe true
+      TransferPensionScheme(
+        ukTransferCharge = Some(false),
+        name = Some("Non-UK TPS"),
+        pstr = None,
+        qops = Some("QOPS123456"),
+        providerAddress = Some("Some address 2"),
+        alphaTwoCountryCode = Some("FR"),
+        alphaThreeCountryCode = Some("FRA")
+      ).isFinished shouldBe true
     }
     "return false" when {
       "not all necessary questions have been populated" in {

@@ -22,7 +22,7 @@ import uk.gov.hmrc.crypto.{AdDecrypter, AdEncrypter, SymmetricCryptoFactory}
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AesGcmAdCryptoFactory @Inject()(appConfig: AppConfig) {
+class AesGcmAdCryptoFactory @Inject() (appConfig: AppConfig) {
 
   private lazy val aesGcmAdCrypto = SymmetricCryptoFactory.aesGcmAdCrypto(appConfig.encryptionKey)
 

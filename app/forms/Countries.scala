@@ -20,42 +20,37 @@ import play.api.libs.json._
 
 import scala.io.Source
 
-
 object Countries {
 
   lazy val allCountries: List[Country] = countriesFromFile filter (c => mdgCountryCodes("/mdg-country-codes.csv") contains c.alphaTwoCode)
-  
-  lazy val overseasCountries: List[Country] = allCountries.filter(_.alphaTwoCode != "GB")
-  
-  lazy val euCountries: List[Country] = countriesFromFile filter (c => mdgCountryCodes("/mdg-country-codes-eu.csv") contains c.alphaTwoCode)
-  
-  lazy val countriesThreeAlphaMapFromCountryName : Map[String, String] = countriesThreeAlphaMap.map(_.swap)
 
-  lazy val countriesTwoAlphaMapFromCountryName : Map[String, String] =
-    countriesTwoAlphaMap.filter{ case (k,_) => mdgCountryCodes("/mdg-country-codes.csv") contains k }.map(_.swap)
-    
+  lazy val overseasCountries: List[Country] = allCountries.filter(_.alphaTwoCode != "GB")
+
+  lazy val euCountries: List[Country] = countriesFromFile filter (c => mdgCountryCodes("/mdg-country-codes-eu.csv") contains c.alphaTwoCode)
+
+  lazy val countriesThreeAlphaMapFromCountryName: Map[String, String] = countriesThreeAlphaMap.map(_.swap)
+
+  lazy val countriesTwoAlphaMapFromCountryName: Map[String, String] =
+    countriesTwoAlphaMap.filter { case (k, _) => mdgCountryCodes("/mdg-country-codes.csv") contains k }.map(_.swap)
 
   def getCountryFromCode(alphaTwoCode: Option[String]): Option[Country] =
-    alphaTwoCode.flatMap(
-      x => allCountries.find(_.alphaTwoCode == x)
-    )
-  
+    alphaTwoCode.flatMap(x => allCountries.find(_.alphaTwoCode == x))
+
   def getCountryFromCodeWithDefault(countryCode: Option[String], defaultStr: String = "no country code"): String =
     getCountryFromCode(countryCode).fold(countryCode.getOrElse(defaultStr))(_.countryName)
 
-  def get2AlphaCodeFrom3AlphaCode(alphaThreeCode : Option[String]) : Option[String] =
+  def get2AlphaCodeFrom3AlphaCode(alphaThreeCode: Option[String]): Option[String] =
     countriesFromFile.find(country => alphaThreeCode.contains(country.alphaThreeCode)).map(_.alphaTwoCode)
 
-  def get3AlphaCodeFrom2AlphaCode(alphaTwoCode : Option[String]) : Option[String] =
+  def get3AlphaCodeFrom2AlphaCode(alphaTwoCode: Option[String]): Option[String] =
     alphaTwoCode.map(cc => countriesFromFile.filter(countryNamesWithCodes => cc == countryNamesWithCodes.alphaTwoCode).head).map(_.alphaThreeCode)
 
   lazy private val countriesFromFile: List[Country] = {
     def fromJsonFile: List[Country] =
       Json.parse(getClass.getResourceAsStream("/location-autocomplete-canonical-list.json")) match {
         case JsArray(cs) =>
-          cs.toList.collect {
-            case JsArray(scala.collection.Seq(c: JsString, cc: JsString)) =>
-              Country(c.value, alphaTwoCode(cc.value), countriesThreeAlphaMapFromCountryName.getOrElse(c.value, "N/A"))
+          cs.toList.collect { case JsArray(scala.collection.Seq(c: JsString, cc: JsString)) =>
+            Country(c.value, alphaTwoCode(cc.value), countriesThreeAlphaMapFromCountryName.getOrElse(c.value, "N/A"))
           }
         case _ =>
           throw new IllegalArgumentException(
@@ -66,38 +61,34 @@ object Countries {
     fromJsonFile.sortBy(_.countryName)
   }
 
-  lazy private val countriesTwoAlphaMap : Map[String, String] = {
+  lazy private val countriesTwoAlphaMap: Map[String, String] =
     Json.parse(getClass.getResourceAsStream("/location-autocomplete-canonical-list.json")) match {
       case JsArray(cs) =>
-        cs.toList.collect {
-          case JsArray(scala.collection.Seq(c: JsString, cc: JsString)) =>
-            (alphaTwoCode(cc.value), c.value)
+        cs.toList.collect { case JsArray(scala.collection.Seq(c: JsString, cc: JsString)) =>
+          (alphaTwoCode(cc.value), c.value)
         }.toMap
       case _ =>
         throw new IllegalArgumentException(
           "Could not read JSON array of countries from : location-autocomplete-canonical-list.json"
         )
     }
+
+  lazy private val countriesThreeAlphaMap: Map[String, String] = {
+    val filename = "/three-digit-country-code-to-country-name.csv"
+    val lines    = Source.fromInputStream(getClass.getResourceAsStream(filename)).mkString.split("\\n").toList
+    lines
+      .foldLeft(List[(String, String)]()) { (acc, item) =>
+        val lineArray = item.split("=")
+        val (countryCode, countryName) =
+          (lineArray.headOption, lineArray.lastOption) match {
+            case (Some(cc), Some(cn)) => (cc, cn)
+            case _                    => throw new RuntimeException("Could not read country data from : location-autocomplete-canonical-list.json ")
+          }
+        (countryCode -> countryName) :: acc
+      }
+      .toMap
   }
 
-  lazy private val countriesThreeAlphaMap : Map[String, String] = {
-    val filename = "/three-digit-country-code-to-country-name.csv"
-    val lines = Source.fromInputStream(getClass.getResourceAsStream(filename)).mkString.split("\\n").toList
-    lines.foldLeft(List[(String, String)]()) {
-      (acc, item) =>
-        val lineArray = item.split("=")
-        val (countryCode, countryName) = {
-          try {
-            (lineArray.head, lineArray.last)
-          }
-          catch {
-            case _: Throwable => throw new RuntimeException("Could not read country data from : location-autocomplete-canonical-list.json ")
-          }
-        }
-        (countryCode -> countryName) :: acc
-    }.toMap
-  }
-  
   private def mdgCountryCodes(fileName: String): List[String] =
     Source
       .fromInputStream(getClass.getResourceAsStream(fileName))

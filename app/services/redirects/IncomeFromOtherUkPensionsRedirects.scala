@@ -30,33 +30,30 @@ object IncomeFromOtherUkPensionsRedirects {
 
   def cyaPageCall(taxYear: Int): Call = UkPensionIncomeCYAController.show(taxYear)
 
-  def schemeIsFinishedCheck(schemes: Seq[UkPensionIncomeViewModel], index: Int, taxYear: Int, continueRedirect: Call): Result = {
+  def schemeIsFinishedCheck(schemes: Seq[UkPensionIncomeViewModel], index: Int, taxYear: Int, continueRedirect: Call): Result =
     if (schemes(index).isFinished) {
       Redirect(PensionSchemeSummaryController.show(taxYear, Some(index)))
     } else {
       Redirect(continueRedirect)
     }
-  }
 
-  def indexCheckThenJourneyCheck(data: PensionsUserData, optIndex: Option[Int],
-                                 currentPage: IncomeFromOtherUkPensionsPages,
-                                 taxYear: Int)(continue: PensionsUserData => Future[Result]): Future[Result] = {
+  def indexCheckThenJourneyCheck(data: PensionsUserData, optIndex: Option[Int], currentPage: IncomeFromOtherUkPensionsPages, taxYear: Int)(
+      continue: PensionsUserData => Future[Result]): Future[Result] = {
 
     val checkRedirect = journeyCheck(currentPage, _, taxYear, optIndex)
-    redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-      data: PensionsUserData =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
+      val pensionSchemes: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
+      val validatedIndex: Option[Int]                   = optIndex.filter(pensionSchemes.indices.contains)
 
-        val pensionSchemes: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
-        val validatedIndex: Option[Int] = optIndex.filter(pensionSchemes.indices.contains)
-
-        (pensionSchemes.nonEmpty, validatedIndex) match {
-          case (true, Some(_)) => continue(data) // happy path
-          case (_, _) if currentPage.equals(DoYouGetUkPensionSchemePaymentsPage) => continue(data)
-          case (_, _) if currentPage.equals(CheckUkPensionIncomeCYAPage) => continue(data)
-          case (_, None) if currentPage.equals(PensionSchemeDetailsPage) => continue(data) // new scheme
-          case (_, None) if currentPage.equals(RemovePensionIncomePage) => Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear))) // bad remove request
-          case (_, _) => Future.successful(Redirect(redirectForSchemeLoop(pensionSchemes, taxYear))) // scheme start or summary
-        }
+      (pensionSchemes.nonEmpty, validatedIndex) match {
+        case (true, Some(_))                                                   => continue(data) // happy path
+        case (_, _) if currentPage.equals(DoYouGetUkPensionSchemePaymentsPage) => continue(data)
+        case (_, _) if currentPage.equals(CheckUkPensionIncomeCYAPage)         => continue(data)
+        case (_, None) if currentPage.equals(PensionSchemeDetailsPage)         => continue(data) // new scheme
+        case (_, None) if currentPage.equals(RemovePensionIncomePage) =>
+          Future.successful(Redirect(UkPensionIncomeSummaryController.show(taxYear))) // bad remove request
+        case (_, _) => Future.successful(Redirect(redirectForSchemeLoop(pensionSchemes, taxYear))) // scheme start or summary
+      }
     }
   }
 
@@ -71,7 +68,10 @@ object IncomeFromOtherUkPensionsRedirects {
 
   def journeyCheck(currentPage: IncomeFromOtherUkPensionsPages, cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
     val incomeFromPensions = cya.incomeFromPensions
-    if (isPageValidInJourney(currentPage.pageId, incomeFromPensions) && previousQuestionIsAnswered(currentPage.pageId, optIndex, incomeFromPensions)) {
+    if (isPageValidInJourney(currentPage.pageId, incomeFromPensions) && previousQuestionIsAnswered(
+        currentPage.pageId,
+        optIndex,
+        incomeFromPensions)) {
       None
     } else {
       Some(Redirect(UkPensionSchemePaymentsController.show(taxYear)))
@@ -86,11 +86,15 @@ object IncomeFromOtherUkPensionsRedirects {
     val firstQuestionTrue = { viewModel: IncomeFromPensionsViewModel => viewModel.uKPensionIncomesQuestion.getOrElse(false) }
 
     Map(
-      1 -> valid, 8 -> valid,
+      1 -> valid,
+      8 -> valid,
       // Page 2 to 7 requires first question to be answered true
-      2 -> firstQuestionTrue, 3 -> firstQuestionTrue,
-      4 -> firstQuestionTrue, 5 -> firstQuestionTrue,
-      6 -> firstQuestionTrue, 7 -> firstQuestionTrue
+      2 -> firstQuestionTrue,
+      3 -> firstQuestionTrue,
+      4 -> firstQuestionTrue,
+      5 -> firstQuestionTrue,
+      6 -> firstQuestionTrue,
+      7 -> firstQuestionTrue
     )
   }
 
@@ -108,8 +112,8 @@ object IncomeFromOtherUkPensionsRedirects {
           false
         else
           viewModel.uKPensionIncomes(validIndex.get).pensionSchemeName.isDefined &&
-            viewModel.uKPensionIncomes(validIndex.get).pensionSchemeRef.isDefined &&
-            viewModel.uKPensionIncomes(validIndex.get).pensionId.isDefined
+          viewModel.uKPensionIncomes(validIndex.get).pensionSchemeRef.isDefined &&
+          viewModel.uKPensionIncomes(validIndex.get).pensionId.isDefined
       },
       4 -> { viewModel: IncomeFromPensionsViewModel =>
         if (validIndex.isEmpty) false
@@ -121,7 +125,7 @@ object IncomeFromOtherUkPensionsRedirects {
       },
       6 -> { _: IncomeFromPensionsViewModel => true }, // if valid then schemes can exist or be empty
       7 -> { viewModel: IncomeFromPensionsViewModel =>
-        if (validIndex.isEmpty) true // to summary page
+        if (validIndex.isEmpty) true                               // to summary page
         else viewModel.uKPensionIncomes(validIndex.get).isFinished // to journey start
       },
       8 -> { viewModel: IncomeFromPensionsViewModel =>

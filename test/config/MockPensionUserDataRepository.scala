@@ -28,29 +28,34 @@ trait MockPensionUserDataRepository extends MockFactory {
 
   val mockPensionUserDataRepository: PensionsUserDataRepository = mock[PensionsUserDataRepository]
 
-  def mockFind(taxYear: Int, user: User,
-               repositoryResponse: Either[DatabaseError, Option[PensionsUserData]]
-              ): CallHandler2[Int, User, Future[Either[DatabaseError, Option[PensionsUserData]]]] = {
-    (mockPensionUserDataRepository.find(_: Int, _: User))
+  def mockFind(taxYear: Int, user: User, repositoryResponse: Either[DatabaseError, Option[PensionsUserData]])
+      : CallHandler2[Int, User, Future[Either[DatabaseError, Option[PensionsUserData]]]] =
+    (mockPensionUserDataRepository
+      .find(_: Int, _: User))
       .expects(taxYear, user)
       .returns(Future.successful(repositoryResponse))
       .anyNumberOfTimes()
-  }
 
   def mockCreateOrUpdate(PensionUserData: PensionsUserData,
-                         response: Either[DatabaseError, Unit]): CallHandler1[PensionsUserData, Future[Either[DatabaseError, Unit]]] = {
-    (mockPensionUserDataRepository.createOrUpdate(_: PensionsUserData))
+                         response: Either[DatabaseError, Unit]): CallHandler1[PensionsUserData, Future[Either[DatabaseError, Unit]]] =
+    (mockPensionUserDataRepository
+      .createOrUpdate(_: PensionsUserData))
       .expects(PensionUserData)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
-  }
 
-  def mockClear(taxYear: Int, user: User, response: Boolean): Unit = {
-    (mockPensionUserDataRepository.clear(_: Int, _: User))
+  def mockCreateOrUpdate(response: Either[DatabaseError, Unit]): CallHandler1[PensionsUserData, Future[Either[DatabaseError, Unit]]] =
+    (mockPensionUserDataRepository
+      .createOrUpdate(_: PensionsUserData))
+      .expects(*)
+      .returns(Future.successful(response))
+      .anyNumberOfTimes()
+
+  def mockClear(taxYear: Int, user: User, response: Boolean): Unit =
+    (mockPensionUserDataRepository
+      .clear(_: Int, _: User))
       .expects(taxYear, user)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
-  }
-
 
 }

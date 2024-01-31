@@ -28,17 +28,20 @@ object IncomeTaxUserDataHttpParser extends APIParser with Logging {
   type IncomeTaxUserDataResponse = Either[APIErrorModel, IncomeTaxUserData]
 
   override val parserName: String = "IncomeTaxUserDataHttpParser"
-  override val service: String = "income-tax-submission"
+  override val service: String    = "income-tax-submission"
 
   implicit object IncomeTaxUserDataHttpReads extends HttpReads[IncomeTaxUserDataResponse] {
     override def read(method: String, url: String, response: HttpResponse): IncomeTaxUserDataResponse = {
       ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
 
       response.status match {
-        case OK => response.json.validate[IncomeTaxUserData].fold[IncomeTaxUserDataResponse](
-          _ => badSuccessJsonFromAPI,
-          parsedModel => Right(parsedModel)
-        )
+        case OK =>
+          response.json
+            .validate[IncomeTaxUserData]
+            .fold[IncomeTaxUserDataResponse](
+              _ => badSuccessJsonFromAPI,
+              parsedModel => Right(parsedModel)
+            )
         case NO_CONTENT => Right(IncomeTaxUserData())
         case INTERNAL_SERVER_ERROR =>
           pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))

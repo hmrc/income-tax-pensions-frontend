@@ -28,7 +28,8 @@ import utils.{EncryptedValue, SecureGCMCipher}
 case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewModel] = None,
                                        statePensionLumpSum: Option[StateBenefitViewModel] = None,
                                        uKPensionIncomesQuestion: Option[Boolean] = None,
-                                       uKPensionIncomes: Seq[UkPensionIncomeViewModel] = Seq.empty) extends PensionCYABaseModel {
+                                       uKPensionIncomes: Seq[UkPensionIncomeViewModel] = Seq.empty)
+    extends PensionCYABaseModel {
 
   def isEmpty: Boolean =
     statePension.isEmpty && statePensionLumpSum.isEmpty && uKPensionIncomesQuestion.isEmpty && uKPensionIncomes.isEmpty
@@ -61,11 +62,10 @@ object IncomeFromPensionsViewModel {
   implicit val format: OFormat[IncomeFromPensionsViewModel] = Json.format[IncomeFromPensionsViewModel]
 }
 
-case class EncryptedIncomeFromPensionsViewModel(
-                                       statePension: Option[EncryptedStateBenefitViewModel] = None,
-                                       statePensionLumpSum: Option[EncryptedStateBenefitViewModel] = None,
-                                       uKPensionIncomesQuestion: Option[EncryptedValue] = None,
-                                       uKPensionIncomes: Seq[EncryptedUkPensionIncomeViewModel] = Seq.empty) {
+case class EncryptedIncomeFromPensionsViewModel(statePension: Option[EncryptedStateBenefitViewModel] = None,
+                                                statePensionLumpSum: Option[EncryptedStateBenefitViewModel] = None,
+                                                uKPensionIncomesQuestion: Option[EncryptedValue] = None,
+                                                uKPensionIncomes: Seq[EncryptedUkPensionIncomeViewModel] = Seq.empty) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): IncomeFromPensionsViewModel =
     IncomeFromPensionsViewModel(

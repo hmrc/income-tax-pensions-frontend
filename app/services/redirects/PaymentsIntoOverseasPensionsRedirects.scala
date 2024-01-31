@@ -27,7 +27,6 @@ import services.redirects.SimpleRedirectService.{checkForExistingSchemes, redire
 
 import scala.concurrent.Future
 
-
 object PaymentsIntoOverseasPensionsRedirects {
 
   def redirectForSchemeLoop(reliefs: Seq[Relief], taxYear: Int): Call = {
@@ -39,49 +38,44 @@ object PaymentsIntoOverseasPensionsRedirects {
     )
   }
 
-  def schemeIsFinishedCheck(schemes: Seq[Relief], index: Int, taxYear: Int, continueRedirect: Call): Result = {
+  def schemeIsFinishedCheck(schemes: Seq[Relief], index: Int, taxYear: Int, continueRedirect: Call): Result =
     if (schemes(index).isFinished) {
       Redirect(ReliefsSchemeDetailsController.show(taxYear, Some(index)))
     } else {
       Redirect(continueRedirect)
     }
-  }
 
-  def indexCheckThenJourneyCheck(data: PensionsUserData, optIndex: Option[Int],
-                                 currentPage: PaymentsIntoOverseasPensionsPages,
-                                 taxYear: Int)(continue: Relief => Future[Result]): Future[Result] = {
+  def indexCheckThenJourneyCheck(data: PensionsUserData, optIndex: Option[Int], currentPage: PaymentsIntoOverseasPensionsPages, taxYear: Int)(
+      continue: Relief => Future[Result]): Future[Result] = {
 
-    val reliefs = data.pensions.paymentsIntoOverseasPensions.reliefs
+    val reliefs                     = data.pensions.paymentsIntoOverseasPensions.reliefs
     val validatedIndex: Option[Int] = validateIndex(optIndex, reliefs)
     (reliefs, validatedIndex) match {
       case (reliefs, None) if reliefs.nonEmpty =>
-
         val checkRedirect = journeyCheckIndex(currentPage, _, taxYear, reliefs, None)
-        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-          _ =>
-            Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { _ =>
+          Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
         }
 
       case (_, None) =>
-
         val checkRedirect = journeyCheck(currentPage, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-          _ =>
-            Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { _ =>
+          Future.successful(Redirect(redirectForSchemeLoop(reliefs, taxYear)))
         }
 
       case (_, Some(index)) =>
-
         val checkRedirect = journeyCheckIndex(currentPage, _, taxYear, reliefs, Some(index))
-        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) {
-          data: PensionsUserData =>
-            continue(data.pensions.paymentsIntoOverseasPensions.reliefs(index))
+        redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
+          continue(data.pensions.paymentsIntoOverseasPensions.reliefs(index))
         }
     }
   }
 
-  private def journeyCheckIndex(currentPage: PaymentsIntoOverseasPensionsPages, cya: PensionsCYAModel, taxYear: Int,
-                                reliefs: Seq[Relief], index: Option[Int]): Option[Result] = {
+  private def journeyCheckIndex(currentPage: PaymentsIntoOverseasPensionsPages,
+                                cya: PensionsCYAModel,
+                                taxYear: Int,
+                                reliefs: Seq[Relief],
+                                index: Option[Int]): Option[Result] = {
     val paymentsIOP = cya.paymentsIntoOverseasPensions
     if (isPageValidInJourney(currentPage, paymentsIOP, index)) {
       None
@@ -94,7 +88,6 @@ object PaymentsIntoOverseasPensionsRedirects {
     }
   }
 
-
   def journeyCheck(currentPage: PaymentsIntoOverseasPensionsPages, cya: PensionsCYAModel, taxYear: Int, index: Option[Int] = None): Option[Result] = {
     val paymentsIOP = cya.paymentsIntoOverseasPensions
     if (isPageValidInJourney(currentPage, paymentsIOP, index)) {
@@ -106,38 +99,33 @@ object PaymentsIntoOverseasPensionsRedirects {
 
   def cyaPageCall(taxYear: Int): Call = PaymentsIntoOverseasPensionsCYAController.show(taxYear)
 
-
-  private val indexPageValidInJourney: Map[Int, Relief => Boolean] = {
+  private val indexPageValidInJourney: Map[Int, Relief => Boolean] =
     Map(
-      4 -> { relief: Relief => relief.customerReference.isDefined },
-      5 -> { relief: Relief => relief.customerReference.isDefined },
-      6 -> { relief: Relief => relief.customerReference.isDefined },
-      7 -> { relief: Relief => relief.customerReference.isDefined && relief.reliefType.contains(MigrantMemberRelief) }, //MMR QOPS Page
-      8 -> { relief: Relief => relief.customerReference.isDefined && relief.reliefType.contains(DoubleTaxationRelief) }, //DTR Page
-      9 -> { relief: Relief => relief.customerReference.isDefined && relief.reliefType.contains(TransitionalCorrespondingRelief) }, // TCR SF74 Page
+      4  -> { relief: Relief => relief.customerReference.isDefined },
+      5  -> { relief: Relief => relief.customerReference.isDefined },
+      6  -> { relief: Relief => relief.customerReference.isDefined },
+      7  -> { relief: Relief => relief.customerReference.isDefined && relief.reliefType.contains(MigrantMemberRelief) },             // MMR QOPS Page
+      8  -> { relief: Relief => relief.customerReference.isDefined && relief.reliefType.contains(DoubleTaxationRelief) },            // DTR Page
+      9  -> { relief: Relief => relief.customerReference.isDefined && relief.reliefType.contains(TransitionalCorrespondingRelief) }, // TCR SF74 Page
       10 -> { relief: Relief => relief.isFinished },
       12 -> { relief: Relief => relief.isFinished }
     )
-  }
 
-  private val pageValidInJourneyMap: Map[Int, PaymentsIntoOverseasPensionsViewModel => Boolean] = {
+  private val pageValidInJourneyMap: Map[Int, PaymentsIntoOverseasPensionsViewModel => Boolean] =
     Map(
       1 -> { _: PaymentsIntoOverseasPensionsViewModel => true },
       2 -> { piopVM: PaymentsIntoOverseasPensionsViewModel =>
-        piopVM.paymentsIntoOverseasPensionsQuestions.exists(x =>
-          x && piopVM.paymentsIntoOverseasPensionsAmount.isDefined)
+        piopVM.paymentsIntoOverseasPensionsQuestions.exists(x => x && piopVM.paymentsIntoOverseasPensionsAmount.isDefined)
       },
-      3 -> { piopVM: PaymentsIntoOverseasPensionsViewModel => piopVM.employerPaymentsQuestion.getOrElse(false) },
-      4 -> { piopVM: PaymentsIntoOverseasPensionsViewModel => !piopVM.taxPaidOnEmployerPaymentsQuestion.getOrElse(true) }, //cust reference
-      11 -> { piopVM: PaymentsIntoOverseasPensionsViewModel => piopVM.reliefs.isEmpty || piopVM.reliefs.forall(_.isFinished) }, //summary page
+      3  -> { piopVM: PaymentsIntoOverseasPensionsViewModel => piopVM.employerPaymentsQuestion.getOrElse(false) },
+      4  -> { piopVM: PaymentsIntoOverseasPensionsViewModel => !piopVM.taxPaidOnEmployerPaymentsQuestion.getOrElse(true) },     // cust reference
+      11 -> { piopVM: PaymentsIntoOverseasPensionsViewModel => piopVM.reliefs.isEmpty || piopVM.reliefs.forall(_.isFinished) }, // summary page
       13 -> { piopVM: PaymentsIntoOverseasPensionsViewModel => piopVM.isFinished }
     )
-  }
-
 
   private def isPageValidInJourney(currentPage: PaymentsIntoOverseasPensionsPages,
                                    pIPViewModel: PaymentsIntoOverseasPensionsViewModel,
-                                   index: Option[Int]): Boolean = {
+                                   index: Option[Int]): Boolean =
     validateIndex(index, pIPViewModel.reliefs) match {
       case Some(value) if currentPage.hasIndex =>
         indexPageValidInJourney.getOrElse(currentPage.journeyNo, { _: Relief => false })(pIPViewModel.reliefs(value))
@@ -147,11 +135,8 @@ object PaymentsIntoOverseasPensionsRedirects {
         pageValidInJourneyMap.getOrElse(currentPage.journeyNo, { _: PaymentsIntoOverseasPensionsViewModel => false })(pIPViewModel)
       case _ => false
     }
-  }
 
-  private def validateIndex(index: Option[Int], pensionSchemesList: Seq[Relief]): Option[Int] = {
+  private def validateIndex(index: Option[Int], pensionSchemesList: Seq[Relief]): Option[Int] =
     index.filter(i => i >= 0 && i < pensionSchemesList.size)
-  }
-
 
 }

@@ -38,20 +38,21 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxableAmountController @Inject()(authAction: AuthorisedAction,
-                                        pensionSessionService: PensionSessionService,
-                                        taxableAmountView: TaxableAmountView,
-                                        errorHandler: ErrorHandler)
-                                       (implicit val mcc: MessagesControllerComponents,
-                                        appConfig: AppConfig, clock: Clock,
-                                        ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with SessionHelper with FormUtils {
+class TaxableAmountController @Inject() (
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    taxableAmountView: TaxableAmountView,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper
+    with FormUtils {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, YourTaxableAmountPage, taxYear) { data =>
-
           if (validTaxAmounts(data, index.getOrElse(0))) {
             val (amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr) = populateView(data, index.getOrElse(0))
             Future.successful(Ok(taxableAmountView(amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr, taxYear, index)))
@@ -68,10 +69,9 @@ class TaxableAmountController @Inject()(authAction: AuthorisedAction,
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, YourTaxableAmountPage, taxYear) { data =>
-
           val updatedCyaModel = updatePensionScheme(data, getTaxableAmount(data, index.getOrElse(0)), taxYear, index.getOrElse(0))
-          pensionSessionService.createOrUpdateSessionData(request.user,
-            updatedCyaModel, taxYear, data.isPriorSubmission)(errorHandler.internalServerError()) {
+          pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+            errorHandler.internalServerError()) {
             Redirect(PensionSchemeSummaryController.show(taxYear, index))
           }
 
@@ -80,7 +80,8 @@ class TaxableAmountController @Inject()(authAction: AuthorisedAction,
     }
   }
 
-  /** *************************************  Helper functions  **************************************** */
+  /** ************************************* Helper functions ****************************************
+    */
 
   private def validTaxAmounts(data: PensionsUserData, index: Int): Boolean = {
     val amountBeforeTax = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount
@@ -90,22 +91,23 @@ class TaxableAmountController @Inject()(authAction: AuthorisedAction,
   }
 
   private def populateView(data: PensionsUserData, index: Int): (Option[String], Option[String], Option[String], Option[Boolean]) = {
-    val amountBeforeTax = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount
-    val nonUkTaxPaidOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
+    val amountBeforeTax    = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount
+    val nonUkTaxPaidOpt    = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
     val signedNonUkTaxPaid = nonUkTaxPaidOpt.map(v => if (v > 0) -v else v)
-    val ftcr = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
-    val taxableAmount = getTaxableAmount(data, index)
-    val viewValues = formatValues(amountBeforeTax, signedNonUkTaxPaid, taxableAmount)
+    val ftcr               = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
+    val taxableAmount      = getTaxableAmount(data, index)
+    val viewValues         = formatValues(amountBeforeTax, signedNonUkTaxPaid, taxableAmount)
     (viewValues._1, viewValues._2, viewValues._3, ftcr)
   }
 
   private def formatValues(amountBeforeTax: Option[BigDecimal],
                            signedNonUkTaxPaid: Option[BigDecimal],
                            taxableAmount: Option[BigDecimal]): (Option[String], Option[String], Option[String]) = {
-    def formatNoZeros(amount: BigDecimal): String = {
-      NumberFormat.getCurrencyInstance(Locale.UK).format(amount)
+    def formatNoZeros(amount: BigDecimal): String =
+      NumberFormat
+        .getCurrencyInstance(Locale.UK)
+        .format(amount)
         .replaceAll("\\.00", "")
-    }
 
     (
       amountBeforeTax.map(amount => formatNoZeros(amount)),
@@ -116,16 +118,17 @@ class TaxableAmountController @Inject()(authAction: AuthorisedAction,
 
   private def getTaxableAmount(data: PensionsUserData, index: Int): Option[BigDecimal] = {
     val amountBeforeTaxOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount
-    val nonUkTaxPaidOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
+    val nonUkTaxPaidOpt    = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
     for {
       amountBeforeTax <- amountBeforeTaxOpt
-      nonUkTaxPaid <- nonUkTaxPaidOpt
-      isFtcr <- data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
-      taxableAmount = if (isFtcr) {
-        amountBeforeTax
-      } else {
-        amountBeforeTax - nonUkTaxPaid
-      }
+      nonUkTaxPaid    <- nonUkTaxPaidOpt
+      isFtcr          <- data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
+      taxableAmount =
+        if (isFtcr) {
+          amountBeforeTax
+        } else {
+          amountBeforeTax - nonUkTaxPaid
+        }
     } yield taxableAmount
   }
 
@@ -134,9 +137,11 @@ class TaxableAmountController @Inject()(authAction: AuthorisedAction,
     data.pensions.copy(
       incomeFromOverseasPensions = viewModel.copy(
         overseasIncomePensionSchemes = viewModel.overseasIncomePensionSchemes
-          .updated(index, viewModel.overseasIncomePensionSchemes(index)
-            .copy(taxableAmount = taxableAmount))
-
+          .updated(
+            index,
+            viewModel
+              .overseasIncomePensionSchemes(index)
+              .copy(taxableAmount = taxableAmount))
       ))
   }
 }

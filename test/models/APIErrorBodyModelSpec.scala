@@ -21,19 +21,16 @@ import play.api.libs.json.{JsObject, Json}
 import utils.UnitTest
 
 class APIErrorBodyModelSpec extends UnitTest {
-  val model: APIErrorBodyModel = new APIErrorBodyModel(
-    "SERVICE_UNAVAILABLE", "The service is currently unavailable")
+  val model: APIErrorBodyModel = new APIErrorBodyModel("SERVICE_UNAVAILABLE", "The service is currently unavailable")
   val jsModel: JsObject = Json.obj(
-    "code" -> "SERVICE_UNAVAILABLE",
+    "code"   -> "SERVICE_UNAVAILABLE",
     "reason" -> "The service is currently unavailable"
   )
 
   val errorsJsModel: JsObject = Json.obj(
     "failures" -> Json.arr(
-      Json.obj("code" -> "SERVICE_UNAVAILABLE",
-        "reason" -> "The service is currently unavailable"),
-      Json.obj("code" -> "INTERNAL_SERVER_ERROR",
-        "reason" -> "The service is currently facing issues.")
+      Json.obj("code" -> "SERVICE_UNAVAILABLE", "reason"   -> "The service is currently unavailable"),
+      Json.obj("code" -> "INTERNAL_SERVER_ERROR", "reason" -> "The service is currently facing issues.")
     )
   )
 
@@ -49,11 +46,15 @@ class APIErrorBodyModelSpec extends UnitTest {
 
   "The APIErrorModel" should {
 
-    val model = APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("SERVICE_UNAVAILABLE","The service is currently unavailable"))
-    val errorsModel = APIErrorModel(SERVICE_UNAVAILABLE, APIErrorsBodyModel(Seq(
-      APIErrorBodyModel("SERVICE_UNAVAILABLE","The service is currently unavailable"),
-      APIErrorBodyModel("INTERNAL_SERVER_ERROR","The service is currently facing issues.")
-    )))
+    val model = APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("SERVICE_UNAVAILABLE", "The service is currently unavailable"))
+    val errorsModel = APIErrorModel(
+      SERVICE_UNAVAILABLE,
+      APIErrorsBodyModel(
+        Seq(
+          APIErrorBodyModel("SERVICE_UNAVAILABLE", "The service is currently unavailable"),
+          APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues.")
+        ))
+    )
 
     "parse to Json" in {
       model.toJson shouldBe jsModel

@@ -19,25 +19,18 @@ package models.pension.reliefs
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
-case class PensionReliefs(submittedOn: String,
-                          deletedOn: Option[String],
-                          pensionReliefs: Reliefs
-                         )
+case class PensionReliefs(submittedOn: String, deletedOn: Option[String], pensionReliefs: Reliefs)
 
 object PensionReliefs {
   implicit val formats: OFormat[PensionReliefs] = Json.format[PensionReliefs]
 }
 
-case class EncryptedPensionReliefs(submittedOn: EncryptedValue,
-                                   deletedOn: Option[EncryptedValue],
-                                   pensionReliefs: EncryptedReliefs
-                                  ) {
-  
-  def isEmpty(): Boolean = this.productIterator.forall(_ == None)
-  def nonEmpty(): Boolean = ! isEmpty()
+case class EncryptedPensionReliefs(submittedOn: EncryptedValue, deletedOn: Option[EncryptedValue], pensionReliefs: EncryptedReliefs) {
+
+  def isEmpty(): Boolean  = this.productIterator.forall(_ == None)
+  def nonEmpty(): Boolean = !isEmpty()
 }
 
 object EncryptedPensionReliefs {
   implicit val formats: OFormat[EncryptedPensionReliefs] = Json.format[EncryptedPensionReliefs]
 }
-

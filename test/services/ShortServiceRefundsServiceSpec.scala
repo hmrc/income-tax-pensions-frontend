@@ -29,76 +29,75 @@ class ShortServiceRefundsServiceSpec extends UnitTest with MockPensionSessionSer
 
   "createOrUpdateShortServiceRefundQuestion." should {
     "update cya with ukRefundCharge to false for ShortServiceRefunds with index 0" in {
-      val index = Some(0)
-        val refundSchemes = aShortServiceRefundsViewModel.refundPensionScheme.head.copy(ukRefundCharge = None)
-        val refundsCya = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(refundSchemes))
-        val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundsCya))
-        val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds =
-          aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(refundSchemes.copy(ukRefundCharge = Some(false)))))
-
+      val index         = Some(0)
+      val refundSchemes = aShortServiceRefundsViewModel.refundPensionScheme.head.copy(ukRefundCharge = None)
+      val refundsCya    = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(refundSchemes))
+      val userData      = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundsCya))
+      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds =
+        aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(refundSchemes.copy(ukRefundCharge = Some(false)))))
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = false, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with ukRefundCharge to true when no ShortServiceRefunds exists" in {
-      val index = None
+      val index      = None
       val refundsCya = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq.empty)
-      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundsCya))
+      val userData   = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundsCya))
 
       val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds =
         aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = Some(true)))))
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = true, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with ukRefundCharge to false when no ShortServiceRefunds exists" in {
-      val index = None
+      val index      = None
       val refundsCya = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq.empty)
-      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundsCya))
+      val userData   = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundsCya))
 
       val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds =
         aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = Some(false)))))
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = false, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
 
-
     "update cya with ukRefundCharge to true when refundPensionSchemes exists" in {
-      val index = None
+      val index         = None
       val refundSchemes = aShortServiceRefundsViewModel.refundPensionScheme.head.copy(ukRefundCharge = Some(false))
-      val refundsCya = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(refundSchemes))
-      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundsCya))
+      val refundsCya    = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(refundSchemes))
+      val userData      = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundsCya))
 
-      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds =
-        aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
-          refundSchemes.copy(ukRefundCharge = Some(false)), OverseasRefundPensionScheme(ukRefundCharge = Some(true)))
-        ))
+      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds = aShortServiceRefundsViewModel.copy(refundPensionScheme =
+        Seq(refundSchemes.copy(ukRefundCharge = Some(false)), OverseasRefundPensionScheme(ukRefundCharge = Some(true)))))
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = true, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with ukRefundCharge to false when refundPensionSchemes exists" in {
-      val index = None
+      val index         = None
       val refundSchemes = aShortServiceRefundsViewModel.refundPensionScheme.head.copy(ukRefundCharge = Some(false))
-      val refundsCya = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(refundSchemes))
-      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundsCya))
+      val refundsCya    = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(refundSchemes))
+      val userData      = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundsCya))
 
-      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds =
-        aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
-          refundSchemes.copy(ukRefundCharge = Some(false)), OverseasRefundPensionScheme(ukRefundCharge = Some(false)))
-        ))
+      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds = aShortServiceRefundsViewModel.copy(refundPensionScheme =
+        Seq(refundSchemes.copy(ukRefundCharge = Some(false)), OverseasRefundPensionScheme(ukRefundCharge = Some(false)))))
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
 
-      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = false, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update cya with existing ukRefundCharge to true when multiple refundPensionSchemes exists but latest scheme does not contain name" in {
@@ -111,136 +110,142 @@ class ShortServiceRefundsServiceSpec extends UnitTest with MockPensionSessionSer
 
       val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundSchemes))
 
-      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds =
-        aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
-          OverseasRefundPensionScheme(ukRefundCharge = Some(true), name = Some("Scheme 1")),
-          OverseasRefundPensionScheme(ukRefundCharge = Some(true), name = None)
-        ))
-      )
+      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
+        OverseasRefundPensionScheme(ukRefundCharge = Some(true), name = Some("Scheme 1")),
+        OverseasRefundPensionScheme(ukRefundCharge = Some(true), name = None)
+      )))
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
       expectedCYA.shortServiceRefunds.refundPensionScheme.size shouldBe 2
-      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = true, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
 
     "update user session data with existing ukRefundCharge to Yes when refundPensionSchemes exists with nonUk data" in {
       val index = Some(0)
       val refundPensionSchemes = Seq(
-        OverseasRefundPensionScheme(ukRefundCharge = Some(false),
-          name = Some("Overseas Refund Scheme Name"),
-          pensionSchemeTaxReference = None,
-          qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
-          providerAddress = Some("Scheme Address"),
-          alphaTwoCountryCode = Some("FR"),
-          alphaThreeCountryCode = Some("FRA"))
-      )
-
-      val refundSchemes = aShortServiceRefundsViewModel.copy(refundPensionScheme = refundPensionSchemes)
-
-      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundSchemes))
-
-      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds =
-        aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
-          OverseasRefundPensionScheme(ukRefundCharge = Some(true))
-        ))
-      )
-
-      mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
-      expectedCYA.shortServiceRefunds.refundPensionScheme.size shouldBe 1
-      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
-    }
-
-    "update user session data with existing ukRefundCharge to No when refundPensionSchemes exists with Uk charge data" in {
-      val index = Some(0)
-      val refundPensionSchemes = Seq(
-        OverseasRefundPensionScheme(ukRefundCharge = Some(true),
-          name = Some("UK Refund Scheme Name"),
-          pensionSchemeTaxReference = Some("12345678RA"),
-          qualifyingRecognisedOverseasPensionScheme = None,
-          providerAddress = Some("Scheme Address"),
-          alphaTwoCountryCode = None,
-          alphaThreeCountryCode = None)
-      )
-
-      val refundSchemes = aShortServiceRefundsViewModel.copy(refundPensionScheme = refundPensionSchemes)
-
-      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundSchemes))
-
-      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds =
-        aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
-          OverseasRefundPensionScheme(ukRefundCharge = Some(false))
-        ))
-      )
-
-      mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
-      expectedCYA.shortServiceRefunds.refundPensionScheme.size shouldBe 1
-      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
-    }
-
-    "submits Yes for ukRefundCharge when it was true and doesn't clear data" in {
-      val index = Some(0)
-      val refundPensionSchemes = Seq(
-        OverseasRefundPensionScheme(ukRefundCharge = Some(true),
-          name = Some("UK Refund Scheme Name"),
-          pensionSchemeTaxReference = Some("12345678RA"),
-          qualifyingRecognisedOverseasPensionScheme = None,
-          providerAddress = Some("Scheme Address"),
-          alphaTwoCountryCode = None,
-          alphaThreeCountryCode = None)
-      )
-
-      val refundSchemes = aShortServiceRefundsViewModel.copy(refundPensionScheme = refundPensionSchemes)
-
-      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundSchemes))
-
-      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds =
-        aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
-          OverseasRefundPensionScheme(ukRefundCharge = Some(true),
-            name = Some("UK Refund Scheme Name"),
-            pensionSchemeTaxReference = Some("12345678RA"),
-            qualifyingRecognisedOverseasPensionScheme = None,
-            providerAddress = Some("Scheme Address"),
-            alphaTwoCountryCode = None,
-            alphaThreeCountryCode = None)
-        ))
-      )
-
-      mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
-      expectedCYA.shortServiceRefunds.refundPensionScheme.size shouldBe 1
-      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = true, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
-    }
-
-    "submits No for ukRefundCharge when it was false and doesn't clear data" in {
-      val index = Some(0)
-      val refundPensionSchemes = Seq(
-        OverseasRefundPensionScheme(ukRefundCharge = Some(false),
+        OverseasRefundPensionScheme(
+          ukRefundCharge = Some(false),
           name = Some("Overseas Refund Scheme Name"),
           pensionSchemeTaxReference = None,
           qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
           providerAddress = Some("Scheme Address"),
           alphaTwoCountryCode = Some("FR"),
           alphaThreeCountryCode = Some("FRA")
-      ))
+        )
+      )
 
       val refundSchemes = aShortServiceRefundsViewModel.copy(refundPensionScheme = refundPensionSchemes)
 
       val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundSchemes))
 
-      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds =
-        aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
-          OverseasRefundPensionScheme(ukRefundCharge = Some(false),
-            name = Some("Overseas Refund Scheme Name"),
-            pensionSchemeTaxReference = None,
-            qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
-            providerAddress = Some("Scheme Address"),
-            alphaTwoCountryCode = Some("FR"),
-            alphaThreeCountryCode = Some("FRA"))
-        ))
-      )
+      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
+        OverseasRefundPensionScheme(ukRefundCharge = Some(true))
+      )))
 
       mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
       expectedCYA.shortServiceRefunds.refundPensionScheme.size shouldBe 1
-      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = false, index)) shouldBe Right(aPensionsUserData.copy(pensions = expectedCYA))
+      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = true, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
+    }
+
+    "update user session data with existing ukRefundCharge to No when refundPensionSchemes exists with Uk charge data" in {
+      val index = Some(0)
+      val refundPensionSchemes = Seq(
+        OverseasRefundPensionScheme(
+          ukRefundCharge = Some(true),
+          name = Some("UK Refund Scheme Name"),
+          pensionSchemeTaxReference = Some("12345678RA"),
+          qualifyingRecognisedOverseasPensionScheme = None,
+          providerAddress = Some("Scheme Address"),
+          alphaTwoCountryCode = None,
+          alphaThreeCountryCode = None
+        )
+      )
+
+      val refundSchemes = aShortServiceRefundsViewModel.copy(refundPensionScheme = refundPensionSchemes)
+
+      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundSchemes))
+
+      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
+        OverseasRefundPensionScheme(ukRefundCharge = Some(false))
+      )))
+
+      mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
+      expectedCYA.shortServiceRefunds.refundPensionScheme.size shouldBe 1
+      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = false, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
+    }
+
+    "submits Yes for ukRefundCharge when it was true and doesn't clear data" in {
+      val index = Some(0)
+      val refundPensionSchemes = Seq(
+        OverseasRefundPensionScheme(
+          ukRefundCharge = Some(true),
+          name = Some("UK Refund Scheme Name"),
+          pensionSchemeTaxReference = Some("12345678RA"),
+          qualifyingRecognisedOverseasPensionScheme = None,
+          providerAddress = Some("Scheme Address"),
+          alphaTwoCountryCode = None,
+          alphaThreeCountryCode = None
+        )
+      )
+
+      val refundSchemes = aShortServiceRefundsViewModel.copy(refundPensionScheme = refundPensionSchemes)
+
+      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundSchemes))
+
+      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
+        OverseasRefundPensionScheme(
+          ukRefundCharge = Some(true),
+          name = Some("UK Refund Scheme Name"),
+          pensionSchemeTaxReference = Some("12345678RA"),
+          qualifyingRecognisedOverseasPensionScheme = None,
+          providerAddress = Some("Scheme Address"),
+          alphaTwoCountryCode = None,
+          alphaThreeCountryCode = None
+        )
+      )))
+
+      mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
+      expectedCYA.shortServiceRefunds.refundPensionScheme.size shouldBe 1
+      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = true, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
+    }
+
+    "submits No for ukRefundCharge when it was false and doesn't clear data" in {
+      val index = Some(0)
+      val refundPensionSchemes = Seq(
+        OverseasRefundPensionScheme(
+          ukRefundCharge = Some(false),
+          name = Some("Overseas Refund Scheme Name"),
+          pensionSchemeTaxReference = None,
+          qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
+          providerAddress = Some("Scheme Address"),
+          alphaTwoCountryCode = Some("FR"),
+          alphaThreeCountryCode = Some("FRA")
+        ))
+
+      val refundSchemes = aShortServiceRefundsViewModel.copy(refundPensionScheme = refundPensionSchemes)
+
+      val userData = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(shortServiceRefunds = refundSchemes))
+
+      val expectedCYA = aPensionsUserData.pensions.copy(shortServiceRefunds = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
+        OverseasRefundPensionScheme(
+          ukRefundCharge = Some(false),
+          name = Some("Overseas Refund Scheme Name"),
+          pensionSchemeTaxReference = None,
+          qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
+          providerAddress = Some("Scheme Address"),
+          alphaTwoCountryCode = Some("FR"),
+          alphaThreeCountryCode = Some("FRA")
+        )
+      )))
+
+      mockCreateOrUpdateSessionData(userData.copy(pensions = expectedCYA))
+      expectedCYA.shortServiceRefunds.refundPensionScheme.size shouldBe 1
+      await(underTest.createOrUpdateShortServiceRefundQuestion(userData, question = false, index)) shouldBe Right(
+        aPensionsUserData.copy(pensions = expectedCYA))
     }
   }
 }

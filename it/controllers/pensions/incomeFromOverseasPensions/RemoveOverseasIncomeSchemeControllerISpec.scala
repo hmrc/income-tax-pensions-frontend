@@ -32,7 +32,7 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > form > header > p"
+    val captionSelector: String    = "#main-content > div > div > form > header > p"
     val cancelLinkSelector: String = "#cancel-link-id"
   }
 
@@ -45,17 +45,17 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedTitle = "Are you sure you want to remove this overseas pension scheme?"
+    val expectedTitle                  = "Are you sure you want to remove this overseas pension scheme?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val buttonText = "Remove"
-    val cancelText = "Cancel"
+    val buttonText                     = "Remove"
+    val cancelText                     = "Cancel"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle = "A ydych chi’n siŵr eich bod am dynnu’r cynllun pensiwn tramor hwn?"
+    val expectedTitle                  = "A ydych chi’n siŵr eich bod am dynnu’r cynllun pensiwn tramor hwn?"
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val buttonText = "Tynnu"
-    val cancelText = "Canslo"
+    val buttonText                     = "Tynnu"
+    val cancelText                     = "Canslo"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
@@ -76,8 +76,12 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
             insertCyaData(aPensionsUserData)
-            urlGet(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(0))), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(0))),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
@@ -103,8 +107,11 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlGet(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, None)), follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlGet(
+            fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, None)),
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         s"has a SEE_OTHER ($SEE_OTHER) status" in {
@@ -119,8 +126,11 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(aPensionsUserData)
-          urlGet(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(3))), follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          urlGet(
+            fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(3))),
+            follow = false,
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         s"has a SEE_OTHER ($SEE_OTHER) status" in {
@@ -143,8 +153,12 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
             dropPensionsDB()
             authoriseAgentOrIndividual()
             insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(1))), body = "", follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(1))),
+              body = "",
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           s"has a SEE_OTHER ($SEE_OTHER) status" in {
@@ -165,8 +179,12 @@ class RemoveOverseasIncomeSchemeControllerISpec extends IntegrationTest with Bef
             dropPensionsDB()
             authoriseAgentOrIndividual()
             insertCyaData(aPensionsUserData)
-            urlPost(fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(invalidIndex))), body = "", follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlPost(
+              fullUrl(removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(invalidIndex))),
+              body = "",
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           s"has a SEE_OTHER ($SEE_OTHER) status" in {

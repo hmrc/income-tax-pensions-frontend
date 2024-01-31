@@ -36,16 +36,16 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class RemoveReliefSchemeController @Inject()(actionsProvider: ActionsProvider,
-                                             pensionSessionService: PensionSessionService,
-                                             view: RemoveReliefSchemeView,
-                                             errorHandler: ErrorHandler)
-                                            (implicit val mcc: MessagesControllerComponents,
-                                             appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class RemoveReliefSchemeController @Inject() (
+    actionsProvider: ActionsProvider,
+    pensionSessionService: PensionSessionService,
+    view: RemoveReliefSchemeView,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-
     indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, index, RemoveReliefsSchemePage, taxYear) { relief: Relief =>
       Future.successful(Ok(view(taxYear = taxYear, reliefSchemeList = List(relief), index = index)))
     }
@@ -54,24 +54,21 @@ class RemoveReliefSchemeController @Inject()(actionsProvider: ActionsProvider,
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
     val pensionReliefScheme = sessionUserData.pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
     validatedIndex(index, pensionReliefScheme.size)
-      .fold(Future.successful(Redirect(ReliefsSchemeSummaryController.show(taxYear)))) {
-        i =>
-          indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, Some(i), RemoveReliefsSchemePage, taxYear) { _ =>
-            val updatedPensionReliefScheme = pensionReliefScheme.patch(i, Nil, 1)
-            updateSessionData(sessionUserData.pensionsUserData, updatedPensionReliefScheme, taxYear)
-          }
+      .fold(Future.successful(Redirect(ReliefsSchemeSummaryController.show(taxYear)))) { i =>
+        indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, Some(i), RemoveReliefsSchemePage, taxYear) { _ =>
+          val updatedPensionReliefScheme = pensionReliefScheme.patch(i, Nil, 1)
+          updateSessionData(sessionUserData.pensionsUserData, updatedPensionReliefScheme, taxYear)
+        }
       }
   }
 
-  private def updateSessionData[T](pensionUserData: PensionsUserData,
-                                   reliefScheme: Seq[Relief],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
-    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(
-      paymentsIntoOverseasPensions = pensionUserData.pensions.paymentsIntoOverseasPensions.copy(
-        reliefs = reliefScheme))
+  private def updateSessionData[T](pensionUserData: PensionsUserData, reliefScheme: Seq[Relief], taxYear: Int)(implicit
+      request: UserSessionDataRequest[T]): Future[Result] = {
+    val updatedCyaModel: PensionsCYAModel =
+      pensionUserData.pensions.copy(paymentsIntoOverseasPensions = pensionUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = reliefScheme))
 
-    pensionSessionService.createOrUpdateSessionData[Result](request.user,
-      updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+    pensionSessionService.createOrUpdateSessionData[Result](request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
+      errorHandler.internalServerError()) {
       Redirect(ReliefsSchemeSummaryController.show(taxYear))
     }
   }

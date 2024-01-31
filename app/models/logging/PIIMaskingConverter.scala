@@ -18,17 +18,15 @@ package models.logging
 
 import scala.util.matching.Regex
 
-/**
- * It will programatically remove PII information from logs. Keep it up-to-date depending what PII we may log.
- */
+/** It will programatically remove PII information from logs. Keep it up-to-date depending what PII we may log.
+  */
 object PIIMaskingConverter {
   private val ninoPattern: Regex = """(?<=nino/)\w+""".r
 
   private val allPatterns = List(ninoPattern)
 
-  def mask(raw: String): String = {
+  def mask(raw: String): String =
     allPatterns.foldLeft(raw) { (maskedString, pattern) =>
       pattern.replaceAllIn(maskedString, _ => "REDACTED_FROM_LOGS")
     }
-  }
 }

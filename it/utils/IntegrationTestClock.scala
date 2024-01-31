@@ -19,10 +19,10 @@ package utils
 import org.joda.time.{DateTime, DateTimeZone}
 
 object IntegrationTestClock extends Clock {
-  private val year = 2021
-  private val month = 1
-  private val day = 1
-  private val hour = 0
+  private val year   = 2021
+  private val month  = 1
+  private val day    = 1
+  private val hour   = 0
   private val minute = 0
 
   override def now(zone: DateTimeZone = DateTimeZone.UTC): DateTime = new DateTime(year, month, day, hour, minute, zone)

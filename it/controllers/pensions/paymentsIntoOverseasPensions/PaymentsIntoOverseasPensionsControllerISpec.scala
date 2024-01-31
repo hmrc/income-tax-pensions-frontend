@@ -29,10 +29,7 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 import scala.concurrent.Future
 
-class PaymentsIntoOverseasPensionsControllerISpec extends IntegrationTest
-  with ViewHelpers
-  with BeforeAndAfterEach
-  with PensionsDatabaseHelper {
+class PaymentsIntoOverseasPensionsControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
 
@@ -48,9 +45,8 @@ class PaymentsIntoOverseasPensionsControllerISpec extends IntegrationTest
     dropPensionsDB()
   }
 
-  private def url(taxYear: Int): String = {
+  private def url(taxYear: Int): String =
     s"/update-and-submit-income-tax-return/pensions/$taxYear/payments-into-pensions/payments-into-overseas-pensions/overseas-pension-scheme"
-  }
 
   ".show" should {
 
@@ -68,7 +64,8 @@ class PaymentsIntoOverseasPensionsControllerISpec extends IntegrationTest
   ".submit" should {
 
     "redirect to pensions summary when 'Yes' is selected" in {
-      val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
+      val request = FakeRequest("POST", url(taxYearEOY))
+        .withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
         .withFormUrlEncodedBody(YesNoForm.yesNo -> "true")
 
       lazy val result: Future[Result] = {
@@ -81,7 +78,8 @@ class PaymentsIntoOverseasPensionsControllerISpec extends IntegrationTest
     }
 
     "redirect to income tax submission overview and 'No' is selected" in {
-      val request = FakeRequest("POST", url(taxYearEOY)).withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
+      val request = FakeRequest("POST", url(taxYearEOY))
+        .withHeaders(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList), csrfContent)
         .withFormUrlEncodedBody(YesNoForm.yesNo -> "false")
 
       lazy val result: Future[Result] = {

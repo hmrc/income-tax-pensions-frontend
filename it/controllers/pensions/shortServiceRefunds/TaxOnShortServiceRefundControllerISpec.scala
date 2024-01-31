@@ -30,16 +30,16 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
 
     "show page when EOY" when {
       "has a valid index" in {
-        val sessionData = pensionsUserData(aPensionsCYAModel)
+        val sessionData                     = pensionsUserData(aPensionsCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse = getPageWithIndex(1)
+        implicit val response: WSResponse   = getPageWithIndex(1)
 
         response.status equals OK
       }
       "has no index" in {
-        val sessionData = pensionsUserData(aPensionsCYAModel)
+        val sessionData                     = pensionsUserData(aPensionsCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse = getPageWithIndex()
+        implicit val response: WSResponse   = getPageWithIndex()
 
         response.status equals OK
       }
@@ -48,17 +48,17 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
     "redirect to the first page in journey" when {
       "previous questions have not been answered" in {
         val incompleteCYAModel = aPensionsCYAModel.copy(shortServiceRefunds = ShortServiceRefundsViewModel(shortServiceRefund = Some(true)))
-        val sessionData = pensionsUserData(incompleteCYAModel)
+        val sessionData        = pensionsUserData(incompleteCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse = getPageWithIndex()
+        implicit val response: WSResponse   = getPageWithIndex()
 
         assertRedirectionAsExpected(PageRelativeURLs.taxableShortServiceRefunds)
       }
       "page is invalid in journey" in {
         val invalidCYAModel = aPensionsCYAModel.copy(shortServiceRefunds = ShortServiceRefundsViewModel(shortServiceRefund = Some(false)))
-        val sessionData = pensionsUserData(invalidCYAModel)
+        val sessionData     = pensionsUserData(invalidCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse = getPageWithIndex()
+        implicit val response: WSResponse   = getPageWithIndex()
 
         assertRedirectionAsExpected(PageRelativeURLs.taxableShortServiceRefunds)
       }
@@ -67,7 +67,7 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
     "redirect to the summary page" when {
       "the user has no stored session data at all" in {
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-        implicit val response: WSResponse = getPageWithIndex()
+        implicit val response: WSResponse   = getPageWithIndex()
         assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
       }
     }
@@ -76,89 +76,91 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
   ".submit" should {
     "succeed when the user has relevant session data and" when {
 
-        "the user has selected 'Yes' with no index" in {
-          val sessionData = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel))
-          val expectedViewModel: ShortServiceRefundsViewModel = aShortServiceRefundsEmptySchemeViewModel.copy(
-            refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = Some(true)))
-          )
+      "the user has selected 'Yes' with no index" in {
+        val sessionData = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel))
+        val expectedViewModel: ShortServiceRefundsViewModel = aShortServiceRefundsEmptySchemeViewModel.copy(
+          refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = Some(true)))
+        )
 
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)), queryParams = Map("refundPensionSchemeIndex" -> ""))
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)), queryParams = Map("refundPensionSchemeIndex" -> ""))
 
-          val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0")
+        val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0")
 
-          assertRedirectionAsExpected(redirectPage)
-          getShortServiceViewModel mustBe Some(expectedViewModel)
-        }
-
-        "the user has selected 'No' with no index" in {
-          val sessionData = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel))
-          val expectedViewModel: ShortServiceRefundsViewModel = aShortServiceRefundsEmptySchemeViewModel.copy(
-            refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = Some(false)))
-          )
-
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)), queryParams = Map("refundPensionSchemeIndex" -> ""))
-
-          val redirectPage = relativeUrl(
-            "/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0")
-
-          assertRedirectionAsExpected(redirectPage)
-          getShortServiceViewModel mustBe Some(expectedViewModel)
-        }
-
-        "the user selects 'No' when previously 'Yes' was submitted and it clears PensionScheme data" in {
-          val sessionData = pensionsUserData(aPensionsCYAModel)
-
-          val expectedViewModel: ShortServiceRefundsViewModel = sessionData.pensions.shortServiceRefunds.copy(
-            refundPensionScheme = sessionData.pensions.shortServiceRefunds.refundPensionScheme.updated(0,
-              OverseasRefundPensionScheme(
-                ukRefundCharge = Some(false)
-              )
-            )
-          )
-
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)), queryParams = Map("refundPensionSchemeIndex" -> "0"))
-
-          val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0")
-
-          assertRedirectionAsExpected(redirectPage)
-          getShortServiceViewModel mustBe Some(expectedViewModel)
-        }
-
-        "the user selects 'Yes' when previously 'No' was submitted and it clears PensionScheme data" in {
-          val sessionData = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsNonUkEmptySchemeViewModel))
-
-          val expectedViewModel: ShortServiceRefundsViewModel = sessionData.pensions.shortServiceRefunds.copy(
-            refundPensionScheme = sessionData.pensions.shortServiceRefunds.refundPensionScheme.updated(0,
-              OverseasRefundPensionScheme(
-                ukRefundCharge = Some(true)
-              )
-            )
-          )
-
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-          implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)), queryParams = Map("refundPensionSchemeIndex" -> "0"))
-
-          val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0")
-
-          assertRedirectionAsExpected(redirectPage)
-          getShortServiceViewModel mustBe Some(expectedViewModel)
-        }
+        assertRedirectionAsExpected(redirectPage)
+        getShortServiceViewModel mustBe Some(expectedViewModel)
       }
 
+      "the user has selected 'No' with no index" in {
+        val sessionData = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel))
+        val expectedViewModel: ShortServiceRefundsViewModel = aShortServiceRefundsEmptySchemeViewModel.copy(
+          refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = Some(false)))
+        )
+
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse =
+          submitForm(SubmittedFormDataForYesNoPage(Some(false)), queryParams = Map("refundPensionSchemeIndex" -> ""))
+
+        val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0")
+
+        assertRedirectionAsExpected(redirectPage)
+        getShortServiceViewModel mustBe Some(expectedViewModel)
+      }
+
+      "the user selects 'No' when previously 'Yes' was submitted and it clears PensionScheme data" in {
+        val sessionData = pensionsUserData(aPensionsCYAModel)
+
+        val expectedViewModel: ShortServiceRefundsViewModel = sessionData.pensions.shortServiceRefunds.copy(
+          refundPensionScheme = sessionData.pensions.shortServiceRefunds.refundPensionScheme.updated(
+            0,
+            OverseasRefundPensionScheme(
+              ukRefundCharge = Some(false)
+            ))
+        )
+
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse =
+          submitForm(SubmittedFormDataForYesNoPage(Some(false)), queryParams = Map("refundPensionSchemeIndex" -> "0"))
+
+        val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0")
+
+        assertRedirectionAsExpected(redirectPage)
+        getShortServiceViewModel mustBe Some(expectedViewModel)
+      }
+
+      "the user selects 'Yes' when previously 'No' was submitted and it clears PensionScheme data" in {
+        val sessionData = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsNonUkEmptySchemeViewModel))
+
+        val expectedViewModel: ShortServiceRefundsViewModel = sessionData.pensions.shortServiceRefunds.copy(
+          refundPensionScheme = sessionData.pensions.shortServiceRefunds.refundPensionScheme.updated(
+            0,
+            OverseasRefundPensionScheme(
+              ukRefundCharge = Some(true)
+            ))
+        )
+
+        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
+        implicit val response: WSResponse =
+          submitForm(SubmittedFormDataForYesNoPage(Some(true)), queryParams = Map("refundPensionSchemeIndex" -> "0"))
+
+        val redirectPage = relativeUrl("/overseas-pensions/short-service-refunds/short-service-refunds-pension-scheme?index=0")
+
+        assertRedirectionAsExpected(redirectPage)
+        getShortServiceViewModel mustBe Some(expectedViewModel)
+      }
+    }
+
     "return BAD_REQUEST when the user has not selected any option" in {
-      val sessionData = pensionsUserData(aPensionsCYAModel)
+      val sessionData                     = pensionsUserData(aPensionsCYAModel)
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-      implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(None))
+      implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(None))
 
       response must haveStatus(BAD_REQUEST)
     }
 
     "redirect to first page of journey" when {
       "page is invalid" in {
-        val sessionData = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = minimalShortServiceRefundsViewModel))
+        val sessionData                     = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = minimalShortServiceRefundsViewModel))
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
         implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)), queryParams = Map("refundPensionSchemeIndex" -> ""))
 
@@ -167,9 +169,10 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
         assertRedirectionAsExpected(redirectPage)
       }
       "previous questions are unanswered" in {
-        val sessionData = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel.copy(
-          shortServiceRefundTaxPaidCharge = None
-        )))
+        val sessionData = pensionsUserData(
+          aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel.copy(
+            shortServiceRefundTaxPaidCharge = None
+          )))
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
         implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)), queryParams = Map("refundPensionSchemeIndex" -> ""))
 
@@ -180,7 +183,7 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
     }
 
     "redirect to first page of scheme loop (itself) without an index when submission index is invalid and there are no schemes" in {
-      val sessionData = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel))
+      val sessionData                     = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel))
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
       implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)), queryParams = Map("refundPensionSchemeIndex" -> "10"))
 
@@ -190,7 +193,7 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
     }
 
     "redirect to scheme summary page when submission index is invalid and there are existing schemes" in {
-      val sessionData = pensionsUserData(aPensionsCYAModel)
+      val sessionData                     = pensionsUserData(aPensionsCYAModel)
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
       implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(true)), queryParams = Map("refundPensionSchemeIndex" -> "-1"))
 
@@ -202,7 +205,7 @@ class TaxOnShortServiceRefundControllerISpec extends YesNoControllerSpec("/overs
     "redirect to the Pensions Summary page when the user has no stored session data at all" in {
 
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-      implicit val response: WSResponse = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
+      implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoPage(Some(false)))
 
       assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
       getTransferPensionsViewModel mustBe None

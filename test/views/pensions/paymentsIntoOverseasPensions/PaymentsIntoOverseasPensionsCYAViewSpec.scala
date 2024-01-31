@@ -27,14 +27,14 @@ import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAView
 
-class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { //scalastyle:off magic.number
+class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { // scalastyle:off magic.number
 
   object ChangeLinks {
-    val changePiop = routes.PaymentIntoPensionSchemeController.show(taxYearEOY).url
-    val changeTotalPayments = routes.PaymentIntoPensionSchemeController.show(taxYearEOY).url
+    val changePiop             = routes.PaymentIntoPensionSchemeController.show(taxYearEOY).url
+    val changeTotalPayments    = routes.PaymentIntoPensionSchemeController.show(taxYearEOY).url
     val changeEmployerPayments = routes.EmployerPayOverseasPensionController.show(taxYearEOY).url
-    val changeEmployerTax = routes.TaxEmployerPaymentsController.show(taxYearEOY).url
-    val changeScheme = routes.ReliefsSchemeSummaryController.show(taxYearEOY).url
+    val changeEmployerTax      = routes.TaxEmployerPaymentsController.show(taxYearEOY).url
+    val changeScheme           = routes.ReliefsSchemeSummaryController.show(taxYearEOY).url
   }
 
   trait CommonExpectedResults {
@@ -57,39 +57,39 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { //scalastyl
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedTitle: String = "Check payments into overseas pensions"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val piopYesNo: String = "Payments into overseas pensions"
-    val totalPayments: String = "Total payments"
-    val employerPaymentsYesNo: String = "Employer payments"
-    val employerTaxYesNo: String = "Tax paid on employer payments"
-    val schemes: String = "Overseas pension schemes"
-    val hiddenPiopYesNo: String = "Change payments into overseas pensions"
-    val hiddenTotalPayments: String = "Change total payments"
+    val expectedTitle: String               = "Check payments into overseas pensions"
+    val expectedCaption: Int => String      = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val piopYesNo: String                   = "Payments into overseas pensions"
+    val totalPayments: String               = "Total payments"
+    val employerPaymentsYesNo: String       = "Employer payments"
+    val employerTaxYesNo: String            = "Tax paid on employer payments"
+    val schemes: String                     = "Overseas pension schemes"
+    val hiddenPiopYesNo: String             = "Change payments into overseas pensions"
+    val hiddenTotalPayments: String         = "Change total payments"
     val hiddenEmployerPaymentsYesNo: String = "Change employer payments"
-    val hiddenEmployerTaxYesNo: String = "Change tax paid on employer payments"
-    val hiddenSchemes: String = "Change overseas pension schemes"
-    val buttonText: String = "Save and continue"
-    val noText: String = "No"
-    val yesText: String = "Yes"
+    val hiddenEmployerTaxYesNo: String      = "Change tax paid on employer payments"
+    val hiddenSchemes: String               = "Change overseas pension schemes"
+    val buttonText: String                  = "Save and continue"
+    val noText: String                      = "No"
+    val yesText: String                     = "Yes"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedTitle: String = "Gwirio taliadau i bensiynau tramor"
-    val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val piopYesNo: String = "Taliadau i bensiynau tramor"
-    val totalPayments: String = "Cyfanswm y taliadau"
-    val employerPaymentsYesNo: String = "Taliadau cyflogwr"
-    val employerTaxYesNo: String = "Treth sydd wedi’i thalu ar daliadau cyflogwr"
-    val schemes: String = "Cynllun pensiwn tramor"
-    val hiddenPiopYesNo: String = "Newid taliadau i bensiynau tramor"
-    val hiddenTotalPayments: String = "Change total payments"
+    val expectedTitle: String               = "Gwirio taliadau i bensiynau tramor"
+    val expectedCaption: Int => String      = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val piopYesNo: String                   = "Taliadau i bensiynau tramor"
+    val totalPayments: String               = "Cyfanswm y taliadau"
+    val employerPaymentsYesNo: String       = "Taliadau cyflogwr"
+    val employerTaxYesNo: String            = "Treth sydd wedi’i thalu ar daliadau cyflogwr"
+    val schemes: String                     = "Cynllun pensiwn tramor"
+    val hiddenPiopYesNo: String             = "Newid taliadau i bensiynau tramor"
+    val hiddenTotalPayments: String         = "Change total payments"
     val hiddenEmployerPaymentsYesNo: String = "Change employer payments"
-    val hiddenEmployerTaxYesNo: String = "Change tax paid on employer payments"
-    val hiddenSchemes: String = "Change overseas pension schemes"
-    val buttonText: String = "Cadw ac yn eich blaen"
-    val noText: String = "Na"
-    val yesText: String = "Iawn"
+    val hiddenEmployerTaxYesNo: String      = "Change tax paid on employer payments"
+    val hiddenSchemes: String               = "Change overseas pension schemes"
+    val buttonText: String                  = "Cadw ac yn eich blaen"
+    val noText: String                      = "Na"
+    val yesText: String                     = "Iawn"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, String]] = Seq(
@@ -103,7 +103,7 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { //scalastyl
 
   private def renderPage(userScenario: UserScenario[CommonExpectedResults, String], model: PaymentsIntoOverseasPensionsViewModel) = {
     implicit val request: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-    implicit val messages: Messages = getMessages(userScenario.isWelsh)
+    implicit val messages: Messages                          = getMessages(userScenario.isWelsh)
 
     val htmlFormat = underTest(taxYearEOY, model)
     import userScenario.commonExpectedResults._
@@ -114,7 +114,6 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { //scalastyl
     captionCheck(expectedCaption(taxYearEOY))
     document
   }
-
 
   userScenarios.foreach { userScenario =>
     import userScenario.commonExpectedResults._
@@ -128,14 +127,18 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { //scalastyl
         cyaRowCheck(totalPayments, "£1,999.99", ChangeLinks.changeTotalPayments, hiddenTotalPayments, 2)
         cyaRowCheck(employerPaymentsYesNo, yesText, ChangeLinks.changeEmployerPayments, hiddenEmployerPaymentsYesNo, 3)
         cyaRowCheck(employerTaxYesNo, noText, ChangeLinks.changeEmployerTax, hiddenEmployerTaxYesNo, 4)
-        cyaRowCheck(schemes, "tcrPENSIONINCOME2000, mmrPENSIONINCOME356, dtrPENSIONINCOME550, noPENSIONINCOME100", ChangeLinks.changeScheme, hiddenSchemes, 5)
+        cyaRowCheck(
+          schemes,
+          "tcrPENSIONINCOME2000, mmrPENSIONINCOME356, dtrPENSIONINCOME550, noPENSIONINCOME100",
+          ChangeLinks.changeScheme,
+          hiddenSchemes,
+          5)
         cyaNoMoreRowsAfterCheck(5)
         buttonCheck(buttonText)
       }
 
       "render the page with 'Yes' to all gateway questions and no schemes" when {
-        val piopModel = aPaymentsIntoOverseasPensionsViewModel.copy(
-          taxPaidOnEmployerPaymentsQuestion = Some(true), reliefs = Seq.empty)
+        val piopModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(true), reliefs = Seq.empty)
         implicit val document: Document = renderPage(userScenario, piopModel)
 
         cyaRowCheck(piopYesNo, yesText, ChangeLinks.changePiop, hiddenPiopYesNo, 1)
@@ -147,8 +150,7 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { //scalastyl
       }
 
       "render the page with 'No' Payments into Overseas pensions" when {
-        val minPiopModel = aPaymentsIntoOverseasPensionsEmptyViewModel.copy(
-          paymentsIntoOverseasPensionsQuestions = Some(false))
+        val minPiopModel = aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(false))
         import userScenario.commonExpectedResults._
         implicit val document: Document = renderPage(userScenario, minPiopModel)
 

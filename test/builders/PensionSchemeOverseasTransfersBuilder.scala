@@ -25,6 +25,5 @@ object PensionSchemeOverseasTransfersBuilder {
     overseasSchemeProvider = Seq(anOverseasSchemeProvider),
     transferCharge = 55.55,
     transferChargeTaxPaid = 66.66
-
   )
 }

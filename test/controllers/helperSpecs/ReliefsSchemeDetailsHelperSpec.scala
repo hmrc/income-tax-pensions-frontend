@@ -32,13 +32,16 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
   implicit val messages: Messages = stubbedMessages()
 
   val taxYear = 2022
-  val index = Some(1)
+  val index   = Some(1)
 
-  val reliefTransactional: Relief = Relief(
-    Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.TransitionalCorrespondingRelief), sf74Reference = Some("123456"))
+  val reliefTransactional: Relief =
+    Relief(Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.TransitionalCorrespondingRelief), sf74Reference = Some("123456"))
 
   val reliefMigrant: Relief = Relief(
-    Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.MigrantMemberRelief), qopsReference = Some("123456")
+    Some("PENSIONINCOME245"),
+    Some(193.54),
+    Some(TaxReliefQuestion.MigrantMemberRelief),
+    qopsReference = Some("123456")
   )
 
   val reliefDouble: Relief = Relief(
@@ -51,9 +54,7 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
     doubleTaxationReliefAmount = Some(123.45)
   )
 
-  val reliefNone: Relief = Relief(None,
-    None,
-    reliefType = Some(TaxReliefQuestion.NoTaxRelief))
+  val reliefNone: Relief = Relief(None, None, reliefType = Some(TaxReliefQuestion.NoTaxRelief))
 
   "Getting the summary rows" should {
     "return the expected" when {
@@ -98,70 +99,93 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
 
   private def assertRowForSchemeName(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
     val addOn = if (index.isDefined) s"?index=${index.get}" else ""
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Pension scheme name",
-      expectedValue,
-      "Change",
-      s"/2022/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number$addOn",
-      messages("overseasPension.reliefDetails.pensionSchemeName.hidden")))
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Pension scheme name",
+        expectedValue,
+        "Change",
+        s"/2022/overseas-pensions/payments-into-overseas-pensions/pensions-customer-reference-number$addOn",
+        messages("overseasPension.reliefDetails.pensionSchemeName.hidden")
+      )
+    )
   }
 
-  private def assertRowForUntaxedEmployerPayments(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Untaxed employer payments",
-      expectedValue,
-      "Change",
-      "/2022/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments?index=1",
-      messages("overseasPension.reliefDetails.amount.hidden")))
-  }
+  private def assertRowForUntaxedEmployerPayments(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Untaxed employer payments",
+        expectedValue,
+        "Change",
+        "/2022/overseas-pensions/payments-into-overseas-pensions/untaxed-employer-payments?index=1",
+        messages("overseasPension.reliefDetails.amount.hidden")
+      )
+    )
 
-  private def assertRowForReliefType(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Type of relief",
-      expectedValue,
-      "Change",
-      "/2022/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-emp-relief-status?reliefIndex=1",
-      messages("overseasPension.reliefDetails.typeOfRelief.hidden")))
-  }
+  private def assertRowForReliefType(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Type of relief",
+        expectedValue,
+        "Change",
+        "/2022/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-emp-relief-status?reliefIndex=1",
+        messages("overseasPension.reliefDetails.typeOfRelief.hidden")
+      )
+    )
 
-  private def assertRowForQOPSSchemeDetails(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Scheme details",
-      expectedValue,
-      "Change",
-      "/2022/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number?index=1",
-      messages("overseasPension.reliefDetails.schemeDetail.hidden")))
-  }
+  private def assertRowForQOPSSchemeDetails(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Scheme details",
+        expectedValue,
+        "Change",
+        "/2022/overseas-pensions/payments-into-overseas-pensions/qualifying-overseas-pension-scheme-reference-number?index=1",
+        messages("overseasPension.reliefDetails.schemeDetail.hidden")
+      )
+    )
 
-  private def assertRowForSf74SchemeDetails(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Scheme details",
-      expectedValue,
-      "Change",
-      "/2022/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74?reliefIndex=1",
-      messages("overseasPension.reliefDetails.schemeDetail.hidden")))
-  }
+  private def assertRowForSf74SchemeDetails(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Scheme details",
+        expectedValue,
+        "Change",
+        "/2022/overseas-pensions/payments-into-overseas-pensions/pensions-overseas-sf74?reliefIndex=1",
+        messages("overseasPension.reliefDetails.schemeDetail.hidden")
+      )
+    )
 
-  private def assertRowForMigrationSchemeDetails(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Scheme details",
-      expectedValue,
-      "Change",
-      "/2022/overseas-pensions/payments-into-overseas-pensions/double-taxation-agreement-details?index=1",
-      messages("overseasPension.reliefDetails.schemeDetail.hidden")))
-  }
+  private def assertRowForMigrationSchemeDetails(summaryListRow: SummaryListRow, expectedValue: String): Unit =
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Scheme details",
+        expectedValue,
+        "Change",
+        "/2022/overseas-pensions/payments-into-overseas-pensions/double-taxation-agreement-details?index=1",
+        messages("overseasPension.reliefDetails.schemeDetail.hidden")
+      )
+    )
 
   private def assertSummaryListRow(summaryListRow: SummaryListRow, expectedSummaryRowContents: ExpectedSummaryRowContents): Unit = {
     assertLabel(summaryListRow, expectedSummaryRowContents.label)
     assertValue(summaryListRow, expectedSummaryRowContents.value)
-    assertAction(summaryListRow, expectedSummaryRowContents.linkLabel, expectedSummaryRowContents.linkPathEnding, expectedSummaryRowContents.hiddenText)
+    assertAction(
+      summaryListRow,
+      expectedSummaryRowContents.linkLabel,
+      expectedSummaryRowContents.linkPathEnding,
+      expectedSummaryRowContents.hiddenText)
   }
 
   private def assertAction(summaryListRow: SummaryListRow, expectedLabel: String, expectedPath: String, expectedHiddenText: String): Unit = {
 
     summaryListRow.actions shouldBe defined
     val actionsForFirstSummaryRow = summaryListRow.actions.get
-    val firstAction: ActionItem = actionsForFirstSummaryRow.items.head
+    val firstAction: ActionItem   = actionsForFirstSummaryRow.items.head
     firstAction.content shouldBe HtmlContent("<span aria-hidden=\"true\">" + expectedLabel + "</span>")
     withClue(s"We had expected the link path to end with '$expectedPath':") {
       firstAction.href should endWith(expectedPath)
@@ -170,17 +194,15 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
     firstAction.visuallyHiddenText.get shouldBe expectedHiddenText
   }
 
-  private def assertLabel(summaryListRow: SummaryListRow, expectedLabel: String) = {
+  private def assertLabel(summaryListRow: SummaryListRow, expectedLabel: String) =
     withClue(s"We had expected the label to be '$expectedLabel':") {
       summaryListRow.key.content shouldBe HtmlContent(expectedLabel)
     }
-  }
 
-  private def assertValue(summaryListRow: SummaryListRow, expectedValue: String): Assertion = {
+  private def assertValue(summaryListRow: SummaryListRow, expectedValue: String): Assertion =
     withClue(s"We had expected the value to be '$expectedValue':") {
       summaryListRow.value shouldBe Value(HtmlContent(expectedValue), "govuk-!-width-one-third")
     }
-  }
 
   private def stubbedMessages() = {
     import scala.jdk.CollectionConverters._
@@ -189,31 +211,30 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
       Map(
         Lang.defaultLang.code ->
           Map(
-            "common.no" -> "No",
-            "common.change" -> "Change",
-            "overseasPension.reliefDetails.pensionSchemeName" -> "Pension scheme name",
-            "overseasPension.reliefDetails.amount" -> "Untaxed employer payments",
-            "overseasPension.reliefDetails.typeOfRelief" -> "Type of relief",
-            "overseasPension.reliefDetails.schemeDetail" -> "Scheme details",
-            "overseasPension.reliefDetails.countryCode" -> "Country code:",
-            "overseasPension.reliefDetails.article" -> "Article:",
-            "overseasPension.reliefDetails.treaty" -> "Treaty:",
-            "overseasPension.reliefDetails.relief" -> "Relief:",
+            "common.no"                                              -> "No",
+            "common.change"                                          -> "Change",
+            "overseasPension.reliefDetails.pensionSchemeName"        -> "Pension scheme name",
+            "overseasPension.reliefDetails.amount"                   -> "Untaxed employer payments",
+            "overseasPension.reliefDetails.typeOfRelief"             -> "Type of relief",
+            "overseasPension.reliefDetails.schemeDetail"             -> "Scheme details",
+            "overseasPension.reliefDetails.countryCode"              -> "Country code:",
+            "overseasPension.reliefDetails.article"                  -> "Article:",
+            "overseasPension.reliefDetails.treaty"                   -> "Treaty:",
+            "overseasPension.reliefDetails.relief"                   -> "Relief:",
             "overseasPension.reliefDetails.pensionSchemeName.hidden" -> "Change pension scheme name",
-            "overseasPension.reliefDetails.amount.hidden" -> "Change untaxed employer payments",
-            "overseasPension.reliefDetails.typeOfRelief.hidden" -> "Change type of relief",
-            "overseasPension.reliefDetails.schemeDetail.hidden" -> "Change scheme details",
-            "overseasPension.pensionReliefType.TCR" -> "Transitional corresponding relief",
-            "overseasPension.pensionReliefType.MMR" -> "Migrant member relief",
-            "overseasPension.pensionReliefType.DTR" -> "Double taxation relief",
-            "overseasPension.reliefDetails.noTaxRelief" -> "No tax relief"
+            "overseasPension.reliefDetails.amount.hidden"            -> "Change untaxed employer payments",
+            "overseasPension.reliefDetails.typeOfRelief.hidden"      -> "Change type of relief",
+            "overseasPension.reliefDetails.schemeDetail.hidden"      -> "Change scheme details",
+            "overseasPension.pensionReliefType.TCR"                  -> "Transitional corresponding relief",
+            "overseasPension.pensionReliefType.MMR"                  -> "Migrant member relief",
+            "overseasPension.pensionReliefType.DTR"                  -> "Double taxation relief",
+            "overseasPension.reliefDetails.noTaxRelief"              -> "No tax relief"
           ).asJava
       ).asJava,
-      new Langs(new play.api.i18n.DefaultLangs()))
+      new Langs(new play.api.i18n.DefaultLangs())
+    )
     messagesApi.preferred(new Langs(new play.api.i18n.DefaultLangs()).availables())
   }
 
   private case class ExpectedSummaryRowContents(label: String, value: String, linkLabel: String, linkPathEnding: String, hiddenText: String)
 }
-
-

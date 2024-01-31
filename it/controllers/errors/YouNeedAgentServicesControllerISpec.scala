@@ -25,7 +25,7 @@ import utils.{IntegrationTest, ViewHelpers}
 class YouNeedAgentServicesControllerISpec extends IntegrationTest with ViewHelpers {
 
   object Selectors {
-    val p1Selector = "#main-content > div > div > p"
+    val p1Selector                = "#main-content > div > div > p"
     val createAnAgentLinkSelector = "#create_agent_services_link"
   }
 
@@ -40,25 +40,23 @@ class YouNeedAgentServicesControllerISpec extends IntegrationTest with ViewHelpe
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val h1Expected = "You cannot view this page"
-    val youNeedText = "You need to"
+    val h1Expected        = "You cannot view this page"
+    val youNeedText       = "You need to"
     val createAnAgentText = "create an agent services account"
-    val beforeYouCanText = "before you can view this page."
+    val beforeYouCanText  = "before you can view this page."
     val createAnAgentLink = "https://www.gov.uk/guidance/get-an-hmrc-agent-services-account"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val h1Expected = "Ni allwch fwrw golwg dros y dudalen hon"
-    val youNeedText = "Mae angen"
+    val h1Expected        = "Ni allwch fwrw golwg dros y dudalen hon"
+    val youNeedText       = "Mae angen"
     val createAnAgentText = "creu cyfrif gwasanaethau asiant"
-    val beforeYouCanText = "cyn i chi allu bwrw golwg dros y dudalen hon."
+    val beforeYouCanText  = "cyn i chi allu bwrw golwg dros y dudalen hon."
     val createAnAgentLink = "https://www.gov.uk/guidance/get-an-hmrc-agent-services-account"
   }
 
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, CommonExpectedResults]] = {
-    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN),
-      UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY))
-  }
+  val userScenarios: Seq[UserScenario[CommonExpectedResults, CommonExpectedResults]] =
+    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN), UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY))
 
   ".show" when {
     import Selectors._

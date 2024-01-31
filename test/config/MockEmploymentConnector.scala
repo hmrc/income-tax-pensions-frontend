@@ -31,11 +31,10 @@ trait MockEmploymentConnector extends MockFactory {
   val mockEmploymentConnector: EmploymentConnector = mock[EmploymentConnector]
 
   def mockSaveEmploymentPensionsData(nino: String, taxYear: Int, model: CreateUpdateEmploymentRequest, response: Either[APIErrorModel, Unit])
-  : CallHandler5[String, Int, CreateUpdateEmploymentRequest, HeaderCarrier, ExecutionContext, Future[SessionResponse]] = {
-
-    (mockEmploymentConnector.saveEmploymentPensionsData(_: String, _: Int, _: CreateUpdateEmploymentRequest)(_: HeaderCarrier, _: ExecutionContext))
+      : CallHandler5[String, Int, CreateUpdateEmploymentRequest, HeaderCarrier, ExecutionContext, Future[SessionResponse]] =
+    (mockEmploymentConnector
+      .saveEmploymentPensionsData(_: String, _: Int, _: CreateUpdateEmploymentRequest)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, model, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
-  }
 }

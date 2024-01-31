@@ -23,7 +23,6 @@ import utils.CYABaseHelper
 
 object ShortSummaryCYAViewHelper extends CYABaseHelper {
 
-
   def summaryListRows(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
       summaryRowForShortServiceRefund(shortServiceRefundsViewModel, taxYear),
@@ -33,72 +32,73 @@ object ShortSummaryCYAViewHelper extends CYABaseHelper {
       summaryRowForShortServiceSchemes(shortServiceRefundsViewModel, taxYear)
     ).flatten
 
-  private def summaryRowForShortServiceRefund(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)
-                                                       (implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForShortServiceRefund(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     Some(
       summaryListRowWithBooleanValue(
         "shortServiceRefunds.cya.refund",
         shortServiceRefundsViewModel.shortServiceRefund,
         routes.TaxableRefundAmountController.show(taxYear))(messages)
     )
-  }
 
-  private def summaryRowForShortServiceRefundsAmount(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)
-                                        (implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForShortServiceRefundsAmount(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     shortServiceRefundsViewModel.shortServiceRefund
       .filter(_ == true)
       .flatMap(_ =>
         shortServiceRefundsViewModel.shortServiceRefund match {
           case Some(true) if shortServiceRefundsViewModel.shortServiceRefundCharge.isDefined =>
-            Some(summaryListRowWithOptionalAmountValue(
-              "shortServiceRefunds.cya.refundAmount",
-              shortServiceRefundsViewModel.shortServiceRefundCharge,
-              routes.TaxableRefundAmountController.show(taxYear))(messages))
+            Some(
+              summaryListRowWithOptionalAmountValue(
+                "shortServiceRefunds.cya.refundAmount",
+                shortServiceRefundsViewModel.shortServiceRefundCharge,
+                routes.TaxableRefundAmountController.show(taxYear))(messages))
           case _ => Option.empty[SummaryListRow]
-        }
-      )
-  }
+        })
 
-  private def summaryRowForShortServiceRefundCharge(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)
-                                              (implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForShortServiceRefundCharge(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     shortServiceRefundsViewModel.shortServiceRefundTaxPaid match {
-      case Some(true) => Some(summaryListRowWithBooleanValue(
-        "shortServiceRefunds.cya.nonUk",
-        shortServiceRefundsViewModel.shortServiceRefundTaxPaid,
-        routes.NonUkTaxRefundsController.show(taxYear))(messages))
-      case Some(false) => Some(summaryListRowWithString(
-        "shortServiceRefunds.cya.nonUk",
-        Some(messages("common.noTaxPaid")),
-        routes.NonUkTaxRefundsController.show(taxYear))(messages))
+      case Some(true) =>
+        Some(
+          summaryListRowWithBooleanValue(
+            "shortServiceRefunds.cya.nonUk",
+            shortServiceRefundsViewModel.shortServiceRefundTaxPaid,
+            routes.NonUkTaxRefundsController.show(taxYear))(messages))
+      case Some(false) =>
+        Some(
+          summaryListRowWithString(
+            "shortServiceRefunds.cya.nonUk",
+            Some(messages("common.noTaxPaid")),
+            routes.NonUkTaxRefundsController.show(taxYear))(messages))
       case None => None
     }
-  }
 
-  private def summaryRowForShortServiceRefundChargeAmount(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)
-                                                    (implicit messages: Messages): Option[SummaryListRow] = {
+  private def summaryRowForShortServiceRefundChargeAmount(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
     shortServiceRefundsViewModel.shortServiceRefundTaxPaid
       .filter(_ == true)
       .flatMap(_ =>
         shortServiceRefundsViewModel.shortServiceRefundTaxPaid match {
           case Some(true) if shortServiceRefundsViewModel.shortServiceRefundTaxPaidCharge.isDefined =>
-            Some(summaryListRowWithOptionalAmountValue(
-              "shortServiceRefunds.cya.nonUkAmount",
-              shortServiceRefundsViewModel.shortServiceRefundTaxPaidCharge,
-              routes.NonUkTaxRefundsController.show(taxYear))(messages))
+            Some(
+              summaryListRowWithOptionalAmountValue(
+                "shortServiceRefunds.cya.nonUkAmount",
+                shortServiceRefundsViewModel.shortServiceRefundTaxPaidCharge,
+                routes.NonUkTaxRefundsController.show(taxYear))(messages))
           case _ => Option.empty[SummaryListRow]
-        }
-      )
-  }
+        })
 
-  private def summaryRowForShortServiceSchemes(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)
-                                           (implicit messages: Messages): Option[SummaryListRow] = {
-        if (shortServiceRefundsViewModel.refundPensionScheme.isEmpty){
-          Option.empty[SummaryListRow]
-        } else {
-          Some(summaryListRowWithStrings(
-            "shortServiceRefunds.cya.schemesPayingTax",
-            Some(shortServiceRefundsViewModel.refundPensionScheme.flatMap(_.name)),
-            routes.RefundSummaryController.show(taxYear))(messages)
-        )}
-      }
+  private def summaryRowForShortServiceSchemes(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)(implicit
+      messages: Messages): Option[SummaryListRow] =
+    if (shortServiceRefundsViewModel.refundPensionScheme.isEmpty) {
+      Option.empty[SummaryListRow]
+    } else {
+      Some(
+        summaryListRowWithStrings(
+          "shortServiceRefunds.cya.schemesPayingTax",
+          Some(shortServiceRefundsViewModel.refundPensionScheme.flatMap(_.name)),
+          routes.RefundSummaryController.show(taxYear)
+        )(messages))
+    }
 }

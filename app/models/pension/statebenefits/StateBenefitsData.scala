@@ -30,17 +30,16 @@ case class StateBenefitsData(incapacityBenefits: Option[Set[StateBenefit]] = Non
 
 object StateBenefitsData {
 
-  implicit val stateBenefitsDataWrites: OWrites[StateBenefitsData] = (stateBenefitsData: StateBenefitsData) => {
+  implicit val stateBenefitsDataWrites: OWrites[StateBenefitsData] = (stateBenefitsData: StateBenefitsData) =>
     jsonObjNoNulls(
-      "incapacityBenefit" -> stateBenefitsData.incapacityBenefits,
-      "statePension" -> stateBenefitsData.statePension,
-      "statePensionLumpSum" -> stateBenefitsData.statePensionLumpSum,
+      "incapacityBenefit"          -> stateBenefitsData.incapacityBenefits,
+      "statePension"               -> stateBenefitsData.statePension,
+      "statePensionLumpSum"        -> stateBenefitsData.statePensionLumpSum,
       "employmentSupportAllowance" -> stateBenefitsData.employmentSupportAllowances,
-      "jobSeekersAllowance" -> stateBenefitsData.jobSeekersAllowances,
-      "bereavementAllowance" -> stateBenefitsData.bereavementAllowance,
-      "otherStateBenefits" -> stateBenefitsData.other
+      "jobSeekersAllowance"        -> stateBenefitsData.jobSeekersAllowances,
+      "bereavementAllowance"       -> stateBenefitsData.bereavementAllowance,
+      "otherStateBenefits"         -> stateBenefitsData.other
     )
-  }
 
   implicit val stateBenefitsDataReads: Reads[StateBenefitsData] = (
     (JsPath \ "incapacityBenefit").readNullable[Set[StateBenefit]] and
@@ -50,7 +49,5 @@ object StateBenefitsData {
       (JsPath \ "jobSeekersAllowance").readNullable[Set[StateBenefit]] and
       (JsPath \ "bereavementAllowance").readNullable[StateBenefit] and
       (JsPath \ "otherStateBenefits").readNullable[StateBenefit]
-    ) (StateBenefitsData.apply _)
+  )(StateBenefitsData.apply _)
 }
-
-

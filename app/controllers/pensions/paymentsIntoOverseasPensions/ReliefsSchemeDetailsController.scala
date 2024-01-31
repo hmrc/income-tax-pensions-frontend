@@ -32,10 +32,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class ReliefsSchemeDetailsController @Inject()(view: ReliefSchemeDetailsView,
-                                               actionsProvider: ActionsProvider)
-                                              (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class ReliefsSchemeDetailsController @Inject() (view: ReliefSchemeDetailsView, actionsProvider: ActionsProvider)(implicit
+    val mcc: MessagesControllerComponents,
+    appConfig: AppConfig)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit userSessionDataRequest =>

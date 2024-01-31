@@ -45,8 +45,12 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
         insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        urlGet(fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(schemeIndex0))), !aUser.isAgent, follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(schemeIndex0))),
+          !aUser.isAgent,
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
       result.status shouldBe OK
     }
@@ -58,7 +62,9 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(invalidJourney))
-          urlGet(fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(0))), follow = false,
+          urlGet(
+            fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(0))),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -69,13 +75,14 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
       }
 
       "previous questions are unanswered" which {
-        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(
-          uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(amount = None)))
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(amount = None)))
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
           insertCyaData(pensionsUserDataWithIncomeFromPensions(incompleteJourney))
-          urlGet(fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(0))), follow = false,
+          urlGet(
+            fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(0))),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -89,9 +96,12 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          val viewModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
+          val viewModel =
+            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
-          urlGet(fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(8))), follow = false,
+          urlGet(
+            fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(8))),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -105,9 +115,12 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          val viewModel = anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
+          val viewModel =
+            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
-          urlGet(fullUrl(pensionSchemeSummaryUrl(taxYearEOY, None)), follow = false,
+          urlGet(
+            fullUrl(pensionSchemeSummaryUrl(taxYearEOY, None)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -122,8 +135,11 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(schemeIndex0))), follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+        urlGet(
+          fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(schemeIndex0))),
+          follow = false,
+          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+        )
       }
 
       result.status shouldBe SEE_OTHER

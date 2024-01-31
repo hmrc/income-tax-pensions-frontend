@@ -18,9 +18,9 @@ package common
 
 object SessionValues {
   val CLIENT_MTDITID = "ClientMTDID"
-  val CLIENT_NINO = "ClientNino"
+  val CLIENT_NINO    = "ClientNino"
 
-  val TAX_YEAR = "TAX_YEAR"
-  val VALID_TAX_YEARS = "validTaxYears"
+  val TAX_YEAR               = "TAX_YEAR"
+  val VALID_TAX_YEARS        = "validTaxYears"
   val TEMP_NEW_EMPLOYMENT_ID = "TEMP_NEW_EMPLOYMENT_ID"
 }

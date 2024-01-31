@@ -43,9 +43,18 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
 
       "both 'surcharge' and 'no surcharge' are false" in {
         val expected = anUnauthorisedPaymentsViewModel
-          .copy(surchargeQuestion = Some(false), surchargeAmount = None, surchargeTaxAmountQuestion = None, surchargeTaxAmount = None,
-            noSurchargeQuestion = Some(false), noSurchargeAmount = None, noSurchargeTaxAmountQuestion = None, noSurchargeTaxAmount = None,
-            ukPensionSchemesQuestion = None, pensionSchemeTaxReference = None)
+          .copy(
+            surchargeQuestion = Some(false),
+            surchargeAmount = None,
+            surchargeTaxAmountQuestion = None,
+            surchargeTaxAmount = None,
+            noSurchargeQuestion = Some(false),
+            noSurchargeAmount = None,
+            noSurchargeTaxAmountQuestion = None,
+            noSurchargeTaxAmount = None,
+            ukPensionSchemesQuestion = None,
+            pensionSchemeTaxReference = None
+          )
         anUnauthorisedPaymentsViewModel.copyWithQuestionsApplied(Some(false), Some(false)) shouldBe expected
       }
     }
@@ -57,34 +66,40 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
         anUnauthorisedPaymentsViewModel.isFinished
       }
       "all required questions are answered" in {
-        anUnauthorisedPaymentsViewModel.copy(
-          surchargeQuestion = Some(false),
-          surchargeAmount = None,
-          surchargeTaxAmountQuestion = None,
-          surchargeTaxAmount = None,
-        ).isFinished shouldBe true
+        anUnauthorisedPaymentsViewModel
+          .copy(
+            surchargeQuestion = Some(false),
+            surchargeAmount = None,
+            surchargeTaxAmountQuestion = None,
+            surchargeTaxAmount = None
+          )
+          .isFinished shouldBe true
 
-        anUnauthorisedPaymentsViewModel.copy(
-          surchargeTaxAmountQuestion = Some(false),
-          surchargeTaxAmount = None,
-          noSurchargeQuestion = Some(false),
-          noSurchargeAmount = None,
-          noSurchargeTaxAmountQuestion = None,
-          noSurchargeTaxAmount = None,
-          ukPensionSchemesQuestion = Some(false),
-          pensionSchemeTaxReference = None
-        ).isFinished shouldBe true
+        anUnauthorisedPaymentsViewModel
+          .copy(
+            surchargeTaxAmountQuestion = Some(false),
+            surchargeTaxAmount = None,
+            noSurchargeQuestion = Some(false),
+            noSurchargeAmount = None,
+            noSurchargeTaxAmountQuestion = None,
+            noSurchargeTaxAmount = None,
+            ukPensionSchemesQuestion = Some(false),
+            pensionSchemeTaxReference = None
+          )
+          .isFinished shouldBe true
       }
     }
 
     "return false" when {
       "not all necessary questions have been populated" in {
-        anUnauthorisedPaymentsViewModel.copy(
-          surchargeQuestion = Some(true),
-          surchargeAmount = None,
-          surchargeTaxAmountQuestion = Some(false),
-          surchargeTaxAmount = None,
-        ).isFinished
+        anUnauthorisedPaymentsViewModel
+          .copy(
+            surchargeQuestion = Some(true),
+            surchargeAmount = None,
+            surchargeTaxAmountQuestion = Some(false),
+            surchargeTaxAmount = None
+          )
+          .isFinished
       }
     }
   }
@@ -102,7 +117,10 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
 
     "contain the partial data that is present in the view model" in {
       val viewModel: UnauthorisedPaymentsViewModel = anUnauthorisedPaymentsViewModel.copy(
-        noSurchargeQuestion = Some(false), noSurchargeAmount = None, noSurchargeTaxAmountQuestion = None, noSurchargeTaxAmount = None)
+        noSurchargeQuestion = Some(false),
+        noSurchargeAmount = None,
+        noSurchargeTaxAmountQuestion = None,
+        noSurchargeTaxAmount = None)
       val expectedResult: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments(
         Some(Seq("12345678AB", "12345678AC")),
         Some(Charge(12.11, 34.22)),
@@ -113,8 +131,8 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
     }
 
     "be empty when there is no surcharge or non-surcharge payments" in {
-      val viewModel: UnauthorisedPaymentsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy(
-        surchargeQuestion = Some(false), noSurchargeQuestion = Some(false))
+      val viewModel: UnauthorisedPaymentsViewModel =
+        anUnauthorisedPaymentsEmptyViewModel.copy(surchargeQuestion = Some(false), noSurchargeQuestion = Some(false))
       val expectedResult: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments(None, None, None)
 
       viewModel.toUnauth shouldBe expectedResult
@@ -134,12 +152,20 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
 
   "unauthorisedPaymentQuestion" should {
     "return 'Some(true)' when surchargeQuestion and/or noSurchargeQuestion are 'true'" in {
-      anUnauthorisedPaymentsEmptyViewModel.copy(surchargeQuestion = Some(true), noSurchargeQuestion = Some(false)).unauthorisedPaymentQuestion shouldBe Some(true)
-      anUnauthorisedPaymentsEmptyViewModel.copy(surchargeQuestion = None, noSurchargeQuestion = Some(true)).unauthorisedPaymentQuestion shouldBe Some(true)
-      anUnauthorisedPaymentsEmptyViewModel.copy(surchargeQuestion = Some(true), noSurchargeQuestion = Some(true)).unauthorisedPaymentQuestion shouldBe Some(true)
+      anUnauthorisedPaymentsEmptyViewModel
+        .copy(surchargeQuestion = Some(true), noSurchargeQuestion = Some(false))
+        .unauthorisedPaymentQuestion shouldBe Some(true)
+      anUnauthorisedPaymentsEmptyViewModel.copy(surchargeQuestion = None, noSurchargeQuestion = Some(true)).unauthorisedPaymentQuestion shouldBe Some(
+        true)
+      anUnauthorisedPaymentsEmptyViewModel
+        .copy(surchargeQuestion = Some(true), noSurchargeQuestion = Some(true))
+        .unauthorisedPaymentQuestion shouldBe Some(true)
     }
     "return 'false' when surchargeQuestion and/or noSurchargeQuestion are 'false'" in {
-      anUnauthorisedPaymentsViewModel.copy(surchargeQuestion = Some(false), noSurchargeQuestion = Some(false)).unauthorisedPaymentQuestion.get shouldBe false
+      anUnauthorisedPaymentsViewModel
+        .copy(surchargeQuestion = Some(false), noSurchargeQuestion = Some(false))
+        .unauthorisedPaymentQuestion
+        .get shouldBe false
       anUnauthorisedPaymentsViewModel.copy(surchargeQuestion = None, noSurchargeQuestion = Some(false)).unauthorisedPaymentQuestion.get shouldBe false
       anUnauthorisedPaymentsViewModel.copy(surchargeQuestion = Some(false), noSurchargeQuestion = None).unauthorisedPaymentQuestion.get shouldBe false
     }

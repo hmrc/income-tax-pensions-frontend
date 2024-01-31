@@ -26,15 +26,15 @@ trait MockErrorHandler extends MockFactory {
 
   protected val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
 
-  def mockHandleError(status: Int, result: Result): Unit = {
-    (mockErrorHandler.handleError(_: Int)(_: Request[_]))
+  def mockHandleError(status: Int, result: Result): Unit =
+    (mockErrorHandler
+      .handleError(_: Int)(_: Request[_]))
       .expects(status, *)
       .returns(result)
-  }
 
-  def mockInternalServerError: CallHandler1[Request[_], Result] = {
-    (mockErrorHandler.internalServerError()(_: Request[_]))
+  def mockInternalServerError: CallHandler1[Request[_], Result] =
+    (mockErrorHandler
+      .internalServerError()(_: Request[_]))
       .expects(*)
       .returns(InternalServerError)
-  }
 }

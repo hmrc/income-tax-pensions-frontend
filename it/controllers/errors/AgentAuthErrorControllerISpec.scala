@@ -25,9 +25,9 @@ import utils.{IntegrationTest, ViewHelpers}
 class AgentAuthErrorControllerISpec extends IntegrationTest with ViewHelpers {
 
   object Selectors {
-    val youCan = "#main-content > div > div > p:nth-child(2)"
+    val youCan                         = "#main-content > div > div > p:nth-child(2)"
     val authoriseAsAnAgentLinkSelector = "#client_auth_link"
-    val tryAnother = "#main-content > div > div > a"
+    val tryAnother                     = "#main-content > div > div > a"
   }
 
   val url = s"$appUrl/error/you-need-client-authorisation"
@@ -44,29 +44,27 @@ class AgentAuthErrorControllerISpec extends IntegrationTest with ViewHelpers {
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val title = "There’s a problem"
+    val title                     = "There’s a problem"
     val youCannotViewText: String = "You cannot view this client’s information. Your client needs to"
-    val authoriseYouAsText = "authorise you as their agent (opens in new tab)"
-    val beforeYouCanTryText = "before you can sign in to this service."
-    val tryAnother = "Try another client’s details"
-    val authoriseAsAnAgentLink = "https://www.gov.uk/guidance/client-authorisation-an-overview"
-    val tryAnotherExpectedHref = "http://localhost:11111/report-quarterly/income-and-expenses/view/agents/client-utr"
+    val authoriseYouAsText        = "authorise you as their agent (opens in new tab)"
+    val beforeYouCanTryText       = "before you can sign in to this service."
+    val tryAnother                = "Try another client’s details"
+    val authoriseAsAnAgentLink    = "https://www.gov.uk/guidance/client-authorisation-an-overview"
+    val tryAnotherExpectedHref    = "http://localhost:11111/report-quarterly/income-and-expenses/view/agents/client-utr"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val title = "Mae problem wedi codi."
+    val title                     = "Mae problem wedi codi."
     val youCannotViewText: String = "Ni allwch fwrw golwg dros wybodaeth y cleient hwn. Mae angen i’ch cleient"
-    val authoriseYouAsText = "eich awdurdodi fel ei asiant (yn agor tab newydd)"
-    val beforeYouCanTryText = "cyn y gallwch fewngofnodi i’r gwasanaeth hwn."
-    val tryAnother = "Rhowch gynnig ar fanylion cleient arall"
-    val authoriseAsAnAgentLink = "https://www.gov.uk/guidance/client-authorisation-an-overview"
-    val tryAnotherExpectedHref = "http://localhost:11111/report-quarterly/income-and-expenses/view/agents/client-utr"
+    val authoriseYouAsText        = "eich awdurdodi fel ei asiant (yn agor tab newydd)"
+    val beforeYouCanTryText       = "cyn y gallwch fewngofnodi i’r gwasanaeth hwn."
+    val tryAnother                = "Rhowch gynnig ar fanylion cleient arall"
+    val authoriseAsAnAgentLink    = "https://www.gov.uk/guidance/client-authorisation-an-overview"
+    val tryAnotherExpectedHref    = "http://localhost:11111/report-quarterly/income-and-expenses/view/agents/client-utr"
   }
 
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, CommonExpectedResults]] = {
-    Seq(UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN),
-      UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY))
-  }
+  val userScenarios: Seq[UserScenario[CommonExpectedResults, CommonExpectedResults]] =
+    Seq(UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN), UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY))
 
   ".show" when {
     import Selectors._
@@ -90,7 +88,7 @@ class AgentAuthErrorControllerISpec extends IntegrationTest with ViewHelpers {
           import user.commonExpectedResults._
 
           titleCheck(title, user.isWelsh)
-          h1Check(heading,"xl")
+          h1Check(heading, "xl")
           textOnPageCheck(s"$youCannotViewText $authoriseYouAsText $beforeYouCanTryText", youCan)
           linkCheck(authoriseYouAsText, authoriseAsAnAgentLinkSelector, authoriseAsAnAgentLink)
           buttonCheck(tryAnother, Selectors.tryAnother, Some(tryAnotherExpectedHref))
@@ -100,4 +98,3 @@ class AgentAuthErrorControllerISpec extends IntegrationTest with ViewHelpers {
     }
   }
 }
-

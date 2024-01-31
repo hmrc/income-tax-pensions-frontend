@@ -25,67 +25,67 @@ object PaymentsIntoOverseasPensionsPages {
 
   case object PaymentIntoPensionSchemePage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 1
-    override val hasIndex = false
+    override val hasIndex       = false
   }
 
   case object EmployerPayOverseasPensionPage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 2
-    override val hasIndex = false
+    override val hasIndex       = false
   }
 
   case object TaxEmployerPaymentsPage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 3
-    override val hasIndex = false
+    override val hasIndex       = false
   }
 
- case object PensionsCustomerReferenceNumberPage extends PaymentsIntoOverseasPensionsPages {
+  case object PensionsCustomerReferenceNumberPage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 4
-   override val hasIndex = true
- }
+    override val hasIndex       = true
+  }
 
   case object UntaxedEmployerPaymentsPage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 5
-    override val hasIndex = true
+    override val hasIndex       = true
   }
 
   case object PensionReliefTypePage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 6
-    override val hasIndex = true
+    override val hasIndex       = true
   }
 
   case object QOPSReferencePage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 7
-    override val hasIndex = true
+    override val hasIndex       = true
   }
 
   case object DoubleTaxationAgreementPage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 8
-    override val hasIndex = true
+    override val hasIndex       = true
   }
 
   case object SF74ReferencePage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 9
-    override val hasIndex = true
+    override val hasIndex       = true
   }
 
   case object ReliefsSchemeDetailsPage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 10
-    override val hasIndex = true
+    override val hasIndex       = true
   }
 
   case object ReliefsSchemeSummaryPage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 11
-    override val hasIndex = false
+    override val hasIndex       = false
   }
 
   case object RemoveReliefsSchemePage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 12
-    override val hasIndex = true
+    override val hasIndex       = true
   }
 
   case object PaymentsIntoOverseasPensionsCYAPage extends PaymentsIntoOverseasPensionsPages {
     override val journeyNo: Int = 13
-    override val hasIndex = false
+    override val hasIndex       = false
   }
 
 }

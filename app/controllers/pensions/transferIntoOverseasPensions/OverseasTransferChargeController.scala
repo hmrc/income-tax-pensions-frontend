@@ -39,41 +39,38 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class OverseasTransferChargeController @Inject()(
-                                                  actionsProvider: ActionsProvider,
-                                                  pensionSessionService: PensionSessionService,
-                                                  view: OverseasTransferChargeView,
-                                                  errorHandler: ErrorHandler)
-                                                (implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
-  extends FrontendController(mcc) with I18nSupport with SessionHelper {
+class OverseasTransferChargeController @Inject() (
+    actionsProvider: ActionsProvider,
+    pensionSessionService: PensionSessionService,
+    view: OverseasTransferChargeView,
+    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
+    with I18nSupport
+    with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionData =>
-
-      val checkRedirect = journeyCheck(OverseasTransferChargeAmountPage, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-        data =>
-          val transferChargeAmount: Option[BigDecimal] = data.pensions.transfersIntoOverseasPensions.overseasTransferChargeAmount
-          val transferCharge: Option[Boolean] = data.pensions.transfersIntoOverseasPensions.overseasTransferCharge
-          (transferCharge, transferChargeAmount) match {
-            case (Some(a), amount) => Future.successful(Ok(view(amountForm(sessionData.user).fill((a, amount)), taxYear)))
-            case _ => Future.successful(Ok(view(amountForm(sessionData.user), taxYear)))
-          }
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+    val checkRedirect = journeyCheck(OverseasTransferChargeAmountPage, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      val transferChargeAmount: Option[BigDecimal] = data.pensions.transfersIntoOverseasPensions.overseasTransferChargeAmount
+      val transferCharge: Option[Boolean]          = data.pensions.transfersIntoOverseasPensions.overseasTransferCharge
+      (transferCharge, transferChargeAmount) match {
+        case (Some(a), amount) => Future.successful(Ok(view(amountForm(sessionData.user).fill((a, amount)), taxYear)))
+        case _                 => Future.successful(Ok(view(amountForm(sessionData.user), taxYear)))
       }
+    }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionUserData =>
-      amountForm(sessionUserData.user).bindFromRequest().fold(
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+    amountForm(sessionUserData.user)
+      .bindFromRequest()
+      .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNoAmount => {
           val checkRedirect = journeyCheck(OverseasTransferChargeAmountPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-            data => {
-              (yesNoAmount._1, yesNoAmount._2) match {
-                case (true, amount) => updateSessionData(data, yesNo = true, amount, taxYear)
-                case (false, _) => updateSessionData(data, yesNo = false, None, taxYear)
-              }
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+            (yesNoAmount._1, yesNoAmount._2) match {
+              case (true, amount) => updateSessionData(data, yesNo = true, amount, taxYear)
+              case (false, _)     => updateSessionData(data, yesNo = false, None, taxYear)
             }
           }
         }
@@ -91,19 +88,16 @@ class OverseasTransferChargeController @Inject()(
     )
   }
 
-  private def updateSessionData[T](pensionUserData: PensionsUserData,
-                                   yesNo: Boolean,
-                                   amount: Option[BigDecimal],
-                                   taxYear: Int)(implicit request: UserSessionDataRequest[T]): Future[Result] = {
+  private def updateSessionData[T](pensionUserData: PensionsUserData, yesNo: Boolean, amount: Option[BigDecimal], taxYear: Int)(implicit
+      request: UserSessionDataRequest[T]): Future[Result] = {
 
     val cyaModel = pensionUserData.pensions
     val updateViewModel = cyaModel.copy(transfersIntoOverseasPensions =
-      if (yesNo) cyaModel.transfersIntoOverseasPensions.copy(
-        overseasTransferCharge = Some(true), overseasTransferChargeAmount = amount)
+      if (yesNo) cyaModel.transfersIntoOverseasPensions.copy(overseasTransferCharge = Some(true), overseasTransferChargeAmount = amount)
       else TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(true), overseasTransferCharge = Some(false)))
 
-    pensionSessionService.createOrUpdateSessionData(request.user,
-      updateViewModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+    pensionSessionService.createOrUpdateSessionData(request.user, updateViewModel, taxYear, pensionUserData.isPriorSubmission)(
+      errorHandler.internalServerError()) {
       Redirect(
         if (!yesNo || updateViewModel.transfersIntoOverseasPensions.isFinished) TransferIntoOverseasPensionsCYAController.show(taxYear)
         else PensionSchemeTaxTransferController.show(taxYear)

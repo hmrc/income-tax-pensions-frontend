@@ -22,7 +22,9 @@ import play.api.libs.ws.WSResponse
 
 class YesNoControllerSpec(override val pathForThisPage: String) extends ControllerSpec(pathForThisPage) {
 
-  def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedYesNoPageContents)(implicit userConfig: UserConfig, response: WSResponse): Unit = {
+  def assertPageAsExpected(expectedStatusCode: Int, expectedPageContents: ExpectedYesNoPageContents)(implicit
+      userConfig: UserConfig,
+      response: WSResponse): Unit = {
     val document = parse(response.body)
     response must haveStatus(expectedStatusCode)
     super.assertPageAsExpected(document, expectedPageContents)
@@ -41,9 +43,8 @@ class YesNoControllerSpec(override val pathForThisPage: String) extends Controll
                                        errorAboveElementCheckSectionOpt: Option[ErrorAboveElementCheckSection] = None,
                                        links: Set[ExpectedLink] = Set.empty,
                                        text: Set[ExpectedText] = Set.empty,
-                                       formUrl:Option[String] = None
-                                      ) extends BaseExpectedPageContents
-
+                                       formUrl: Option[String] = None)
+      extends BaseExpectedPageContents
 
   case class SubmittedFormDataForYesNoPage(yesOrNoOpt: Option[Boolean]) extends SubmittedFormDataWithYesNo {
 

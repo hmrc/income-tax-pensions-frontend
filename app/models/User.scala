@@ -16,10 +16,6 @@
 
 package models
 
-case class User(mtditid: String,
-                arn: Option[String],
-                nino: String,
-                sessionId: String,
-                affinityGroup: String) {
+case class User(mtditid: String, arn: Option[String], nino: String, sessionId: String, affinityGroup: String) {
   def isAgent: Boolean = arn.nonEmpty
 }

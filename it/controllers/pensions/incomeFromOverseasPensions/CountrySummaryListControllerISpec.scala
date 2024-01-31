@@ -38,14 +38,14 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
   val urlPrefix = s"/update-and-submit-income-tax-return/pensions/$taxYearEOY/"
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
-    val addAnotherLinkSelector = "#add-another-pension-link"
-    val addLinkSelector = "#add-pension-income-link"
-    val continueButtonSelector: String = "#continue"
-    val addSchemeButtonSelector: String = "#AddAScheme"
-    val overviewButtonSelector: String = "#ReturnToOverview"
-    val summaryListTableSelector = "#pensionIncomeSummaryList"
-    val needToAddSchemeTextSelector: String = "#youNeedToAddOneOrMorePensionScheme1"
+    val captionSelector: String              = "#main-content > div > div > header > p"
+    val addAnotherLinkSelector               = "#add-another-pension-link"
+    val addLinkSelector                      = "#add-pension-income-link"
+    val continueButtonSelector: String       = "#continue"
+    val addSchemeButtonSelector: String      = "#AddAScheme"
+    val overviewButtonSelector: String       = "#ReturnToOverview"
+    val summaryListTableSelector             = "#pensionIncomeSummaryList"
+    val needToAddSchemeTextSelector: String  = "#youNeedToAddOneOrMorePensionScheme1"
     val returnToOverviewTextSelector: String = "#youNeedToAddOneOrMorePensionScheme2"
 
     def changeLinkSelector(index: Int): String = s"#pensionIncomeSummaryList > dl > div:nth-child($index) > dd.hmrc-add-to-a-list__change > a"
@@ -71,31 +71,32 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val expectedContinueButtonText = "Continue"
-    val expectedAddSchemeButtonText = "Add a scheme"
-    val expectedOverviewButtonText = "Return to overview"
-    val expectedTitle = "Overseas pension income"
-    val expectedHeading = "Overseas pension income"
-    val change = "Change"
-    val remove = "Remove"
-    val expectedAddAnotherText = "Add another pension scheme"
+    val expectedCaption: Int => String     = (taxYear: Int) => s"Income from overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
+    val expectedContinueButtonText         = "Continue"
+    val expectedAddSchemeButtonText        = "Add a scheme"
+    val expectedOverviewButtonText         = "Return to overview"
+    val expectedTitle                      = "Overseas pension income"
+    val expectedHeading                    = "Overseas pension income"
+    val change                             = "Change"
+    val remove                             = "Remove"
+    val expectedAddAnotherText             = "Add another pension scheme"
     val expectedNeedToAddPensionSchemeText = "You need to add one or more pension scheme."
-    val expectedReturnToOverviewPageText = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
+    val expectedReturnToOverviewPageText   = "If you don’t have a pensions scheme to add you can return to the overview page and come back later."
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val expectedContinueButtonText = "Yn eich blaen"
-    val expectedAddSchemeButtonText = "Ychwanegu cynllun"
-    val expectedOverviewButtonText = "Yn ôl i’r trosolwg"
-    val expectedTitle = "Incwm o bensiwn tramor"
-    val expectedHeading = "Incwm o bensiwn tramor"
-    val change = "Newid"
-    val remove = "Tynnu"
-    val expectedAddAnotherText = "Ychwanegu cynllun pensiwn arall"
+    val expectedCaption: Int => String     = (taxYear: Int) => s"Incwm o bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    val expectedContinueButtonText         = "Yn eich blaen"
+    val expectedAddSchemeButtonText        = "Ychwanegu cynllun"
+    val expectedOverviewButtonText         = "Yn ôl i’r trosolwg"
+    val expectedTitle                      = "Incwm o bensiwn tramor"
+    val expectedHeading                    = "Incwm o bensiwn tramor"
+    val change                             = "Newid"
+    val remove                             = "Tynnu"
+    val expectedAddAnotherText             = "Ychwanegu cynllun pensiwn arall"
     val expectedNeedToAddPensionSchemeText = "Bydd angen i chi ychwanegu un cynllun pensiwn neu fwy."
-    val expectedReturnToOverviewPageText = "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
+    val expectedReturnToOverviewPageText =
+      "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(
@@ -112,7 +113,9 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), follow = false,
+        urlGet(
+          fullUrl(countrySummaryListControllerUrl(taxYearEOY)),
+          follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
@@ -129,7 +132,9 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
           authoriseAgentOrIndividual()
           dropPensionsDB()
           insertCyaData(pensionUserDataWithIncomeOverseasPension(invalidJourneyViewModel))
-          urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(countrySummaryListControllerUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -141,7 +146,9 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
           authoriseAgentOrIndividual()
           dropPensionsDB()
           insertCyaData(pensionUserDataWithIncomeOverseasPension(anIncomeFromOverseasPensionsEmptyViewModel))
-          urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), follow = false,
+          urlGet(
+            fullUrl(countrySummaryListControllerUrl(taxYearEOY)),
+            follow = false,
             headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
@@ -155,11 +162,14 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
         import Selectors._
         import user.commonExpectedResults._
 
-        val pensionName1 = countries.getCountryFromCodeWithDefault(anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.alphaTwoCode)
+        val pensionName1 =
+          countries.getCountryFromCodeWithDefault(anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.alphaTwoCode)
         val pensionAmount1 = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head.pensionPaymentAmount
           .fold("")(am => bigDecimalCurrency(am.toString()))
         val pensionName2 = countries.getCountryFromCodeWithDefault(anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(1).alphaTwoCode)
-        val pensionAmount2 = anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes(1).pensionPaymentAmount
+        val pensionAmount2 = anIncomeFromOverseasPensionsViewModel
+          .overseasIncomePensionSchemes(1)
+          .pensionPaymentAmount
           .fold("")(am => bigDecimalCurrency(am.toString()))
 
         "render the 'Overseas pension income' summary list page with pre-filled content" which {
@@ -168,8 +178,12 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
             dropPensionsDB()
             val viewModel = anIncomeFromOverseasPensionsViewModel
             insertCyaData(pensionUserDataWithIncomeOverseasPension(viewModel))
-            urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(countrySummaryListControllerUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {
@@ -184,7 +198,7 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
           textOnPageCheck(s"$pensionName1 $pensionAmount1", pensionNameSelector(1))
           textOnPageCheck(s"$pensionName2 $pensionAmount2", pensionNameSelector(2))
 
-          //TODO: replace hrefs "#" below with link to first details page when available .e.g. PensionSchemeSummaryController.show(taxYear, Some(0))).url
+          // TODO: replace hrefs "#" below with link to first details page when available .e.g. PensionSchemeSummaryController.show(taxYear, Some(0))).url
           linkCheck(s"$change $change $pensionName1", changeLinkSelector(1), overseasPensionsSchemeSummaryUrl(taxYearEOY, 0))
 
           linkCheck(s"$remove $remove $pensionName1", removeLinkSelector(1), removeOverseasIncomeSchemeControllerUrl(taxYearEOY, Some(0)))
@@ -205,8 +219,12 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
             val emptyViewModel = anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(true))
             insertCyaData(pensionUserDataWithIncomeOverseasPension(emptyViewModel))
 
-            urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(countrySummaryListControllerUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {
@@ -265,8 +283,12 @@ class CountrySummaryListControllerISpec extends IntegrationTest with BeforeAndAf
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
             insertCyaData(pensionUserDataWithIncomeOverseasPension(incompleteViewModel))
-            urlGet(fullUrl(countrySummaryListControllerUrl(taxYearEOY)), user.isWelsh, follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            urlGet(
+              fullUrl(countrySummaryListControllerUrl(taxYearEOY)),
+              user.isWelsh,
+              follow = false,
+              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            )
           }
 
           "has an OK status" in {

@@ -26,10 +26,10 @@ import utils.{IntegrationTest, ViewHelpers}
 class SessionExpiredControllerISpec extends IntegrationTest with ViewHelpers {
 
   object Selectors {
-    val h1Selector = "#main-content > div > div > header > h1"
-    val p1Selector = "#main-content > div > div > div.govuk-body > p"
+    val h1Selector     = "#main-content > div > div > header > h1"
+    val p1Selector     = "#main-content > div > div > div.govuk-body > p"
     val buttonSelector = "#continue"
-    val formSelector = "#main-content > div > div > form"
+    val formSelector   = "#main-content > div > div > form"
   }
 
   val url = s"$appUrl/timeout"
@@ -43,25 +43,23 @@ class SessionExpiredControllerISpec extends IntegrationTest with ViewHelpers {
   }
 
   object CommonExpectedEN extends CommonExpectedResults {
-    val h1Expected = "For your security, we signed you out"
-    val p1Expected = "We did not save your answers."
-    val buttonExpectedText = "Sign in"
-    val buttonExpectedUrl: String = s"http://localhost:11111/update-and-submit-income-tax-return/$taxYear/start"
+    val h1Expected                    = "For your security, we signed you out"
+    val p1Expected                    = "We did not save your answers."
+    val buttonExpectedText            = "Sign in"
+    val buttonExpectedUrl: String     = s"http://localhost:11111/update-and-submit-income-tax-return/$taxYear/start"
     val buttonExpectedUrl2030: String = "http://localhost:11111/update-and-submit-income-tax-return/2030/start"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
-    val h1Expected = "Er eich diogelwch, gwnaethom eich allgofnodi"
-    val p1Expected = "Ni wnaethom gadw’ch atebion."
-    val buttonExpectedText = "Mewngofnodi"
-    val buttonExpectedUrl: String = s"http://localhost:11111/update-and-submit-income-tax-return/$taxYear/start"
+    val h1Expected                    = "Er eich diogelwch, gwnaethom eich allgofnodi"
+    val p1Expected                    = "Ni wnaethom gadw’ch atebion."
+    val buttonExpectedText            = "Mewngofnodi"
+    val buttonExpectedUrl: String     = s"http://localhost:11111/update-and-submit-income-tax-return/$taxYear/start"
     val buttonExpectedUrl2030: String = "http://localhost:11111/update-and-submit-income-tax-return/2030/start"
   }
 
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, CommonExpectedResults]] = {
-    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN),
-      UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY))
-  }
+  val userScenarios: Seq[UserScenario[CommonExpectedResults, CommonExpectedResults]] =
+    Seq(UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN), UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY))
 
   ".show" when {
     import Selectors._
@@ -88,7 +86,7 @@ class SessionExpiredControllerISpec extends IntegrationTest with ViewHelpers {
           welshToggleCheck(user.isWelsh)
           h1Check(h1Expected, "xl")
 
-          textOnPageCheck(p1Expected,p1Selector)
+          textOnPageCheck(p1Expected, p1Selector)
           buttonCheck(buttonExpectedText, buttonSelector)
           formGetLinkCheck(buttonExpectedUrl, formSelector)
         }
@@ -97,7 +95,7 @@ class SessionExpiredControllerISpec extends IntegrationTest with ViewHelpers {
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)} with a tax year in session" should {
 
         val differentTaxYear = 2030
-        lazy val cookies = playSessionCookies(differentTaxYear, validTaxYearList)
+        lazy val cookies     = playSessionCookies(differentTaxYear, validTaxYearList)
 
         "render the page with the right content" which {
 
@@ -118,7 +116,7 @@ class SessionExpiredControllerISpec extends IntegrationTest with ViewHelpers {
           welshToggleCheck(user.isWelsh)
           h1Check(h1Expected, "xl")
 
-          textOnPageCheck(p1Expected,p1Selector)
+          textOnPageCheck(p1Expected, p1Selector)
           buttonCheck(buttonExpectedText, buttonSelector)
           formGetLinkCheck(buttonExpectedUrl2030, formSelector)
         }

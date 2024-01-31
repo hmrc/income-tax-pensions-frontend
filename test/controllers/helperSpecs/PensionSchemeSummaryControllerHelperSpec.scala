@@ -27,11 +27,11 @@ import play.test.Helpers.stubMessagesApi
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, SummaryListRow, Value}
 
-class PensionSchemeSummaryControllerHelperSpec extends AnyWordSpec with Matchers{
+class PensionSchemeSummaryControllerHelperSpec extends AnyWordSpec with Matchers {
 
   implicit val messages: Messages = stubbedMessages()
 
-  val taxYear = 2022
+  val taxYear            = 2022
   val index: Option[Int] = Some(0)
 
   val incomeModel: UkPensionIncomeViewModel = UkPensionIncomeViewModel(
@@ -43,10 +43,10 @@ class PensionSchemeSummaryControllerHelperSpec extends AnyWordSpec with Matchers
     pensionSchemeRef = Some("123/AB456"),
     amount = Some(211.33),
     taxPaid = Some(14.77),
-    isCustomerEmploymentData = Some(true))
+    isCustomerEmploymentData = Some(true)
+  )
 
-  val incomeModelNone: UkPensionIncomeViewModel = UkPensionIncomeViewModel(
-    None, None, None, None, None, None)
+  val incomeModelNone: UkPensionIncomeViewModel = UkPensionIncomeViewModel(None, None, None, None, None, None)
 
   "Getting the summary rows" should {
     "return the expected" when {
@@ -71,45 +71,61 @@ class PensionSchemeSummaryControllerHelperSpec extends AnyWordSpec with Matchers
 
   private def assertRowForSchemeDetails(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
     val addOn = if (index.isDefined) s"?pensionSchemeIndex=${index.get}" else ""
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Scheme details",
-      expectedValue,
-      "common.change",
-      s"/2022/pension-income/pension-income-details$addOn",
-      messages("incomeFromPensions.schemeDetails.summary.details.hidden")))
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Scheme details",
+        expectedValue,
+        "common.change",
+        s"/2022/pension-income/pension-income-details$addOn",
+        messages("incomeFromPensions.schemeDetails.summary.details.hidden")
+      )
+    )
   }
 
   private def assertRowForPensionsIncome(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
     val addOn = if (index.isDefined) s"?pensionSchemeIndex=${index.get}" else ""
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Pension income",
-      expectedValue,
-      "common.change",
-      s"/2022/pension-income/pension-amount$addOn",
-      messages("incomeFromPensions.schemeDetails.summary.income.hidden")))
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Pension income",
+        expectedValue,
+        "common.change",
+        s"/2022/pension-income/pension-amount$addOn",
+        messages("incomeFromPensions.schemeDetails.summary.income.hidden")
+      )
+    )
   }
 
   private def assertRowForPensionStartDate(summaryListRow: SummaryListRow, expectedValue: String): Unit = {
     val addOn = if (index.isDefined) s"?pensionSchemeIndex=${index.get}" else ""
-    assertSummaryListRow(summaryListRow, ExpectedSummaryRowContents(
-      "Pension start date",
-      expectedValue,
-      "common.change",
-      s"/2022/pension-income/pension-start-date$addOn",
-      messages("incomeFromPensions.schemeDetails.summary.date.hidden")))
+    assertSummaryListRow(
+      summaryListRow,
+      ExpectedSummaryRowContents(
+        "Pension start date",
+        expectedValue,
+        "common.change",
+        s"/2022/pension-income/pension-start-date$addOn",
+        messages("incomeFromPensions.schemeDetails.summary.date.hidden")
+      )
+    )
   }
 
   private def assertSummaryListRow(summaryListRow: SummaryListRow, expectedSummaryRowContents: ExpectedSummaryRowContents): Unit = {
     assertLabel(summaryListRow, expectedSummaryRowContents.label)
     assertValue(summaryListRow, expectedSummaryRowContents.value)
-    assertAction(summaryListRow, expectedSummaryRowContents.linkLabel, expectedSummaryRowContents.linkPathEnding, expectedSummaryRowContents.hiddenText)
+    assertAction(
+      summaryListRow,
+      expectedSummaryRowContents.linkLabel,
+      expectedSummaryRowContents.linkPathEnding,
+      expectedSummaryRowContents.hiddenText)
   }
 
   private def assertAction(summaryListRow: SummaryListRow, expectedLabel: String, expectedPath: String, expectedHiddenText: String): Unit = {
 
     summaryListRow.actions shouldBe defined
     val actionsForFirstSummaryRow = summaryListRow.actions.get
-    val firstAction: ActionItem = actionsForFirstSummaryRow.items.head
+    val firstAction: ActionItem   = actionsForFirstSummaryRow.items.head
     firstAction.content shouldBe HtmlContent("<span aria-hidden=\"true\">" + expectedLabel + "</span>")
     withClue(s"We had expected the link path to end with '$expectedPath':") {
       firstAction.href should endWith(expectedPath)
@@ -118,17 +134,15 @@ class PensionSchemeSummaryControllerHelperSpec extends AnyWordSpec with Matchers
     firstAction.visuallyHiddenText.get shouldBe expectedHiddenText
   }
 
-  private def assertLabel(summaryListRow: SummaryListRow, expectedLabel: String) = {
+  private def assertLabel(summaryListRow: SummaryListRow, expectedLabel: String) =
     withClue(s"We had expected the label to be '$expectedLabel':") {
       summaryListRow.key.content shouldBe HtmlContent(expectedLabel)
     }
-  }
 
-  private def assertValue(summaryListRow: SummaryListRow, expectedValue: String): Assertion = {
+  private def assertValue(summaryListRow: SummaryListRow, expectedValue: String): Assertion =
     withClue(s"We had expected the value to be '$expectedValue':") {
       summaryListRow.value shouldBe Value(HtmlContent(expectedValue), "govuk-!-width-one-third")
     }
-  }
 
   private def stubbedMessages() = {
     import scala.jdk.CollectionConverters._
@@ -137,17 +151,18 @@ class PensionSchemeSummaryControllerHelperSpec extends AnyWordSpec with Matchers
       Map(
         Lang.defaultLang.code ->
           Map(
-            "incomeFromPensions.schemeDetails.summary.title" -> "Check pension scheme details",
+            "incomeFromPensions.schemeDetails.summary.title"   -> "Check pension scheme details",
             "incomeFromPensions.schemeDetails.summary.details" -> "Scheme details",
-            "incomeFromPensions.schemeDetails.summary.income" -> "Pension income",
-            "incomeFromPensions.schemeDetails.summary.date" -> "Pension start date",
-            "incomeFromPensions.schemeDetails.summary.paye" -> "PAYE:",
-            "incomeFromPensions.schemeDetails.summary.pid" -> "PID:",
-            "incomeFromPensions.schemeDetails.summary.pay" -> "Pay:",
-            "incomeFromPensions.schemeDetails.summary.tax" -> "Tax:"
+            "incomeFromPensions.schemeDetails.summary.income"  -> "Pension income",
+            "incomeFromPensions.schemeDetails.summary.date"    -> "Pension start date",
+            "incomeFromPensions.schemeDetails.summary.paye"    -> "PAYE:",
+            "incomeFromPensions.schemeDetails.summary.pid"     -> "PID:",
+            "incomeFromPensions.schemeDetails.summary.pay"     -> "Pay:",
+            "incomeFromPensions.schemeDetails.summary.tax"     -> "Tax:"
           ).asJava
       ).asJava,
-      new Langs(new play.api.i18n.DefaultLangs()))
+      new Langs(new play.api.i18n.DefaultLangs())
+    )
     messagesApi.preferred(new Langs(new play.api.i18n.DefaultLangs()).availables())
   }
 

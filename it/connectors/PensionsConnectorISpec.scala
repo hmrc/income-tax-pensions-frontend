@@ -33,7 +33,7 @@ import scala.concurrent.duration.Duration
 
 class PensionsConnectorISpec extends IntegrationTest {
 
-  lazy val connector: PensionsConnector = app.injector.instanceOf[PensionsConnector]
+  lazy val connector: PensionsConnector         = app.injector.instanceOf[PensionsConnector]
   lazy val externalConnector: PensionsConnector = appWithFakeExternalCall.injector.instanceOf[PensionsConnector]
 
   implicit override val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders("mtditid" -> mtditid, "X-Session-ID" -> sessionId)
@@ -46,14 +46,13 @@ class PensionsConnectorISpec extends IntegrationTest {
       anPensionCharges.pensionSchemeOverseasTransfers,
       anPensionCharges.pensionSchemeUnauthorisedPayments,
       anPensionCharges.pensionContributions,
-      anPensionCharges.overseasPensionContributions,
+      anPensionCharges.overseasPensionContributions
     )
 
     "Return a success 204 result" when {
       "submission has no content" in {
 
-        stubPutWithHeadersCheck(chargesURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId,
-          "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(chargesURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)
         result shouldBe Right(())
@@ -61,8 +60,12 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "payload is successfully submitted" in {
 
-        stubPutWithHeadersCheck(chargesURL, NO_CONTENT, Json.toJson(chargesRequestModel).toString(),
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(
+          chargesURL,
+          NO_CONTENT,
+          Json.toJson(chargesRequestModel).toString(),
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
 
         val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)
         result shouldBe Right(())
@@ -75,8 +78,7 @@ class PensionsConnectorISpec extends IntegrationTest {
 
         implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue"))).withExtraHeaders("mtditid" -> mtditid)
 
-        stubPutWithHeadersCheck(chargesURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId,
-          "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(chargesURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel)(hc, ec), Duration.Inf)
 
@@ -85,8 +87,7 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "submission returns invalid json" in {
 
-        stubPutWithHeadersCheck(chargesURL, INTERNAL_SERVER_ERROR, """{"invalid": true}""",
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(chargesURL, INTERNAL_SERVER_ERROR, """{"invalid": true}""", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
@@ -94,8 +95,12 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "submission returns a 500" in {
 
-        stubPutWithHeadersCheck(chargesURL, INTERNAL_SERVER_ERROR, """{"code": "FAILED", "reason": "failed"}""",
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(
+          chargesURL,
+          INTERNAL_SERVER_ERROR,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
 
         val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
@@ -103,8 +108,12 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "submission returns a 503" in {
 
-        stubPutWithHeadersCheck(chargesURL, SERVICE_UNAVAILABLE, """{"code": "FAILED", "reason": "failed"}""",
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(
+          chargesURL,
+          SERVICE_UNAVAILABLE,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
 
         val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))
@@ -112,8 +121,12 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "submission returns an unexpected result" in {
 
-        stubPutWithHeadersCheck(chargesURL, BAD_REQUEST, """{"code": "FAILED", "reason": "failed"}""",
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(
+          chargesURL,
+          BAD_REQUEST,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
 
         val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
@@ -132,8 +145,7 @@ class PensionsConnectorISpec extends IntegrationTest {
     "Return a success 204 result" when {
       "submission has no content" in {
 
-        stubPutWithHeadersCheck(incomeURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId,
-          "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(incomeURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val result = Await.result(connector.savePensionIncomeSessionData(nino, taxYear, incomeRequestModel), Duration.Inf)
         result shouldBe Right(())
@@ -141,8 +153,7 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "payload is successfully submitted" in {
 
-        stubPutWithHeadersCheck(incomeURL, NO_CONTENT, Json.toJson(incomeRequestModel).toString(),
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(incomeURL, NO_CONTENT, Json.toJson(incomeRequestModel).toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val result = Await.result(connector.savePensionIncomeSessionData(nino, taxYear, incomeRequestModel), Duration.Inf)
         result shouldBe Right(())
@@ -155,8 +166,7 @@ class PensionsConnectorISpec extends IntegrationTest {
 
         implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue"))).withExtraHeaders("mtditid" -> mtditid)
 
-        stubPutWithHeadersCheck(incomeURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId,
-          "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(incomeURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val result = Await.result(connector.savePensionIncomeSessionData(nino, taxYear, incomeRequestModel)(hc, ec), Duration.Inf)
 
@@ -165,8 +175,7 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "submission returns a 200 but invalid json" in {
 
-        stubPutWithHeadersCheck(incomeURL, OK, Json.toJson("""{"invalid": true}""").toString(),
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(incomeURL, OK, Json.toJson("""{"invalid": true}""").toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val result = Await.result(connector.savePensionIncomeSessionData(nino, taxYear, incomeRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
@@ -174,8 +183,12 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "submission returns a 500" in {
 
-        stubPutWithHeadersCheck(incomeURL, INTERNAL_SERVER_ERROR, """{"code": "FAILED", "reason": "failed"}""",
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(
+          incomeURL,
+          INTERNAL_SERVER_ERROR,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
 
         val result = Await.result(connector.savePensionIncomeSessionData(nino, taxYear, incomeRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
@@ -183,8 +196,12 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "submission returns a 503" in {
 
-        stubPutWithHeadersCheck(incomeURL, SERVICE_UNAVAILABLE, """{"code": "FAILED", "reason": "failed"}""",
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(
+          incomeURL,
+          SERVICE_UNAVAILABLE,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
 
         val result = Await.result(connector.savePensionIncomeSessionData(nino, taxYear, incomeRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))
@@ -192,8 +209,12 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "submission returns an unexpected result" in {
 
-        stubPutWithHeadersCheck(incomeURL, BAD_REQUEST, """{"code": "FAILED", "reason": "failed"}""",
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(
+          incomeURL,
+          BAD_REQUEST,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
 
         val result = Await.result(connector.savePensionIncomeSessionData(nino, taxYear, incomeRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
@@ -211,8 +232,7 @@ class PensionsConnectorISpec extends IntegrationTest {
     "Return a success 204 result" when {
       "submission has no content" in {
 
-        stubPutWithHeadersCheck(reliefURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId,
-          "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(reliefURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val result = Await.result(connector.savePensionReliefSessionData(nino, taxYear, reliefRequestModel), Duration.Inf)
         result shouldBe Right(())
@@ -220,8 +240,7 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "payload is successfully submitted" in {
 
-        stubPutWithHeadersCheck(reliefURL, NO_CONTENT, Json.toJson(reliefRequestModel).toString(),
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(reliefURL, NO_CONTENT, Json.toJson(reliefRequestModel).toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val result = Await.result(connector.savePensionReliefSessionData(nino, taxYear, reliefRequestModel), Duration.Inf)
         result shouldBe Right(())
@@ -234,8 +253,7 @@ class PensionsConnectorISpec extends IntegrationTest {
 
         implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue"))).withExtraHeaders("mtditid" -> mtditid)
 
-        stubPutWithHeadersCheck(reliefURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId,
-          "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(reliefURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val result = Await.result(connector.savePensionReliefSessionData(nino, taxYear, reliefRequestModel)(hc, ec), Duration.Inf)
 
@@ -244,8 +262,7 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "submission returns a 200 but invalid json" in {
 
-        stubPutWithHeadersCheck(reliefURL, OK, Json.toJson("""{"invalid": true}""").toString(),
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(reliefURL, OK, Json.toJson("""{"invalid": true}""").toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
         val result = Await.result(connector.savePensionReliefSessionData(nino, taxYear, reliefRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
@@ -253,8 +270,12 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "submission returns a 500" in {
 
-        stubPutWithHeadersCheck(reliefURL, INTERNAL_SERVER_ERROR, """{"code": "FAILED", "reason": "failed"}""",
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(
+          reliefURL,
+          INTERNAL_SERVER_ERROR,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
 
         val result = Await.result(connector.savePensionReliefSessionData(nino, taxYear, reliefRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
@@ -262,8 +283,12 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "submission returns a 503" in {
 
-        stubPutWithHeadersCheck(reliefURL, SERVICE_UNAVAILABLE, """{"code": "FAILED", "reason": "failed"}""",
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(
+          reliefURL,
+          SERVICE_UNAVAILABLE,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
 
         val result = Await.result(connector.savePensionReliefSessionData(nino, taxYear, reliefRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))
@@ -271,8 +296,12 @@ class PensionsConnectorISpec extends IntegrationTest {
 
       "submission returns an unexpected result" in {
 
-        stubPutWithHeadersCheck(reliefURL, BAD_REQUEST, """{"code": "FAILED", "reason": "failed"}""",
-          "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(
+          reliefURL,
+          BAD_REQUEST,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
 
         val result = Await.result(connector.savePensionReliefSessionData(nino, taxYear, reliefRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))

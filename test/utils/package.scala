@@ -15,7 +15,7 @@
  */
 
 package object utils {
-  
+
   def createLongString(size: Int): String = {
     def impl(str: String): String = if (str.length < size) impl(str + "A") else str
     impl("")

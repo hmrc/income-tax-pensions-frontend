@@ -27,9 +27,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class NrsConnector @Inject()(val http: HttpClient,
-                             val config: AppConfig
-                            )(implicit ec: ExecutionContext) extends RawResponseReads with Logging {
+class NrsConnector @Inject() (val http: HttpClient, val config: AppConfig)(implicit ec: ExecutionContext) extends RawResponseReads with Logging {
 
   def postNrsConnector[A](nino: String, payload: A)(implicit hc: HeaderCarrier, writes: Writes[A]): Future[NrsSubmissionResponse] = {
     val url: String = config.nrsProxyBaseUrl + s"/income-tax-nrs-proxy/$nino/itsa-personal-income-submission"

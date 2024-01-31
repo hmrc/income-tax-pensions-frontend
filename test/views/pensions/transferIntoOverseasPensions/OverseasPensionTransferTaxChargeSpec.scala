@@ -33,9 +33,9 @@ import views.html.pensions.transferIntoOverseasPensions.pensionSchemeTaxTransfer
 class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequestProvider {
 
   object Selectors {
-    val captionSelector = "#main-content > div > div > header > p"
+    val captionSelector     = "#main-content > div > div > header > p"
     val amountLabelSelector = "#conditional-value > div > label"
-    val amountTextSelector = "#amount-2"
+    val amountTextSelector  = "#amount-2"
   }
 
   trait CommonExpectedResults {
@@ -56,50 +56,55 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
     override val expectedTitle = "Did your pension schemes pay tax on the amount that resulted in a transfer charge?"
-    override val expectedNoEntryErrorText: String = "Select yes if your pension schemes paid tax on the amount on which you paid an overseas transfer charge"
+    override val expectedNoEntryErrorText: String =
+      "Select yes if your pension schemes paid tax on the amount on which you paid an overseas transfer charge"
     override val expectedIncorrectFormatErrorText: String = "Enter the tax paid on the amount on which you paid an overseas transfer charge in pounds"
-    override val expectedNoAmountEntryErrorText: String = "Enter the tax paid on the amount on which you paid an overseas transfer charge"
+    override val expectedNoAmountEntryErrorText: String   = "Enter the tax paid on the amount on which you paid an overseas transfer charge"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
     override val expectedTitle = "A wnaeth eich cynlluniau pensiwn dalu treth ar y swm a wnaeth arwain at dâl trosglwyddiadau?"
-    override val expectedNoEntryErrorText: String = "Dewiswch ‘Iawn’ os gwnaeth eich cynlluniau pensiwn dalu treth ar y swm y gwnaethoch chi dalu tâl trosglwyddiadau tramor arno"
-    override val expectedIncorrectFormatErrorText: String = "Nodwch y dreth a dalwyd ar y swm y gwnaethoch dalu tâl trosglwyddiadau tramor arno yn y fformat cywir"
+    override val expectedNoEntryErrorText: String =
+      "Dewiswch ‘Iawn’ os gwnaeth eich cynlluniau pensiwn dalu treth ar y swm y gwnaethoch chi dalu tâl trosglwyddiadau tramor arno"
+    override val expectedIncorrectFormatErrorText: String =
+      "Nodwch y dreth a dalwyd ar y swm y gwnaethoch dalu tâl trosglwyddiadau tramor arno yn y fformat cywir"
     override val expectedNoAmountEntryErrorText: String = "Nodwch y dreth a dalwyd ar y swm y gwnaethoch dalu tâl trosglwyddiadau tramor arno"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
     override val expectedTitle = "Did your client’s pension schemes pay tax on the amount that resulted in a transfer charge?"
-    override val expectedNoEntryErrorText: String = "Select yes if your client’s pension schemes paid tax on the amount that resulted in a transfer charge"
+    override val expectedNoEntryErrorText: String =
+      "Select yes if your client’s pension schemes paid tax on the amount that resulted in a transfer charge"
     override val expectedIncorrectFormatErrorText: String = "Enter the amount of tax paid on the transfer charge amount in pounds"
-    override val expectedNoAmountEntryErrorText: String = "Enter the amount of tax paid on the transfer charge amount"
+    override val expectedNoAmountEntryErrorText: String   = "Enter the amount of tax paid on the transfer charge amount"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
     override val expectedTitle = "A wnaeth cynlluniau pensiwn eich cleient dalu treth ar y swm a wnaeth arwain at dâl trosglwyddiadau?"
-    override val expectedNoEntryErrorText: String = "Dewiswch ‘Iawn’ os gwnaeth cynlluniau pensiwn eich cleient dalu treth ar y swm a wnaeth arwain at dâl trosglwyddiadau"
+    override val expectedNoEntryErrorText: String =
+      "Dewiswch ‘Iawn’ os gwnaeth cynlluniau pensiwn eich cleient dalu treth ar y swm a wnaeth arwain at dâl trosglwyddiadau"
     override val expectedIncorrectFormatErrorText: String = "Nodwch swm y dreth a dalwyd ar y tâl trosglwyddiadau yn y fformat cywir"
-    override val expectedNoAmountEntryErrorText: String = "Nodwch swm y dreth a dalwyd ar y tâl trosglwyddiadau"
+    override val expectedNoAmountEntryErrorText: String   = "Nodwch swm y dreth a dalwyd ar y tâl trosglwyddiadau"
   }
 
   object ExpectedCommonEN extends CommonExpectedResults {
     override val expectedCaption: Int => String = (taxYear: Int) => s"Transfers into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    override val expectedAmountText: String = "Total tax, in pounds"
-    override val yes: String = "Yes"
-    override val no: String = "No"
-    override val continue: String = "Continue"
+    override val expectedAmountText: String     = "Total tax, in pounds"
+    override val yes: String                    = "Yes"
+    override val no: String                     = "No"
+    override val continue: String               = "Continue"
     override val expectedTooBigErrorText: String = "The amount of tax paid on the transfer charge amount must be less than £100,000,000,000"
   }
 
   object ExpectedCommonCY extends CommonExpectedResults {
-    override val expectedCaption: Int => String = (taxYear: Int) => s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    override val expectedAmountText: String = "Cyfanswm y dreth, mewn punnoedd"
-    override val yes: String = "Iawn"
-    override val no: String = "Na"
-    override val continue: String = "Yn eich blaen"
+    override val expectedCaption: Int => String = (taxYear: Int) =>
+      s"Trosglwyddiadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
+    override val expectedAmountText: String      = "Cyfanswm y dreth, mewn punnoedd"
+    override val yes: String                     = "Iawn"
+    override val no: String                      = "Na"
+    override val continue: String                = "Yn eich blaen"
     override val expectedTooBigErrorText: String = "Mae’n rhaid i swm y dreth a dalwyd ar y tâl trosglwyddiadau fod yn llai na £100,000,000,000"
   }
-
 
   override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
     UserScenario(isWelsh = false, isAgent = false, ExpectedCommonEN, Some(ExpectedIndividualEN)),
@@ -108,21 +113,21 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
     UserScenario(isWelsh = true, isAgent = true, ExpectedCommonCY, Some(ExpectedAgentCY))
   )
 
-
   private lazy val underTest = inject[pensionSchemeTaxTransferChargeView]
   userScenarios.foreach { userScenario =>
-
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render page without pre filled date" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
+          aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] =
+          new FormsProvider().pensionSchemeTaxTransferForm(if (userScenario.isAgent) anAgentUser else aUser)
 
         implicit val htmlFormat: HtmlFormat.Appendable = underTest(form, taxYearEOY)
-        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+        implicit val document: Document                = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
@@ -132,15 +137,17 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
       }
       "render the page with pre filled data" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData,
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
+          aPensionsUserData,
           if (userScenario.isAgent) anAgentUser else aUser,
           if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] =
+          new FormsProvider().pensionSchemeTaxTransferForm(if (userScenario.isAgent) anAgentUser else aUser)
 
-        implicit val htmlFormat: HtmlFormat.Appendable = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100.00")), taxYearEOY)
+        implicit val htmlFormat: HtmlFormat.Appendable =
+          underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "100.00")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
-
 
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
@@ -153,12 +160,14 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
 
       "render the page with an error when the user doesn’t select a radio button" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] =
+          new FormsProvider().pensionSchemeTaxTransferForm(if (userScenario.isAgent) anAgentUser else aUser)
 
         implicit val htmlFormat: HtmlFormat.Appendable = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "")), taxYearEOY)
-        implicit val document: Document = Jsoup.parse(htmlFormat.body)
+        implicit val document: Document                = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoEntryErrorText, Some("value"))
         errorSummaryCheck(userScenario.specificExpectedResults.get.expectedNoEntryErrorText, "#value")
@@ -167,11 +176,14 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
       "render the page with an error when the user selects yes but doesn’t enter the amount" which {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] =
+          new FormsProvider().pensionSchemeTaxTransferForm(if (userScenario.isAgent) anAgentUser else aUser)
 
-        implicit val htmlFormat: HtmlFormat.Appendable = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "")), taxYearEOY)
+        implicit val htmlFormat: HtmlFormat.Appendable =
+          underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedNoAmountEntryErrorText, Some("amount-2"))
@@ -180,11 +192,14 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
 
       "render the page with an error when the user selects yes but amount is in wrong format" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] =
+          new FormsProvider().pensionSchemeTaxTransferForm(if (userScenario.isAgent) anAgentUser else aUser)
 
-        implicit val htmlFormat: HtmlFormat.Appendable = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "bfsbrfg")), taxYearEOY)
+        implicit val htmlFormat: HtmlFormat.Appendable =
+          underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "bfsbrfg")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.specificExpectedResults.get.expectedIncorrectFormatErrorText, Some("amount-2"))
@@ -192,11 +207,14 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
       }
       "render the page with an error when the user selects yes but amount exceeds max" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(aPensionsUserData, aUser, if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-        def form: Form[(Boolean, Option[BigDecimal])] = new FormsProvider().pensionSchemeTaxTransferForm(if (userScenario.isAgent) anAgentUser else aUser)
+        def form: Form[(Boolean, Option[BigDecimal])] =
+          new FormsProvider().pensionSchemeTaxTransferForm(if (userScenario.isAgent) anAgentUser else aUser)
 
-        implicit val htmlFormat: HtmlFormat.Appendable = underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "1000000000000000000000.00")), taxYearEOY)
+        implicit val htmlFormat: HtmlFormat.Appendable =
+          underTest(form.bind(Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "1000000000000000000000.00")), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         errorAboveElementCheck(userScenario.commonExpectedResults.expectedTooBigErrorText, Some("amount-2"))
@@ -204,6 +222,5 @@ class OverseasPensionTransferTaxChargeSpec extends ViewUnitTest with FakeRequest
       }
     }
   }
-
 
 }

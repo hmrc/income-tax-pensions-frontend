@@ -16,7 +16,12 @@
 
 package builders
 
-import builders.ClaimCYAModelBuilder.{aPriorStatePensionClaimCYAModel, aPriorStatePensionLumpSumClaimCYAModel, aStatePensionClaimCYAModel, aStatePensionLumpSumClaimCYAModel}
+import builders.ClaimCYAModelBuilder.{
+  aPriorStatePensionClaimCYAModel,
+  aPriorStatePensionLumpSumClaimCYAModel,
+  aStatePensionClaimCYAModel,
+  aStatePensionLumpSumClaimCYAModel
+}
 import builders.PensionsUserDataBuilder.{aPensionsUserData, taxYear}
 import models.mongo.StateBenefitsUserData
 

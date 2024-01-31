@@ -35,12 +35,12 @@ import views.html.pensions.incomeFromPensions.PensionSchemeStartDateView
 
 class PensionSchemeStartDateViewSpec extends ViewUnitTest with FakeRequestProvider {
 
-  private val dayInputName = "pensionStartDate-day"
+  private val dayInputName   = "pensionStartDate-day"
   private val monthInputName = "pensionStartDate-month"
-  private val yearInputName = "pensionStartDate-year"
-  private val validDay = "27"
-  private val validMonth = "10"
-  private val validYear = "2021"
+  private val yearInputName  = "pensionStartDate-year"
+  private val validDay       = "27"
+  private val validMonth     = "10"
+  private val validYear      = "2021"
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
@@ -59,39 +59,39 @@ class PensionSchemeStartDateViewSpec extends ViewUnitTest with FakeRequestProvid
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val buttonText = "Continue"
-    val expectedHintText = "For example, 12 11 2007"
-    val expectedDayLabel = "Day"
-    val expectedMonthLabel = "Month"
-    val expectedYearLabel = "Year"
+    val buttonText                     = "Continue"
+    val expectedHintText               = "For example, 12 11 2007"
+    val expectedDayLabel               = "Day"
+    val expectedMonthLabel             = "Month"
+    val expectedYearLabel              = "Year"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Incwm o bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val buttonText = "Yn eich blaen"
-    val expectedHintText = "Er enghraifft, 12 11 2007"
-    val expectedDayLabel = "Diwrnod"
-    val expectedMonthLabel = "Mis"
-    val expectedYearLabel = "Blwyddyn"
+    val buttonText                     = "Yn eich blaen"
+    val expectedHintText               = "Er enghraifft, 12 11 2007"
+    val expectedDayLabel               = "Diwrnod"
+    val expectedMonthLabel             = "Mis"
+    val expectedYearLabel              = "Blwyddyn"
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
-    val expectedTitle = "When did you start getting payments from this scheme?"
+    val expectedTitle      = "When did you start getting payments from this scheme?"
     val expectedErrorTitle = s"Error: $expectedTitle"
   }
 
   object ExpectedIndividualCY extends SpecificExpectedResults {
-    val expectedTitle = "Pryd y gwnaethoch ddechrau cael taliadau o’r cynllun hwn?"
+    val expectedTitle      = "Pryd y gwnaethoch ddechrau cael taliadau o’r cynllun hwn?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
   object ExpectedAgentEN extends SpecificExpectedResults {
-    val expectedTitle = "When did your client start getting payments from this scheme?"
+    val expectedTitle      = "When did your client start getting payments from this scheme?"
     val expectedErrorTitle = s"Error: $expectedTitle"
   }
 
   object ExpectedAgentCY extends SpecificExpectedResults {
-    val expectedTitle = "Pryd y gwnaeth eich cleient ddechrau cael taliadau o’r cynllun hwn?"
+    val expectedTitle      = "Pryd y gwnaeth eich cleient ddechrau cael taliadau o’r cynllun hwn?"
     val expectedErrorTitle = s"Gwall: $expectedTitle"
   }
 
@@ -103,16 +103,16 @@ class PensionSchemeStartDateViewSpec extends ViewUnitTest with FakeRequestProvid
   )
 
   object Selectors {
-    val captionSelector: String = "#main-content > div > div > header > p"
+    val captionSelector: String        = "#main-content > div > div > header > p"
     val continueButtonSelector: String = "#continue"
-    val formSelector: String = "#main-content > div > div > form"
-    val hintSelector = "#pensionStartDate-hint"
-    val dayInputSelector = "#day"
-    val monthInputSelector = "#month"
-    val yearInputSelector = "#year"
-    val dayInputHref = "#day"
-    val monthInputHref = "#month"
-    val yearInputHref = "#year"
+    val formSelector: String           = "#main-content > div > div > form"
+    val hintSelector                   = "#pensionStartDate-hint"
+    val dayInputSelector               = "#day"
+    val monthInputSelector             = "#month"
+    val yearInputSelector              = "#year"
+    val dayInputHref                   = "#day"
+    val monthInputHref                 = "#month"
+    val yearInputHref                  = "#year"
 
     def labelSelector(index: Int): String = s"#pensionStartDate > div:nth-child($index) > div > label"
   }
@@ -123,7 +123,6 @@ class PensionSchemeStartDateViewSpec extends ViewUnitTest with FakeRequestProvid
   private lazy val underTest = inject[PensionSchemeStartDateView]
 
   userScenarios.foreach { userScenario =>
-
     import Selectors._
     def form: Form[DateForm.DateModel] = new FormsProvider().pensionSchemeDateForm
 
@@ -132,17 +131,17 @@ class PensionSchemeStartDateViewSpec extends ViewUnitTest with FakeRequestProvid
       "render page with no pre-filled data" which {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = {
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAModel.copy(
-              incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-                uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(startDate = None)))
-            )),
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(
+            aPensionsUserData.copy(
+              pensions = aPensionsCYAModel.copy(
+                incomeFromPensions = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(startDate = None)))
+              )),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        }
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
-        val htmlFormat = underTest(form, taxYearEOY, 0)
+        val htmlFormat                  = underTest(form, taxYearEOY, 0)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
@@ -163,17 +162,18 @@ class PensionSchemeStartDateViewSpec extends ViewUnitTest with FakeRequestProvid
       "render page with pre-filled data" which {
 
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = {
-          UserSessionDataRequest(aPensionsUserData.copy(
-            pensions = aPensionsCYAModel.copy(
-              incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-                uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(startDate = Some(s"$validYear-$validMonth-$validDay"))))
-            )),
+        implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
+          UserSessionDataRequest(
+            aPensionsUserData.copy(
+              pensions = aPensionsCYAModel.copy(
+                incomeFromPensions = anIncomeFromPensionsViewModel.copy(
+                  uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(startDate = Some(s"$validYear-$validMonth-$validDay"))))
+              )),
             if (userScenario.isAgent) anAgentUser else aUser,
-            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
-        }
+            if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
+          )
 
-        val htmlFormat = underTest(form.fill(DateModel(validDay, validMonth, validYear)), taxYearEOY, 1)
+        val htmlFormat                  = underTest(form.fill(DateModel(validDay, validMonth, validYear)), taxYearEOY, 1)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)

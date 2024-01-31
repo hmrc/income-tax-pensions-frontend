@@ -24,83 +24,79 @@ import utils.ViewUtils.bigDecimalCurrency
 trait ViewHelper {
   self: AnyWordSpec with Matchers =>
 
-  private val serviceName = "Update and submit an Income Tax Return"
+  private val serviceName      = "Update and submit an Income Tax Return"
   private val serviceNameWelsh = "Diweddaru a chyflwyno Ffurflen Dreth Incwm"
-  private val govUkExtension = "GOV.UK"
-  private val ENGLISH = "English"
-  private val WELSH = "Welsh"
+  private val govUkExtension   = "GOV.UK"
+  private val ENGLISH          = "English"
+  private val WELSH            = "Welsh"
 
   protected def welshTest(isWelsh: Boolean): String = if (isWelsh) "Welsh" else "English"
 
   protected def agentTest(isAgent: Boolean): String = if (isAgent) "Agent" else "Individual"
 
-  def elementText(selector: String)(implicit document: Document): String = {
+  def elementText(selector: String)(implicit document: Document): String =
     document.select(selector).text()
-  }
 
-  def elementExist(selector: String)(implicit document: Document): Boolean = {
+  def elementExist(selector: String)(implicit document: Document): Boolean =
     !document.select(selector).isEmpty
-  }
 
-  def titleCheck(title: String, isWelsh: Boolean)(implicit document: Document): Unit = {
+  def titleCheck(title: String, isWelsh: Boolean)(implicit document: Document): Unit =
     s"has a title of $title" in {
       document.title() shouldBe s"$title - ${if (isWelsh) serviceNameWelsh else serviceName} - $govUkExtension"
     }
-  }
 
-  def hintTextCheck(text: String, selector: String = ".govuk-hint")(implicit document: Document): Unit = {
+  def hintTextCheck(text: String, selector: String = ".govuk-hint")(implicit document: Document): Unit =
     s"has the hint text of '$text'" in {
       elementText(selector) shouldBe text
     }
-  }
 
-  def h1Check(header: String, size: String = "l")(implicit document: Document): Unit = {
+  def h1Check(header: String, size: String = "l")(implicit document: Document): Unit =
     s"have a page heading of '$header'" in {
       document.select(s".govuk-heading-$size").text() shouldBe header
     }
-  }
 
-  def captionCheck(caption: String, selector: String = ".govuk-caption-l")(implicit document: Document): Unit = {
+  def captionCheck(caption: String, selector: String = ".govuk-caption-l")(implicit document: Document): Unit =
     s"have the caption of '$caption'" in {
       document.select(selector).text() shouldBe caption
     }
-  }
 
-  def elementsNotOnPageCheck(selector: String)(implicit document: Document): Unit = {
+  def elementsNotOnPageCheck(selector: String)(implicit document: Document): Unit =
     s"not have the page elements for selector '$selector'" in {
       document.select(selector).isEmpty shouldBe true
     }
-  }
 
-  def textOnPageCheck(text: String, selector: String, additionalTestText: String = "")(implicit document: Document): Unit = {
+  def textOnPageCheck(text: String, selector: String, additionalTestText: String = "")(implicit document: Document): Unit =
     s"have text on the screen of '$text' $additionalTestText" in {
       document.select(selector).text() shouldBe text
     }
-  }
 
-  def elementNotOnPageCheck(selector: String)(implicit document: Document): Unit = {
+  def elementNotOnPageCheck(selector: String)(implicit document: Document): Unit =
     s"not have the page element for selector '$selector'" in {
       document.select(selector).isEmpty shouldBe true
     }
-  }
 
-  def changeAmountRowCheck(item: String, value: String, itemSelector: String, valueSelector: String, changeSelector: String,
-                           changeHiddenText: String, href: String)
-                          (implicit document: Document): Unit = {
+  def changeAmountRowCheck(item: String,
+                           value: String,
+                           itemSelector: String,
+                           valueSelector: String,
+                           changeSelector: String,
+                           changeHiddenText: String,
+                           href: String)(implicit document: Document): Unit = {
     textOnPageCheck(item, itemSelector)
     textOnPageCheck(value, valueSelector, s"for the value of the $item field")
     linkCheck(changeHiddenText, changeSelector, href)
   }
 
-  def changeAmountRowCheck(item: String, value: String, section: Int, row: Int, changeHiddenText: String, href: String)
-                          (implicit document: Document): Unit = {
+  def changeAmountRowCheck(item: String, value: String, section: Int, row: Int, changeHiddenText: String, href: String)(implicit
+      document: Document): Unit = {
 
     def benefitsItemSelector(section: Int, row: Int): String = s"#main-content > div > div > dl:nth-child($section) > div:nth-child($row) > dt"
 
     def benefitsAmountSelector(section: Int, row: Int): String =
       s"#main-content > div > div > dl:nth-child($section) > div:nth-child($row) > dd.govuk-summary-list__value"
 
-    def benefitsChangeLinkSelector(section: Int, row: Int): String = s"#main-content > div > div > dl:nth-child($section) > div:nth-child($row) > dd > a"
+    def benefitsChangeLinkSelector(section: Int, row: Int): String =
+      s"#main-content > div > div > dl:nth-child($section) > div:nth-child($row) > dd > a"
 
     textOnPageCheck(item, benefitsItemSelector(section, row))
     textOnPageCheck(value, benefitsAmountSelector(section, row), s"for the value of the $item field")
@@ -108,21 +104,19 @@ trait ViewHelper {
 
   }
 
-  def formGetLinkCheck(text: String, selector: String)(implicit document: Document): Unit = {
+  def formGetLinkCheck(text: String, selector: String)(implicit document: Document): Unit =
     s"have a form with a GET action of '$text'" in {
       document.select(selector).attr("action") shouldBe text
       document.select(selector).attr("method") shouldBe "GET"
     }
-  }
 
-  def formPostLinkCheck(text: String, selector: String)(implicit document: Document): Unit = {
+  def formPostLinkCheck(text: String, selector: String)(implicit document: Document): Unit =
     s"have a form with a POST action of '$text'" in {
       document.select(selector).attr("action") shouldBe text
       document.select(selector).attr("method") shouldBe "POST"
     }
-  }
 
-  def buttonCheck(text: String, selector: String = ".govuk-button", href: Option[String] = None)(implicit document: Document): Unit = {
+  def buttonCheck(text: String, selector: String = ".govuk-button", href: Option[String] = None)(implicit document: Document): Unit =
     s"have a $text button" which {
       s"has the text '$text'" in {
         document.select(selector).text() shouldBe text
@@ -137,9 +131,8 @@ trait ViewHelper {
         }
       }
     }
-  }
 
-  def radioButtonCheck(text: String, radioNumber: Int, checked: Boolean)(implicit document: Document): Unit = {
+  def radioButtonCheck(text: String, radioNumber: Int, checked: Boolean)(implicit document: Document): Unit =
     s"have a $text radio button" which {
       s"is of type radio button" in {
         val selector = ".govuk-radios__item > input"
@@ -154,10 +147,9 @@ trait ViewHelper {
         document.select(selector).get(radioNumber - 1).hasAttr("checked") shouldBe checked
       }
     }
-  }
 
-  def linkCheck(text: String, selector: String, href: String, hiddenTextSelector: Option[String] = None, isExactUrlMatch: Boolean = true)
-               (implicit document: Document): Unit = {
+  def linkCheck(text: String, selector: String, href: String, hiddenTextSelector: Option[String] = None, isExactUrlMatch: Boolean = true)(implicit
+      document: Document): Unit =
     s"have a $text link" which {
       s"has the text '$text' and a href to '$href'" in {
         if (hiddenTextSelector.isDefined) {
@@ -173,7 +165,6 @@ trait ViewHelper {
         }
       }
     }
-  }
 
   def inputFieldValueCheck(name: String, selector: String, value: String)(implicit document: Document): Unit = {
     s"'$selector' has a name of '$name'" in {
@@ -183,16 +174,16 @@ trait ViewHelper {
       document.select(selector).attr("value") shouldBe value
     }
   }
-  
+
   def selectFieldValueCheck(name: String, selector: String, value: String)(implicit document: Document): Unit = {
     s"'$selector' has a name of '$name'" in {
       document.select(selector).attr("name") shouldBe name
     }
-     s"'$selector' has a value of '$value'" in {
-       document.select(selector).select("option").first().attr("value") shouldBe value
-     }
+    s"'$selector' has a value of '$value'" in {
+      document.select(selector).select("option").first().attr("value") shouldBe value
+    }
   }
-  
+
   def textareaFieldValueCheck(name: String, selector: String, value: String)(implicit document: Document): Unit = {
     s"'$selector' has a name of '$name'" in {
       document.select(selector).attr("name") shouldBe name
@@ -245,7 +236,7 @@ trait ViewHelper {
     }
 
     for (error <- errors) {
-      val index = errors.indexOf(error) + 1
+      val index    = errors.indexOf(error) + 1
       val selector = s".govuk-error-summary__body > ul > li:nth-child($index) > a"
 
       s"has a ${error._1} error in the error summary" which {
@@ -259,18 +250,16 @@ trait ViewHelper {
     }
   }
 
-  def errorAboveElementCheck(text: String, id: Option[String] = None)(implicit document: Document): Unit = {
+  def errorAboveElementCheck(text: String, id: Option[String] = None)(implicit document: Document): Unit =
     s"has a $text error above the element" which {
       s"has the text '$text'" in {
         val selector = if (id.isDefined) s"#${id.get}-error" else ".govuk-error-message"
         document.select(selector).text() shouldBe s"Error: $text"
       }
     }
-  }
 
-  def welshToggleCheck(isWelsh: Boolean)(implicit document: Document): Unit = {
+  def welshToggleCheck(isWelsh: Boolean)(implicit document: Document): Unit =
     welshToggleCheck(if (isWelsh) WELSH else ENGLISH)
-  }
 
   def welshToggleCheck(activeLanguage: String)(implicit document: Document): Unit = {
     val otherLanguage = if (activeLanguage == "English") "Welsh" else "English"
@@ -279,8 +268,7 @@ trait ViewHelper {
 
     def linkLanguage = Map("English" -> "English", "Welsh" -> "Cymraeg")
 
-    def linkText = Map("English" -> "Change the language to English English",
-      "Welsh" -> "Newid yr iaith ir Gymraeg Cymraeg")
+    def linkText = Map("English" -> "Change the language to English English", "Welsh" -> "Newid yr iaith ir Gymraeg Cymraeg")
 
     s"have the language toggle already set to $activeLanguage" which {
       s"has the text '$activeLanguage" in {
@@ -300,9 +288,9 @@ trait ViewHelper {
 
   def moneyContent(number: BigDecimal): String = bigDecimalCurrency(number.toString)
 
-  def cyaRowCheck(expectedText: String, expectedValue: String, changeLinkHref: String, changeLinkHiddenText: String, rowNumber: Int)
-                 (implicit document: Document): Unit = {
-    val keySelector = s"#main-content > div > div > dl > div:nth-child($rowNumber) > dt"
+  def cyaRowCheck(expectedText: String, expectedValue: String, changeLinkHref: String, changeLinkHiddenText: String, rowNumber: Int)(implicit
+      document: Document): Unit = {
+    val keySelector   = s"#main-content > div > div > dl > div:nth-child($rowNumber) > dt"
     val valueSelector = s"#main-content > div > div > dl > div:nth-child($rowNumber) > dd.govuk-summary-list__value"
 
     s"row number $rowNumber is correct" which {
@@ -316,10 +304,10 @@ trait ViewHelper {
       }
     }
   }
-  
+
   def cyaNoMoreRowsAfterCheck(rowNumber: Int)(implicit document: Document): Unit = {
     val keySelector = s"#main-content > div > div > dl > div:nth-child(${rowNumber + 1}) > dt"
-    
+
     s"no rows after row $rowNumber" in {
       document.select(keySelector).isEmpty shouldBe true
     }

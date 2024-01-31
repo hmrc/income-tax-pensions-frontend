@@ -27,18 +27,17 @@ class APIParserSpec extends UnitTest {
 
   object FakeParser extends APIParser {
     override val parserName: String = "TestParser"
-    override val service: String = "service"
+    override val service: String    = "service"
   }
 
-  def httpResponse(json: JsValue =
-                   Json.parse(
-                     """{"failures":[
+  def httpResponse(json: JsValue = Json.parse("""{"failures":[
                        |{"code":"SERVICE_UNAVAILABLE","reason":"The service is currently unavailable"},
-                       |{"code":"INTERNAL_SERVER_ERROR","reason":"The service is currently facing issues."}]}""".stripMargin)): HttpResponse = HttpResponse(
-    INTERNAL_SERVER_ERROR,
-    json,
-    Map("CorrelationId" -> Seq("1234645654645"))
-  )
+                       |{"code":"INTERNAL_SERVER_ERROR","reason":"The service is currently facing issues."}]}""".stripMargin)): HttpResponse =
+    HttpResponse(
+      INTERNAL_SERVER_ERROR,
+      json,
+      Map("CorrelationId" -> Seq("1234645654645"))
+    )
 
   "FakeParser" should {
     "log the correct message" in {
@@ -60,15 +59,20 @@ class APIParserSpec extends UnitTest {
     }
     "handle multiple errors" in {
       val result = FakeParser.handleAPIError(httpResponse())
-      result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorsBodyModel(Seq(
-        APIErrorBodyModel("SERVICE_UNAVAILABLE", "The service is currently unavailable"),
-        APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues.")
-      ))))
+      result shouldBe Left(
+        APIErrorModel(
+          INTERNAL_SERVER_ERROR,
+          APIErrorsBodyModel(Seq(
+            APIErrorBodyModel("SERVICE_UNAVAILABLE", "The service is currently unavailable"),
+            APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues.")
+          ))
+        ))
     }
     "handle single errors" in {
-      val result = FakeParser.handleAPIError(httpResponse(Json.parse(
-        """{"code":"INTERNAL_SERVER_ERROR","reason":"The service is currently facing issues."}""".stripMargin)))
-      result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues.")))
+      val result = FakeParser.handleAPIError(
+        httpResponse(Json.parse("""{"code":"INTERNAL_SERVER_ERROR","reason":"The service is currently facing issues."}""".stripMargin)))
+      result shouldBe Left(
+        APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues.")))
     }
 
     "handle response that is neither a single error or multiple errors" in {

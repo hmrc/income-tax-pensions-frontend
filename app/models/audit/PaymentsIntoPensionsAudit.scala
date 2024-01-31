@@ -23,42 +23,46 @@ import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.libs.json.{Json, OWrites}
 
 case class PaymentsIntoPensionsAudit(
-  taxYear: Int,
-  userType: String,
-  nino: String,
-  mtdItId: String,
-  paymentsIntoPension: PaymentsIntoPensionsViewModel,
-  priorPaymentsIntoPension: Option[PaymentsIntoPensionsViewModel] = None
+    taxYear: Int,
+    userType: String,
+    nino: String,
+    mtdItId: String,
+    paymentsIntoPension: PaymentsIntoPensionsViewModel,
+    priorPaymentsIntoPension: Option[PaymentsIntoPensionsViewModel] = None
 ) {
-  private val amend = "AmendPaymentsIntoPension"
+  private val amend  = "AmendPaymentsIntoPension"
   private val create = "CreatePaymentsIntoPension"
-  private val view = "ViewPaymentsIntoPension"
-  
+  private val view   = "ViewPaymentsIntoPension"
+
   def toAuditModelAmend: AuditModel[PaymentsIntoPensionsAudit] = toAuditModel(amend)
-  
+
   def toAuditModelCreate: AuditModel[PaymentsIntoPensionsAudit] = toAuditModel(create)
-  
+
   def toAuditModelView: AuditModel[PaymentsIntoPensionsAudit] = toAuditModel(view)
-  
+
   private def toAuditModel(name: String): AuditModel[PaymentsIntoPensionsAudit] = AuditModel(name, name, this)
 }
 
 object PaymentsIntoPensionsAudit {
 
   def apply(
-    taxYear: Int,
-    user: User,
-    paymentsIntoPension: PaymentsIntoPensionsViewModel,
-    priorPaymentsIntoPension: Option[PaymentsIntoPensionsViewModel]
-  ): PaymentsIntoPensionsAudit = {
+      taxYear: Int,
+      user: User,
+      paymentsIntoPension: PaymentsIntoPensionsViewModel,
+      priorPaymentsIntoPension: Option[PaymentsIntoPensionsViewModel]
+  ): PaymentsIntoPensionsAudit =
     PaymentsIntoPensionsAudit(
-      taxYear, user.affinityGroup, user.nino, user.mtditid, paymentsIntoPension, priorPaymentsIntoPension
+      taxYear,
+      user.affinityGroup,
+      user.nino,
+      user.mtditid,
+      paymentsIntoPension,
+      priorPaymentsIntoPension
     )
-  }
 
   implicit val writes: OWrites[PaymentsIntoPensionsAudit] = Json.writes[PaymentsIntoPensionsAudit]
-  
-  def amendAudit(user: User, sessionData: PensionsUserData, priorData: Option[AllPensionsData]) : PaymentsIntoPensionsAudit =
+
+  def amendAudit(user: User, sessionData: PensionsUserData, priorData: Option[AllPensionsData]): PaymentsIntoPensionsAudit =
     PaymentsIntoPensionsAudit(
       taxYear = sessionData.taxYear,
       userType = user.affinityGroup,
@@ -67,7 +71,7 @@ object PaymentsIntoPensionsAudit {
       paymentsIntoPension = sessionData.pensions.paymentsIntoPension,
       priorPaymentsIntoPension = priorData.map(pd => AllPensionsData.generateCyaFromPrior(pd).paymentsIntoPension)
     )
-  
+
   def standardAudit(user: User, sessionData: PensionsUserData): PaymentsIntoPensionsAudit =
     PaymentsIntoPensionsAudit(
       taxYear = sessionData.taxYear,

@@ -16,9 +16,8 @@
 
 package services.redirects
 
-
 sealed trait TransfersIntoOverseasPensionsPages {
-val journeyNo: Int
+  val journeyNo: Int
 }
 
 object TransfersIntoOverseasPensionsPages {

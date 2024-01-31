@@ -35,14 +35,14 @@ import support.ControllerUnitTest
 import support.mocks.MockAuditService.mockedAuditSuccessResult
 import support.mocks.{MockAuditService, MockAuthorisedAction, MockErrorHandler, MockPensionSessionService}
 
+class AuditActionsProviderSpec
+    extends ControllerUnitTest
+    with MockAuthorisedAction
+    with MockPensionSessionService
+    with MockAuditService
+    with MockErrorHandler {
 
-class AuditActionsProviderSpec extends ControllerUnitTest
-  with MockAuthorisedAction
-  with MockPensionSessionService
-  with MockAuditService
-  with MockErrorHandler {
-
-  private val anyBlock = (_: Request[AnyContent]) => Ok("any-result")
+  private val anyBlock      = (_: Request[AnyContent]) => Ok("any-result")
   private val validTaxYears = validTaxYearList.mkString(",")
 
   val fakeIndividualRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
@@ -61,26 +61,25 @@ class AuditActionsProviderSpec extends ControllerUnitTest
   type ActionType = Int => ActionBuilder[WrappedRequest, AnyContent]
 
   for ((actionName: String, action) <- Seq(
-    ("paymentsIntoPensionsViewAuditing", auditProvider.paymentsIntoPensionsViewAuditing: ActionType),
-    ("paymentsIntoPensionsUpdateAuditing", auditProvider.paymentsIntoPensionsUpdateAuditing: ActionType),
-    ("unauthorisedPaymentsViewAuditing", auditProvider.unauthorisedPaymentsViewAuditing: ActionType),
-    ("unauthorisedPaymentsUpdateAuditing", auditProvider.unauthorisedPaymentsUpdateAuditing: ActionType),
-    ("incomeFromOverseasPensionsViewAuditing", auditProvider.incomeFromOverseasPensionsViewAuditing: ActionType),
-    ("incomeFromOverseasPensionsUpdateAuditing", auditProvider.incomeFromOverseasPensionsUpdateAuditing: ActionType),
-    ("paymentsIntoOverseasPensionsViewAuditing", auditProvider.paymentsIntoOverseasPensionsViewAuditing: ActionType),
-    ("paymentsIntoOverseasPensionsUpdateAuditing", auditProvider.paymentsIntoOverseasPensionsUpdateAuditing: ActionType),
-    ("shortServiceRefundsViewAuditing", auditProvider.shortServiceRefundsViewAuditing: ActionType),
-    ("shortServiceRefundsUpdateAuditing", auditProvider.shortServiceRefundsUpdateAuditing: ActionType),
-    ("incomeFromStatePensionsViewAuditing", auditProvider.incomeFromStatePensionsViewAuditing: ActionType),
-    ("incomeFromStatePensionsUpdateAuditing", auditProvider.incomeFromStatePensionsUpdateAuditing: ActionType),
-    ("ukPensionIncomeViewAuditing", auditProvider.ukPensionIncomeViewAuditing: ActionType),
-    ("ukPensionIncomeUpdateAuditing", auditProvider.ukPensionIncomeUpdateAuditing: ActionType),
-    ("annualAllowancesViewAuditing", auditProvider.annualAllowancesViewAuditing: ActionType),
-    ("annualAllowancesUpdateAuditing", auditProvider.annualAllowancesUpdateAuditing: ActionType),
-    ("transfersIntoOverseasPensionsViewAuditing", auditProvider.transfersIntoOverseasPensionsViewAuditing: ActionType),
-    ("transfersIntoOverseasPensionsUpdateAuditing", auditProvider.transfersIntoOverseasPensionsUpdateAuditing: ActionType)
-
-  )) {
+      ("paymentsIntoPensionsViewAuditing", auditProvider.paymentsIntoPensionsViewAuditing: ActionType),
+      ("paymentsIntoPensionsUpdateAuditing", auditProvider.paymentsIntoPensionsUpdateAuditing: ActionType),
+      ("unauthorisedPaymentsViewAuditing", auditProvider.unauthorisedPaymentsViewAuditing: ActionType),
+      ("unauthorisedPaymentsUpdateAuditing", auditProvider.unauthorisedPaymentsUpdateAuditing: ActionType),
+      ("incomeFromOverseasPensionsViewAuditing", auditProvider.incomeFromOverseasPensionsViewAuditing: ActionType),
+      ("incomeFromOverseasPensionsUpdateAuditing", auditProvider.incomeFromOverseasPensionsUpdateAuditing: ActionType),
+      ("paymentsIntoOverseasPensionsViewAuditing", auditProvider.paymentsIntoOverseasPensionsViewAuditing: ActionType),
+      ("paymentsIntoOverseasPensionsUpdateAuditing", auditProvider.paymentsIntoOverseasPensionsUpdateAuditing: ActionType),
+      ("shortServiceRefundsViewAuditing", auditProvider.shortServiceRefundsViewAuditing: ActionType),
+      ("shortServiceRefundsUpdateAuditing", auditProvider.shortServiceRefundsUpdateAuditing: ActionType),
+      ("incomeFromStatePensionsViewAuditing", auditProvider.incomeFromStatePensionsViewAuditing: ActionType),
+      ("incomeFromStatePensionsUpdateAuditing", auditProvider.incomeFromStatePensionsUpdateAuditing: ActionType),
+      ("ukPensionIncomeViewAuditing", auditProvider.ukPensionIncomeViewAuditing: ActionType),
+      ("ukPensionIncomeUpdateAuditing", auditProvider.ukPensionIncomeUpdateAuditing: ActionType),
+      ("annualAllowancesViewAuditing", auditProvider.annualAllowancesViewAuditing: ActionType),
+      ("annualAllowancesUpdateAuditing", auditProvider.annualAllowancesUpdateAuditing: ActionType),
+      ("transfersIntoOverseasPensionsViewAuditing", auditProvider.transfersIntoOverseasPensionsViewAuditing: ActionType),
+      ("transfersIntoOverseasPensionsUpdateAuditing", auditProvider.transfersIntoOverseasPensionsUpdateAuditing: ActionType)
+    )) {
 
     s".$actionName(taxYear)" should {
       "redirect to UnauthorisedUserErrorController when authentication fails" in {
@@ -92,23 +91,30 @@ class AuditActionsProviderSpec extends ControllerUnitTest
 
       "handle internal server error when getUserSessionData result in error" in {
         mockAuthAsIndividual(Some(aUser.nino))
-        mockGetPensionSessionData(taxYearEOY,
+        mockGetPensionSessionData(
+          taxYearEOY,
           Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues."))))
         mockHandleError(INTERNAL_SERVER_ERROR, InternalServerError)
 
         val underTest = action(taxYearEOY)(block = anyBlock)
-        await(underTest(fakeIndividualRequest.withSession(TAX_YEAR -> taxYearEOY.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe InternalServerError
+        await(
+          underTest(
+            fakeIndividualRequest.withSession(TAX_YEAR -> taxYearEOY.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe InternalServerError
       }
       if (actionName.contains("UpdateAuditing")) {
         "handle internal server error when getUserPriorAndSessionData result in error" in {
           mockAuthAsIndividual(Some(aUser.nino))
           mockGetPensionSessionData(taxYearEOY, Right(Some(aPensionsUserData)))
-          mockGetPriorData(taxYearEOY, aUser,
+          mockGetPriorData(
+            taxYearEOY,
+            aUser,
             Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues."))))
           mockHandleError(INTERNAL_SERVER_ERROR, InternalServerError)
 
           val underTest = action(taxYearEOY)(block = anyBlock)
-          await(underTest(fakeIndividualRequest.withSession(TAX_YEAR -> taxYearEOY.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe InternalServerError
+          await(
+            underTest(
+              fakeIndividualRequest.withSession(TAX_YEAR -> taxYearEOY.toString, VALID_TAX_YEARS -> validTaxYears))) shouldBe InternalServerError
         }
       }
 
@@ -123,7 +129,10 @@ class AuditActionsProviderSpec extends ControllerUnitTest
             case "paymentsIntoPensionsUpdateAuditing" =>
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
               mockGetPriorData(taxYearEOY, aUser, Right(priorData))
-              val audModel = PaymentsIntoPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.paymentsIntoPension,
+              val audModel = PaymentsIntoPensionsAudit(
+                taxYearEOY,
+                aUser,
+                aPensionsUserData.pensions.paymentsIntoPension,
                 priorData.pensions.map(generateCyaFromPrior).map(_.paymentsIntoPension))
               if (audModel.priorPaymentsIntoPension.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "paymentsIntoPensionsViewAuditing" =>
@@ -132,7 +141,10 @@ class AuditActionsProviderSpec extends ControllerUnitTest
             case "unauthorisedPaymentsUpdateAuditing" =>
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
               mockGetPriorData(taxYearEOY, aUser, Right(priorData))
-              val audModel = UnauthorisedPaymentsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.unauthorisedPayments,
+              val audModel = UnauthorisedPaymentsAudit(
+                taxYearEOY,
+                aUser,
+                aPensionsUserData.pensions.unauthorisedPayments,
                 priorData.pensions.map(generateCyaFromPrior).map(_.unauthorisedPayments))
               if (audModel.priorUnauthorisedPayments.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "unauthorisedPaymentsViewAuditing" =>
@@ -141,7 +153,10 @@ class AuditActionsProviderSpec extends ControllerUnitTest
             case "incomeFromOverseasPensionsUpdateAuditing" =>
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
               mockGetPriorData(taxYearEOY, aUser, Right(priorData))
-              val audModel = IncomeFromOverseasPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.incomeFromOverseasPensions,
+              val audModel = IncomeFromOverseasPensionsAudit(
+                taxYearEOY,
+                aUser,
+                aPensionsUserData.pensions.incomeFromOverseasPensions,
                 priorData.pensions.map(generateCyaFromPrior).map(_.incomeFromOverseasPensions))
               if (audModel.priorIncomeFromOverseasPensions.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "incomeFromOverseasPensionsViewAuditing" =>
@@ -150,8 +165,12 @@ class AuditActionsProviderSpec extends ControllerUnitTest
             case "paymentsIntoOverseasPensionsUpdateAuditing" =>
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
               mockGetPriorData(taxYearEOY, aUser, Right(priorData))
-              val audModel = PaymentsIntoOverseasPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.paymentsIntoOverseasPensions,
-                priorData.pensions.map(generateCyaFromPrior).map(_.paymentsIntoOverseasPensions))
+              val audModel = PaymentsIntoOverseasPensionsAudit(
+                taxYearEOY,
+                aUser,
+                aPensionsUserData.pensions.paymentsIntoOverseasPensions,
+                priorData.pensions.map(generateCyaFromPrior).map(_.paymentsIntoOverseasPensions)
+              )
               if (audModel.priorPaymentsIntoOverseasPensions.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "paymentsIntoOverseasPensionsViewAuditing" =>
               PaymentsIntoOverseasPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.paymentsIntoOverseasPensions, None).toAuditModelView
@@ -159,7 +178,10 @@ class AuditActionsProviderSpec extends ControllerUnitTest
             case "shortServiceRefundsUpdateAuditing" =>
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
               mockGetPriorData(taxYearEOY, aUser, Right(priorData))
-              val audModel = ShortServiceRefundsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.shortServiceRefunds,
+              val audModel = ShortServiceRefundsAudit(
+                taxYearEOY,
+                aUser,
+                aPensionsUserData.pensions.shortServiceRefunds,
                 priorData.pensions.map(generateCyaFromPrior).map(_.shortServiceRefunds))
               if (audModel.priorShortServiceRefunds.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "shortServiceRefundsViewAuditing" =>
@@ -168,7 +190,10 @@ class AuditActionsProviderSpec extends ControllerUnitTest
             case "incomeFromStatePensionsUpdateAuditing" =>
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
               mockGetPriorData(taxYearEOY, aUser, Right(priorData))
-              val audModel = IncomeFromStatePensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.incomeFromPensions,
+              val audModel = IncomeFromStatePensionsAudit(
+                taxYearEOY,
+                aUser,
+                aPensionsUserData.pensions.incomeFromPensions,
                 priorData.pensions.map(generateCyaFromPrior).map(_.incomeFromPensions))
               if (audModel.priorIncomeFromStatePensions.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "incomeFromStatePensionsViewAuditing" =>
@@ -178,18 +203,21 @@ class AuditActionsProviderSpec extends ControllerUnitTest
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
               mockGetPriorData(taxYearEOY, aUser, Right(priorData))
               val audModel = UkPensionIncomeAudit(
-                taxYearEOY, aUser,
+                taxYearEOY,
+                aUser,
                 AuditUkPensionIncome(
                   aPensionsUserData.pensions.incomeFromPensions.uKPensionIncomesQuestion,
                   aPensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
                 ),
-                priorData.pensions.map(pd => generateUkPensionCyaFromPrior(pd))
-                  .map({case (ukPensionIncomeQ, ukPensionIncomes) => AuditUkPensionIncome(ukPensionIncomeQ, ukPensionIncomes)})
+                priorData.pensions
+                  .map(pd => generateUkPensionCyaFromPrior(pd))
+                  .map { case (ukPensionIncomeQ, ukPensionIncomes) => AuditUkPensionIncome(ukPensionIncomeQ, ukPensionIncomes) }
               )
               if (audModel.priorUkPensionIncome.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "ukPensionIncomeViewAuditing" =>
               UkPensionIncomeAudit(
-                taxYearEOY, aUser,
+                taxYearEOY,
+                aUser,
                 AuditUkPensionIncome(
                   aPensionsUserData.pensions.incomeFromPensions.uKPensionIncomesQuestion,
                   aPensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
@@ -200,7 +228,10 @@ class AuditActionsProviderSpec extends ControllerUnitTest
             case "annualAllowancesUpdateAuditing" =>
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
               mockGetPriorData(taxYearEOY, aUser, Right(priorData))
-              val audModel = AnnualAllowancesAudit(taxYearEOY, aUser, aPensionsUserData.pensions.pensionsAnnualAllowances,
+              val audModel = AnnualAllowancesAudit(
+                taxYearEOY,
+                aUser,
+                aPensionsUserData.pensions.pensionsAnnualAllowances,
                 priorData.pensions.map(generateCyaFromPrior).map(_.pensionsAnnualAllowances))
               if (audModel.priorAnnualAllowances.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "annualAllowancesViewAuditing" =>
@@ -209,8 +240,12 @@ class AuditActionsProviderSpec extends ControllerUnitTest
             case "transfersIntoOverseasPensionsUpdateAuditing" =>
               val priorData = if (auditType == "amend") anIncomeTaxUserData else anIncomeTaxUserData.copy(pensions = None)
               mockGetPriorData(taxYearEOY, aUser, Right(priorData))
-              val audModel = TransfersIntoOverseasPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.transfersIntoOverseasPensions,
-                priorData.pensions.map(generateCyaFromPrior).map(_.transfersIntoOverseasPensions))
+              val audModel = TransfersIntoOverseasPensionsAudit(
+                taxYearEOY,
+                aUser,
+                aPensionsUserData.pensions.transfersIntoOverseasPensions,
+                priorData.pensions.map(generateCyaFromPrior).map(_.transfersIntoOverseasPensions)
+              )
               if (audModel.priorTransfersIntoOverseasPensions.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "transfersIntoOverseasPensionsViewAuditing" =>
               TransfersIntoOverseasPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.transfersIntoOverseasPensions, None).toAuditModelView
