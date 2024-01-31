@@ -33,8 +33,9 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
 
   ".persistPaymentIntoPensionViewModel" should {
     "return Right when model is saved successfully and payment into pensions cya is cleared from DB" in {
-      val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
-      val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
+      val sessionCya                              = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
+      val sessionUserData                         = aPensionsUserData.copy(pensions = sessionCya)
+      val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
 
@@ -49,7 +50,7 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
         )
       )
       mockSavePensionReliefSessionData(nino, taxYear, model, Right(()))
-      mockCreateOrUpdate(Right(()))
+      mockCreateOrUpdate(userWithEmptySavePaymentsIntoPensionCya, Right(()))
 
       val result = await(pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, taxYear))
       result shouldBe Right(())
@@ -86,8 +87,9 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
     }
 
     "return Left(DataNotUpdated) when data could not be updated" in {
-      val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
-      val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
+      val sessionCya                              = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
+      val sessionUserData                         = aPensionsUserData.copy(pensions = sessionCya)
+      val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
 
@@ -102,7 +104,7 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
         )
       )
       mockSavePensionReliefSessionData(nino, taxYear, model, Right(()))
-      mockCreateOrUpdate(Left(DataNotUpdated))
+      mockCreateOrUpdate(userWithEmptySavePaymentsIntoPensionCya, Left(DataNotUpdated))
 
       val result = await(pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, taxYear))
       result shouldBe Left(DataNotUpdated)

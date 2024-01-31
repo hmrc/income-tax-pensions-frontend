@@ -47,7 +47,8 @@ class PensionOverseasPaymentServiceSpec
       val allPensionsData = anAllPensionsData
       val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
-      val priorUserData   = IncomeTaxUserData(Some(allPensionsData))
+      val userWithEmptySavePaymentsIntoOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+      val priorUserData                            = IncomeTaxUserData(Some(allPensionsData))
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
@@ -70,7 +71,7 @@ class PensionOverseasPaymentServiceSpec
       mockDeletePensionReliefSessionData(nino, taxYear, Right(()))
       mockSavePensionIncomeSessionData(nino, taxYear, model1, Right(()))
       mockSavePensionReliefSessionData(nino, taxYear, model2, Right(()))
-      mockCreateOrUpdate(sessionUserData, Right(()))
+      mockCreateOrUpdate(userWithEmptySavePaymentsIntoOverseasCya, Right(()))
 
       val result = await(overseasPaymentPensionService.savePaymentsFromOverseasPensionsViewModel(aUser, taxYear))
       result shouldBe Right(())
@@ -119,6 +120,7 @@ class PensionOverseasPaymentServiceSpec
       val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
       val priorUserData   = IncomeTaxUserData(Some(allPensionsData))
+      val userWithEmptySavePaymentsIntoOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
@@ -141,7 +143,7 @@ class PensionOverseasPaymentServiceSpec
       mockDeletePensionReliefSessionData(nino, taxYear, Right(()))
       mockSavePensionIncomeSessionData(nino, taxYear, model1, Right(()))
       mockSavePensionReliefSessionData(nino, taxYear, model2, Right(()))
-      mockCreateOrUpdate(sessionUserData, Left(DataNotUpdated))
+      mockCreateOrUpdate(userWithEmptySavePaymentsIntoOverseasCya, Left(DataNotUpdated))
 
       val result = await(overseasPaymentPensionService.savePaymentsFromOverseasPensionsViewModel(aUser, taxYear))
       result shouldBe Left(DataNotUpdated)

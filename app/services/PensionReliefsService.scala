@@ -36,16 +36,19 @@ class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDa
       clock: Clock): Future[Either[ServiceError, Unit]] = {
 
     def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData =
-      userData.getOrElse(
-        PensionsUserData(
-          user.sessionId,
-          user.mtditid,
-          user.nino,
-          taxYear,
-          isPriorSubmission = false,
-          PensionsCYAModel.emptyModels,
-          clock.now(DateTimeZone.UTC)
-        ))
+      userData match {
+        case Some(value) => value.copy(pensions = value.pensions.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel()))
+        case None =>
+          PensionsUserData(
+            user.sessionId,
+            user.mtditid,
+            user.nino,
+            taxYear,
+            isPriorSubmission = false,
+            PensionsCYAModel.emptyModels,
+            clock.now(DateTimeZone.UTC)
+          )
+      }
 
     (for {
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
