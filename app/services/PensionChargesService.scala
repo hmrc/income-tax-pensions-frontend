@@ -170,7 +170,10 @@ object PensionChargesService {
 
     def getAnnualAllowanceUserData(userData: Option[PensionsUserData], user: User, taxYear: Int, clock: Clock): PensionsUserData =
       userData match {
-        case Some(value) => value
+        case Some(value) =>
+          value.copy(pensions = value.pensions.copy(
+            pensionsAnnualAllowances = PensionAnnualAllowancesViewModel()
+          ))
 
         case None =>
           PensionsUserData(
