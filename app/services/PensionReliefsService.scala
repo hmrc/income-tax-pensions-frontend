@@ -38,15 +38,16 @@ class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDa
     def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData =
       userData match {
         case Some(value) => value.copy(pensions = value.pensions.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel()))
-        case None => PensionsUserData(
-          user.sessionId,
-          user.mtditid,
-          user.nino,
-          taxYear,
-          isPriorSubmission = false,
-          PensionsCYAModel.emptyModels,
-          clock.now(DateTimeZone.UTC)
-        )
+        case None =>
+          PensionsUserData(
+            user.sessionId,
+            user.mtditid,
+            user.nino,
+            taxYear,
+            isPriorSubmission = false,
+            PensionsCYAModel.emptyModels,
+            clock.now(DateTimeZone.UTC)
+          )
       }
 
     (for {

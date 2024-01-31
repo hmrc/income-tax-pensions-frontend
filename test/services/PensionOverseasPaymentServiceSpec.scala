@@ -48,7 +48,7 @@ class PensionOverseasPaymentServiceSpec
       val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
       val userWithEmptySavePaymentsIntoOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
-      val priorUserData   = IncomeTaxUserData(Some(allPensionsData))
+      val priorUserData                            = IncomeTaxUserData(Some(allPensionsData))
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)

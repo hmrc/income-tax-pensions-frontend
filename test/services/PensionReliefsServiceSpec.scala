@@ -33,8 +33,8 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
 
   ".persistPaymentIntoPensionViewModel" should {
     "return Right when model is saved successfully and payment into pensions cya is cleared from DB" in {
-      val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
-      val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
+      val sessionCya                              = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
+      val sessionUserData                         = aPensionsUserData.copy(pensions = sessionCya)
       val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
@@ -87,8 +87,8 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
     }
 
     "return Left(DataNotUpdated) when data could not be updated" in {
-      val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
-      val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
+      val sessionCya                              = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
+      val sessionUserData                         = aPensionsUserData.copy(pensions = sessionCya)
       val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
