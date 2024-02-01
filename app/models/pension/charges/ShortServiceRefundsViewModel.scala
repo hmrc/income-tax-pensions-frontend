@@ -35,6 +35,8 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
   def isEmpty: Boolean = shortServiceRefund.isEmpty && shortServiceRefundCharge.isEmpty &&
     shortServiceRefundTaxPaid.isEmpty && shortServiceRefundTaxPaidCharge.isEmpty && refundPensionScheme.isEmpty
 
+  def nonEmpty: Boolean = !isEmpty
+
   def isFinished: Boolean =
     shortServiceRefund.exists(x =>
       if (x)

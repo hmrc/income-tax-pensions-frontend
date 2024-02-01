@@ -37,6 +37,8 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
 
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
+  def nonEmpty: Boolean = !isEmpty
+
   def isFinished: Boolean = {
     val isDone_rasPensionPaymentQuestion = yesNoAndAmountPopulated(rasPensionPaymentQuestion, totalRASPaymentsAndTaxRelief)
     val isDone_oneOffRASPaymentsQuestion =

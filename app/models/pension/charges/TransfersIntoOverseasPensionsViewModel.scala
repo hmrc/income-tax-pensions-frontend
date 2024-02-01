@@ -36,6 +36,8 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
   def isEmpty: Boolean = transferPensionSavings.isEmpty && overseasTransferCharge.isEmpty && overseasTransferChargeAmount.isEmpty &&
     pensionSchemeTransferCharge.isEmpty && pensionSchemeTransferChargeAmount.isEmpty && transferPensionScheme.isEmpty
 
+  def nonEmpty: Boolean = !isEmpty
+
   def isFinished: Boolean =
     transferPensionSavings.exists(x =>
       if (x)
