@@ -23,8 +23,8 @@ import utils.CYABaseHelper
 import utils.DateTimeUtil.dateToStringFormat
 
 object StatePensionCYAHelper extends CYABaseHelper {
-  def summaryListRows(incomeFromPensionsViewModel: IncomeFromPensionsViewModel, taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] = {
-    val s1 = Seq(
+  def summaryListRows(incomeFromPensionsViewModel: IncomeFromPensionsViewModel, taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] =
+    Seq(
       statePensionSR(incomeFromPensionsViewModel.statePension, taxYear),
       startDateSR(incomeFromPensionsViewModel.statePension, taxYear),
       lumpSumSR(incomeFromPensionsViewModel.statePensionLumpSum, taxYear),
@@ -32,8 +32,6 @@ object StatePensionCYAHelper extends CYABaseHelper {
       lumSumSDateSR(incomeFromPensionsViewModel.statePensionLumpSum, taxYear),
       addStatePensionToTaxCalcSR(incomeFromPensionsViewModel.statePensionLumpSum, taxYear)
     ).flatten
-    s1
-  }
 
   private def statePensionSR(viewModel: Option[StateBenefitViewModel], taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] =
     Some(
@@ -88,7 +86,6 @@ object StatePensionCYAHelper extends CYABaseHelper {
       messages: Messages): Option[SummaryListRow] =
     viewModel.flatMap(sb =>
       sb.addToCalculation
-        .filter(_ != None)
         .map(_ =>
           summaryListRowWithString(
             "statePension.cya.taxCalc.label",

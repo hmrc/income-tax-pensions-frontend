@@ -104,7 +104,7 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
             routes.DoubleTaxationAgreementController.show(taxYear, index)
           ))
 
-      case TaxReliefQuestion.NoTaxRelief => Option.empty[SummaryListRow]
+      case _ => Option.empty[SummaryListRow]
     }
 
 }

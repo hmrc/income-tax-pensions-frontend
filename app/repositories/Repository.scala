@@ -32,10 +32,10 @@ trait Repository {
     equal("taxYear", toBson(taxYear))
   )
 
-  def handleEncryptionDecryptionException[T](exception: Exception, startOfMessage: String): Left[DatabaseError, T] = {
-    val message: String = exception match {
+  def handleEncryptionDecryptionException[T](throwable: Throwable, startOfMessage: String): Left[DatabaseError, T] = {
+    val message: String = throwable match {
       case exception: EncryptionDecryptionException => s"${exception.failureReason} ${exception.failureMessage}"
-      case _                                        => exception.getMessage
+      case _                                        => throwable.getMessage
     }
 
     pagerDutyLog(ENCRYPTION_DECRYPTION_ERROR, s"$startOfMessage $message")

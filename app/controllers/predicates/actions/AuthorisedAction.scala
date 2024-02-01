@@ -27,7 +27,7 @@ import services.AuthService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.{affinityGroup, allEnrolments, confidenceLevel}
 import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
@@ -53,6 +53,7 @@ class AuthorisedAction @Inject() (appConfig: AppConfig)(implicit val authService
     authService.authorised().retrieve(affinityGroup) {
       case Some(AffinityGroup.Agent) => agentAuthentication(block)(request, headerCarrier)
       case Some(affinityGroup)       => individualAuthentication(block, affinityGroup)(request, headerCarrier)
+      case _                         => throw new UnauthorizedException("Unable to retrieve affinityGroup")
     } recover {
       case _: NoActiveSession =>
         logger.info(s"[AuthorisedAction][invokeBlock] - No active session. Redirecting to ${appConfig.signInUrl}")

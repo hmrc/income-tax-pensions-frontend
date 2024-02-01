@@ -57,7 +57,6 @@ class PensionSessionService @Inject() (pensionUserDataRepository: PensionsUserDa
       case Right(data) => Right(data)
     }
 
-  @deprecated("We should avoid using this method, as it's more difficult to mock. use 'getPensionSessionData' above", since = "0001228")
   def getPensionsSessionDataResult(taxYear: Int, user: User)(result: Option[PensionsUserData] => Future[Result])(implicit
       request: Request[_]): Future[Result] =
     pensionUserDataRepository.find(taxYear, user).flatMap {
