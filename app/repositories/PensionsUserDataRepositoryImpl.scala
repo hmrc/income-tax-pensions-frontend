@@ -94,8 +94,8 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
         Try {
           encryptionService.decryptUserData(encryptedData)
         }.toEither match {
-          case Left(throwable) => handleEncryptionDecryptionException(throwable, start)
-          case Right(decryptedData)       => Right(decryptedData)
+          case Left(throwable)      => handleEncryptionDecryptionException(throwable, start)
+          case Right(decryptedData) => Right(decryptedData)
         }
     }
   }

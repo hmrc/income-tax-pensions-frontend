@@ -56,7 +56,8 @@ class PensionOverseasIncomeStatus @Inject() (
         case Left(_) => Future.successful(errorHandler.internalServerError())
         case Right(maybeData) =>
           maybeData match {
-            case Some(data) => cleanUpSchemes(data).map {
+            case Some(data) =>
+              cleanUpSchemes(data).map {
                 case Right(_) =>
                   val form =
                     data.pensions.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion
