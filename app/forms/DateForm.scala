@@ -31,8 +31,8 @@ object DateForm extends InputFilters {
     def toLocalDate: LocalDate = LocalDate.of(year.toInt, month.toInt, day.toInt)
   }
 
-  val tooLongAgoYear = 1900
-  val tooLongAgoDate = LocalDate.of(tooLongAgoYear, 1, 1)
+  private val tooLongAgoYear = 1900
+  private val tooLongAgoDate = LocalDate.of(tooLongAgoYear, 1, 1)
 
   def day(id: String): String = s"$id-day"
 
@@ -49,7 +49,7 @@ object DateForm extends InputFilters {
       )(DateModel.apply)(DateModel.unapply)
     )
 
-  def areInputsEmpty(date: DateModel, messageStart: String)(implicit messages: Messages): Seq[FormError] =
+  private def areInputsEmpty(date: DateModel, messageStart: String)(implicit messages: Messages): Seq[FormError] =
     (date.day.isEmpty, date.month.isEmpty, date.year.isEmpty) match {
       case (true, true, true)   => Seq(FormError("emptyAll", Messages(s"$messageStart.error.empty.all")))
       case (true, false, false) => Seq(FormError("emptyDay", Messages(s"$messageStart.error.empty.day")))
@@ -61,7 +61,7 @@ object DateForm extends InputFilters {
       case (_, _, _)            => Seq()
     }
 
-  def dateValidation(date: LocalDate, messageStart: String)(implicit messages: Messages): Seq[FormError] =
+  private def dateValidation(date: LocalDate, messageStart: String)(implicit messages: Messages): Seq[FormError] =
     (date.isAfter(LocalDate.now().minusDays(1)), date.isBefore(tooLongAgoDate)) match {
       case (true, _) => Seq(FormError("invalidFormat", Messages(s"$messageStart.error.dateInFuture")))
       case (_, true) => Seq(FormError("invalidFormat", Messages(s"$messageStart.error.tooLongAgo")))

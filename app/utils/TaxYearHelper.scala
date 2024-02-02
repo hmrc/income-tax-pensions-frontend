@@ -17,9 +17,9 @@
 package utils
 
 import common.SessionValues
+import play.api.mvc.Request
 
 import java.time.{LocalDate, LocalDateTime, ZoneId}
-import play.api.mvc.Request
 
 trait TaxYearHelper extends SessionHelper {
 
@@ -40,7 +40,7 @@ trait TaxYearHelper extends SessionHelper {
 
   val taxYearEOY: Int = taxYear - 1
 
-  def retrieveTaxYearList(implicit request: Request[_]): Seq[Int] =
+  private def retrieveTaxYearList(implicit request: Request[_]): Seq[Int] =
     getFromSession(SessionValues.VALID_TAX_YEARS)(request).getOrElse("").split(',').toSeq.map(_.toInt)
 
   def firstClientTaxYear(implicit request: Request[_]): Int  = retrieveTaxYearList.head

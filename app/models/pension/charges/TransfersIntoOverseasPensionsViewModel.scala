@@ -40,17 +40,23 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
 
   def isFinished: Boolean =
     transferPensionSavings.exists(x =>
-      if (x)
+      if (x) {
         overseasTransferCharge.exists(x =>
-          if (!x) true
-          else
+          if (!x) {
+            true
+          } else {
             overseasTransferChargeAmount.isDefined &&
             pensionSchemeTransferCharge.exists(x =>
-              if (!x) true
-              else
+              if (!x) {
+                true
+              } else {
                 pensionSchemeTransferChargeAmount.isDefined &&
-                transferPensionScheme.nonEmpty && transferPensionScheme.forall(tps => tps.isFinished)))
-      else true)
+                transferPensionScheme.nonEmpty && transferPensionScheme.forall(tps => tps.isFinished)
+              })
+          })
+      } else {
+        true
+      })
 
   def toTransfersIOP: PensionSchemeOverseasTransfers = PensionSchemeOverseasTransfers(
     overseasSchemeProvider = fromTransferPensionScheme(this.transferPensionScheme),

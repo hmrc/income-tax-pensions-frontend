@@ -46,7 +46,7 @@ object AllPensionsData {
       shortServiceRefunds = generateShortServiceRefundCyaFromPrior(prior)
     )
 
-  def generatePaymentsIntoPensionsCyaFromPrior(prior: AllPensionsData): PaymentsIntoPensionsViewModel =
+  private def generatePaymentsIntoPensionsCyaFromPrior(prior: AllPensionsData): PaymentsIntoPensionsViewModel =
     PaymentsIntoPensionsViewModel(
       rasPensionPaymentQuestion = prior.pensionReliefs.map(_.pensionReliefs.regularPensionContributions.isDefined),
       totalRASPaymentsAndTaxRelief = prior.pensionReliefs.flatMap(_.pensionReliefs.regularPensionContributions),
@@ -73,7 +73,7 @@ object AllPensionsData {
       pensionSchemeTaxReferences = prior.pensionCharges.flatMap(_.pensionContributions).map(_.pensionSchemeTaxReference)
     )
 
-  def generateIncomeFromPensionsModelFromPrior(prior: AllPensionsData): IncomeFromPensionsViewModel = {
+  private def generateIncomeFromPensionsModelFromPrior(prior: AllPensionsData): IncomeFromPensionsViewModel = {
     val (statePen, statePenLumpSum)   = generateStatePensionCyaFromPrior(prior)
     val (uKPenIncomesQ, uKPenIncomes) = generateUkPensionCyaFromPrior(prior)
 
@@ -88,7 +88,7 @@ object AllPensionsData {
     )
   }
 
-  def generateStatePensionCyaFromPrior(prior: AllPensionsData): (Option[StateBenefitViewModel], Option[StateBenefitViewModel]) = {
+  private def generateStatePensionCyaFromPrior(prior: AllPensionsData): (Option[StateBenefitViewModel], Option[StateBenefitViewModel]) = {
     def getStatePensionModel(statePension: Option[StateBenefit]): Option[StateBenefitViewModel] =
       statePension match {
         case Some(benefit) =>
@@ -140,7 +140,7 @@ object AllPensionsData {
     (getUkPensionQuestion(prior), getUkPensionIncome(prior))
   }
 
-  def generateUnauthorisedPaymentsCysFromPrior(prior: AllPensionsData): UnauthorisedPaymentsViewModel =
+  private def generateUnauthorisedPaymentsCysFromPrior(prior: AllPensionsData): UnauthorisedPaymentsViewModel =
     UnauthorisedPaymentsViewModel(
       surchargeQuestion = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge).map(_.amount > 0)),
       noSurchargeQuestion = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge).map(_ => true)),
@@ -154,7 +154,7 @@ object AllPensionsData {
       pensionSchemeTaxReference = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.pensionSchemeTaxReference))
     )
 
-  def generatePaymentsIntoOverseasPensionsFromPrior(prior: AllPensionsData): PaymentsIntoOverseasPensionsViewModel = {
+  private def generatePaymentsIntoOverseasPensionsFromPrior(prior: AllPensionsData): PaymentsIntoOverseasPensionsViewModel = {
     def getTaxReliefQuestion(overseasPensionContribution: OverseasPensionContribution): String =
       if (overseasPensionContribution.sf74Reference.isDefined) {
         TaxReliefQuestion.TransitionalCorrespondingRelief
@@ -189,7 +189,7 @@ object AllPensionsData {
     )
   }
 
-  def generateIncomeFromOverseasPensionsCyaFromPrior(prior: AllPensionsData): IncomeFromOverseasPensionsViewModel =
+  private def generateIncomeFromOverseasPensionsCyaFromPrior(prior: AllPensionsData): IncomeFromOverseasPensionsViewModel =
     IncomeFromOverseasPensionsViewModel(
       paymentsFromOverseasPensionsQuestion = prior.pensionIncome.flatMap(_.foreignPension.map(_.nonEmpty)),
       overseasIncomePensionSchemes = prior.pensionIncome
@@ -207,7 +207,7 @@ object AllPensionsData {
         .getOrElse(Nil)
     )
 
-  def generateTransfersIntoOverseasPensionsCyaFromPrior(prior: AllPensionsData): TransfersIntoOverseasPensionsViewModel =
+  private def generateTransfersIntoOverseasPensionsCyaFromPrior(prior: AllPensionsData): TransfersIntoOverseasPensionsViewModel =
     TransfersIntoOverseasPensionsViewModel(
       transferPensionSavings = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferCharge).isDefined),
       overseasTransferCharge = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferCharge).isDefined),
@@ -228,7 +228,7 @@ object AllPensionsData {
         .getOrElse(Nil)
     )
 
-  def generateShortServiceRefundCyaFromPrior(prior: AllPensionsData): ShortServiceRefundsViewModel =
+  private def generateShortServiceRefundCyaFromPrior(prior: AllPensionsData): ShortServiceRefundsViewModel =
     ShortServiceRefundsViewModel(
       shortServiceRefund = prior.pensionCharges.map(_.overseasPensionContributions.map(_.shortServiceRefund).isDefined),
       shortServiceRefundCharge = prior.pensionCharges.flatMap(_.overseasPensionContributions.map(_.shortServiceRefund)),
