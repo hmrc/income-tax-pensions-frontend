@@ -112,8 +112,11 @@ object ShortServiceRefundsRedirects {
         if (schemesEmpty) false else shortServiceRefundsViewModel.refundPensionScheme(index).isFinished
       },
       7 -> { shortServiceRefundsViewModel: ShortServiceRefundsViewModel =>
-        if (isPageValidInJourney(2, shortServiceRefundsViewModel)) shortServiceRefundsViewModel.isFinished
-        else !shortServiceRefundsViewModel.shortServiceRefund.getOrElse(true)
+        if (isPageValidInJourney(2, shortServiceRefundsViewModel)) {
+          shortServiceRefundsViewModel.isFinished
+        } else {
+          !shortServiceRefundsViewModel.shortServiceRefund.getOrElse(true)
+        }
       }
     )
 

@@ -44,7 +44,7 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
         routes.PensionsCustomerReferenceNumberController.show(taxYear, index))
     })
 
-  def unTaxedPayerEmployments(relief: Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] =
+  private def unTaxedPayerEmployments(relief: Relief, taxYear: Int, index: Option[Int])(implicit messages: Messages): Option[SummaryListRow] =
     Some(relief.employerPaymentsAmount.fold {
       summaryListRowWithString(
         "overseasPension.reliefDetails.amount",
@@ -68,7 +68,7 @@ object ReliefsSchemeDetailsHelper extends CYABaseHelper {
         routes.PensionReliefTypeController.show(taxYear, index))
     })
 
-  def typeOfReliefToMessage(reliefType: String)(implicit messages: Messages): String =
+  private def typeOfReliefToMessage(reliefType: String)(implicit messages: Messages): String =
     reliefType match {
       case TaxReliefQuestion.DoubleTaxationRelief            => messages("overseasPension.pensionReliefType.DTR")
       case TaxReliefQuestion.MigrantMemberRelief             => messages("overseasPension.pensionReliefType.MMR")

@@ -16,15 +16,14 @@
 
 package utils
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import scala.util.Try
 
 object ViewUtils {
@@ -81,7 +80,7 @@ object ViewUtils {
         ))
     )
 
-  def ariaHiddenChangeLink(linkText: String): HtmlContent =
+  private def ariaHiddenChangeLink(linkText: String): HtmlContent =
     HtmlContent(
       s"""<span aria-hidden="true">$linkText</span>"""
     )

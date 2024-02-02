@@ -33,7 +33,7 @@ object PensionSchemeSummaryHelper extends CYABaseHelper {
       pensionStartDate(pensionIncomes, taxYear, index)
     )
 
-  def pensionSchemeDetails(pensionIncomes: UkPensionIncomeViewModel, taxYear: Int, index: Option[Int])(implicit
+  private def pensionSchemeDetails(pensionIncomes: UkPensionIncomeViewModel, taxYear: Int, index: Option[Int])(implicit
       messages: Messages): SummaryListRow = {
     val provider = s"${pensionIncomes.pensionSchemeName.getOrElse("")}<br>"
     val paye     = s"${messages("incomeFromPensions.schemeDetails.summary.paye")} ${pensionIncomes.pensionSchemeRef.getOrElse("")}<br>"

@@ -82,9 +82,11 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject() (implicit
                 val pensionsCYAModel: PensionsCYAModel       = data.pensions
                 val viewModel: UnauthorisedPaymentsViewModel = pensionsCYAModel.unauthorisedPayments
                 val updatedCyaModel: PensionsCYAModel =
-                  pensionsCYAModel.copy(unauthorisedPayments =
-                    if (yesNo) viewModel.copy(ukPensionSchemesQuestion = Some(true))
-                    else viewModel.copy(ukPensionSchemesQuestion = Some(false), pensionSchemeTaxReference = None))
+                  pensionsCYAModel.copy(unauthorisedPayments = if (yesNo) {
+                    viewModel.copy(ukPensionSchemesQuestion = Some(true))
+                  } else {
+                    viewModel.copy(ukPensionSchemesQuestion = Some(false), pensionSchemeTaxReference = None)
+                  })
 
                 pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                   errorHandler.internalServerError()) {

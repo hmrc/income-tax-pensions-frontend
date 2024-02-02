@@ -75,18 +75,22 @@ object StatePensionRedirects { // scalastyle:off magic.number
     1 -> { _: IncomeFromPensionsViewModel => true },
     2 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel => incomeFromPensionsViewModel.statePension.exists(_.amount.isDefined) },
     3 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel =>
-      if (isPageValidInJourney(2, incomeFromPensionsViewModel))
+      if (isPageValidInJourney(2, incomeFromPensionsViewModel)) {
         incomeFromPensionsViewModel.statePension.exists(_.startDateQuestion.isDefined)
-      else incomeFromPensionsViewModel.statePension.exists(_.amountPaidQuestion.isDefined)
+      } else {
+        incomeFromPensionsViewModel.statePension.exists(_.amountPaidQuestion.isDefined)
+      }
     },
     4 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel => incomeFromPensionsViewModel.statePensionLumpSum.exists(_.amount.isDefined) },
     5 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel =>
       incomeFromPensionsViewModel.statePensionLumpSum.exists(spls => spls.taxPaidQuestion.exists(x => if (x) spls.taxPaid.isDefined else true))
     },
     6 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel =>
-      if (isPageValidInJourney(5, incomeFromPensionsViewModel))
+      if (isPageValidInJourney(5, incomeFromPensionsViewModel)) {
         incomeFromPensionsViewModel.statePensionLumpSum.exists(_.startDateQuestion.isDefined)
-      else incomeFromPensionsViewModel.statePensionLumpSum.isDefined
+      } else {
+        incomeFromPensionsViewModel.statePensionLumpSum.isDefined
+      }
     },
     7 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel => incomeFromPensionsViewModel.isFinishedStatePension }
   )

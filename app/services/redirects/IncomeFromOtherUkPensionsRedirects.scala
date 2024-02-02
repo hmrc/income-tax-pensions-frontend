@@ -104,33 +104,45 @@ object IncomeFromOtherUkPensionsRedirects {
     val previousQuestionAnswered: Map[Int, IncomeFromPensionsViewModel => Boolean] = Map(
       1 -> { _: IncomeFromPensionsViewModel => true },
       2 -> { viewModel: IncomeFromPensionsViewModel =>
-        if (optIndex.nonEmpty && validIndex.isEmpty) false
-        else viewModel.uKPensionIncomesQuestion.isDefined
+        if (optIndex.nonEmpty && validIndex.isEmpty) false else viewModel.uKPensionIncomesQuestion.isDefined
       },
       3 -> { viewModel: IncomeFromPensionsViewModel =>
-        if (validIndex.isEmpty)
+        if (validIndex.isEmpty) {
           false
-        else
+        } else {
           viewModel.uKPensionIncomes(validIndex.get).pensionSchemeName.isDefined &&
           viewModel.uKPensionIncomes(validIndex.get).pensionSchemeRef.isDefined &&
           viewModel.uKPensionIncomes(validIndex.get).pensionId.isDefined
+        }
       },
       4 -> { viewModel: IncomeFromPensionsViewModel =>
-        if (validIndex.isEmpty) false
-        else viewModel.uKPensionIncomes(validIndex.get).amount.isDefined && viewModel.uKPensionIncomes(validIndex.get).taxPaid.isDefined
+        if (validIndex.isEmpty) {
+          false
+        } else {
+          viewModel.uKPensionIncomes(validIndex.get).amount.isDefined && viewModel.uKPensionIncomes(validIndex.get).taxPaid.isDefined
+        }
       },
       5 -> { viewModel: IncomeFromPensionsViewModel =>
-        if (validIndex.isEmpty) false
-        else viewModel.uKPensionIncomes(validIndex.get).isFinished
+        if (validIndex.isEmpty) {
+          false
+        } else {
+          viewModel.uKPensionIncomes(validIndex.get).isFinished
+        }
       },
       6 -> { _: IncomeFromPensionsViewModel => true }, // if valid then schemes can exist or be empty
       7 -> { viewModel: IncomeFromPensionsViewModel =>
-        if (validIndex.isEmpty) true                               // to summary page
-        else viewModel.uKPensionIncomes(validIndex.get).isFinished // to journey start
+        if (validIndex.isEmpty) {
+          true // to summary page
+        } else {
+          viewModel.uKPensionIncomes(validIndex.get).isFinished // to journey start
+        }
       },
       8 -> { viewModel: IncomeFromPensionsViewModel =>
-        if (isPageValidInJourney(2, viewModel)) viewModel.isFinishedUkPension
-        else !viewModel.uKPensionIncomesQuestion.getOrElse(true)
+        if (isPageValidInJourney(2, viewModel)) {
+          viewModel.isFinishedUkPension
+        } else {
+          !viewModel.uKPensionIncomesQuestion.getOrElse(true)
+        }
       }
     )
 

@@ -54,8 +54,11 @@ object PensionsAuditAction {
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = Future.successful {
       val toAuditModel = {
         val auditModel = PaymentsIntoPensionsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) () => auditModel.toAuditModelCreate
-        else () => auditModel.toAuditModelAmend
+        if (req.pensions.isEmpty) { () =>
+          auditModel.toAuditModelCreate
+        } else { () =>
+          auditModel.toAuditModelAmend
+        }
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, PaymentsIntoPensionsAudit.writes)
       None
@@ -80,8 +83,11 @@ object PensionsAuditAction {
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = Future.successful {
       val toAuditModel = {
         val auditModel = UnauthorisedPaymentsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) () => auditModel.toAuditModelCreate
-        else () => auditModel.toAuditModelAmend
+        if (req.pensions.isEmpty) { () =>
+          auditModel.toAuditModelCreate
+        } else { () =>
+          auditModel.toAuditModelAmend
+        }
       }
       auditService.sendAudit(toAuditModel())(hc(req.request), ec, UnauthorisedPaymentsAudit.writes)
       None

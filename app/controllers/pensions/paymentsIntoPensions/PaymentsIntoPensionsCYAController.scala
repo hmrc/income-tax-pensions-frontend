@@ -69,7 +69,7 @@ class PaymentsIntoPensionsCYAController @Inject() (
     val (cya, prior, pIP) =
       (priorAndSessionRequest.pensionsUserData, priorAndSessionRequest.pensions, priorAndSessionRequest.pensionsUserData.pensions.paymentsIntoPension)
 
-    if (!pIP.rasPensionPaymentQuestion.exists(x => x) && !pIP.pensionTaxReliefNotClaimedQuestion.exists(x => x))
+    if (!pIP.rasPensionPaymentQuestion.exists(x => x) && !pIP.pensionTaxReliefNotClaimedQuestion.exists(x => x)) {
       // TODO: check conditions for excluding Pensions from submission without gateway
       excludeJourneyService
         .excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)
@@ -77,6 +77,7 @@ class PaymentsIntoPensionsCYAController @Inject() (
           case Right(_) => performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest, clock)
           case Left(_)  => errorHandler.futureInternalServerError()
         }
+    }
     if (!comparePriorData(cya.pensions, prior)) {
       Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
     } else {

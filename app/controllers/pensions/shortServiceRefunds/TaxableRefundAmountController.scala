@@ -76,9 +76,13 @@ class TaxableRefundAmountController @Inject() (
 
     val updatedCyaModel: PensionsCYAModel = shortServiceRefundsService.updateCyaWithShortServiceRefundGatewayQuestion(pensionUserData, yesNo, amount)
     val redirectLocation =
-      if (updatedCyaModel.shortServiceRefunds.isFinished) cyaPageCall(taxYear)
-      else if (yesNo) NonUkTaxRefundsController.show(taxYear)
-      else ShortServiceRefundsCYAController.show(taxYear)
+      if (updatedCyaModel.shortServiceRefunds.isFinished) {
+        cyaPageCall(taxYear)
+      } else if (yesNo) {
+        NonUkTaxRefundsController.show(taxYear)
+      } else {
+        ShortServiceRefundsCYAController.show(taxYear)
+      }
 
     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
       errorHandler.internalServerError()) {
