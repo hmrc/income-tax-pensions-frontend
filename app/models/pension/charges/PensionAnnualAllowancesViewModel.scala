@@ -32,6 +32,8 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
 
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
+  def nonEmpty: Boolean = !isEmpty
+
   def isFinished: Boolean =
     reducedAnnualAllowanceQuestion.exists(x =>
       !x || {

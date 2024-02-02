@@ -33,6 +33,35 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
   def isEmpty: Boolean = paymentsIntoPension.isEmpty && pensionsAnnualAllowances.isEmpty &&
     incomeFromPensions.isEmpty && paymentsIntoOverseasPensions.isEmpty &&
     incomeFromOverseasPensions.isEmpty && transfersIntoOverseasPensions.isEmpty && shortServiceRefunds.isEmpty
+
+  def nonEmpty: Boolean = !isEmpty
+
+  /* It merges the current model with the overrides. It favors the overrides over the current model fields if they exists.
+   * It means that the user has changed the data but not yet submitted */
+  def merge(overrides: Option[PensionsCYAModel]): PensionsCYAModel = {
+    val overridesPaymentsIntoPension           = overrides.map(_.paymentsIntoPension).getOrElse(PaymentsIntoPensionsViewModel())
+    val overridesPensionsAnnualAllowances      = overrides.map(_.pensionsAnnualAllowances).getOrElse(PensionAnnualAllowancesViewModel())
+    val overridesIncomeFromPensions            = overrides.map(_.incomeFromPensions).getOrElse(IncomeFromPensionsViewModel())
+    val overridesUnauthorisedPayments          = overrides.map(_.unauthorisedPayments).getOrElse(UnauthorisedPaymentsViewModel())
+    val overridesPaymentsIntoOverseasPensions  = overrides.map(_.paymentsIntoOverseasPensions).getOrElse(PaymentsIntoOverseasPensionsViewModel())
+    val overridesIncomeFromOverseasPensions    = overrides.map(_.incomeFromOverseasPensions).getOrElse(IncomeFromOverseasPensionsViewModel())
+    val overridesTransfersIntoOverseasPensions = overrides.map(_.transfersIntoOverseasPensions).getOrElse(TransfersIntoOverseasPensionsViewModel())
+    val overridesShortServiceRefunds           = overrides.map(_.shortServiceRefunds).getOrElse(ShortServiceRefundsViewModel())
+
+    copy(
+      paymentsIntoPension = if (overridesPaymentsIntoPension.nonEmpty) overridesPaymentsIntoPension else paymentsIntoPension,
+      pensionsAnnualAllowances = if (overridesPensionsAnnualAllowances.nonEmpty) overridesPensionsAnnualAllowances else pensionsAnnualAllowances,
+      incomeFromPensions = if (overridesIncomeFromPensions.nonEmpty) overridesIncomeFromPensions else incomeFromPensions,
+      unauthorisedPayments = if (overridesUnauthorisedPayments.nonEmpty) overridesUnauthorisedPayments else unauthorisedPayments,
+      paymentsIntoOverseasPensions =
+        if (overridesPaymentsIntoOverseasPensions.nonEmpty) overridesPaymentsIntoOverseasPensions else paymentsIntoOverseasPensions,
+      incomeFromOverseasPensions =
+        if (overridesIncomeFromOverseasPensions.nonEmpty) overridesIncomeFromOverseasPensions else incomeFromOverseasPensions,
+      transfersIntoOverseasPensions =
+        if (overridesTransfersIntoOverseasPensions.nonEmpty) overridesTransfersIntoOverseasPensions else transfersIntoOverseasPensions,
+      shortServiceRefunds = if (overridesShortServiceRefunds.nonEmpty) overridesShortServiceRefunds else shortServiceRefunds
+    )
+  }
 }
 
 object PensionsCYAModel {
