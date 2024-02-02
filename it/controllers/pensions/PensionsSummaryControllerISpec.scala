@@ -363,7 +363,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
   }
 
   private def checkCommonBehaviour(userScenario: UserScenario[CommonExpectedResults, Nothing])(implicit document: () => Document): Unit = {
-    import userScenario.commonExpectedResults._
+    import userScenario.commonExpectedResults._f
     titleCheck(expectedTitle, userScenario.isWelsh)
     h1Check(expectedH1)
     captionCheck(expectedCaption(taxYearEOY))

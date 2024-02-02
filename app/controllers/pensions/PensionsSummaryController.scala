@@ -45,8 +45,8 @@ class PensionsSummaryController @Inject() (implicit
     extends FrontendController(mcc)
     with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (pensionsUserData: Option[PensionsUserData], priorData: Option[AllPensionsData]) =>
-      createOrUpdateSessionIfNeeded(pensionsUserData, priorData, taxYear)
+    pensionSessionService.getAndHandle(taxYear, request.user) { (sessionData: Option[PensionsUserData], priorData: Option[AllPensionsData]) =>
+      createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear)
     }
   }
 
