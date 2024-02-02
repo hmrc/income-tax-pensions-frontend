@@ -22,6 +22,7 @@ import builders.PensionChargesBuilder.anPensionCharges
 import builders.PensionsUserDataBuilder.anPensionsUserDataEmptyCya
 import builders.StateBenefitsModelBuilder.aStateBenefitsModel
 import builders.UserBuilder
+import controllers.pensions.PensionsSummaryControllerISpec._
 import models.User
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,13 +34,11 @@ import play.api.test.Injecting
 import services.PensionSessionService
 import utils.CommonUtils
 import utils.PageUrls.IncomeFromPensionsPages.pensionIncomeSummaryUrl
+import utils.PageUrls.OverseasPensions.overseasPensionsUrl
 import utils.PageUrls.PaymentIntoPensions.{checkPaymentsIntoPensionCyaUrl, reliefAtSourcePensionsUrl}
 import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, reducedAnnualAllowanceUrl}
 import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
 import utils.PageUrls._
-import PensionsSummaryControllerISpec._
-import utils.PageUrls.OverseasPensions.overseasPensionsUrl
-import utils.PageUrls.PaymentIntoOverseasPensions.paymentsIntoOverseasPensionsCyaUrl
 
 class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach with Injecting {
 
@@ -367,8 +366,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
     titleCheck(expectedTitle, userScenario.isWelsh)
     h1Check(expectedH1)
     captionCheck(expectedCaption(taxYearEOY))
-    // TODO: Figure out what's wrong in SASS-7068
-    //    checkPensionsUserDataIsInitialised(userScenario.isAgent)
+    checkPensionsUserDataIsInitialised(userScenario.isAgent)
   }
 
   private def checkPensionsUserDataIsInitialised(isAgent: Boolean): Unit =

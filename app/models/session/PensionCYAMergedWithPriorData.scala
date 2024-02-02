@@ -23,12 +23,14 @@ final case class PensionCYAMergedWithPriorData(newPensionsCYAModel: PensionsCYAM
 
 object PensionCYAMergedWithPriorData {
 
+  /** Notice it will return newModelChanged=true at the beginning when no session exists, so it is initialized initially with empty values.
+    */
   def mergeSessionAndPriorData(existingSessionData: Option[PensionsUserData], priorData: Option[AllPensionsData]): PensionCYAMergedWithPriorData = {
     val maybeExistingSessionPension = existingSessionData.map(_.pensions)
 
     val userSessionFromOnlyPriorData = priorData.map(AllPensionsData.generateCyaFromPrior).getOrElse(PensionsCYAModel.emptyModels)
     val mergedSession                = userSessionFromOnlyPriorData.merge(maybeExistingSessionPension)
-    val existingSessionDidNotChanged = maybeExistingSessionPension.getOrElse(PensionsCYAModel.emptyModels).equals(mergedSession)
+    val existingSessionDidNotChanged = maybeExistingSessionPension.exists(_.equals(mergedSession))
 
     PensionCYAMergedWithPriorData(mergedSession, newModelChanged = !existingSessionDidNotChanged)
   }

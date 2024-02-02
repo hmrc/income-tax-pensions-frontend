@@ -39,7 +39,7 @@ class PensionCYAMergedWithPriorDataSpec extends AnyWordSpecLike with TableDriven
 
     val cases = Table(
       ("sessionData", "priorData", "expectedResult"),
-      (None, None, PensionCYAMergedWithPriorData(emptyModel, false)),
+      (None, None, PensionCYAMergedWithPriorData(emptyModel, true)), // if there is no session at the beginning we want to initialize it, thus true
       (Some(sessionWithEmptyModel), None, PensionCYAMergedWithPriorData(emptyModel, false)),
       (None, Some(fullPensionsModel), PensionCYAMergedWithPriorData(expectedFullSession, true)),
       (Some(sessionWithEmptyModel), Some(fullPensionsModel), PensionCYAMergedWithPriorData(expectedFullSession, true)),
