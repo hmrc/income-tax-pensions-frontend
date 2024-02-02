@@ -19,14 +19,16 @@ package controllers.pensions
 import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
+import models.mongo.PensionsCYAModel
+import models.pension.AllPensionsData
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.Clock
 import views.html.pensions.OverseasPensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 
 @Singleton
 class OverseasPensionsSummaryController @Inject() (implicit
@@ -34,13 +36,15 @@ class OverseasPensionsSummaryController @Inject() (implicit
     appConfig: AppConfig,
     authAction: AuthorisedAction,
     pensionSessionService: PensionSessionService,
+    clock: Clock,
     overseasPensionsSummaryView: OverseasPensionsSummaryView)
     extends FrontendController(mcc)
     with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (pensionsUserData, priorData) =>
-      Future.successful(Ok(overseasPensionsSummaryView(taxYear, pensionsUserData.map(_.pensions), priorData)))
-    }
+    def summaryViewResult(taxYear: Int, cyaModel: PensionsCYAModel, priorData: Option[AllPensionsData]) =
+      Ok(overseasPensionsSummaryView(taxYear, Some(cyaModel), priorData))
+
+    pensionSessionService.mergePriorDataToSession(taxYear, request.user, summaryViewResult)
   }
 }
