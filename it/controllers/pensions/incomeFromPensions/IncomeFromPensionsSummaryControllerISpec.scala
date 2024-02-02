@@ -20,7 +20,7 @@ import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
 import builders.StateBenefitViewModelBuilder.{anEmptyStateBenefitViewModel, anStateBenefitViewModelOne}
-import models.pension.statebenefits.StateBenefitViewModel
+import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -265,12 +265,30 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
           }
         }
 
-        "render pensions summary page when there is no data " which {
-          lazy val result: WSResponse = getResponseNoSessionData()
+        "render page when there is no session and prior data" which {
+          lazy val result: WSResponse = showPageNoData(user)
 
-          "has an SEE_OTHER status" in {
-            result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          "has an OK status" in {
+            result.status shouldBe OK
+            println("Here db should have empty document")
+          }
+
+          titleCheck(expectedTitle, user.isWelsh)
+          h1Check(expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
+
+          buttonCheck(buttonText, continueButtonSelector)
+          welshToggleCheck(user.isWelsh)
+
+          "has a State Pension section" which {
+            textOnPageCheck(notStartedText, statePensionsStatusSelector)
+          }
+
+          "has a Other UK pensions section" which {
+            textOnPageCheck(notStartedText, otherUkPensionsLinkSelector)
           }
         }
       }
