@@ -53,7 +53,7 @@ class AuthorisedAction @Inject() (appConfig: AppConfig)(implicit val authService
     authService.authorised().retrieve(affinityGroup) {
       case Some(AffinityGroup.Agent) => agentAuthentication(block)(request, headerCarrier)
       case Some(affinityGroup)       => individualAuthentication(block, affinityGroup)(request, headerCarrier)
-      case _                         => throw new UnauthorizedException("Unable to retrieve affinityGroup")
+      case None                      => throw new UnauthorizedException("Unable to retrieve affinityGroup")
     } recover {
       case _: NoActiveSession =>
         logger.info(s"[AuthorisedAction][invokeBlock] - No active session. Redirecting to ${appConfig.signInUrl}")
