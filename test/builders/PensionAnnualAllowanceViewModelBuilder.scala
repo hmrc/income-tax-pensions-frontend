@@ -31,6 +31,17 @@ object PensionAnnualAllowanceViewModelBuilder {
     pensionSchemeTaxReferences = Some(Seq("1234567CRC", "12345678RB", "1234567DRD"))
   )
 
+  val aPensionAnnualAllowanceAnotherViewModel: PensionAnnualAllowancesViewModel = PensionAnnualAllowancesViewModel(
+    reducedAnnualAllowanceQuestion = Some(false),
+    moneyPurchaseAnnualAllowance = Some(false),
+    taperedAnnualAllowance = Some(false),
+    aboveAnnualAllowanceQuestion = Some(false),
+    aboveAnnualAllowance = Some(1),
+    pensionProvidePaidAnnualAllowanceQuestion = Some(false),
+    taxPaidByPensionProvider = Some(2),
+    pensionSchemeTaxReferences = Some(List("987654321AB"))
+  )
+
   val aPensionAnnualAllowanceEmptyViewModel: PensionAnnualAllowancesViewModel = PensionAnnualAllowancesViewModel()
 
 }

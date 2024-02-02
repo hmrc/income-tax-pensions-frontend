@@ -124,6 +124,8 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
   def isEmpty: Boolean = paymentsIntoOverseasPensionsQuestions.isEmpty && paymentsIntoOverseasPensionsAmount.isEmpty &&
     employerPaymentsQuestion.isEmpty && taxPaidOnEmployerPaymentsQuestion.isEmpty && reliefs.isEmpty
 
+  def nonEmpty: Boolean = !isEmpty
+
   def isFinished: Boolean =
     paymentsIntoOverseasPensionsQuestions.exists(x =>
       if (!x) true

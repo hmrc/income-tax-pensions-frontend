@@ -17,18 +17,11 @@
 package utils
 
 import builders.EmploymentPensionsBuilder.anEmploymentPensions
-import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
-import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionIncomeViewModelBuilder.aPensionIncome
-import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsViewModel
 import builders.StateBenefitsModelBuilder.aStateBenefitsModel
-import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
-import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
-import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.charges._
-import models.pension.reliefs.{PaymentsIntoPensionsViewModel, PensionReliefs, Reliefs}
+import models.pension.reliefs.{PensionReliefs, Reliefs}
 
 object PensionDataStubs {
 
@@ -105,62 +98,5 @@ object PensionDataStubs {
     employmentPensions = Some(anEmploymentPensions),
     pensionIncome = Some(aPensionIncome)
   )
-
-}
-
-object PensionUserDataStub extends IntegrationTest {
-  implicit val testClock: Clock = UnitTestClock
-
-  val paymentsIntoPensionViewModel: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
-    Some(true),
-    Some(222.3),
-    Some(true),
-    Some(22.44),
-    Some(true),
-    Some(true),
-    Some(true),
-    Some(44.00),
-    Some(true),
-    Some(55.55))
-
-  val pensionsAnnualAllowancesViewModel: PensionAnnualAllowancesViewModel = PensionAnnualAllowancesViewModel(
-    reducedAnnualAllowanceQuestion = Some(true),
-    moneyPurchaseAnnualAllowance = Some(true),
-    taperedAnnualAllowance = Some(true),
-    aboveAnnualAllowanceQuestion = Some(true),
-    aboveAnnualAllowance = Some(12.44),
-    pensionProvidePaidAnnualAllowanceQuestion = Some(true),
-    taxPaidByPensionProvider = Some(14.55),
-    pensionSchemeTaxReferences = Some(Seq("1234567CRC", "12345678RB", "1234567DRD"))
-  )
-
-  // scalastyle:off magic.number
-  def pensionUserData(
-      sessionId: String = "sessionid",
-      mtdItId: String = "1234567890",
-      nino: String = "nino",
-      taxyear: Int = taxYear,
-      isPriorSubmission: Boolean = true,
-      cya: PensionsCYAModel = PensionsCYAModel(
-        paymentsIntoPensionViewModel,
-        pensionsAnnualAllowancesViewModel,
-        anIncomeFromPensionsViewModel,
-        anUnauthorisedPaymentsViewModel,
-        aPaymentsIntoOverseasPensionsViewModel,
-        anIncomeFromOverseasPensionsViewModel,
-        aTransfersIntoOverseasPensionsViewModel,
-        aShortServiceRefundsViewModel
-      )
-  ): PensionsUserData =
-    PensionsUserData(
-      sessionId = sessionId,
-      mtdItId = mtdItId,
-      nino = nino,
-      taxYear = taxyear,
-      isPriorSubmission = isPriorSubmission,
-      pensions = cya,
-      lastUpdated = testClock.now()
-    )
-  // scalastyle:on magic.number
 
 }

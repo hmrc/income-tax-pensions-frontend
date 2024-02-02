@@ -33,6 +33,8 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
 
   def isEmpty: Boolean = paymentsFromOverseasPensionsQuestion.isEmpty && overseasIncomePensionSchemes.isEmpty
 
+  def nonEmpty: Boolean = !isEmpty
+
   def isFinished: Boolean =
     paymentsFromOverseasPensionsQuestion.exists(x =>
       if (!x) true else overseasIncomePensionSchemes.nonEmpty && overseasIncomePensionSchemes.forall(_.isFinished))
