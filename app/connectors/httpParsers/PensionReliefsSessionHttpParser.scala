@@ -18,7 +18,6 @@ package connectors.httpParsers
 
 import models.APIErrorModel
 import models.logging.ConnectorResponseInfo
-import play.api.Logging
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object PensionReliefsSessionHttpParser extends APIParser {

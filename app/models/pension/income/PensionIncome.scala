@@ -133,7 +133,7 @@ case class CreateUpdatePensionIncomeModel(foreignPension: Option[ForeignPensionC
     excludedModel match {
       case Some(OverseasPensionContributionContainer(_)) => foreignPension.isEmpty || foreignPension.exists(_.isEmpty)
       case Some(ForeignPensionContainer(_))              => overseasPensionContribution.isEmpty || overseasPensionContribution.exists(_.isEmpty)
-      case None                                          => true
+      case _                                             => true
     }
 }
 object CreateUpdatePensionIncomeModel {

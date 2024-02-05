@@ -16,7 +16,7 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.ActionsProvider
 import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData}
 import play.api.i18n.I18nSupport
@@ -36,17 +36,20 @@ import scala.concurrent.{ExecutionContext, Future}
 class CountrySummaryListController @Inject() (
     actionsProvider: ActionsProvider,
     countrySummary: CountrySummaryList,
-    pensionSessionService: PensionSessionService)(implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler)(implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    cleanUpSchemes(sessionUserData.pensionsUserData).flatMap { case Right(updatedUserData) =>
-      val checkRedirect = journeyCheck(CountrySchemeSummaryListPage, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
-        Future.successful(Ok(countrySummary(taxYear, updatedUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes)))
-      }
+    cleanUpSchemes(sessionUserData.pensionsUserData).flatMap {
+      case Right(updatedUserData) =>
+        val checkRedirect = journeyCheck(CountrySchemeSummaryListPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
+          Future.successful(Ok(countrySummary(taxYear, updatedUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes)))
+        }
+      case Left(_) => Future.successful(errorHandler.internalServerError())
     }
   }
 

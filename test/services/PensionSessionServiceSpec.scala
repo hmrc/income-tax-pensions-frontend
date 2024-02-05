@@ -18,6 +18,7 @@ package services
 
 import builders.AllPensionsDataBuilder.anAllPensionDataEmpty
 import builders.PensionsCYAModelBuilder._
+import cats.implicits.catsSyntaxEitherId
 import config._
 import models.mongo._
 import models.pension.AllPensionsData.generateCyaFromPrior
@@ -124,8 +125,8 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
 
     "return Left DB Error(400) when createOrUpdate fails" in {
       mockCreateOrUpdate(pensionDataFull, Left(DataNotUpdated))
-      val Left(response) = await(service.createOrUpdateSessionData(pensionDataFull))
-      response shouldBe a[DatabaseError]
+      val response = await(service.createOrUpdateSessionData(pensionDataFull))
+      response shouldBe Left(DataNotUpdated)
     }
   }
 }

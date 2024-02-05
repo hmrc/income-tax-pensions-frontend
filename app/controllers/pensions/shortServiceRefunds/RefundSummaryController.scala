@@ -16,7 +16,7 @@
 
 package controllers.pensions.shortServiceRefunds
 
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.ActionsProvider
 import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData}
 import play.api.i18n.I18nSupport
@@ -37,17 +37,20 @@ class RefundSummaryController @Inject() (actionsProvider: ActionsProvider, view:
     implicit
     mcc: MessagesControllerComponents,
     appConfig: AppConfig,
-    ec: ExecutionContext)
+    ec: ExecutionContext,
+    errorHandler: ErrorHandler)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    cleanUpSchemes(sessionUserData.pensionsUserData).flatMap { case Right(updatedUserData) =>
-      val checkRedirect = journeyCheck(RefundSchemesSummaryPage, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
-        Future.successful(Ok(view(taxYear, updatedUserData.pensions.shortServiceRefunds.refundPensionScheme)))
-      }
+    cleanUpSchemes(sessionUserData.pensionsUserData).flatMap {
+      case Right(updatedUserData) =>
+        val checkRedirect = journeyCheck(RefundSchemesSummaryPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
+          Future.successful(Ok(view(taxYear, updatedUserData.pensions.shortServiceRefunds.refundPensionScheme)))
+        }
+      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
     }
   }
 

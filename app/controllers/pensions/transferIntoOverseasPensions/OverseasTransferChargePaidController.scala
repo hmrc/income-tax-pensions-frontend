@@ -52,24 +52,26 @@ class OverseasTransferChargePaidController @Inject() (actionsProvider: ActionsPr
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
-      cleanUpSchemes(sessionUserData.pensionsUserData).flatMap { case Right(updatedUserData) =>
-        val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear)
+      cleanUpSchemes(sessionUserData.pensionsUserData).flatMap {
+        case Right(updatedUserData) =>
+          val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear)
 
-        redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-          validatedSchemes(pensionSchemeIndex, data.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
-            case Left(_) =>
-              Future.successful(Redirect(redirectForSchemeLoop(data.pensions.transfersIntoOverseasPensions.transferPensionScheme, taxYear)))
-            case Right(_) =>
-              Future.successful(
-                Ok(
-                  pageView(
-                    OverseasTransferChargePaidPage(
-                      taxYear,
-                      pensionSchemeIndex,
-                      data.pensions.transfersIntoOverseasPensions,
-                      formsProvider.overseasTransferChargePaidForm))))
+          redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+            validatedSchemes(pensionSchemeIndex, data.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
+              case Left(_) =>
+                Future.successful(Redirect(redirectForSchemeLoop(data.pensions.transfersIntoOverseasPensions.transferPensionScheme, taxYear)))
+              case Right(_) =>
+                Future.successful(
+                  Ok(
+                    pageView(
+                      OverseasTransferChargePaidPage(
+                        taxYear,
+                        pensionSchemeIndex,
+                        data.pensions.transfersIntoOverseasPensions,
+                        formsProvider.overseasTransferChargePaidForm))))
+            }
           }
-        }
+        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       }
   }
 

@@ -50,22 +50,28 @@ class PensionOverseasIncomeStatus @Inject() (
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      case Right(optPensionUserData) =>
-        optPensionUserData match {
-          case Some(data) =>
-            cleanUpSchemes(data).map { case Right(_) =>
-              val form =
-                data.pensions.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion
-                  .fold(yesNoForm(request.user))(yesNoForm(request.user).fill(_))
-              Ok(incomeFromOverseasPensionsView(form, taxYear))
-            }
-          case None =>
-            // TODO - redirect to CYA page once implemented <- I think to this page with empty form
-            Future.successful(Ok(incomeFromOverseasPensionsView(yesNoForm(request.user), taxYear)))
-        }
-    }
+    pensionSessionService
+      .getPensionSessionData(taxYear, request.user)
+      .flatMap {
+        case Left(_) => Future.successful(errorHandler.internalServerError())
+        case Right(maybeData) =>
+          maybeData match {
+            case Some(data) =>
+              cleanUpSchemes(data).map {
+                case Right(_) =>
+                  val form =
+                    data.pensions.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion
+                      .fold(yesNoForm(request.user))(yesNoForm(request.user).fill(_))
+                  Ok(incomeFromOverseasPensionsView(form, taxYear))
+
+                case Left(_) => errorHandler.internalServerError()
+              }
+
+            case None =>
+              // TODO - redirect to CYA page once implemented <- I think to this page with empty form
+              Future.successful(Ok(incomeFromOverseasPensionsView(yesNoForm(request.user), taxYear)))
+          }
+      }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>

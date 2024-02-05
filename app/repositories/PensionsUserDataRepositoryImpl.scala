@@ -32,8 +32,8 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
 import utils.PagerDutyHelper.PagerDutyKeys.{FAILED_TO_CREATE_UPDATE_PENSIONS_DATA, FAILED_TO_ClEAR_PENSIONS_DATA, FAILED_TO_FIND_PENSIONS_DATA}
 import utils.PagerDutyHelper.{PagerDutyKeys, pagerDutyLog}
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
@@ -69,8 +69,8 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
         Try {
           encryptedData.map(encryptionService.decryptUserData)
         }.toEither match {
-          case Left(exception: Exception) => handleEncryptionDecryptionException(exception, start)
-          case Right(decryptedData)       => Right(decryptedData)
+          case Left(throwable)      => handleEncryptionDecryptionException(throwable, start)
+          case Right(decryptedData) => Right(decryptedData)
         }
     }
   }
@@ -94,8 +94,8 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
         Try {
           encryptionService.decryptUserData(encryptedData)
         }.toEither match {
-          case Left(exception: Exception) => handleEncryptionDecryptionException(exception, start)
-          case Right(decryptedData)       => Right(decryptedData)
+          case Left(throwable)      => handleEncryptionDecryptionException(throwable, start)
+          case Right(decryptedData) => Right(decryptedData)
         }
     }
   }
@@ -107,7 +107,7 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
     Try {
       encryptionService.encryptUserData(userData)
     }.toEither match {
-      case Left(exception: Exception) => Future.successful(handleEncryptionDecryptionException(exception, start))
+      case Left(throwable) => Future.successful(handleEncryptionDecryptionException(throwable, start))
       case Right(encryptedData) =>
         val queryFilter = filter(encryptedData.sessionId, encryptedData.mtdItId, encryptedData.nino, encryptedData.taxYear)
         val replacement = encryptedData
