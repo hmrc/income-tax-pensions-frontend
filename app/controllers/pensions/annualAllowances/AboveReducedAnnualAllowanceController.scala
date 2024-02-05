@@ -95,7 +95,8 @@ class AboveReducedAnnualAllowanceController @Inject() (
       )
     })
 
-    service.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
+      errorHandler.internalServerError()) {
       isFinishedCheck(updatedCyaModel.pensionsAnnualAllowances, taxYear, PensionProviderPaidTaxController.show(taxYear), cyaPageCall)
     }
   }
