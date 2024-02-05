@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UntaxedEmployerPaymentsController @Inject() (
     actionsProvider: ActionsProvider,
-    pageView: UntaxedEmployerPaymentsView,
+    view: UntaxedEmployerPaymentsView,
     paymentsIntoOverseasService: PaymentsIntoOverseasPensionsService,
     formsProvider: FormsProvider,
     errorHandler: ErrorHandler)(implicit val cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
@@ -50,7 +50,7 @@ class UntaxedEmployerPaymentsController @Inject() (
       indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: Relief =>
         Future.successful(
           Ok(
-            pageView(
+            view(
               UntaxedEmployerPayments(
                 taxYear,
                 pensionSchemeIndex,
@@ -69,7 +69,7 @@ class UntaxedEmployerPaymentsController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors =>
-              Future.successful(BadRequest(pageView(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData, formWithErrors)))),
+              Future.successful(BadRequest(view(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData, formWithErrors)))),
             amount =>
               paymentsIntoOverseasService.updateUntaxedEmployerPayments(sessionUserData.pensionsUserData, amount, pensionSchemeIndex).map {
                 case Left(_) => errorHandler.internalServerError()

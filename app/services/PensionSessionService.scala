@@ -23,6 +23,7 @@ import connectors.IncomeTaxUserDataConnector
 import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
 import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.AllPensionsData
+import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
 import org.joda.time.DateTimeZone
 import play.api.Logging
@@ -50,7 +51,6 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
       .find(taxYear, user)
       .map(_.leftMap(_ => ()))
 
-  @deprecated("We should avoid using this method, as it's more difficult to mock. use 'getPensionSessionData' above", since = "0001228")
   def getPensionsSessionDataResult(taxYear: Int, user: User)(result: Option[PensionsUserData] => Future[Result])(implicit
       request: Request[_]): Future[Result] =
     sessionRepository.find(taxYear, user).flatMap {
@@ -98,4 +98,32 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
       case Left(error: DatabaseError) => Left(error)
       case Right(_)                   => Right(())
     }
+
+  def mergePriorDataToSession(
+      taxYear: Int,
+      user: User,
+      renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
+  )(implicit request: Request[_], hc: HeaderCarrier, clock: Clock): Future[Result] =
+    loadDataAndHandle(taxYear, user) { (sessionData, priorData) =>
+      createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear, user, renderView)
+    }
+
+  private def createOrUpdateSessionIfNeeded(
+      sessionData: Option[PensionsUserData],
+      priorData: Option[AllPensionsData],
+      taxYear: Int,
+      user: User,
+      renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
+  )(implicit request: Request[_], clock: Clock) = {
+    val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
+    val updatedSessionPensionCYAModel = updatedSession.newPensionsCYAModel
+    val summaryView                   = renderView(taxYear, updatedSessionPensionCYAModel, priorData)
+
+    if (updatedSession.newModelChanged) {
+      createOrUpdateSessionData(user, updatedSessionPensionCYAModel, taxYear, isPriorSubmission = priorData.isDefined)(
+        errorHandler.handleError(INTERNAL_SERVER_ERROR))(summaryView)
+    } else {
+      Future.successful(summaryView)
+    }
+  }
 }

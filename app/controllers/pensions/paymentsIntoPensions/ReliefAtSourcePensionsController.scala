@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
-                                                  pageView: ReliefAtSourcePensionsView,
+                                                  view: ReliefAtSourcePensionsView,
                                                   pensionSessionService: PensionSessionService,
                                                   errorHandler: ErrorHandler,
                                                   formsProvider: PaymentsIntoPensionFormProvider)(implicit
@@ -55,10 +55,10 @@ class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
         optPensionUserDate match {
           case Some(data) =>
             data.pensions.paymentsIntoPension.rasPensionPaymentQuestion match {
-              case Some(value) => Future.successful(Ok(pageView(yesNoForm.fill(value), taxYear)))
-              case None        => Future.successful(Ok(pageView(yesNoForm, taxYear)))
+              case Some(value) => Future.successful(Ok(view(yesNoForm.fill(value), taxYear)))
+              case None        => Future.successful(Ok(view(yesNoForm, taxYear)))
             }
-          case None => Future.successful(Ok(pageView(yesNoForm, taxYear)))
+          case None => Future.successful(Ok(view(yesNoForm, taxYear)))
         }
     }
   }
@@ -68,30 +68,32 @@ class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
       .reliefAtSourcePensionsForm(request.user.isAgent)
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(pageView(formWithErrors, taxYear))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNo =>
-          pensionSessionService.loadSessionData(taxYear, request.user).flatMap { case Right(optData) =>
-            val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
-            val viewModel   = pensionsCya.paymentsIntoPension
-            val updatedCyaModel = pensionsCya.copy(paymentsIntoPension = if (yesNo) {
-              viewModel.copy(rasPensionPaymentQuestion = Some(true))
-            } else {
-              viewModel.copy(
-                rasPensionPaymentQuestion = Some(false),
-                totalRASPaymentsAndTaxRelief = None,
-                oneOffRasPaymentPlusTaxReliefQuestion = None,
-                totalOneOffRasPaymentPlusTaxRelief = None,
-                totalPaymentsIntoRASQuestion = None
-              )
-            })
+          pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
+            case Right(optData) =>
+              val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
+              val viewModel   = pensionsCya.paymentsIntoPension
+              val updatedCyaModel = pensionsCya.copy(paymentsIntoPension = if (yesNo) {
+                viewModel.copy(rasPensionPaymentQuestion = Some(true))
+              } else {
+                viewModel.copy(
+                  rasPensionPaymentQuestion = Some(false),
+                  totalRASPaymentsAndTaxRelief = None,
+                  oneOffRasPaymentPlusTaxReliefQuestion = None,
+                  totalOneOffRasPaymentPlusTaxRelief = None,
+                  totalPaymentsIntoRASQuestion = None
+                )
+              })
 
-            val redirectLocation =
-              if (yesNo) ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear) else PensionsTaxReliefNotClaimedController.show(taxYear)
+              val redirectLocation =
+                if (yesNo) ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear) else PensionsTaxReliefNotClaimedController.show(taxYear)
 
-            pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(
-              errorHandler.internalServerError()) {
-              isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
-            }
+              pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(
+                errorHandler.internalServerError()) {
+                isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
+              }
+            case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
           }
       )
   }

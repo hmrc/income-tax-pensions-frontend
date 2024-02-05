@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class OverseasTransferChargePaidController @Inject() (actionsProvider: ActionsProvider,
                                                       formsProvider: FormsProvider,
-                                                      pageView: OverseasTransferChargesPaidView,
+                                                      view: OverseasTransferChargesPaidView,
                                                       pensionSessionService: PensionSessionService,
                                                       errorHandler: ErrorHandler,
                                                       overseasTransferChargesService: OverseasTransferChargesService)(implicit
@@ -52,24 +52,26 @@ class OverseasTransferChargePaidController @Inject() (actionsProvider: ActionsPr
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
     implicit sessionUserData =>
-      cleanUpSchemes(sessionUserData.pensionsUserData).flatMap { case Right(updatedUserData) =>
-        val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear)
+      cleanUpSchemes(sessionUserData.pensionsUserData).flatMap {
+        case Right(updatedUserData) =>
+          val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear)
 
-        redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-          validatedSchemes(pensionSchemeIndex, data.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
-            case Left(_) =>
-              Future.successful(Redirect(redirectForSchemeLoop(data.pensions.transfersIntoOverseasPensions.transferPensionScheme, taxYear)))
-            case Right(_) =>
-              Future.successful(
-                Ok(
-                  pageView(
-                    OverseasTransferChargePaidPage(
-                      taxYear,
-                      pensionSchemeIndex,
-                      data.pensions.transfersIntoOverseasPensions,
-                      formsProvider.overseasTransferChargePaidForm))))
+          redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+            validatedSchemes(pensionSchemeIndex, data.pensions.transfersIntoOverseasPensions.transferPensionScheme) match {
+              case Left(_) =>
+                Future.successful(Redirect(redirectForSchemeLoop(data.pensions.transfersIntoOverseasPensions.transferPensionScheme, taxYear)))
+              case Right(_) =>
+                Future.successful(
+                  Ok(
+                    view(
+                      OverseasTransferChargePaidPage(
+                        taxYear,
+                        pensionSchemeIndex,
+                        data.pensions.transfersIntoOverseasPensions,
+                        formsProvider.overseasTransferChargePaidForm))))
+            }
           }
-        }
+        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       }
   }
 
@@ -94,8 +96,8 @@ class OverseasTransferChargePaidController @Inject() (actionsProvider: ActionsPr
               .bindFromRequest()
               .fold(
                 formWithErrors =>
-                  Future.successful(BadRequest(pageView(
-                    OverseasTransferChargePaidPage(taxYear, pensionSchemeIndex, data.pensions.transfersIntoOverseasPensions, formWithErrors)))),
+                  Future.successful(BadRequest(
+                    view(OverseasTransferChargePaidPage(taxYear, pensionSchemeIndex, data.pensions.transfersIntoOverseasPensions, formWithErrors)))),
                 yesNoValue =>
                   overseasTransferChargesService.updateOverseasTransferChargeQuestion(data, yesNoValue, pensionSchemeIndex).map {
                     case Left(_) => errorHandler.internalServerError()

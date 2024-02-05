@@ -34,11 +34,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-abstract class BaseYesNoAmountController @Inject() (messagesControllerComponents: MessagesControllerComponents,
+abstract class BaseYesNoAmountController @Inject() (cc: MessagesControllerComponents,
                                                     pensionSessionService: PensionSessionService,
                                                     authAction: AuthorisedAction,
                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
-    extends FrontendController(messagesControllerComponents) {
+    extends FrontendController(cc) {
 
   def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html
 

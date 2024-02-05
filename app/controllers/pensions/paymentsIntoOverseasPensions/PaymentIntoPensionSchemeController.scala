@@ -39,7 +39,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class PaymentIntoPensionSchemeController @Inject() (messagesControllerComponents: MessagesControllerComponents,
                                                     authAction: AuthorisedAction,
-                                                    paymentIntoPensionSchemeView: PaymentIntoPensionSchemeView,
+                                                    view: PaymentIntoPensionSchemeView,
                                                     pensionSessionService: PensionSessionService,
                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends BaseYesNoAmountController(messagesControllerComponents, pensionSessionService, authAction, errorHandler)
@@ -61,10 +61,10 @@ class PaymentIntoPensionSchemeController @Inject() (messagesControllerComponents
   }
 
   override def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html =
-    paymentIntoPensionSchemeView(populateForm(cleanUpReliefs(pensionsUserData)), taxYear)
+    view(populateForm(cleanUpReliefs(pensionsUserData)), taxYear)
 
   override def whenFormIsInvalid(form: Form[(Boolean, Option[BigDecimal])], taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html =
-    paymentIntoPensionSchemeView(form, taxYear)
+    view(form, taxYear)
 
   override def questionOpt(pensionsUserData: PensionsUserData): Option[Boolean] =
     pensionsUserData.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsQuestions

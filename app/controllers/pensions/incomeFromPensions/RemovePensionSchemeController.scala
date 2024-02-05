@@ -38,7 +38,7 @@ import scala.concurrent.Future
 class RemovePensionSchemeController @Inject() (implicit
     val mcc: MessagesControllerComponents,
     authAction: AuthorisedAction,
-    removePensionSchemeView: RemovePensionSchemeView,
+    view: RemovePensionSchemeView,
     appConfig: AppConfig,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
@@ -53,7 +53,7 @@ class RemovePensionSchemeController @Inject() (implicit
         case Some(data) =>
           indexCheckThenJourneyCheck(data, pensionSchemeIndex, RemovePensionIncomePage, taxYear) { data =>
             val scheme: UkPensionIncomeViewModel = data.pensions.incomeFromPensions.uKPensionIncomes(pensionSchemeIndex.getOrElse(0))
-            Future.successful(Ok(removePensionSchemeView(taxYear, scheme.pensionSchemeName.getOrElse(""), pensionSchemeIndex)))
+            Future.successful(Ok(view(taxYear, scheme.pensionSchemeName.getOrElse(""), pensionSchemeIndex)))
           }
         case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }

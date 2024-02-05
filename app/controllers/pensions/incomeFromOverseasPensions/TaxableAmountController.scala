@@ -41,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxableAmountController @Inject() (
     authAction: AuthorisedAction,
     pensionSessionService: PensionSessionService,
-    taxableAmountView: TaxableAmountView,
+    view: TaxableAmountView,
     errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
@@ -55,7 +55,7 @@ class TaxableAmountController @Inject() (
         indexCheckThenJourneyCheck(data, index, YourTaxableAmountPage, taxYear) { data =>
           if (validTaxAmounts(data, index.getOrElse(0))) {
             val (amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr) = populateView(data, index.getOrElse(0))
-            Future.successful(Ok(taxableAmountView(amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr, taxYear, index)))
+            Future.successful(Ok(view(amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr, taxYear, index)))
           } else {
             Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
           }

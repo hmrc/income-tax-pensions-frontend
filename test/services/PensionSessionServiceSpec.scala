@@ -18,7 +18,9 @@ package services
 
 import builders.AllPensionsDataBuilder.anAllPensionDataEmpty
 import builders.PensionsCYAModelBuilder._
+import builders.PensionsUserDataBuilder.aPensionsUserData
 import config._
+import models.IncomeTaxUserData
 import models.mongo._
 import models.pension.AllPensionsData.generateCyaFromPrior
 import org.scalatest.concurrent.ScalaFutures
@@ -52,7 +54,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
       mockFind(taxYear, user, Right(None))
       mockFindNoContent(nino, taxYear)
 
-      val response = service.loadDataAndHandle(taxYear, user)((_, _) => Future(Ok))
+      val response = service.loadDataAndHandle(taxYear, user)(block = (_, _) => Future(Ok))
 
       status(response) shouldBe OK
     }
@@ -111,8 +113,53 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
 
     "return Left DB Error(400) when createOrUpdate fails" in {
       mockCreateOrUpdate(emptySessionData, Left(DataNotUpdated))
-      val Left(response) = await(service.createOrUpdateSessionData(emptySessionData))
-      response shouldBe a[DatabaseError]
+      val response = await(service.createOrUpdateSessionData(emptySessionData))
+      response shouldBe Left(DataNotUpdated)
     }
+  }
+
+  "mergePriorDataToSession" should {
+    val noPriorData = IncomeTaxUserData(None)
+
+    "return a successful result if the model required updating (session != prior)" in {
+      super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, noPriorData)
+      super[MockPensionUserDataRepository].mockFind(taxYear, user, Right(None))
+      mockCreateOrUpdate(Right(()))
+
+      val response = service.mergePriorDataToSession(taxYear, user, (_, _, _) => Ok)
+
+      assert(status(response) === OK)
+    }
+
+    "return a successful if not update required (session == prior)" in {
+      val sessionWithEmptyModel = aPensionsUserData.copy(pensions = PensionsCYAModel.emptyModels)
+      super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, noPriorData)
+      super[MockPensionUserDataRepository].mockFind(taxYear, user, Right(Some(sessionWithEmptyModel)))
+      mockCreateOrUpdate(Right(()))
+
+      val response = service.mergePriorDataToSession(taxYear, user, (_, _, _) => Ok)
+
+      assert(status(response) === OK)
+    }
+
+    "return an internal server error if data not found" in {
+      super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, noPriorData)
+      super[MockPensionUserDataRepository].mockFind(taxYear, user, Left(DataNotFound))
+
+      val response = service.mergePriorDataToSession(taxYear, user, (_, _, _) => Ok)
+
+      assert(status(response) === INTERNAL_SERVER_ERROR)
+    }
+
+    "return an internal server error if data not updated" in {
+      super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, noPriorData)
+      super[MockPensionUserDataRepository].mockFind(taxYear, user, Right(None))
+      mockCreateOrUpdate(Left(DataNotUpdated))
+
+      val response = service.mergePriorDataToSession(taxYear, user, (_, _, _) => Ok)
+
+      assert(status(response) === INTERNAL_SERVER_ERROR)
+    }
+
   }
 }

@@ -40,7 +40,7 @@ import scala.concurrent.Future
 class ReducedAnnualAllowanceController @Inject() (implicit
     val cc: MessagesControllerComponents,
     actionsProvider: ActionsProvider,
-    reducedAnnualAllowanceView: ReducedAnnualAllowanceView,
+    view: ReducedAnnualAllowanceView,
     appConfig: AppConfig,
     pensionSessionService: PensionSessionService,
     formsProvider: FormsProvider,
@@ -53,8 +53,8 @@ class ReducedAnnualAllowanceController @Inject() (implicit
     redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val yesNoForm = formsProvider.reducedAnnualAllowanceForm(request.user)
       data.pensions.pensionsAnnualAllowances.reducedAnnualAllowanceQuestion match {
-        case Some(question) => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm.fill(question), taxYear)))
-        case None           => Future.successful(Ok(reducedAnnualAllowanceView(yesNoForm, taxYear)))
+        case Some(question) => Future.successful(Ok(view(yesNoForm.fill(question), taxYear)))
+        case None           => Future.successful(Ok(view(yesNoForm, taxYear)))
       }
     }
   }
@@ -66,7 +66,7 @@ class ReducedAnnualAllowanceController @Inject() (implicit
         .reducedAnnualAllowanceForm(request.user)
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(reducedAnnualAllowanceView(formWithErrors, taxYear))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
           yesNo => updateSessionData(data, yesNo, taxYear)
         )
     }

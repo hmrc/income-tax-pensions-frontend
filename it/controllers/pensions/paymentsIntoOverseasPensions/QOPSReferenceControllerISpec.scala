@@ -19,7 +19,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithOverseasPensions, pensionUserDataWithPaymentsIntoOverseasPensions}
-import builders.ReliefBuilder.{aMigrantMemberRelief, aTransitionalCorrespondingRelief}
+import builders.ReliefBuilder.aTransitionalCorrespondingRelief
 import builders.UserBuilder.aUserRequest
 import forms.QOPSReferenceNumberForm
 import models.pension.charges.Relief

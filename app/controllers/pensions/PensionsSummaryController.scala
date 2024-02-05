@@ -16,13 +16,11 @@
 
 package controllers.pensions
 
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
-import models.AuthorisationRequest
-import models.mongo.PensionsUserData
+import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.session.PensionCYAMergedWithPriorData
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
@@ -31,7 +29,6 @@ import utils.Clock
 import views.html.pensions.PensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 
 @Singleton
 class PensionsSummaryController @Inject() (implicit
@@ -39,28 +36,15 @@ class PensionsSummaryController @Inject() (implicit
     appConfig: AppConfig,
     authAction: AuthorisedAction,
     pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
     clock: Clock,
     pensionsSummaryView: PensionsSummaryView)
     extends FrontendController(mcc)
     with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.loadDataAndHandle(taxYear, request.user) { (sessionData: Option[PensionsUserData], priorData: Option[AllPensionsData]) =>
-      createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear)
-    }
+    def summaryViewResult(taxYear: Int, cyaModel: PensionsCYAModel, priorData: Option[AllPensionsData]) =
+      Ok(pensionsSummaryView(taxYear, Some(cyaModel), priorData))
+
+    pensionSessionService.mergePriorDataToSession(taxYear, request.user, summaryViewResult)
   }
 
-  private def createOrUpdateSessionIfNeeded(sessionData: Option[PensionsUserData], priorData: Option[AllPensionsData], taxYear: Int)(implicit
-      request: AuthorisationRequest[AnyContent]) = {
-    val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
-    val updatedSessionPensionCYAModel = updatedSession.newPensionsCYAModel
-    val summaryViewResult             = Ok(pensionsSummaryView(taxYear, Some(updatedSessionPensionCYAModel), priorData))
-
-    if (updatedSession.newModelChanged) {
-      pensionSessionService.createOrUpdateSessionData(request.user, updatedSessionPensionCYAModel, taxYear, isPriorSubmission = priorData.isDefined)(
-        errorHandler.handleError(INTERNAL_SERVER_ERROR))(summaryViewResult)
-    } else {
-      Future.successful(summaryViewResult)
-    }
-  }
 }

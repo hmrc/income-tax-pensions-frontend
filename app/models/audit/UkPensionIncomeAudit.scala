@@ -20,7 +20,7 @@ import models.User
 import models.audit.UkPensionIncomeAudit.AuditUkPensionIncome
 import models.mongo.PensionsUserData
 import models.pension.AllPensionsData
-import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncomeViewModel}
+import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.libs.json.{Json, OWrites}
 
 case class UkPensionIncomeAudit(taxYear: Int,

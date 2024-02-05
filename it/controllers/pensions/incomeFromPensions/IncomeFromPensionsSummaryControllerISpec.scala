@@ -24,11 +24,10 @@ import models.pension.statebenefits.StateBenefitViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
 import utils.PageUrls.IncomeFromPensionsPages.pensionIncomeSummaryUrl
-import utils.PageUrls.pensionSummaryUrl
 
 class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach {
 
@@ -265,12 +264,29 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
           }
         }
 
-        "render pensions summary page when there is no data " which {
-          lazy val result: WSResponse = getResponseNoSessionData()
+        "render page when there is no session and prior data" which {
+          lazy val result: WSResponse = showPageNoData(user)
 
-          "has an SEE_OTHER status" in {
-            result.status shouldBe SEE_OTHER
-            result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
+          implicit def document: () => Document = () => Jsoup.parse(result.body)
+
+          "has an OK status" in {
+            result.status shouldBe OK
+          }
+
+          titleCheck(expectedTitle, user.isWelsh)
+          h1Check(expectedHeading)
+          captionCheck(expectedCaption(taxYearEOY), captionSelector)
+          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
+
+          buttonCheck(buttonText, continueButtonSelector)
+          welshToggleCheck(user.isWelsh)
+
+          "has a State Pension section" which {
+            textOnPageCheck(notStartedText, statePensionsStatusSelector)
+          }
+
+          "has a Other UK pensions section" which {
+            textOnPageCheck(notStartedText, otherUkPensionsLinkSelector)
           }
         }
       }

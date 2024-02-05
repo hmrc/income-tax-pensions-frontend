@@ -58,14 +58,16 @@ class UkPensionSchemePaymentsController @Inject() (implicit
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
-        cleanUpSchemes(data).flatMap { case Right(updatedUserData) =>
-          val checkRedirect = journeyCheck(DoYouGetUkPensionSchemePaymentsPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-            data.pensions.incomeFromPensions.uKPensionIncomesQuestion match {
-              case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
-              case _           => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
+        cleanUpSchemes(data).flatMap {
+          case Right(updatedUserData) =>
+            val checkRedirect = journeyCheck(DoYouGetUkPensionSchemePaymentsPage, _: PensionsCYAModel, taxYear)
+            redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+              data.pensions.incomeFromPensions.uKPensionIncomesQuestion match {
+                case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
+                case _           => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
+              }
             }
-          }
+          case Left(_) => Future.successful(errorHandler.internalServerError())
         }
 
       case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))

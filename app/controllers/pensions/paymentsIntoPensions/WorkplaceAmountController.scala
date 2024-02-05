@@ -38,7 +38,7 @@ import scala.concurrent.Future
 @Singleton
 class WorkplaceAmountController @Inject() (
     authAction: AuthorisedAction,
-    workplaceAmountView: WorkplaceAmountView,
+    view: WorkplaceAmountView,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
     formProvider: PaymentsIntoPensionFormProvider)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
@@ -52,9 +52,9 @@ class WorkplaceAmountController @Inject() (
         val amountForm = formProvider.workplacePensionAmountForm
         data.pensions.paymentsIntoPension.totalWorkplacePensionPayments match {
           case Some(amount) =>
-            Future.successful(Ok(workplaceAmountView(amountForm.fill(amount), taxYear)))
+            Future.successful(Ok(view(amountForm.fill(amount), taxYear)))
           case None =>
-            Future.successful(Ok(workplaceAmountView(amountForm, taxYear)))
+            Future.successful(Ok(view(amountForm, taxYear)))
         }
       }
     }
@@ -64,7 +64,7 @@ class WorkplaceAmountController @Inject() (
     formProvider.workplacePensionAmountForm
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(workplaceAmountView(formWithErrors, taxYear))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         amount =>
           pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
             val checkRedirect = journeyCheck(WorkplacePensionAmountPage, _, taxYear)

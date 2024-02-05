@@ -16,6 +16,7 @@
 
 package services
 
+import cats.implicits.catsSyntaxEitherId
 import connectors.IncomeTaxUserDataConnector
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
@@ -87,7 +88,7 @@ class PensionOverseasPaymentService @Inject() (pensionUserDataRepository: Pensio
 
       _ <-
         if (updatedIncomeData.overseasPensionContribution.isEmpty) {
-          FutureEitherOps[ServiceError, Unit](Future.successful(Right()))
+          FutureEitherOps[ServiceError, Unit](Future.successful(().asRight))
         } else {
           FutureEitherOps[ServiceError, Unit](
             pensionIncomeConnectorHelper

@@ -69,20 +69,19 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
         Try {
           encryptedData.map(encryptionService.decryptUserData)
         }.toEither match {
-          case Left(exception: Exception) => handleEncryptionDecryptionException(exception, start)
-          case Right(decryptedData)       => Right(decryptedData)
+          case Left(throwable)      => handleEncryptionDecryptionException(throwable, start)
+          case Right(decryptedData) => Right(decryptedData)
         }
     }
   }
 
   def createOrUpdate(userData: PensionsUserData): QueryResult[Unit] = {
-
     lazy val start = "[PensionsUserDataRepositoryImpl][update]"
 
     Try {
       encryptionService.encryptUserData(userData)
     }.toEither match {
-      case Left(exception: Exception) => Future.successful(handleEncryptionDecryptionException(exception, start))
+      case Left(throwable) => Future.successful(handleEncryptionDecryptionException(throwable, start))
       case Right(encryptedData) =>
         val queryFilter = filter(encryptedData.sessionId, encryptedData.mtdItId, encryptedData.nino, encryptedData.taxYear)
         val replacement = encryptedData

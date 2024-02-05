@@ -47,13 +47,15 @@ class TaxableRefundAmountController @Inject() (
     with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
-    cleanUpSchemes(sessionData.pensionsUserData).map { case Right(_) =>
-      val shortServiceRefundCharge: Option[BigDecimal] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefundCharge
-      val refundOpt: Option[Boolean]                   = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefund
-      (refundOpt, shortServiceRefundCharge) match {
-        case (Some(a), amount) => Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user).fill((a, amount)), taxYear))
-        case _                 => Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user), taxYear))
-      }
+    cleanUpSchemes(sessionData.pensionsUserData).map {
+      case Right(_) =>
+        val shortServiceRefundCharge: Option[BigDecimal] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefundCharge
+        val refundOpt: Option[Boolean]                   = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefund
+        (refundOpt, shortServiceRefundCharge) match {
+          case (Some(a), amount) => Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user).fill((a, amount)), taxYear))
+          case _                 => Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user), taxYear))
+        }
+      case Left(_) => errorHandler.handleError(INTERNAL_SERVER_ERROR)
     }
   }
 

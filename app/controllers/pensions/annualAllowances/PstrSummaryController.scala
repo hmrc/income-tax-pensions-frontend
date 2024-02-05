@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PstrSummaryController @Inject() (implicit
     val cc: MessagesControllerComponents,
     authAction: AuthorisedAction,
-    pstrSummaryView: PstrSummaryView,
+    view: PstrSummaryView,
     appConfig: AppConfig,
     pensionSessionService: PensionSessionService,
     ec: ExecutionContext)
@@ -50,7 +50,7 @@ class PstrSummaryController @Inject() (implicit
         val checkRedirect = journeyCheck(PSTRSummaryPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data =>
           val pstrList = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences
-          Future(Ok(pstrSummaryView(taxYear, pstrList.getOrElse(Nil))))
+          Future(Ok(view(taxYear, pstrList.getOrElse(Nil))))
         }
       case None => Future(Redirect(PensionsSummaryController.show(taxYear)))
     }

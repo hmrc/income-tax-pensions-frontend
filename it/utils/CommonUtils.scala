@@ -71,6 +71,17 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
   def showPage(pensionsUserData: PensionsUserData)(implicit url: Int => String): WSResponse =
     showPage(Some(pensionsUserData))
 
+  def showPageNoData[A, B](user: UserScenario[A, B])(implicit url: Int => String): WSResponse = {
+    dropPensionsDB()
+    authoriseAgentOrIndividual(user.isAgent)
+    userDataStub(IncomeTaxUserData(None), nino, taxYearEOY)
+    urlGet(
+      fullUrl(url(taxYearEOY)),
+      user.isWelsh,
+      follow = false,
+      headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+  }
+
   def showUnauthorisedPage[A, B](userScenario: UserScenario[A, B])(implicit url: Int => String): WSResponse = {
     lazy val result: WSResponse = {
       unauthorisedAgentOrIndividual(userScenario.isAgent)

@@ -17,17 +17,18 @@
 package controllers.pensions.incomeFromPensions
 
 import config.AppConfig
-import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
+import models.mongo.PensionsCYAModel
+import models.pension.AllPensionsData
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.Clock
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 
 @Singleton
 class IncomeFromPensionsSummaryController @Inject() (implicit
@@ -35,16 +36,15 @@ class IncomeFromPensionsSummaryController @Inject() (implicit
     appConfig: AppConfig,
     authAction: AuthorisedAction,
     pensionSessionService: PensionSessionService,
+    clock: Clock,
     view: IncomeFromPensionsSummaryView)
     extends FrontendController(mcc)
     with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.loadDataAndHandle(taxYear, request.user) {
-      case (None, _) =>
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      case (pensionsUserData, priorData) =>
-        Future.successful(Ok(view(taxYear, pensionsUserData.map(_.pensions), priorData)))
-    }
+    def summaryViewResult(taxYear: Int, cyaModel: PensionsCYAModel, priorData: Option[AllPensionsData]) =
+      Ok(view(taxYear, Some(cyaModel), priorData))
+
+    pensionSessionService.mergePriorDataToSession(taxYear, request.user, summaryViewResult)
   }
 }

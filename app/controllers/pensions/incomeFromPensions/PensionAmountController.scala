@@ -40,7 +40,7 @@ import scala.concurrent.Future
 class PensionAmountController @Inject() (implicit
     val mcc: MessagesControllerComponents,
     authAction: AuthorisedAction,
-    pensionAmountView: PensionAmountView,
+    view: PensionAmountView,
     appConfig: AppConfig,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
@@ -67,7 +67,7 @@ class PensionAmountController @Inject() (implicit
               case Some(index) =>
                 Future.successful(
                   Ok(
-                    pensionAmountView(
+                    view(
                       formsProvider.pensionAmountForm(request.user).fill((pensionIncomesList(index).amount, pensionIncomesList(index).taxPaid)),
                       taxYear,
                       index)))
@@ -89,7 +89,7 @@ class PensionAmountController @Inject() (implicit
                 .pensionAmountForm(request.user)
                 .bindFromRequest()
                 .fold(
-                  formWithErrors => Future.successful(BadRequest(pensionAmountView(formWithErrors, taxYear, index))),
+                  formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
                   amounts => {
                     val pensionsCYAModel: PensionsCYAModel     = data.pensions
                     val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions

@@ -22,7 +22,7 @@ import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
 import config.{AppConfig, ErrorHandler, MockAppConfig}
 import controllers.predicates.actions.AuthorisedAction
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.PensionsUserData
 import models.{AuthorisationRequest, User}
 import org.scalamock.handlers.CallHandler4
 import org.scalamock.scalatest.MockFactory
