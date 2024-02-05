@@ -56,8 +56,9 @@ class TaxableAmountController @Inject() (
           if (validTaxAmounts(data, index.getOrElse(0))) {
             val (amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr) = populateView(data, index.getOrElse(0))
             Future.successful(Ok(taxableAmountView(amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr, taxYear, index)))
-          } else
+          } else {
             Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
+          }
 
         }
       case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))

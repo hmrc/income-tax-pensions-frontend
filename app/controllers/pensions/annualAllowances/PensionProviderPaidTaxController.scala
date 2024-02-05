@@ -81,11 +81,11 @@ class PensionProviderPaidTaxController @Inject() (
       request: UserSessionDataRequest[T]): Future[Result] = {
 
     val viewModel: PensionAnnualAllowancesViewModel = pensionUserData.pensions.pensionsAnnualAllowances
-    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(pensionsAnnualAllowances =
-      if (yesNo)
-        viewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(true), taxPaidByPensionProvider = amount)
-      else
-        viewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(false), taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None))
+    val updatedCyaModel: PensionsCYAModel = pensionUserData.pensions.copy(pensionsAnnualAllowances = if (yesNo) {
+      viewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(true), taxPaidByPensionProvider = amount)
+    } else {
+      viewModel.copy(pensionProvidePaidAnnualAllowanceQuestion = Some(false), taxPaidByPensionProvider = None, pensionSchemeTaxReferences = None)
+    })
     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
       errorHandler.internalServerError()) {
       isFinishedCheck(updatedCyaModel.pensionsAnnualAllowances, taxYear, PensionSchemeTaxReferenceController.show(taxYear, None), cyaPageCall)

@@ -84,9 +84,11 @@ class NonUKTaxOnAmountResultedInSurchargeController @Inject() (
                 )
 
                 val redirectLocation =
-                  if (data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(true))
+                  if (data.pensions.unauthorisedPayments.noSurchargeQuestion.contains(true)) {
                     NoSurchargeAmountController.show(taxYear)
-                  else WereAnyOfTheUnauthorisedPaymentsController.show(taxYear)
+                  } else {
+                    WereAnyOfTheUnauthorisedPaymentsController.show(taxYear)
+                  }
                 pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                   errorHandler.internalServerError()) {
                   isFinishedCheck(updatedCyaModel.unauthorisedPayments, taxYear, redirectLocation, cyaPageCall)

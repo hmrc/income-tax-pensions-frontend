@@ -43,7 +43,7 @@ class EncryptionDecryptionException(method: String, reason: String, message: Str
 @Singleton
 class SecureGCMCipher @Inject() (implicit private val appConfig: AppConfig) extends Logging {
 
-  val IV_SIZE                       = 96
+  private val IV_SIZE               = 96
   val TAG_BIT_LENGTH                = 128
   val ALGORITHM_TO_TRANSFORM_STRING = "AES/GCM/PKCS5Padding"
   lazy val secureRandom             = new SecureRandom()

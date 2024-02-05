@@ -127,10 +127,15 @@ object AnnualAllowancesRedirects {
         annualAVM.pensionProvidePaidAnnualAllowanceQuestion.exists(x => x && annualAVM.taxPaidByPensionProvider.isDefined)
       },
       8 -> { annualAVM: PensionAnnualAllowancesViewModel =>
-        if (!isPageValidInJourney(2, annualAVM)) !annualAVM.reducedAnnualAllowanceQuestion.getOrElse(true)
-        else if (!isPageValidInJourney(4, annualAVM)) !annualAVM.aboveAnnualAllowanceQuestion.getOrElse(true)
-        else if (!isPageValidInJourney(5, annualAVM)) !annualAVM.pensionProvidePaidAnnualAllowanceQuestion.getOrElse(true)
-        else annualAVM.isFinished
+        if (!isPageValidInJourney(2, annualAVM)) {
+          !annualAVM.reducedAnnualAllowanceQuestion.getOrElse(true)
+        } else if (!isPageValidInJourney(4, annualAVM)) {
+          !annualAVM.aboveAnnualAllowanceQuestion.getOrElse(true)
+        } else if (!isPageValidInJourney(5, annualAVM)) {
+          !annualAVM.pensionProvidePaidAnnualAllowanceQuestion.getOrElse(true)
+        } else {
+          annualAVM.isFinished
+        }
       }
     )
 

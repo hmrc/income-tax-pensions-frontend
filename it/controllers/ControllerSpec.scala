@@ -171,8 +171,11 @@ class ControllerSpec(val pathForThisPage: String)
   protected def assertRadioButtonAsExpected(document: Document, index: Int, expectedRadioButton: ExpectedRadioButton): Unit = {
     document must haveARadioButtonAtIndex(index)
     document must haveARadioButtonAtIndexWithLabel(index, expectedRadioButton.label)
-    if (expectedRadioButton.isChecked) document must haveACheckedRadioButtonAtIndex(index)
-    else document must not(haveACheckedRadioButtonAtIndex(index))
+    if (expectedRadioButton.isChecked) {
+      document must haveACheckedRadioButtonAtIndex(index)
+    } else {
+      document must not(haveACheckedRadioButtonAtIndex(index))
+    }
   }
 
   protected def assertTextInputAsExpected(document: Document, expectedInputField: ExpectedInputField): Unit = {
@@ -263,8 +266,11 @@ class ControllerSpec(val pathForThisPage: String)
       if (expectedOtherLanguage == PreferredLanguages.English) "Change the language to English English" else "Newid yr iaith ir Gymraeg Cymraeg"
     document must haveOtherLanguageSelectorTitle(expectedOtherLanguage, expectedOtherLanguageTitle)
     val expectedLanguageSelectorLink =
-      if (preferredLanguage == PreferredLanguages.English) "/update-and-submit-income-tax-return/pensions/language/cymraeg"
-      else "/update-and-submit-income-tax-return/pensions/language/english"
+      if (preferredLanguage == PreferredLanguages.English) {
+        "/update-and-submit-income-tax-return/pensions/language/cymraeg"
+      } else {
+        "/update-and-submit-income-tax-return/pensions/language/english"
+      }
     document must haveLanguageSelectorLink(expectedLanguageSelectorLink)
 
     document must haveAFormWithTargetAction(expectedPageContents.formUrl.getOrElse(relativeUrlForThisPage))

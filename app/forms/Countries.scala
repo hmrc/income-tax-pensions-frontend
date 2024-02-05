@@ -33,7 +33,7 @@ object Countries {
   lazy val countriesTwoAlphaMapFromCountryName: Map[String, String] =
     countriesTwoAlphaMap.filter { case (k, _) => mdgCountryCodes("/mdg-country-codes.csv") contains k }.map(_.swap)
 
-  def getCountryFromCode(alphaTwoCode: Option[String]): Option[Country] =
+  private def getCountryFromCode(alphaTwoCode: Option[String]): Option[Country] =
     alphaTwoCode.flatMap(x => allCountries.find(_.alphaTwoCode == x))
 
   def getCountryFromCodeWithDefault(countryCode: Option[String], defaultStr: String = "no country code"): String =

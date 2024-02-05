@@ -59,9 +59,11 @@ class PensionOverseasIncomeCountryController @Inject() (
         val form               = countryForm(request.user)
 
         index.fold {
-          if (optData.exists(data => data.pensions.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion.exists(isTrue => isTrue)))
+          if (optData.exists(data => data.pensions.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion.exists(isTrue => isTrue))) {
             Future.successful(Ok(pensionOverseasIncomeCountryView(form, countriesToInclude, taxYear, None)))
-          else Future.successful(Redirect(PensionOverseasIncomeStatus.show(taxYear)))
+          } else {
+            Future.successful(Redirect(PensionOverseasIncomeStatus.show(taxYear)))
+          }
         } { countryIndex =>
           val checkRedirect = journeyCheck(WhatCountryIsSchemeRegisteredInPage, _, taxYear, Some(countryIndex))
           redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>

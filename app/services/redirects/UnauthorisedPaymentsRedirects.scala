@@ -24,8 +24,8 @@ import controllers.pensions.unauthorisedPayments.routes.{
 }
 import models.mongo.PensionsCYAModel
 import models.pension.charges.UnauthorisedPaymentsViewModel
-import play.api.mvc.{Call, Result}
 import play.api.mvc.Results.Redirect
+import play.api.mvc.{Call, Result}
 import services.redirects.SimpleRedirectService.checkForExistingSchemes
 import services.redirects.UnauthorisedPaymentsPages.{PSTRPage, RemovePSTRPage}
 
@@ -47,14 +47,15 @@ object UnauthorisedPaymentsRedirects { // scalastyle:off magic.number
 
     if (!previousQuestionIsAnswered(currentPage.journeyNo, unauthorisedPayments) || !isPageValidInJourney(
         currentPage.journeyNo,
-        unauthorisedPayments))
+        unauthorisedPayments)) {
       Some(Redirect(UnauthorisedPaymentsController.show(taxYear)))
-    else if (currentPage.equals(RemovePSTRPage))
+    } else if (currentPage.equals(RemovePSTRPage)) {
       removePstrPageCheck(cya, taxYear, optIndex)
-    else if (currentPage.equals(PSTRPage))
+    } else if (currentPage.equals(PSTRPage)) {
       pstrPageCheck(cya, taxYear, optIndex)
-    else
+    } else {
       None
+    }
   }
 
   private def pstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int]): Option[Result] = {
@@ -125,13 +126,19 @@ object UnauthorisedPaymentsRedirects { // scalastyle:off magic.number
     2 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.surchargeQuestion.isDefined },
     3 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.surchargeAmount.isDefined },
     4 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
-      if (isPageValidInJourney(3, unauthorisedPaymentsViewModel)) unauthorisedPaymentsViewModel.surchargeTaxAmountQuestion.isDefined
-      else unauthorisedPaymentsViewModel.noSurchargeQuestion.isDefined
+      if (isPageValidInJourney(3, unauthorisedPaymentsViewModel)) {
+        unauthorisedPaymentsViewModel.surchargeTaxAmountQuestion.isDefined
+      } else {
+        unauthorisedPaymentsViewModel.noSurchargeQuestion.isDefined
+      }
     },
     5 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.noSurchargeAmount.isDefined },
     6 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel =>
-      if (isPageValidInJourney(5, unauthorisedPaymentsViewModel)) unauthorisedPaymentsViewModel.noSurchargeTaxAmountQuestion.isDefined
-      else unauthorisedPaymentsViewModel.surchargeTaxAmountQuestion.isDefined
+      if (isPageValidInJourney(5, unauthorisedPaymentsViewModel)) {
+        unauthorisedPaymentsViewModel.noSurchargeTaxAmountQuestion.isDefined
+      } else {
+        unauthorisedPaymentsViewModel.surchargeTaxAmountQuestion.isDefined
+      }
     },
     7 -> { unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel => unauthorisedPaymentsViewModel.ukPensionSchemesQuestion.isDefined },
     8 -> { _: UnauthorisedPaymentsViewModel => true },

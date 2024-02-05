@@ -42,7 +42,7 @@ class BenefitsFromSchemeController @Inject() (
     with I18nSupport
     with SessionHelper {
 
-  def benefitsFromSchemeForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
+  private def benefitsFromSchemeForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
     missingInputError = s"employerFinancedRetirementScheme.benefitsFromScheme.error.${if (isAgent) "agent" else "individual"}"
   )
 

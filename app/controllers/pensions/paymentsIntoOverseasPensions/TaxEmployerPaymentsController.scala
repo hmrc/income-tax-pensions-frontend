@@ -74,13 +74,15 @@ class TaxEmployerPaymentsController @Inject() (
             case Right(Some(data)) =>
               val cyaModel: PensionsCYAModel = data.pensions
               val updatedViewModel: PaymentsIntoOverseasPensionsViewModel =
-                if (yesNo) cyaModel.paymentsIntoOverseasPensions.copy(taxPaidOnEmployerPaymentsQuestion = Some(true), reliefs = Seq.empty)
-                else cyaModel.paymentsIntoOverseasPensions.copy(taxPaidOnEmployerPaymentsQuestion = Some(false))
+                if (yesNo) {
+                  cyaModel.paymentsIntoOverseasPensions.copy(taxPaidOnEmployerPaymentsQuestion = Some(true), reliefs = Seq.empty)
+                } else {
+                  cyaModel.paymentsIntoOverseasPensions.copy(taxPaidOnEmployerPaymentsQuestion = Some(false))
+                }
               val updatedCyaModel: PensionsCYAModel = cyaModel.copy(paymentsIntoOverseasPensions = updatedViewModel)
 
               val redirectLocation =
-                if (yesNo) cyaPageCall(taxYear)
-                else redirectForSchemeLoop(updatedCyaModel.paymentsIntoOverseasPensions.reliefs, taxYear)
+                if (yesNo) cyaPageCall(taxYear) else redirectForSchemeLoop(updatedCyaModel.paymentsIntoOverseasPensions.reliefs, taxYear)
 
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                 errorHandler.internalServerError()) {

@@ -21,7 +21,7 @@ import forms.{Countries, Country}
 object DoubleTaxationAgreementCountries {
 
   // All ISO 3166-1 alpha-3 codes for countries that are part of the double taxation agreement.
-  val isoAlphaCodes: List[String] =
+  private val isoAlphaCodes: List[String] =
     List(
       "CYM",
       "DZA",

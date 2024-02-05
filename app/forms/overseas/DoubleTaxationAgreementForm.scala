@@ -38,13 +38,14 @@ object DoubleTaxationAgreementForm extends InputFilters {
   val countryNotEmptyMsg: String = "transferIntoOverseasPensions.doubleTaxation.country.error.noEntry"
 
   // relief amount
-  val reliefNonEmpty: String      = "transferIntoOverseasPensions.doubleTaxation.amount.error.noEntry"
-  val wrongFormatKey: String      = "transferIntoOverseasPensions.doubleTaxation.amount.error.incorrectFormat"
-  val exceedsMaxAmountKey: String = "transferIntoOverseasPensions.doubleTaxation.amount.error.tooBig"
+  private val reliefNonEmpty: String = "transferIntoOverseasPensions.doubleTaxation.amount.error.noEntry"
+  val wrongFormatKey: String         = "transferIntoOverseasPensions.doubleTaxation.amount.error.incorrectFormat"
+  val exceedsMaxAmountKey: String    = "transferIntoOverseasPensions.doubleTaxation.amount.error.tooBig"
 
   val countryMapping: (String, Boolean) => (String, Mapping[Option[String]]) = (agentOrIndividual: String, isCountryUK: Boolean) =>
-    if (isCountryUK) countryId -> ignored(Option.empty[String])
-    else {
+    if (isCountryUK) {
+      countryId -> ignored(Option.empty[String])
+    } else {
       val (str, constraint) = CountryForm.countryMapping(agentOrIndividual, countryNotEmptyMsg)
       str -> constraint.transform[Option[String]](str1 => Some(str1), optStr => optStr.getOrElse(""))
     }
