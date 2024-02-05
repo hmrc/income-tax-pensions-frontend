@@ -33,14 +33,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UkPensionSchemeDetailsController @Inject() (implicit
-    val cc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    ukPensionSchemeDetails: UkPensionSchemeDetails,
-    appConfig: AppConfig,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    ec: ExecutionContext)
+class UkPensionSchemeDetailsController @Inject() (cc: MessagesControllerComponents,
+                                                  authAction: AuthorisedAction,
+                                                  ukPensionSchemeDetails: UkPensionSchemeDetails,
+                                                  pensionSessionService: PensionSessionService,
+                                                  errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

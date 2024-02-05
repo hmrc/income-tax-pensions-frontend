@@ -38,11 +38,8 @@ class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
                                                   view: ReliefAtSourcePensionsView,
                                                   pensionSessionService: PensionSessionService,
                                                   errorHandler: ErrorHandler,
-                                                  formsProvider: PaymentsIntoPensionFormProvider)(implicit
-    val cc: MessagesControllerComponents,
-    appConfig: AppConfig,
-    clock: Clock,
-    ec: ExecutionContext)
+                                                  formsProvider: PaymentsIntoPensionFormProvider,
+                                                  cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

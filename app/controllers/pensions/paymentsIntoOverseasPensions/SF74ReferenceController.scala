@@ -36,12 +36,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class SF74ReferenceController @Inject() (
-    actionsProvider: ActionsProvider,
-    pensionSessionService: PensionSessionService,
-    view: SF74ReferenceView,
-    formsProvider: FormsProvider,
-    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+class SF74ReferenceController @Inject() (actionsProvider: ActionsProvider,
+                                         pensionSessionService: PensionSessionService,
+                                         view: SF74ReferenceView,
+                                         formsProvider: FormsProvider,
+                                         errorHandler: ErrorHandler,
+                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

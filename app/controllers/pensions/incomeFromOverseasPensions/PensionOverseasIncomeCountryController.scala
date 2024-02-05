@@ -43,8 +43,9 @@ class PensionOverseasIncomeCountryController @Inject() (
     authAction: AuthorisedAction,
     view: PensionOverseasIncomeCountryView,
     pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
-    extends FrontendController(mcc)
+    errorHandler: ErrorHandler,
+    cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(cc)
     with I18nSupport {
 
   private def countryForm(user: User): Form[String] = CountryForm.countryForm(

@@ -36,15 +36,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject() (authAction: AuthorisedAction,
-                                                                    pensionSessionService: PensionSessionService,
-                                                                    errorHandler: ErrorHandler,
-                                                                    view: ReliefAtSourcePaymentsAndTaxReliefAmountView,
-                                                                    formProvider: PaymentsIntoPensionFormProvider)(implicit
-    val mcc: MessagesControllerComponents,
-    appConfig: AppConfig,
-    clock: Clock,
-    ec: ExecutionContext)
+class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject() (
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    view: ReliefAtSourcePaymentsAndTaxReliefAmountView,
+    formProvider: PaymentsIntoPensionFormProvider,
+    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>

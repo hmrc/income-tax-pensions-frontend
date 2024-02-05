@@ -38,11 +38,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxableAmountController @Inject() (
-    authAction: AuthorisedAction,
-    pensionSessionService: PensionSessionService,
-    view: TaxableAmountView,
-    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class TaxableAmountController @Inject() (authAction: AuthorisedAction,
+                                         pensionSessionService: PensionSessionService,
+                                         view: TaxableAmountView,
+                                         errorHandler: ErrorHandler,
+                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper

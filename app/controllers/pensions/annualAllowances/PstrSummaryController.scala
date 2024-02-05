@@ -34,13 +34,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PstrSummaryController @Inject() (implicit
-    val cc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    view: PstrSummaryView,
-    appConfig: AppConfig,
-    pensionSessionService: PensionSessionService,
-    ec: ExecutionContext)
+class PstrSummaryController @Inject() (cc: MessagesControllerComponents,
+                                       authAction: AuthorisedAction,
+                                       view: PstrSummaryView,
+                                       pensionSessionService: PensionSessionService)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

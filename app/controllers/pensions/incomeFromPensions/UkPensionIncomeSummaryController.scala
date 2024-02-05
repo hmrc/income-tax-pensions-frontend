@@ -34,13 +34,10 @@ import views.html.pensions.incomeFromPensions.UkPensionIncomeSummary
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UkPensionIncomeSummaryController @Inject() (implicit
-    val cc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    ukPensionIncomeSummary: UkPensionIncomeSummary,
-    appConfig: AppConfig,
-    pensionSessionService: PensionSessionService,
-    ec: ExecutionContext)
+class UkPensionIncomeSummaryController @Inject() (cc: MessagesControllerComponents,
+                                                  authAction: AuthorisedAction,
+                                                  ukPensionIncomeSummary: UkPensionIncomeSummary,
+                                                  pensionSessionService: PensionSessionService)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

@@ -42,7 +42,8 @@ class ShortServiceRefundsCYAController @Inject() (
     view: ShortServiceRefundsCYAView,
     pensionSessionService: PensionSessionService,
     pensionChargesService: PensionChargesService,
-    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    errorHandler: ErrorHandler,
+    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

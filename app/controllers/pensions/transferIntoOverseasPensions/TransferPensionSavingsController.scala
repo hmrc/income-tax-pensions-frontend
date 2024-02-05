@@ -34,12 +34,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class TransferPensionSavingsController @Inject() (
-    actionsProvider: ActionsProvider,
-    pensionSessionService: PensionSessionService,
-    view: TransferPensionSavingsView,
-    errorHandler: ErrorHandler)(implicit cc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
-    extends FrontendController(cc)
+class TransferPensionSavingsController @Inject() (actionsProvider: ActionsProvider,
+                                                  pensionSessionService: PensionSessionService,
+                                                  view: TransferPensionSavingsView,
+                                                  errorHandler: ErrorHandler,
+                                                  mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+    extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
 

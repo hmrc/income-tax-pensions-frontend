@@ -32,10 +32,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class PensionSchemeSummaryController @Inject() (actionsProvider: ActionsProvider, pageView: PensionsSchemeSummary)(implicit
-    mcc: MessagesControllerComponents,
-    appConfig: AppConfig)
-    extends FrontendController(mcc)
+class PensionSchemeSummaryController @Inject() (actionsProvider: ActionsProvider, pageView: PensionsSchemeSummary, cc: MessagesControllerComponents)(
+    implicit appConfig: AppConfig)
+    extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {
 

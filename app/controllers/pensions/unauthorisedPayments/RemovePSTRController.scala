@@ -35,15 +35,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RemovePSTRController @Inject() (implicit
-    val mcc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    view: RemovePSTRView,
-    appConfig: AppConfig,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    clock: Clock,
-    ec: ExecutionContext)
+class RemovePSTRController @Inject() (mcc: MessagesControllerComponents,
+                                      authAction: AuthorisedAction,
+                                      view: RemovePSTRView,
+                                      pensionSessionService: PensionSessionService,
+                                      errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

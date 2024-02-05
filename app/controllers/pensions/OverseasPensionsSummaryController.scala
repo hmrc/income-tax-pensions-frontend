@@ -31,13 +31,11 @@ import views.html.pensions.OverseasPensionsSummaryView
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class OverseasPensionsSummaryController @Inject() (implicit
-    val mcc: MessagesControllerComponents,
-    appConfig: AppConfig,
+class OverseasPensionsSummaryController @Inject() (
+    mcc: MessagesControllerComponents,
     authAction: AuthorisedAction,
     pensionSessionService: PensionSessionService,
-    clock: Clock,
-    overseasPensionsSummaryView: OverseasPensionsSummaryView)
+    overseasPensionsSummaryView: OverseasPensionsSummaryView)(implicit appConfig: AppConfig, clock: Clock)
     extends FrontendController(mcc)
     with I18nSupport {
 

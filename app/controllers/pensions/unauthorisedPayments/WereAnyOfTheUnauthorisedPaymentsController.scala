@@ -38,15 +38,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class WereAnyOfTheUnauthorisedPaymentsController @Inject() (implicit
-    val cc: MessagesControllerComponents,
+class WereAnyOfTheUnauthorisedPaymentsController @Inject() (
+    cc: MessagesControllerComponents,
     authAction: AuthorisedAction,
     view: WereAnyOfTheUnauthorisedPaymentsView,
-    appConfig: AppConfig,
     pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    clock: Clock,
-    ec: ExecutionContext)
+    errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

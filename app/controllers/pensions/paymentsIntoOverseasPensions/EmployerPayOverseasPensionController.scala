@@ -42,8 +42,9 @@ class EmployerPayOverseasPensionController @Inject() (
     authAction: AuthorisedAction,
     view: EmployerPayOverseasPensionView,
     pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler)(implicit val cc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
-    extends FrontendController(cc)
+    errorHandler: ErrorHandler,
+    mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport {
 
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
