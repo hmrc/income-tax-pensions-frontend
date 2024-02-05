@@ -272,7 +272,6 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
 
           "has an OK status" in {
             result.status shouldBe OK
-            println("Here db should have empty document")
           }
 
           titleCheck(expectedTitle, user.isWelsh)

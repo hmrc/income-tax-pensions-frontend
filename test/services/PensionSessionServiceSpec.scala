@@ -159,7 +159,6 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
     "return an internal server error if data not found" in {
       super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, noPriorData)
       super[MockPensionUserDataRepository].mockFind(taxYear, user, Left(DataNotFound))
-      mockCreateOrUpdate(Right(()))
 
       val response = service.mergePriorDataToSession(taxYear, user, (_, _, _) => Ok)
 

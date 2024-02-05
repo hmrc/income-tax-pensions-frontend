@@ -129,13 +129,13 @@ class PensionSessionService @Inject() (pensionUserDataRepository: PensionsUserDa
     }
 
   private def createOrUpdateSessionIfNeeded(
-      pensionsUserData: Option[PensionsUserData],
+      sessionData: Option[PensionsUserData],
       priorData: Option[AllPensionsData],
       taxYear: Int,
       user: User,
       renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
   )(implicit request: Request[_], clock: Clock) = {
-    val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(pensionsUserData, priorData)
+    val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
     val updatedSessionPensionCYAModel = updatedSession.newPensionsCYAModel
     val summaryView                   = renderView(taxYear, updatedSessionPensionCYAModel, priorData)
 
