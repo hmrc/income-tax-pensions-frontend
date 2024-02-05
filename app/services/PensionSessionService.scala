@@ -22,6 +22,7 @@ import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataRespo
 import models.User
 import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
+import models.session.PensionCYAMergedWithPriorData
 import org.joda.time.DateTimeZone
 import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
@@ -117,4 +118,32 @@ class PensionSessionService @Inject() (pensionUserDataRepository: PensionsUserDa
       case Left(error: DatabaseError) => Left(error)
       case Right(_)                   => Right(())
     }
+
+  def mergePriorDataToSession(
+      taxYear: Int,
+      user: User,
+      renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
+  )(implicit request: Request[_], hc: HeaderCarrier, clock: Clock): Future[Result] =
+    getAndHandle(taxYear, user) { (sessionData, priorData) =>
+      createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear, user, renderView)
+    }
+
+  private def createOrUpdateSessionIfNeeded(
+      sessionData: Option[PensionsUserData],
+      priorData: Option[AllPensionsData],
+      taxYear: Int,
+      user: User,
+      renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
+  )(implicit request: Request[_], clock: Clock) = {
+    val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
+    val updatedSessionPensionCYAModel = updatedSession.newPensionsCYAModel
+    val summaryView                   = renderView(taxYear, updatedSessionPensionCYAModel, priorData)
+
+    if (updatedSession.newModelChanged) {
+      createOrUpdateSessionData(user, updatedSessionPensionCYAModel, taxYear, isPriorSubmission = priorData.isDefined)(
+        errorHandler.handleError(INTERNAL_SERVER_ERROR))(summaryView)
+    } else {
+      Future.successful(summaryView)
+    }
+  }
 }

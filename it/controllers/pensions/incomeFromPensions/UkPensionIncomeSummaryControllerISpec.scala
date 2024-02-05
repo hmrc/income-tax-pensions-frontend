@@ -29,7 +29,6 @@ import utils.PageUrls.IncomeFromPensionsPages._
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
-// scalastyle:off magic.number
 class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   object Selectors {
@@ -241,4 +240,3 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
     }
   }
 }
-// scalastyle:on magic.number
