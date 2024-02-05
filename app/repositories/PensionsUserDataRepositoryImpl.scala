@@ -59,7 +59,7 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
     val options     = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
 
     val findResult = collection.findOneAndUpdate(queryFilter, update, options).toFutureOption().map(Right(_)).recover { case exception: Exception =>
-      pagerDutyLog(FAILED_TO_FIND_PENSIONS_DATA, s" Failed to find user data. Exception: ${exception.getMessage}")
+      pagerDutyLog(FAILED_TO_FIND_PENSIONS_DATA, s"$start Failed to find user data. Exception: ${exception.getMessage}")
       Left(MongoError(exception.getMessage))
     }
 
