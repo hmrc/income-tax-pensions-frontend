@@ -47,7 +47,8 @@ class RemovePSTRController @Inject() (mcc: MessagesControllerComponents,
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
     implicit request =>
       pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
-        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+        case Left(_) =>
+          Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
 
         case Right(optData) =>
           val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
