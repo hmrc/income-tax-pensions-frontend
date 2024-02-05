@@ -71,14 +71,14 @@ class EmployerPayOverseasPensionController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(employerPayOverseasPensionView(formWithErrors, taxYear))),
-        value =>
+        yesNo =>
           pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-            case Right(maybeData) =>
+            case Right(optPensionUserData) =>
               val checkRedirect = journeyCheck(EmployerPayOverseasPensionPage, _: PensionsCYAModel, taxYear)
-              redirectBasedOnCurrentAnswers(taxYear, maybeData, cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
+              redirectBasedOnCurrentAnswers(taxYear, optPensionUserData, cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
                 val cyaModel: PensionsCYAModel = data.pensions
                 val updatedViewModel: PaymentsIntoOverseasPensionsViewModel =
-                  if (value) {
+                  if (yesNo) {
                     cyaModel.paymentsIntoOverseasPensions.copy(employerPaymentsQuestion = Some(true))
                   } else {
                     cyaModel.paymentsIntoOverseasPensions.copy(
@@ -90,7 +90,7 @@ class EmployerPayOverseasPensionController @Inject() (
                 val updatedCyaModel: PensionsCYAModel = cyaModel.copy(paymentsIntoOverseasPensions = updatedViewModel)
 
                 val redirectLocation =
-                  if (value) TaxEmployerPaymentsController.show(taxYear) else PaymentsIntoOverseasPensionsCYAController.show(taxYear)
+                  if (yesNo) TaxEmployerPaymentsController.show(taxYear) else PaymentsIntoOverseasPensionsCYAController.show(taxYear)
 
                 pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                   errorHandler.internalServerError()) {

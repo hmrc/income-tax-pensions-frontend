@@ -75,6 +75,8 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
 
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
+  def nonEmpty: Boolean = !isEmpty
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUnauthorisedPaymentsViewModel =
     EncryptedUnauthorisedPaymentsViewModel(
       surchargeQuestion = surchargeQuestion.map(_.encrypted),

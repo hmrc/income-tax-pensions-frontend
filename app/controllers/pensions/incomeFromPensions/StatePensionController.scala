@@ -76,11 +76,14 @@ class StatePensionController @Inject() (
       request: UserSessionDataRequest[T]): Future[Result] = {
     val viewModel: IncomeFromPensionsViewModel = pensionUserData.pensions.incomeFromPensions
     val updateStatePension: StateBenefitViewModel =
-      if (yesNo) viewModel.statePension match {
-        case Some(value) => value.copy(amountPaidQuestion = Some(true), amount = amount)
-        case _           => StateBenefitViewModel(amountPaidQuestion = Some(true), amount = amount)
+      if (yesNo) {
+        viewModel.statePension match {
+          case Some(value) => value.copy(amountPaidQuestion = Some(true), amount = amount)
+          case _           => StateBenefitViewModel(amountPaidQuestion = Some(true), amount = amount)
+        }
+      } else {
+        StateBenefitViewModel(amountPaidQuestion = Some(false))
       }
-      else StateBenefitViewModel(amountPaidQuestion = Some(false))
 
     val updatedCyaModel: PensionsCYAModel =
       pensionUserData.pensions.copy(incomeFromPensions = viewModel.copy(statePension = Some(updateStatePension)))

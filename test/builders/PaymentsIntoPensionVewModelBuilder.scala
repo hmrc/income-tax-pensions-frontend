@@ -33,5 +33,18 @@ object PaymentsIntoPensionVewModelBuilder {
     totalWorkplacePensionPayments = Some(192.01)
   )
 
+  val aPaymentsIntoPensionAnotherViewModel: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
+    rasPensionPaymentQuestion = Some(false),
+    totalRASPaymentsAndTaxRelief = Some(1),
+    oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
+    totalOneOffRasPaymentPlusTaxRelief = Some(2),
+    totalPaymentsIntoRASQuestion = Some(false),
+    pensionTaxReliefNotClaimedQuestion = Some(false),
+    retirementAnnuityContractPaymentsQuestion = Some(false),
+    totalRetirementAnnuityContractPayments = Some(3),
+    workplacePensionPaymentsQuestion = Some(false),
+    totalWorkplacePensionPayments = Some(4)
+  )
+
   val aPaymentsIntoPensionsEmptyViewModel: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel()
 }

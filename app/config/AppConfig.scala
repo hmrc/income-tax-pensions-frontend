@@ -17,13 +17,12 @@
 package config
 
 import play.api.Logging
-
-import javax.inject.{Inject, Singleton}
 import play.api.i18n.Lang
 import play.api.mvc.{Call, RequestHeader}
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
 
 @Singleton
@@ -60,19 +59,15 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   def incomeTaxSubmissionIvRedirect: String = incomeTaxSubmissionBaseUrl +
     servicesConfig.getString("microservice.services.income-tax-submission-frontend.iv-redirect")
 
-  lazy val incomeTaxEmploymentBEUrl: String = s"${servicesConfig.getString(ConfigKeys.incomeTaxEmploymentUrl)}/income-tax-employment"
-
-  lazy val incomeTaxExpensesBEUrl: String = s"${servicesConfig.getString(ConfigKeys.incomeTaxExpensesUrl)}/income-tax-expenses"
-
   private lazy val vcBaseUrl: String   = servicesConfig.getString(ConfigKeys.viewAndChangeUrl)
   def viewAndChangeEnterUtrUrl: String = s"$vcBaseUrl/report-quarterly/income-and-expenses/view/agents/client-utr"
 
   lazy private val appUrl: String     = servicesConfig.getString("microservice.url")
   lazy private val contactFrontEndUrl = servicesConfig.getString(ConfigKeys.contactFrontendUrl)
 
-  lazy private val contactFormServiceIndividual                       = "update-and-submit-income-tax-return"
-  lazy private val contactFormServiceAgent                            = "update-and-submit-income-tax-return-agent"
-  def contactFormServiceIdentifier(implicit isAgent: Boolean): String = if (isAgent) contactFormServiceAgent else contactFormServiceIndividual
+  lazy private val contactFormServiceIndividual                               = "update-and-submit-income-tax-return"
+  lazy private val contactFormServiceAgent                                    = "update-and-submit-income-tax-return-agent"
+  private def contactFormServiceIdentifier(implicit isAgent: Boolean): String = if (isAgent) contactFormServiceAgent else contactFormServiceIndividual
 
   private def requestUri(implicit request: RequestHeader): String = SafeRedirectUrl(appUrl + request.uri).encodedUrl
 
@@ -107,8 +102,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
     (lang: String) => controllers.routes.LanguageSwitchController.switchToLanguage(lang)
 
   lazy val welshToggleEnabled: Boolean = servicesConfig.getBoolean("feature-switch.welshToggleEnabled")
-
-  lazy val nrsEnabled: Boolean = servicesConfig.getBoolean("feature-switch.nrsEnabled")
 
   lazy val useEncryption: Boolean = {
     logger.warn("[SecureGCMCipher][decrypt] Encryption is turned off")

@@ -82,11 +82,14 @@ class StatePensionLumpSumController @Inject() (
       request: UserSessionDataRequest[T]): Future[Result] = {
     val viewModel: IncomeFromPensionsViewModel = pensionUserData.pensions.incomeFromPensions
     val updateStatePensionLumpSum: StateBenefitViewModel =
-      if (yesNo) viewModel.statePensionLumpSum match {
-        case Some(value) => value.copy(amountPaidQuestion = Some(true), amount = amount)
-        case _           => StateBenefitViewModel(amountPaidQuestion = Some(true), amount = amount)
+      if (yesNo) {
+        viewModel.statePensionLumpSum match {
+          case Some(value) => value.copy(amountPaidQuestion = Some(true), amount = amount)
+          case _           => StateBenefitViewModel(amountPaidQuestion = Some(true), amount = amount)
+        }
+      } else {
+        StateBenefitViewModel(amountPaidQuestion = Some(false))
       }
-      else StateBenefitViewModel(amountPaidQuestion = Some(false))
 
     val updatedCyaModel  = pensionUserData.pensions.copy(incomeFromPensions = viewModel.copy(statePensionLumpSum = Some(updateStatePensionLumpSum)))
     val redirectLocation = if (yesNo) TaxPaidOnStatePensionLumpSumController.show(taxYear) else StatePensionAddToCalculationController.show(taxYear)

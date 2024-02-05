@@ -92,15 +92,20 @@ class OverseasTransferChargeController @Inject() (
       request: UserSessionDataRequest[T]): Future[Result] = {
 
     val cyaModel = pensionUserData.pensions
-    val updateViewModel = cyaModel.copy(transfersIntoOverseasPensions =
-      if (yesNo) cyaModel.transfersIntoOverseasPensions.copy(overseasTransferCharge = Some(true), overseasTransferChargeAmount = amount)
-      else TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(true), overseasTransferCharge = Some(false)))
+    val updateViewModel = cyaModel.copy(transfersIntoOverseasPensions = if (yesNo) {
+      cyaModel.transfersIntoOverseasPensions.copy(overseasTransferCharge = Some(true), overseasTransferChargeAmount = amount)
+    } else {
+      TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(true), overseasTransferCharge = Some(false))
+    })
 
     pensionSessionService.createOrUpdateSessionData(request.user, updateViewModel, taxYear, pensionUserData.isPriorSubmission)(
       errorHandler.internalServerError()) {
       Redirect(
-        if (!yesNo || updateViewModel.transfersIntoOverseasPensions.isFinished) TransferIntoOverseasPensionsCYAController.show(taxYear)
-        else PensionSchemeTaxTransferController.show(taxYear)
+        if (!yesNo || updateViewModel.transfersIntoOverseasPensions.isFinished) {
+          TransferIntoOverseasPensionsCYAController.show(taxYear)
+        } else {
+          PensionSchemeTaxTransferController.show(taxYear)
+        }
       )
     }
   }

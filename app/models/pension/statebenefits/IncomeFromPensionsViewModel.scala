@@ -34,6 +34,8 @@ case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewMode
   def isEmpty: Boolean =
     statePension.isEmpty && statePensionLumpSum.isEmpty && uKPensionIncomesQuestion.isEmpty && uKPensionIncomes.isEmpty
 
+  def nonEmpty: Boolean = !isEmpty
+
   def isFinishedStatePension: Boolean = statePension.exists(_.isFinished) && statePensionLumpSum.exists(_.isFinished)
 
   def isFinishedUkPension: Boolean = uKPensionIncomesQuestion.exists(x => !x || (uKPensionIncomes.nonEmpty && uKPensionIncomes.forall(_.isFinished)))
@@ -43,7 +45,7 @@ case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewMode
   def journeyIsNoStatePension: Boolean =
     statePension.exists(!_.amountPaidQuestion.getOrElse(true)) && statePensionLumpSum.exists(!_.amountPaidQuestion.getOrElse(true))
 
-  def journeyIsNoUkPension: Boolean = uKPensionIncomesQuestion.exists(x => !x && uKPensionIncomes.isEmpty)
+  private def journeyIsNoUkPension: Boolean = uKPensionIncomesQuestion.exists(x => !x && uKPensionIncomes.isEmpty)
 
   def journeyIsNo: Boolean = journeyIsNoStatePension && journeyIsNoUkPension
 

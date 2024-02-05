@@ -69,12 +69,12 @@ class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(pageView(formWithErrors, taxYear))),
-        value =>
+        yesNo =>
           pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
             case Right(optData) =>
               val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
               val viewModel   = pensionsCya.paymentsIntoPension
-              val updatedCyaModel = pensionsCya.copy(paymentsIntoPension = if (value) {
+              val updatedCyaModel = pensionsCya.copy(paymentsIntoPension = if (yesNo) {
                 viewModel.copy(rasPensionPaymentQuestion = Some(true))
               } else {
                 viewModel.copy(
@@ -87,7 +87,7 @@ class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
               })
 
               val redirectLocation =
-                if (value) ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear) else PensionsTaxReliefNotClaimedController.show(taxYear)
+                if (yesNo) ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear) else PensionsTaxReliefNotClaimedController.show(taxYear)
 
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(
                 errorHandler.internalServerError()) {

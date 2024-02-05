@@ -124,13 +124,17 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
   def isEmpty: Boolean = paymentsIntoOverseasPensionsQuestions.isEmpty && paymentsIntoOverseasPensionsAmount.isEmpty &&
     employerPaymentsQuestion.isEmpty && taxPaidOnEmployerPaymentsQuestion.isEmpty && reliefs.isEmpty
 
+  def nonEmpty: Boolean = !isEmpty
+
   def isFinished: Boolean =
     paymentsIntoOverseasPensionsQuestions.exists(x =>
-      if (!x) true
-      else
+      if (!x) {
+        true
+      } else {
         paymentsIntoOverseasPensionsAmount.isDefined &&
         employerPaymentsQuestion.exists(x =>
-          if (!x) true else taxPaidOnEmployerPaymentsQuestion.exists(x => if (x) true else reliefs.nonEmpty && reliefs.forall(_.isFinished))))
+          if (!x) true else taxPaidOnEmployerPaymentsQuestion.exists(x => if (x) true else reliefs.nonEmpty && reliefs.forall(_.isFinished)))
+      })
 
   def journeyIsNo: Boolean =
     (!paymentsIntoOverseasPensionsQuestions.getOrElse(true)

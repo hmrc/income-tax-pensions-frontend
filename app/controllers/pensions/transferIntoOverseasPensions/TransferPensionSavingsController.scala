@@ -65,15 +65,16 @@ class TransferPensionSavingsController @Inject() (
       request: UserSessionDataRequest[T]): Future[Result] = {
 
     val cyaModel = pensionUserData.pensions
-    val updateViewModel = cyaModel.copy(transfersIntoOverseasPensions =
-      if (transferPensionSavings) cyaModel.transfersIntoOverseasPensions.copy(transferPensionSavings = Some(transferPensionSavings))
-      else TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(transferPensionSavings)))
+    val updateViewModel = cyaModel.copy(transfersIntoOverseasPensions = if (transferPensionSavings) {
+      cyaModel.transfersIntoOverseasPensions.copy(transferPensionSavings = Some(transferPensionSavings))
+    } else {
+      TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(transferPensionSavings))
+    })
 
     pensionSessionService.createOrUpdateSessionData(request.user, updateViewModel, taxYear, pensionUserData.isPriorSubmission)(
       errorHandler.internalServerError()) {
       Redirect(
-        if (transferPensionSavings) OverseasTransferChargeController.show(taxYear)
-        else TransferIntoOverseasPensionsCYAController.show(taxYear)
+        if (transferPensionSavings) OverseasTransferChargeController.show(taxYear) else TransferIntoOverseasPensionsCYAController.show(taxYear)
       )
     }
   }

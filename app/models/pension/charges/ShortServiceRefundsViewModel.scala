@@ -35,13 +35,17 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
   def isEmpty: Boolean = shortServiceRefund.isEmpty && shortServiceRefundCharge.isEmpty &&
     shortServiceRefundTaxPaid.isEmpty && shortServiceRefundTaxPaidCharge.isEmpty && refundPensionScheme.isEmpty
 
+  def nonEmpty: Boolean = !isEmpty
+
   def isFinished: Boolean =
     shortServiceRefund.exists(x =>
-      if (x)
+      if (x) {
         shortServiceRefundCharge.isDefined &&
         shortServiceRefundTaxPaid.exists(x => if (x) shortServiceRefundTaxPaidCharge.isDefined else true) &&
         refundPensionScheme.nonEmpty && refundPensionScheme.forall(rps => rps.isFinished)
-      else true)
+      } else {
+        true
+      })
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedShortServiceRefundsViewModel =
     EncryptedShortServiceRefundsViewModel(
@@ -114,8 +118,11 @@ case class OverseasRefundPensionScheme(
   def isFinished: Boolean =
     name.isDefined && providerAddress.isDefined &&
       ukRefundCharge.exists(x =>
-        if (x) pensionSchemeTaxReference.isDefined
-        else qualifyingRecognisedOverseasPensionScheme.isDefined && alphaTwoCountryCode.isDefined && alphaThreeCountryCode.isDefined)
+        if (x) {
+          pensionSchemeTaxReference.isDefined
+        } else {
+          qualifyingRecognisedOverseasPensionScheme.isDefined && alphaTwoCountryCode.isDefined && alphaThreeCountryCode.isDefined
+        })
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedOverseasRefundPensionScheme =
     EncryptedOverseasRefundPensionScheme(

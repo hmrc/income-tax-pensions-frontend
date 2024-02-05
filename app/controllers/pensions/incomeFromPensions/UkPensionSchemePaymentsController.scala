@@ -91,8 +91,11 @@ class UkPensionSchemePaymentsController @Inject() (implicit
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(
                 errorHandler.internalServerError()) {
                 Redirect(
-                  if (yesNo) redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear)
-                  else UkPensionIncomeCYAController.show(taxYear)
+                  if (yesNo) {
+                    redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear)
+                  } else {
+                    UkPensionIncomeCYAController.show(taxYear)
+                  }
                 )
               }
             }

@@ -62,8 +62,9 @@ object PensionSchemeForm extends InputFilters {
   val countryNotEmptyMsg: String = "common.overseasPensions.country.error.noEntry"
 
   val countryMapping: (String, Boolean) => (String, Mapping[Option[String]]) = (agentOrIndividual: String, isCountryUK: Boolean) =>
-    if (isCountryUK) countryId -> ignored(Option.empty[String])
-    else {
+    if (isCountryUK) {
+      countryId -> ignored(Option.empty[String])
+    } else {
       val (str, constraint) = CountryForm.countryMapping(agentOrIndividual, countryNotEmptyMsg)
       str -> constraint.transform[Option[String]](str1 => Some(str1), optStr => optStr.getOrElse(""))
     }

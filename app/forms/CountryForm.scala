@@ -29,7 +29,7 @@ object CountryForm extends InputFilters {
 
   def notEmpty(message: String): Constraint[String] = nonEmpty(message)
 
-  def validateCountry(): String => Constraint[String] = msgKey =>
+  private def validateCountry(): String => Constraint[String] = msgKey =>
     constraint[String](x => if (Countries.allCountries.map(_.alphaTwoCode).contains(x)) Valid else Invalid(msgKey))
 
   def countryMapping(agentOrIndividual: String, noEntryMsg: String): (String, Mapping[String]) =

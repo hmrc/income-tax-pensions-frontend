@@ -111,20 +111,24 @@ object IncomeFromOverseasPensionsRedirects {
         if (schemesEmpty) false else ifopVM.overseasIncomePensionSchemes(index).alphaTwoCode.isDefined
       },
       4 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
-        if (schemesEmpty) false
-        else
+        if (schemesEmpty) {
+          false
+        } else {
           ifopVM
             .overseasIncomePensionSchemes(index)
             .pensionPaymentAmount
             .isDefined && ifopVM.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid.isDefined
+        }
       },
       5 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
-        if (schemesEmpty) false
-        else
+        if (schemesEmpty) {
+          false
+        } else {
           ifopVM
             .overseasIncomePensionSchemes(index)
             .specialWithholdingTaxQuestion
             .exists(x => if (x) ifopVM.overseasIncomePensionSchemes(index).specialWithholdingTaxAmount.isDefined else true)
+        }
       },
       6 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
         if (schemesEmpty) false else ifopVM.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion.isDefined
@@ -139,8 +143,11 @@ object IncomeFromOverseasPensionsRedirects {
         if (schemesEmpty) false else ifopVM.overseasIncomePensionSchemes(index).isFinished
       },
       10 -> { ifopVM: IncomeFromOverseasPensionsViewModel =>
-        if (isPageValidInJourney(2, ifopVM)) ifopVM.isFinished
-        else !ifopVM.paymentsFromOverseasPensionsQuestion.getOrElse(true)
+        if (isPageValidInJourney(2, ifopVM)) {
+          ifopVM.isFinished
+        } else {
+          !ifopVM.paymentsFromOverseasPensionsQuestion.getOrElse(true)
+        }
       }
     )
 
