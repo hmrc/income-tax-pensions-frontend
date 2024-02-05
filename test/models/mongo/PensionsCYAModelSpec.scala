@@ -37,7 +37,7 @@ class PensionsCYAModelSpec extends AnyWordSpecLike {
     }
 
     "use original when merged with empty" in {
-      assert(sourceModel.merge(Some(PensionsCYAModelBuilder.aPensionsCYAEmptyModel)) === sourceModel)
+      assert(sourceModel.merge(Some(PensionsCYAModelBuilder.emptyPensionsData)) === sourceModel)
     }
 
     "favors overridden values" in {

@@ -37,7 +37,7 @@ object AllPensionsData {
   def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = // scalastyle:off method.length
     PensionsCYAModel(
       paymentsIntoPension = generatePaymentsIntoPensionsCyaFromPrior(prior),
-      pensionsAnnualAllowances = generateAnnualAllowanceCyaFromPrior(prior),
+      pensionsAnnualAllowances = generateAnnualAllowanceSessionFromPrior(prior),
       incomeFromPensions = generateIncomeFromPensionsModelFromPrior(prior),
       unauthorisedPayments = generateUnauthorisedPaymentsCysFromPrior(prior),
       paymentsIntoOverseasPensions = generatePaymentsIntoOverseasPensionsFromPrior(prior),
@@ -61,7 +61,7 @@ object AllPensionsData {
       totalWorkplacePensionPayments = prior.pensionReliefs.flatMap(_.pensionReliefs.paymentToEmployersSchemeNoTaxRelief)
     )
 
-  def generateAnnualAllowanceCyaFromPrior(prior: AllPensionsData): PensionAnnualAllowancesViewModel =
+  def generateAnnualAllowanceSessionFromPrior(prior: AllPensionsData): PensionAnnualAllowancesViewModel =
     PensionAnnualAllowancesViewModel(
       reducedAnnualAllowanceQuestion = prior.pensionCharges.flatMap(_.pensionContributions).flatMap(_.isAnnualAllowanceReduced),
       moneyPurchaseAnnualAllowance = prior.pensionCharges.flatMap(_.pensionContributions).flatMap(_.moneyPurchasedAllowance),
@@ -78,7 +78,6 @@ object AllPensionsData {
     val (uKPenIncomesQ, uKPenIncomes) = generateUkPensionCyaFromPrior(prior)
 
     IncomeFromPensionsViewModel(
-      // TODO: validate as necessary on building CYA page
       statePension = statePen,
       statePensionLumpSum = statePenLumpSum,
 
@@ -189,7 +188,7 @@ object AllPensionsData {
     )
   }
 
-  private def generateIncomeFromOverseasPensionsCyaFromPrior(prior: AllPensionsData): IncomeFromOverseasPensionsViewModel =
+  def generateIncomeFromOverseasPensionsCyaFromPrior(prior: AllPensionsData): IncomeFromOverseasPensionsViewModel =
     IncomeFromOverseasPensionsViewModel(
       paymentsFromOverseasPensionsQuestion = prior.pensionIncome.flatMap(_.foreignPension.map(_.nonEmpty)),
       overseasIncomePensionSchemes = prior.pensionIncome

@@ -23,6 +23,7 @@ import forms.PensionSchemeTaxReferenceForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.OptionValues.convertOptionToValuable
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
@@ -533,7 +534,7 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
       }
     }
 
-    "redirect to annual allowance CYA page if there is no session data" should {
+    "redirect to the pension summary task list if there is no session data" in {
       lazy val form: Map[String, String] = Map(PensionSchemeTaxReferenceForm.taxReferenceId -> "12345678RA")
 
       lazy val result: WSResponse = {
@@ -546,11 +547,8 @@ class PensionSchemeTaxReferenceControllerISpec extends IntegrationTest with Befo
         )
       }
 
-      "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        //        TODO redirect to Annual Allowances CYA
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-      }
+      result.status shouldBe SEE_OTHER
+      result.header("location").value shouldBe pensionSummaryUrl(taxYearEOY)
     }
 
   }

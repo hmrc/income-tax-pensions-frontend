@@ -32,8 +32,8 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
 import utils.PagerDutyHelper.PagerDutyKeys.{FAILED_TO_CREATE_UPDATE_PENSIONS_DATA, FAILED_TO_ClEAR_PENSIONS_DATA, FAILED_TO_FIND_PENSIONS_DATA}
 import utils.PagerDutyHelper.{PagerDutyKeys, pagerDutyLog}
-import javax.inject.{Inject, Singleton}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
@@ -50,7 +50,7 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
     with PensionsUserDataRepository
     with Logging {
 
-  def find[T](taxYear: Int, user: User): Future[Either[DatabaseError, Option[PensionsUserData]]] = {
+  def find(taxYear: Int, user: User): QueryResult[Option[PensionsUserData]] = {
 
     lazy val start = "[PensionsUserDataRepositoryImpl][find]"
 
@@ -59,7 +59,7 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
     val options     = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
 
     val findResult = collection.findOneAndUpdate(queryFilter, update, options).toFutureOption().map(Right(_)).recover { case exception: Exception =>
-      pagerDutyLog(FAILED_TO_FIND_PENSIONS_DATA, s"$start Failed to find user data. Exception: ${exception.getMessage}")
+      pagerDutyLog(FAILED_TO_FIND_PENSIONS_DATA, s" Failed to find user data. Exception: ${exception.getMessage}")
       Left(MongoError(exception.getMessage))
     }
 
@@ -75,32 +75,7 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
     }
   }
 
-  def findNoOpt[T](taxYear: Int, user: User): Future[Either[DatabaseError, PensionsUserData]] = {
-
-    lazy val start = "[PensionsUserDataRepositoryImpl][find]"
-
-    val queryFilter = filter(user.sessionId, user.mtditid, user.nino, taxYear)
-    val update      = set("lastUpdated", toBson(DateTime.now(DateTimeZone.UTC))(MongoJodaFormats.dateTimeWrites))
-    val options     = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
-
-    val findResult = collection.findOneAndUpdate(queryFilter, update, options).toFuture().map(Right(_)).recover { case exception: Exception =>
-      pagerDutyLog(FAILED_TO_FIND_PENSIONS_DATA, s"$start Failed to find user data. Exception: ${exception.getMessage}")
-      Left(MongoError(exception.getMessage))
-    }
-
-    findResult.map {
-      case Left(error) => Left(error)
-      case Right(encryptedData) =>
-        Try {
-          encryptionService.decryptUserData(encryptedData)
-        }.toEither match {
-          case Left(exception: Exception) => handleEncryptionDecryptionException(exception, start)
-          case Right(decryptedData)       => Right(decryptedData)
-        }
-    }
-  }
-
-  def createOrUpdate[T](userData: PensionsUserData): Future[Either[DatabaseError, Unit]] = {
+  def createOrUpdate(userData: PensionsUserData): QueryResult[Unit] = {
 
     lazy val start = "[PensionsUserDataRepositoryImpl][update]"
 
@@ -129,7 +104,7 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
     }
   }
 
-  def clear[T](taxYear: Int, user: User): Future[Boolean] =
+  def clear(taxYear: Int, user: User): Future[Boolean] =
     collection
       .deleteOne(filter(user.sessionId, user.mtditid, user.nino, taxYear))
       .toFutureOption()
@@ -152,9 +127,9 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
 }
 
 trait PensionsUserDataRepository {
-  def createOrUpdate[T](userData: PensionsUserData): Future[Either[DatabaseError, Unit]]
+  type QueryResult[A] = Future[Either[DatabaseError, A]]
 
-  def find[T](taxYear: Int, user: User): Future[Either[DatabaseError, Option[PensionsUserData]]]
-
-  def clear[T](taxYear: Int, user: User): Future[Boolean]
+  def createOrUpdate(userData: PensionsUserData): QueryResult[Unit]
+  def find(taxYear: Int, user: User): QueryResult[Option[PensionsUserData]]
+  def clear(taxYear: Int, user: User): Future[Boolean]
 }

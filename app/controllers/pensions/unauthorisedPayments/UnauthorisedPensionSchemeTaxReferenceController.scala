@@ -57,7 +57,7 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject() (implicit
       )
       val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
 
-      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
         case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
         case Right(optData) =>
           val checkRedirect = journeyCheck(PSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
@@ -85,7 +85,7 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject() (implicit
       .fold(
         formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, pensionSchemeIndex, taxYear))),
         pstr =>
-          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
             case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
             case Right(optData) =>
               val checkRedirect = journeyCheck(PSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)

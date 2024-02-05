@@ -17,7 +17,7 @@
 package views.pensions.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.{aUser, anAgentUser}
 import forms.overseas.DoubleTaxationAgreementForm
@@ -120,8 +120,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
-              pensions =
-                aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief)))),
+              pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -162,7 +161,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
-              pensions = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
+              pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
                 .copy(reliefs = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
@@ -208,7 +207,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
-              pensions = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
+              pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
                 .copy(reliefs = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
@@ -232,7 +231,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
-              pensions = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
+              pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
                 .copy(reliefs = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
@@ -256,7 +255,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
-              pensions = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
+              pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
                 .copy(reliefs = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
@@ -280,7 +279,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
-              pensions = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
+              pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
                 .copy(reliefs = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
@@ -304,7 +303,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
-              pensions = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
+              pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
                 .copy(reliefs = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest

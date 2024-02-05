@@ -17,7 +17,7 @@
 package views.pensions.incomeFromPensions
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.{aUser, anAgentUser}
 import forms.{FormsProvider, RadioButtonAmountForm}
@@ -159,7 +159,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
-            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+            aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -187,7 +187,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
-            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+            aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -219,7 +219,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
-            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+            aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -239,7 +239,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
-            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+            aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -260,7 +260,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
-            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+            aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -281,7 +281,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
-            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
+            aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = anIncomeFromPensionsViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )

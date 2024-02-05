@@ -16,7 +16,7 @@
 
 package controllers.pensions.paymentsIntoOverseasPensions
 
-import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import builders.PensionsCYAModelBuilder.{emptyPensionsData, aPensionsCYAModel}
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
@@ -47,7 +47,7 @@ class PaymentIntoPensionSchemeControllerISpec
       "appear as expected" when {
         "the user has no pension-related session data and" when {
 
-          val sessionData = pensionsUserData(aPensionsCYAEmptyModel)
+          val sessionData = pensionsUserData(emptyPensionsData)
 
           scenarioNameForIndividualAndEnglish in {
 
@@ -506,7 +506,7 @@ class PaymentIntoPensionSchemeControllerISpec
         }
         "the user has no pension-related session data and" when {
 
-          val sessionData = pensionsUserData(aPensionsCYAEmptyModel)
+          val sessionData = pensionsUserData(emptyPensionsData)
 
           "the user has selected 'No'" in {
 

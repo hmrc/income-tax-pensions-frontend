@@ -35,7 +35,7 @@ trait MockPensionSessionService extends MockFactory {
                        user: User,
                        result: IncomeTaxUserDataResponse): CallHandler3[Int, User, HeaderCarrier, Future[IncomeTaxUserDataResponse]] =
     (mockPensionSessionService
-      .getPriorData(_: Int, _: User)(_: HeaderCarrier))
+      .loadPriorData(_: Int, _: User)(_: HeaderCarrier))
       .expects(taxYear, user, *)
       .returning(Future.successful(result))
 
@@ -52,7 +52,7 @@ trait MockPensionSessionService extends MockFactory {
       taxYear: Int,
       result: Either[Unit, Option[PensionsUserData]]): CallHandler2[Int, User, Future[Either[Unit, Option[PensionsUserData]]]] =
     (mockPensionSessionService
-      .getPensionSessionData(_: Int, _: User))
+      .loadSessionData(_: Int, _: User))
       .expects(taxYear, *)
       .returns(Future.successful(result))
       .anyNumberOfTimes()

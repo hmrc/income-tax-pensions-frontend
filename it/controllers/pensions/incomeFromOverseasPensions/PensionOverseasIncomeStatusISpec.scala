@@ -16,7 +16,7 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
-import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import builders.PensionsCYAModelBuilder.{aPensionsCYAModel, emptyPensionsData}
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
@@ -25,11 +25,12 @@ import models.mongo.PensionsCYAModel
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import org.jsoup.Jsoup.parse
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import utils.PageUrls.pensionSummaryUrl
 
 class PensionOverseasIncomeStatusISpec
     extends YesNoControllerSpec("/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-status") {
 
-  val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
+  val minimalSessionDataToAccessThisPage: PensionsCYAModel = emptyPensionsData
 
   val expectedYesNoPageContentsIndividual: ExpectedYesNoPageContents = ExpectedYesNoPageContents(
     title = "Did you get payments from an overseas pension scheme?",
@@ -58,8 +59,8 @@ class PensionOverseasIncomeStatusISpec
             implicit val userConfig: UserConfig = UserConfig(Individual, English, None)
             val response                        = getPage
 
-            response must haveStatus(OK)
-            assertPageAsExpected(parse(response.body), expectedYesNoPageContentsIndividual)
+            response must haveStatus(SEE_OTHER)
+            response.header("location").value mustBe pensionSummaryUrl(taxYear)
           }
         }
 

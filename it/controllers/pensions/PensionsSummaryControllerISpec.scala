@@ -372,7 +372,7 @@ class PensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach
   private def checkPensionsUserDataIsInitialised(isAgent: Boolean): Unit =
     s"have pensions user data initialised" in {
       val user: User = if (isAgent) UserBuilder.anAgentUser else UserBuilder.aUser
-      await(pensionSessionService.getPensionSessionData(taxYearEOY, user)) match {
+      await(pensionSessionService.loadSessionData(taxYearEOY, user)) match {
         case Right(optPensionsUserData) =>
           optPensionsUserData.nonEmpty shouldBe true
         case Left(_) => fail("An unexpected failure to retrieve  user session data")

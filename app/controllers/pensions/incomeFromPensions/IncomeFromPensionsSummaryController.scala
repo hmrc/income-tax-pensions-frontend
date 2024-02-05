@@ -40,7 +40,7 @@ class IncomeFromPensionsSummaryController @Inject() (implicit
     with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) {
+    pensionSessionService.loadDataAndHandle(taxYear, request.user) {
       case (None, _) =>
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       case (pensionsUserData, priorData) =>

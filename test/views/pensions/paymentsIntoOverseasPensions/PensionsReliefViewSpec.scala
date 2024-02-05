@@ -17,7 +17,7 @@
 package views.pensions.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.{aUser, anAgentUser}
 import forms.{FormsProvider, RadioButtonForm}
@@ -126,7 +126,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
           UserSessionDataRequest(
             aPensionsUserData.copy(
               pensions =
-                aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty[Relief]))),
+                emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty[Relief]))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )

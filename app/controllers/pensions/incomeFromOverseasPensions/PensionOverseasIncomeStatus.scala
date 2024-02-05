@@ -18,7 +18,7 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromOverseasPensions.routes._
-import controllers.pensions.routes.OverseasPensionsSummaryController
+import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
 import controllers.predicates.actions.AuthorisedAction
 import forms.YesNoForm
 import models.User
@@ -39,8 +39,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PensionOverseasIncomeStatus @Inject() (
     authAction: AuthorisedAction,
-    incomeFromOverseasPensionsView: IncomeFromOverseasPensionsView,
-    pensionSessionService: PensionSessionService,
+    view: IncomeFromOverseasPensionsView,
+    service: PensionSessionService,
     errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
@@ -50,31 +50,31 @@ class PensionOverseasIncomeStatus @Inject() (
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
-      case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      case Right(optPensionUserData) =>
-        optPensionUserData match {
-          case Some(data) =>
-            cleanUpSchemes(data).map { case Right(_) =>
-              val form =
-                data.pensions.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion
-                  .fold(yesNoForm(request.user))(yesNoForm(request.user).fill(_))
-              Ok(incomeFromOverseasPensionsView(form, taxYear))
-            }
-          case None =>
-            // TODO - redirect to CYA page once implemented <- I think to this page with empty form
-            Future.successful(Ok(incomeFromOverseasPensionsView(yesNoForm(request.user), taxYear)))
-        }
-    }
+    service
+      .loadSessionData(taxYear, request.user)
+      .flatMap {
+        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+        case Right(maybeSessionData) =>
+          maybeSessionData match {
+            case Some(data) =>
+              cleanUpSchemes(data).map { case Right(_) =>
+                val form =
+                  data.pensions.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion
+                    .fold(yesNoForm(request.user))(yesNoForm(request.user).fill(_))
+                Ok(view(form, taxYear))
+              }
+            case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+          }
+      }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     yesNoForm(request.user)
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(incomeFromOverseasPensionsView(formWithErrors, taxYear))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNo =>
-          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          service.loadSessionData(taxYear, request.user).flatMap {
             case Right(optPensionsUserData) =>
               val updatedCyaModel = optPensionsUserData match {
 
@@ -92,8 +92,7 @@ class PensionOverseasIncomeStatus @Inject() (
 
               val isPriorSubmission = optPensionsUserData.fold(false)(_.isPriorSubmission)
 
-              pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, isPriorSubmission)(
-                errorHandler.internalServerError()) {
+              service.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, isPriorSubmission)(errorHandler.internalServerError()) {
                 Redirect(
                   if (yesNo) {
                     redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)
@@ -114,6 +113,6 @@ class PensionOverseasIncomeStatus @Inject() (
     val updatedViewModel   = pensionsUserData.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = filteredSchemes)
     val updatedPensionData = pensionsUserData.pensions.copy(incomeFromOverseasPensions = updatedViewModel)
     val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
-    pensionSessionService.createOrUpdateSessionData(updatedUserData).map(_.map(_ => filteredSchemes))
+    service.createOrUpdateSessionData(updatedUserData).map(_.map(_ => filteredSchemes))
   }
 }

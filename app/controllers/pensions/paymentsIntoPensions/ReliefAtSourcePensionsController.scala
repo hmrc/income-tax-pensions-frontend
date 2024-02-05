@@ -49,7 +49,7 @@ class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     val yesNoForm = formsProvider.reliefAtSourcePensionsForm(request.user.isAgent)
 
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserDate) =>
         optPensionUserDate match {
@@ -70,7 +70,7 @@ class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
       .fold(
         formWithErrors => Future.successful(BadRequest(pageView(formWithErrors, taxYear))),
         yesNo =>
-          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap { case Right(optData) =>
+          pensionSessionService.loadSessionData(taxYear, request.user).flatMap { case Right(optData) =>
             val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
             val viewModel   = pensionsCya.paymentsIntoPension
             val updatedCyaModel = pensionsCya.copy(paymentsIntoPension = if (yesNo) {

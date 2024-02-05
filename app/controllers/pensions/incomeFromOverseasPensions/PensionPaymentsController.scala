@@ -49,7 +49,7 @@ class PensionPaymentsController @Inject() (
     with I18nSupport {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, PensionsPaymentsAmountPage, taxYear) { data =>
@@ -62,7 +62,7 @@ class PensionPaymentsController @Inject() (
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, PensionsPaymentsAmountPage, taxYear) { data =>

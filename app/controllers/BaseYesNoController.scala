@@ -59,7 +59,7 @@ abstract class BaseYesNoController @Inject() (messagesControllerComponents: Mess
   def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(onError)
       case Right(pensionsUserDataOpt) =>
         pensionsUserDataOpt
@@ -69,7 +69,7 @@ abstract class BaseYesNoController @Inject() (messagesControllerComponents: Mess
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(onError)
       case Right(pensionsUserDataOpt) =>
         pensionsUserDataOpt

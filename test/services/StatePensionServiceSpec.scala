@@ -16,7 +16,7 @@
 
 package services
 
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.StateBenefitViewModelBuilder.{aPriorStatePensionLumpSumViewModel, aPriorStatePensionViewModel}
 import builders.StateBenefitsUserDataBuilder.{
@@ -42,9 +42,9 @@ class StatePensionServiceSpec
 
   val statePensionService = new StatePensionService(mockPensionUserDataRepository, mockStateBenefitsConnector)
 
-  val sessionCya: PensionsCYAModel      = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions)
+  val sessionCya: PensionsCYAModel      = emptyPensionsData.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions)
   val sessionUserData: PensionsUserData = aPensionsUserData.copy(pensions = sessionCya)
-  val userWithEmptySaveIncomeFromPensionsCya: PensionsUserData = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+  val userWithEmptySaveIncomeFromPensionsCya: PensionsUserData = aPensionsUserData.copy(pensions = emptyPensionsData)
 
   ".persistIncomeFromPensionsViewModel" should {
 

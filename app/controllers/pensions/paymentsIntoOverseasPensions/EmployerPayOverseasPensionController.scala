@@ -51,7 +51,7 @@ class EmployerPayOverseasPensionController @Inject() (
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) =>
         val checkRedirect = journeyCheck(EmployerPayOverseasPensionPage, _: PensionsCYAModel, taxYear)
@@ -72,7 +72,7 @@ class EmployerPayOverseasPensionController @Inject() (
       .fold(
         formWithErrors => Future.successful(BadRequest(employerPayOverseasPensionView(formWithErrors, taxYear))),
         yesNo =>
-          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap { case Right(optPensionUserData) =>
+          pensionSessionService.loadSessionData(taxYear, request.user).flatMap { case Right(optPensionUserData) =>
             val checkRedirect = journeyCheck(EmployerPayOverseasPensionPage, _: PensionsCYAModel, taxYear)
             redirectBasedOnCurrentAnswers(taxYear, optPensionUserData, cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
               val cyaModel: PensionsCYAModel = data.pensions

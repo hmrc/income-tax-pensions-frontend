@@ -1098,8 +1098,6 @@ incomeFromOverseasPensions.summary.tax.amount = Swm trethadwy
 #Overseas Pension Income Summary Page
 overseasPensionIncomeSummary.heading = Incwm o bensiwn tramor
 overseasPensionIncomeSummary.hidden = Newid incwm o bensiwn tramor
-#TODO: overseasPensionIncomeSummary.addAnotherPensionIncomeLink = Ychwanegu cynllun pensiwn tramor arall
-#TODO:overseasPensionIncomeSummary.addPensionIncomeLink = Ychwanegu cynllun pensiwn tramor
 
 ############################################## TRANSFER INTO OVERSEAS PENSION ##############################################
 

@@ -47,7 +47,7 @@ class NonUKTaxOnAmountResultedInSurchargeController @Inject() (
     with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optData) =>
         val checkRedirect = journeyCheck(NonUkTaxOnSurchargedAmountPage, _: PensionsCYAModel, taxYear)
@@ -65,7 +65,7 @@ class NonUKTaxOnAmountResultedInSurchargeController @Inject() (
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optData) =>
         val checkRedirect = journeyCheck(NonUkTaxOnSurchargedAmountPage, _: PensionsCYAModel, taxYear)

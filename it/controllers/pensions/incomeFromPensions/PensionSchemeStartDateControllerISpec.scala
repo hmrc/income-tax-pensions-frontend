@@ -208,7 +208,6 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
   "submit" should {
 
     "redirect to UkPensionIncomesSummary page and update scheme data when valid form is submitted" in {
-      // todo redirect to Check Scheme Details page when created
       lazy val form    = startDateForm(validDay, validMonth, validYear)
       val schemeIndex1 = 1
 

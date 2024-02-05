@@ -225,7 +225,7 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
       }
     }
 
-    "redirect to the Pensions summary page if there is no session data" should {
+    "redirect to the pension summary task list if there is no session data" in {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
@@ -235,11 +235,8 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
-      "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        // TODO redirect to annual allowance cya page
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-      }
+      result.status shouldBe SEE_OTHER
+      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
     }
   }
 }

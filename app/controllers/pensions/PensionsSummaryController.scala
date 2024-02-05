@@ -45,14 +45,14 @@ class PensionsSummaryController @Inject() (implicit
     extends FrontendController(mcc)
     with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (sessionData: Option[PensionsUserData], priorData: Option[AllPensionsData]) =>
+    pensionSessionService.loadDataAndHandle(taxYear, request.user) { (sessionData: Option[PensionsUserData], priorData: Option[AllPensionsData]) =>
       createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear)
     }
   }
 
-  private def createOrUpdateSessionIfNeeded(pensionsUserData: Option[PensionsUserData], priorData: Option[AllPensionsData], taxYear: Int)(implicit
+  private def createOrUpdateSessionIfNeeded(sessionData: Option[PensionsUserData], priorData: Option[AllPensionsData], taxYear: Int)(implicit
       request: AuthorisationRequest[AnyContent]) = {
-    val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(pensionsUserData, priorData)
+    val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
     val updatedSessionPensionCYAModel = updatedSession.newPensionsCYAModel
     val summaryViewResult             = Ok(pensionsSummaryView(taxYear, Some(updatedSessionPensionCYAModel), priorData))
 

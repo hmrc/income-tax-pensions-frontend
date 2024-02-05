@@ -48,7 +48,7 @@ class ShortServiceRefundsCYAController @Inject() (
     with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsViewAuditing(taxYear) async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) {
+    pensionSessionService.loadDataAndHandle(taxYear, request.user) {
       case (Some(data), _) =>
         val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, Some(data), TaxableRefundAmountController.show(taxYear))(checkRedirect) { data =>
@@ -59,7 +59,7 @@ class ShortServiceRefundsCYAController @Inject() (
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsUpdateAuditing(taxYear) async { implicit request =>
-    pensionSessionService.getAndHandle(taxYear, request.user) { (cya, prior) =>
+    pensionSessionService.loadDataAndHandle(taxYear, request.user) { (cya, prior) =>
       cya.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>

@@ -16,7 +16,7 @@
 
 package controllers.pensions.transferIntoOverseasPensions
 
-import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import builders.PensionsCYAModelBuilder.{emptyPensionsData, aPensionsCYAModel}
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.emptyTransfersIntoOverseasPensionsViewModel
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
@@ -42,7 +42,7 @@ class OverseasTransferChargeControllerISpec extends YesNoAmountControllerSpec("/
     "appear as expected" when {
       "the user has no pension-related session data and" when {
 
-        val sessionData = pensionsUserData(aPensionsCYAEmptyModel)
+        val sessionData = pensionsUserData(emptyPensionsData)
 
         scenarioNameForIndividualAndWelsh ignore {
 
@@ -428,7 +428,7 @@ class OverseasTransferChargeControllerISpec extends YesNoAmountControllerSpec("/
       "the user has no pension-related session data and" when {
 
         val sessionData = pensionsUserData(
-          aPensionsCYAEmptyModel.copy(
+          emptyPensionsData.copy(
             transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel(transferPensionSavings = Some(true))
           ))
 

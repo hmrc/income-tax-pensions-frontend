@@ -16,7 +16,7 @@
 
 package controllers.pensions.paymentsIntoPensions
 
-import builders.PensionsCYAModelBuilder.{aPensionsCYAEmptyModel, aPensionsCYAModel}
+import builders.PensionsCYAModelBuilder.{emptyPensionsData, aPensionsCYAModel}
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
 import controllers.ControllerSpec.UserTypes.{Agent, Individual}
 import controllers.ControllerSpec._
@@ -32,7 +32,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends YesNoControllerSpec("/p
   private val selectorForSecondParagraph = "#main-content > div > div > p:nth-of-type(2)"
   private val selectorForSubHeading      = "#main-content > div > div > form > div > fieldset > legend"
 
-  val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
+  val minimalSessionDataToAccessThisPage: PensionsCYAModel = emptyPensionsData
     .copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(
       rasPensionPaymentQuestion = Some(true),
       totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
@@ -54,7 +54,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends YesNoControllerSpec("/p
         }
         "the user has a session with an empty pensions model" in {
 
-          implicit val response: WSResponse = getPage(Some(pensionsUserData(aPensionsCYAEmptyModel)))
+          implicit val response: WSResponse = getPage(Some(pensionsUserData(emptyPensionsData)))
 
           assertRedirectionAsExpected(PageRelativeURLs.paymentsIntoPensionsReliefAtSourcePage)
 
@@ -63,7 +63,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends YesNoControllerSpec("/p
           "only the RAS question has been answered" in {
 
             val sessionData = pensionsUserData(
-              aPensionsCYAEmptyModel
+              emptyPensionsData
                 .copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(
                   rasPensionPaymentQuestion = Some(true)
                 ))
@@ -78,7 +78,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends YesNoControllerSpec("/p
           "only the RAS question, and the RAS amount has been answered" in {
 
             val sessionData = pensionsUserData(
-              aPensionsCYAEmptyModel
+              emptyPensionsData
                 .copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(
                   rasPensionPaymentQuestion = Some(true),
                   totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00"))
@@ -94,7 +94,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends YesNoControllerSpec("/p
           "only the RAS question, the RAS amount, and the tax relief question has been answered" in {
 
             val sessionData = pensionsUserData(
-              aPensionsCYAEmptyModel
+              emptyPensionsData
                 .copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(
                   rasPensionPaymentQuestion = Some(true),
                   totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),
@@ -111,7 +111,7 @@ class PensionsTaxReliefNotClaimedControllerISpec extends YesNoControllerSpec("/p
           "only the RAS question, the RAS amount, the tax relief question, and tax relief amount has been answered" in {
 
             val sessionData = pensionsUserData(
-              aPensionsCYAEmptyModel
+              emptyPensionsData
                 .copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(
                   rasPensionPaymentQuestion = Some(true),
                   totalRASPaymentsAndTaxRelief = Some(BigDecimal("1.00")),

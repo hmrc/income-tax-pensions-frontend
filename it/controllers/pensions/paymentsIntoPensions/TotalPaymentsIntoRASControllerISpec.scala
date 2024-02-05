@@ -20,7 +20,7 @@ import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasP
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceEmptyViewModel
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.ShortServiceRefundsViewModelBuilder.emptyShortServiceRefundsViewModel
@@ -175,7 +175,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
     "redirect to the ReliefAtSourcePensions question page if previous question is unanswered" when {
 
       val userDataModel = aPensionsUserData.copy(
-        pensions = aPensionsCYAEmptyModel.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion = Some(true))))
+        pensions = emptyPensionsData.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion = Some(true))))
 
       lazy val result: WSResponse = {
         authoriseAgentOrIndividual()
@@ -302,7 +302,7 @@ class TotalPaymentsIntoRASControllerISpec extends IntegrationTest with BeforeAnd
         lazy val invalidForm: Map[String, String] = Map(YesNoForm.yesNo -> "")
 
         val userDataModel = aPensionsUserData.copy(
-          pensions = aPensionsCYAEmptyModel.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion = Some(true))))
+          pensions = emptyPensionsData.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion = Some(true))))
 
         lazy val result: WSResponse = {
           authoriseAgentOrIndividual()
