@@ -16,9 +16,8 @@
 
 package services
 
-import builders.AllPensionsDataBuilder.{anAllPensionDataEmpty, anAllPensionsData}
+import builders.AllPensionsDataBuilder.anAllPensionDataEmpty
 import builders.PensionsCYAModelBuilder._
-import cats.implicits.catsSyntaxEitherId
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import config._
 import models.IncomeTaxUserData
