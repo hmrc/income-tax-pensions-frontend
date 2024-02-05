@@ -41,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PensionPaymentsController @Inject() (
     authAction: AuthorisedAction,
-    pensionPaymentsView: PensionPaymentsView,
+    view: PensionPaymentsView,
     pensionSessionService: PensionSessionService,
     formsProvider: FormsProvider,
     errorHandler: ErrorHandler)(implicit mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
@@ -49,12 +49,12 @@ class PensionPaymentsController @Inject() (
     with I18nSupport {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, PensionsPaymentsAmountPage, taxYear) { data =>
           val form = populateForm(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index.getOrElse(0)))
-          Future.successful(Ok(pensionPaymentsView(form, taxYear, index)))
+          Future.successful(Ok(view(form, taxYear, index)))
 
         }
       case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
@@ -62,7 +62,7 @@ class PensionPaymentsController @Inject() (
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, PensionsPaymentsAmountPage, taxYear) { data =>
@@ -70,7 +70,7 @@ class PensionPaymentsController @Inject() (
             .pensionPaymentsForm(request.user)
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(pensionPaymentsView(formWithErrors, taxYear, index))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
               amounts => updatePensionScheme(data, amounts._1, amounts._2, taxYear, index.getOrElse(0))
             )
         }

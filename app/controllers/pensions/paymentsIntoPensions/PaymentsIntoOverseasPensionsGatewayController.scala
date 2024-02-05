@@ -16,14 +16,13 @@
 
 package controllers.pensions.paymentsIntoPensions
 
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.PaymentsIntoOverseasPensionsFormProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoOverseasPensionsView
@@ -35,9 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PaymentsIntoOverseasPensionsGatewayController @Inject() (
     authAction: AuthorisedAction,
     form: PaymentsIntoOverseasPensionsFormProvider,
-    view: PaymentsIntoOverseasPensionsView,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler)(implicit cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
+    view: PaymentsIntoOverseasPensionsView)(implicit cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {

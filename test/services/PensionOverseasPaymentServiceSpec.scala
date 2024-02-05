@@ -17,7 +17,7 @@
 package services
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import config.{MockIncomeTaxUserDataConnector, MockPensionUserDataRepository, MockPensionsConnector}
@@ -45,9 +45,9 @@ class PensionOverseasPaymentServiceSpec
   ".savePaymentsFromOverseasPensionsViewModel" should {
     "return Right(Unit) when model is saved successfully and payment from overseas pensions cya is cleared from DB" in {
       val allPensionsData = anAllPensionsData
-      val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions)
+      val sessionCya      = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
-      val userWithEmptySavePaymentsIntoOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+      val userWithEmptySavePaymentsIntoOverseasCya = aPensionsUserData.copy(pensions = emptyPensionsData)
       val priorUserData                            = IncomeTaxUserData(Some(allPensionsData))
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
@@ -85,7 +85,7 @@ class PensionOverseasPaymentServiceSpec
 
     "return Left(APIErrorModel) when pension connector could not be connected" in {
       val allPensionsData = anAllPensionsData
-      val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions)
+      val sessionCya      = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
       val priorUserData   = IncomeTaxUserData(Some(allPensionsData))
 
@@ -117,10 +117,10 @@ class PensionOverseasPaymentServiceSpec
 
     "return Left(DataNotUpdated) when data could not be updated" in {
       val allPensionsData = anAllPensionsData
-      val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions)
+      val sessionCya      = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPensionsUserData.pensions.paymentsIntoOverseasPensions)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
       val priorUserData   = IncomeTaxUserData(Some(allPensionsData))
-      val userWithEmptySavePaymentsIntoOverseasCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+      val userWithEmptySavePaymentsIntoOverseasCya = aPensionsUserData.copy(pensions = emptyPensionsData)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)

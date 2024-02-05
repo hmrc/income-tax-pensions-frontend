@@ -16,7 +16,7 @@
 
 package controllers.pensions.employmentFinancedRetirementSchemes
 
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
@@ -24,7 +24,6 @@ import forms.YesNoForm
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.employmentFinancedRetirementSchemes.BenefitsFromSchemeView
@@ -33,11 +32,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class BenefitsFromSchemeController @Inject() (
-    authAction: AuthorisedAction,
-    view: BenefitsFromSchemeView,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler)(implicit cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
+class BenefitsFromSchemeController @Inject() (authAction: AuthorisedAction, view: BenefitsFromSchemeView)(implicit
+    cc: MessagesControllerComponents,
+    appConfig: AppConfig,
+    ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {
@@ -47,9 +45,7 @@ class BenefitsFromSchemeController @Inject() (
   )
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    Future.successful(
-      Ok(view(taxYear, benefitsFromSchemeForm(request.user.isAgent)))
-    )
+    Future.successful(Ok(view(taxYear, benefitsFromSchemeForm(request.user.isAgent))))
   }
 
   def submit(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>

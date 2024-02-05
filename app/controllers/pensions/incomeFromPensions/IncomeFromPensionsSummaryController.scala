@@ -17,7 +17,6 @@
 package controllers.pensions.incomeFromPensions
 
 import config.AppConfig
-import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
@@ -30,7 +29,6 @@ import utils.Clock
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 
 @Singleton
 class IncomeFromPensionsSummaryController @Inject() (implicit

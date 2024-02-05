@@ -20,15 +20,14 @@ import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
 import builders.StateBenefitViewModelBuilder.{anEmptyStateBenefitViewModel, anStateBenefitViewModelOne}
-import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
+import models.pension.statebenefits.StateBenefitViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
 import utils.CommonUtils
 import utils.PageUrls.IncomeFromPensionsPages.pensionIncomeSummaryUrl
-import utils.PageUrls.pensionSummaryUrl
 
 class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach {
 

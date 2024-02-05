@@ -81,7 +81,7 @@ class TransferPensionsSchemeController @Inject() (
                   val updatedCYAModel = updateViewModel(data, tcPensionScheme, idx)
                   pensionSessionService.createOrUpdateSessionData(userSessionDataRequest.user, updatedCYAModel, taxYear, data.isPriorSubmission)(
                     errorHandler.internalServerError()) {
-                    Redirect(TransferChargeSummaryController.show(taxYear)) // TODO: redirect to Overseas Transfer charge Pensions list
+                    Redirect(TransferChargeSummaryController.show(taxYear))
                   }
                 }
               )

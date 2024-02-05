@@ -49,7 +49,7 @@ object PensionsCYAModelBuilder {
     shortServiceRefunds = aShortServiceRefundsViewModel
   )
 
-  val aPensionsCYAEmptyModel: PensionsCYAModel = PensionsCYAModel(
+  val emptyPensionsData: PensionsCYAModel = PensionsCYAModel(
     paymentsIntoPension = aPaymentsIntoPensionsEmptyViewModel,
     pensionsAnnualAllowances = aPensionAnnualAllowanceEmptyViewModel,
     incomeFromPensions = anIncomeFromPensionEmptyViewModel,

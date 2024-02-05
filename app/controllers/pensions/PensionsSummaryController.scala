@@ -16,7 +16,7 @@
 
 package controllers.pensions
 
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel

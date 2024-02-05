@@ -42,7 +42,7 @@ import scala.concurrent.Future
 class PensionSchemeTaxReferenceController @Inject() (implicit
     val cc: MessagesControllerComponents,
     authAction: AuthorisedAction,
-    pensionSchemeTaxReferenceView: PensionSchemeTaxReferenceView,
+    view: PensionSchemeTaxReferenceView,
     appConfig: AppConfig,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
@@ -74,7 +74,7 @@ class PensionSchemeTaxReferenceController @Inject() (implicit
               optIndex,
               request.user
             )
-            Future.successful(Ok(pensionSchemeTaxReferenceView(form, taxYear, optIndex)))
+            Future.successful(Ok(view(form, taxYear, optIndex)))
           } else {
             Future.successful(Redirect(PstrSummaryController.show(taxYear)))
           }
@@ -93,7 +93,7 @@ class PensionSchemeTaxReferenceController @Inject() (implicit
           .pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, taxYear, optIndex))),
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, optIndex))),
             pensionScheme => {
               val checkRedirect = journeyCheck(PSTRPage, _: PensionsCYAModel, taxYear, optIndex)
               redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data =>

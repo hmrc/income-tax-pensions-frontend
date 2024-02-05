@@ -32,7 +32,7 @@ case class UserPriorAndSessionDataRequestRefinerAction(taxYear: Int, pensionSess
   override protected[predicates] def executionContext: ExecutionContext = ec
 
   override protected[predicates] def refine[A](input: UserSessionDataRequest[A]): Future[Either[Result, UserPriorAndSessionDataRequest[A]]] =
-    pensionSessionService.getPriorData(taxYear, input.user)(hc(input.request)).map {
+    pensionSessionService.loadPriorData(taxYear, input.user)(hc(input.request)).map {
       case Left(error) =>
         Left(errorHandler.handleError(error.status)(input.request))
       case Right(incomeTaxUserData) =>

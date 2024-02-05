@@ -18,16 +18,18 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus
-import controllers.pensions.routes.OverseasPensionsSummaryController
+import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.PensionsCYAModel
+import models.pension.AllPensionsData
+import models.pension.AllPensionsData.generateIncomeFromOverseasPensionsCyaFromPrior
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.PensionIncomeService
 import services.redirects.IncomeFromOverseasPensionsPages.CYAPage
 import services.redirects.IncomeFromOverseasPensionsRedirects.journeyCheck
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.PensionIncomeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAView
@@ -55,14 +57,21 @@ class IncomeFromOverseasPensionsCYAController @Inject() (
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsUpdateAuditing(taxYear) async { implicit request =>
-    // TODO: missing the comparison of session with Prior data
     val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) { sessionData =>
-      pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
-        case Left(_) =>
-          errorHandler.internalServerError()
-        case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
+      if (shouldSaveAnswers(sessionData.pensions, request.pensions)) {
+        pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
+          case Left(_) =>
+            errorHandler.internalServerError()
+          case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
+        }
+      } else {
+        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }
     }
   }
+  def shouldSaveAnswers(sessionData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
+    priorData.fold(ifEmpty = true) { prior =>
+      !sessionData.incomeFromOverseasPensions.equals(generateIncomeFromOverseasPensionsCyaFromPrior(prior))
+    }
 }

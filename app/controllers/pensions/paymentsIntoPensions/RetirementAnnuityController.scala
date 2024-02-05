@@ -38,7 +38,7 @@ import scala.concurrent.Future
 @Singleton
 class RetirementAnnuityController @Inject() (
     authAction: AuthorisedAction,
-    payIntoRetirementAnnuityContractView: PayIntoRetirementAnnuityContractView,
+    view: PayIntoRetirementAnnuityContractView,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
     formProvider: PaymentsIntoPensionFormProvider)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
@@ -51,8 +51,8 @@ class RetirementAnnuityController @Inject() (
       redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
         val form = formProvider.retirementAnnuityForm(request.user.isAgent)
         data.pensions.paymentsIntoPension.retirementAnnuityContractPaymentsQuestion match {
-          case Some(value) => Future.successful(Ok(payIntoRetirementAnnuityContractView(form.fill(value), taxYear)))
-          case None        => Future.successful(Ok(payIntoRetirementAnnuityContractView(form, taxYear)))
+          case Some(value) => Future.successful(Ok(view(form.fill(value), taxYear)))
+          case None        => Future.successful(Ok(view(form, taxYear)))
         }
       }
     }
@@ -63,7 +63,7 @@ class RetirementAnnuityController @Inject() (
       .retirementAnnuityForm(request.user.isAgent)
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(payIntoRetirementAnnuityContractView(formWithErrors, taxYear))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNo =>
           pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
             val checkRedirect = journeyCheck(RetirementAnnuityPage, _, taxYear)

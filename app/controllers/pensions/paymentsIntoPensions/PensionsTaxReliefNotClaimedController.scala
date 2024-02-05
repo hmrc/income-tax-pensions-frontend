@@ -40,7 +40,7 @@ class PensionsTaxReliefNotClaimedController @Inject() (
     authAction: AuthorisedAction,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
-    pensionsTaxReliefNotClaimedView: PensionsTaxReliefNotClaimedView,
+    view: PensionsTaxReliefNotClaimedView,
     formProvider: PaymentsIntoPensionFormProvider)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
     extends FrontendController(mcc)
     with I18nSupport {
@@ -51,8 +51,8 @@ class PensionsTaxReliefNotClaimedController @Inject() (
       redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
         val form = formProvider.pensionsTaxReliefNotClaimedForm(request.user.isAgent)
         data.pensions.paymentsIntoPension.pensionTaxReliefNotClaimedQuestion match {
-          case Some(question) => Future.successful(Ok(pensionsTaxReliefNotClaimedView(form.fill(question), taxYear)))
-          case None           => Future.successful(Ok(pensionsTaxReliefNotClaimedView(form, taxYear)))
+          case Some(question) => Future.successful(Ok(view(form.fill(question), taxYear)))
+          case None           => Future.successful(Ok(view(form, taxYear)))
         }
       }
     }
@@ -63,7 +63,7 @@ class PensionsTaxReliefNotClaimedController @Inject() (
       .pensionsTaxReliefNotClaimedForm(request.user.isAgent)
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(pensionsTaxReliefNotClaimedView(formWithErrors, taxYear))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNo =>
           pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
             val checkRedirect = journeyCheck(TaxReliefNotClaimedPage, _, taxYear)

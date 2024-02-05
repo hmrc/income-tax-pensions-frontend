@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class OverseasTransferChargePaidController @Inject() (actionsProvider: ActionsProvider,
                                                       formsProvider: FormsProvider,
-                                                      pageView: OverseasTransferChargesPaidView,
+                                                      view: OverseasTransferChargesPaidView,
                                                       pensionSessionService: PensionSessionService,
                                                       errorHandler: ErrorHandler,
                                                       overseasTransferChargesService: OverseasTransferChargesService)(implicit
@@ -63,7 +63,7 @@ class OverseasTransferChargePaidController @Inject() (actionsProvider: ActionsPr
               case Right(_) =>
                 Future.successful(
                   Ok(
-                    pageView(
+                    view(
                       OverseasTransferChargePaidPage(
                         taxYear,
                         pensionSchemeIndex,
@@ -96,8 +96,8 @@ class OverseasTransferChargePaidController @Inject() (actionsProvider: ActionsPr
               .bindFromRequest()
               .fold(
                 formWithErrors =>
-                  Future.successful(BadRequest(pageView(
-                    OverseasTransferChargePaidPage(taxYear, pensionSchemeIndex, data.pensions.transfersIntoOverseasPensions, formWithErrors)))),
+                  Future.successful(BadRequest(
+                    view(OverseasTransferChargePaidPage(taxYear, pensionSchemeIndex, data.pensions.transfersIntoOverseasPensions, formWithErrors)))),
                 yesNoValue =>
                   overseasTransferChargesService.updateOverseasTransferChargeQuestion(data, yesNoValue, pensionSchemeIndex).map {
                     case Left(_) => errorHandler.internalServerError()

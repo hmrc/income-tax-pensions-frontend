@@ -21,7 +21,7 @@ import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.pension.AllPensionsData.generateAnnualAllowanceCyaFromPrior
+import models.pension.AllPensionsData.generateAnnualAllowanceSessionFromPrior
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionChargesService
@@ -68,6 +68,6 @@ class AnnualAllowanceCYAController @Inject() (
   private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData match {
       case None        => true
-      case Some(prior) => !cyaData.pensionsAnnualAllowances.equals(generateAnnualAllowanceCyaFromPrior(prior))
+      case Some(prior) => !cyaData.pensionsAnnualAllowances.equals(generateAnnualAllowanceSessionFromPrior(prior))
     }
 }

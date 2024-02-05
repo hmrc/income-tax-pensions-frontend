@@ -40,7 +40,7 @@ import scala.concurrent.Future
 @Singleton
 class PensionsCustomerReferenceNumberController @Inject() (
     actionsProvider: ActionsProvider,
-    pensionsCustomerReferenceNumberView: PensionsCustomerReferenceNumberView,
+    view: PensionsCustomerReferenceNumberView,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
     extends FrontendController(mcc)
@@ -58,20 +58,20 @@ class PensionsCustomerReferenceNumberController @Inject() (
             case Some(customerReferenceNumber) =>
               Future.successful(
                 Ok(
-                  pensionsCustomerReferenceNumberView(
+                  view(
                     referenceForm(sessionDataRequest.user)
                       .fill(customerReferenceNumber),
                     taxYear,
                     index)))
             case None =>
-              Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, index)))
+              Future.successful(Ok(view(referenceForm(sessionDataRequest.user), taxYear, index)))
           }
         }
       case None =>
         val checkRedirect = journeyCheck(PensionsCustomerReferenceNumberPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, Some(sessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
           data: PensionsUserData =>
-            Future.successful(Ok(pensionsCustomerReferenceNumberView(referenceForm(sessionDataRequest.user), taxYear, index)))
+            Future.successful(Ok(view(referenceForm(sessionDataRequest.user), taxYear, index)))
         }
     }
   }
@@ -101,7 +101,7 @@ class PensionsCustomerReferenceNumberController @Inject() (
               referenceForm(sessionDataRequest.user)
                 .bindFromRequest()
                 .fold(
-                  formWithErrors => Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, optIndex))),
+                  formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, optIndex))),
                   pensionCustomerReferenceNumber => {
                     val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
                       paymentsIntoOverseasPensions = piop.copy(
@@ -116,7 +116,7 @@ class PensionsCustomerReferenceNumberController @Inject() (
             referenceForm(sessionDataRequest.user)
               .bindFromRequest()
               .fold(
-                formWithErrors => Future.successful(BadRequest(pensionsCustomerReferenceNumberView(formWithErrors, taxYear, Some(index)))),
+                formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, Some(index)))),
                 pensionCustomerReferenceNumber => {
                   val updatedCyaModel: PensionsCYAModel = sessionDataRequest.pensionsUserData.pensions.copy(
                     paymentsIntoOverseasPensions = piop.copy(

@@ -41,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PensionOverseasIncomeCountryController @Inject() (
     authAction: AuthorisedAction,
-    pensionOverseasIncomeCountryView: PensionOverseasIncomeCountryView,
+    view: PensionOverseasIncomeCountryView,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -52,7 +52,7 @@ class PensionOverseasIncomeCountryController @Inject() (
   )
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optData) =>
         val countriesToInclude = Countries.overseasCountries
@@ -60,7 +60,7 @@ class PensionOverseasIncomeCountryController @Inject() (
 
         index.fold {
           if (optData.exists(data => data.pensions.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion.exists(isTrue => isTrue))) {
-            Future.successful(Ok(pensionOverseasIncomeCountryView(form, countriesToInclude, taxYear, None)))
+            Future.successful(Ok(view(form, countriesToInclude, taxYear, None)))
           } else {
             Future.successful(Redirect(PensionOverseasIncomeStatus.show(taxYear)))
           }
@@ -71,7 +71,7 @@ class PensionOverseasIncomeCountryController @Inject() (
             prefillValue match {
 
               case Some(_) =>
-                Future.successful(Ok(pensionOverseasIncomeCountryView(form, countriesToInclude, taxYear, Some(countryIndex))))
+                Future.successful(Ok(view(form, countriesToInclude, taxYear, Some(countryIndex))))
               case None =>
                 Future.successful(Redirect(redirectForSchemeLoop(data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)))
             }
@@ -88,9 +88,9 @@ class PensionOverseasIncomeCountryController @Inject() (
     countryForm(request.user)
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(pensionOverseasIncomeCountryView(formWithErrors, countriesToInclude, taxYear, index))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, countriesToInclude, taxYear, index))),
         country =>
-          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
             case Right(Some(data)) =>
               val pensionSchemeList: Seq[PensionScheme] = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
 

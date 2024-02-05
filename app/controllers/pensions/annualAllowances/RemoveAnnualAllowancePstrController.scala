@@ -40,7 +40,7 @@ import scala.concurrent.Future
 class RemoveAnnualAllowancePstrController @Inject() (implicit
     val mcc: MessagesControllerComponents,
     authAction: AuthorisedAction,
-    removePensionSchemeView: RemoveAnnualAllowancesPstrView,
+    view: RemoveAnnualAllowancesPstrView,
     appConfig: AppConfig,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
@@ -56,7 +56,7 @@ class RemoveAnnualAllowancePstrController @Inject() (implicit
           val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
           redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data =>
             val scheme = data.pensions.pensionsAnnualAllowances.pensionSchemeTaxReferences.get(pensionSchemeIndex.get)
-            Future.successful(Ok(removePensionSchemeView(taxYear, scheme, pensionSchemeIndex)))
+            Future.successful(Ok(view(taxYear, scheme, pensionSchemeIndex)))
           }
         case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       }

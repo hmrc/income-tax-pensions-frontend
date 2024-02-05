@@ -17,7 +17,7 @@
 package views.pensions.incomeFromPensions
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.{aUser, anAgentUser}
 import forms.{FormsProvider, RadioButtonForm}
@@ -105,7 +105,7 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
-            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionEmptyViewModel)),
+            aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = anIncomeFromPensionEmptyViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -126,7 +126,7 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
-            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionEmptyViewModel)),
+            aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = anIncomeFromPensionEmptyViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -147,7 +147,7 @@ class StatePensionAddToCalculationViewSpec extends ViewUnitTest with FakeRequest
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
-            aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = anIncomeFromPensionEmptyViewModel)),
+            aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = anIncomeFromPensionEmptyViewModel)),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )

@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class EmployerPayOverseasPensionController @Inject() (
     authAction: AuthorisedAction,
-    employerPayOverseasPensionView: EmployerPayOverseasPensionView,
+    view: EmployerPayOverseasPensionView,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler)(implicit val cc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(cc)
@@ -51,16 +51,16 @@ class EmployerPayOverseasPensionController @Inject() (
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) =>
         val checkRedirect = journeyCheck(EmployerPayOverseasPensionPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, optPensionUserData, cyaPageCall(taxYear))(checkRedirect) { data =>
           data.pensions.paymentsIntoOverseasPensions.employerPaymentsQuestion match {
             case Some(value) =>
-              Future.successful(Ok(employerPayOverseasPensionView(yesNoForm(request.user).fill(value), taxYear)))
+              Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
             case None =>
-              Future.successful(Ok(employerPayOverseasPensionView(yesNoForm(request.user), taxYear)))
+              Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
           }
         }
     }
@@ -70,9 +70,9 @@ class EmployerPayOverseasPensionController @Inject() (
     yesNoForm(request.user)
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(employerPayOverseasPensionView(formWithErrors, taxYear))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNo =>
-          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
             case Right(optPensionUserData) =>
               val checkRedirect = journeyCheck(EmployerPayOverseasPensionPage, _: PensionsCYAModel, taxYear)
               redirectBasedOnCurrentAnswers(taxYear, optPensionUserData, cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>

@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RemovePSTRController @Inject() (implicit
     val mcc: MessagesControllerComponents,
     authAction: AuthorisedAction,
-    removePensionSchemeView: RemovePSTRView,
+    view: RemovePSTRView,
     appConfig: AppConfig,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
@@ -50,7 +50,7 @@ class RemovePSTRController @Inject() (implicit
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
     implicit request =>
-      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
         case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
 
         case Right(optData) =>
@@ -59,7 +59,7 @@ class RemovePSTRController @Inject() (implicit
             val pstrList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
             checkIndexScheme(pensionSchemeIndex, pstrList) match {
               case Some(scheme) =>
-                Future.successful(Ok(removePensionSchemeView(taxYear, scheme, pensionSchemeIndex)))
+                Future.successful(Ok(view(taxYear, scheme, pensionSchemeIndex)))
               case _ =>
                 Future.successful(Redirect(UkPensionSchemeDetailsController.show(taxYear)))
             }
@@ -68,7 +68,7 @@ class RemovePSTRController @Inject() (implicit
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optData) =>
         val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)

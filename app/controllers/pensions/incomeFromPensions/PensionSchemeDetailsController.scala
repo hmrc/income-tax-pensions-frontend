@@ -41,7 +41,7 @@ import scala.concurrent.Future
 class PensionSchemeDetailsController @Inject() (implicit
     val mcc: MessagesControllerComponents,
     authAction: AuthorisedAction,
-    pensionSchemeDetailsView: PensionSchemeDetailsView,
+    view: PensionSchemeDetailsView,
     appConfig: AppConfig,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
@@ -66,9 +66,9 @@ class PensionSchemeDetailsController @Inject() (implicit
                   pensionIncomesList(index).pensionSchemeRef.getOrElse(""),
                   pensionIncomesList(index).pensionId.getOrElse("")
                 )
-                Future.successful(Ok(pensionSchemeDetailsView(form.fill(fillModel), taxYear, pensionSchemeIndex)))
+                Future.successful(Ok(view(form.fill(fillModel), taxYear, pensionSchemeIndex)))
               case _ =>
-                Future.successful(Ok(pensionSchemeDetailsView(form, taxYear, pensionSchemeIndex)))
+                Future.successful(Ok(view(form, taxYear, pensionSchemeIndex)))
             }
           }
         case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
@@ -80,7 +80,7 @@ class PensionSchemeDetailsController @Inject() (implicit
       .pensionSchemeDetailsForm(request.user)
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(pensionSchemeDetailsView(formWithErrors, taxYear, pensionSchemeIndex))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, pensionSchemeIndex))),
         formModel =>
           pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
             case Some(data) =>

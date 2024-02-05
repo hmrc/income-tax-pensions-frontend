@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TaxEmployerPaymentsController @Inject() (
     authAction: AuthorisedAction,
-    taxEmployerPaymentsView: TaxEmployerPaymentsView,
+    view: TaxEmployerPaymentsView,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -51,14 +51,14 @@ class TaxEmployerPaymentsController @Inject() (
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserData) =>
         val checkRedirect = journeyCheck(TaxEmployerPaymentsPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, optPensionUserData, cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
           data.pensions.paymentsIntoOverseasPensions.taxPaidOnEmployerPaymentsQuestion match {
-            case Some(value) => Future.successful(Ok(taxEmployerPaymentsView(yesNoForm(request.user).fill(value), taxYear)))
-            case None        => Future.successful(Ok(taxEmployerPaymentsView(yesNoForm(request.user), taxYear)))
+            case Some(value) => Future.successful(Ok(view(yesNoForm(request.user).fill(value), taxYear)))
+            case None        => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
           }
         }
     }
@@ -68,9 +68,9 @@ class TaxEmployerPaymentsController @Inject() (
     yesNoForm(request.user)
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(taxEmployerPaymentsView(formWithErrors, taxYear))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNo =>
-          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
             case Right(Some(data)) =>
               val cyaModel: PensionsCYAModel = data.pensions
               val updatedViewModel: PaymentsIntoOverseasPensionsViewModel =

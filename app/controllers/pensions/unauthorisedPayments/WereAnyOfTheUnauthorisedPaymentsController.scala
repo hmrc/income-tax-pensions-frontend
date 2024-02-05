@@ -55,7 +55,7 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject() (implicit
   )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optData) =>
         val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _: PensionsCYAModel, taxYear)
@@ -74,7 +74,7 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject() (implicit
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNo =>
-          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
             case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
             case Right(optData) =>
               val checkRedirect = journeyCheck(WereAnyUnauthPaymentsFromUkPensionSchemePage, _: PensionsCYAModel, taxYear)

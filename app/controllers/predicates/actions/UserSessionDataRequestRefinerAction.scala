@@ -34,7 +34,7 @@ case class UserSessionDataRequestRefinerAction(taxYear: Int, pensionSessionServi
   override protected[predicates] def executionContext: ExecutionContext = ec
 
   override protected[predicates] def refine[A](input: AuthorisationRequest[A]): Future[Either[Result, UserSessionDataRequest[A]]] =
-    pensionSessionService.getPensionSessionData(taxYear, input.user).map {
+    pensionSessionService.loadSessionData(taxYear, input.user).map {
       case Left(_) => Left(errorHandler.handleError(INTERNAL_SERVER_ERROR)(input.request))
       case Right(optPensionsUserData) =>
         RedirectService.redirectBasedOnRequest(optPensionsUserData, taxYear) match {

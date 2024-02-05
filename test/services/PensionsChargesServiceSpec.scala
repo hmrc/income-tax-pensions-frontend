@@ -17,7 +17,7 @@
 package services
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import config.{MockIncomeTaxUserDataConnector, MockPensionUserDataRepository, MockPensionsConnector}
@@ -37,19 +37,19 @@ class PensionsChargesServiceSpec
 
   val pensionChargesService = new PensionChargesService(mockPensionUserDataRepository, mockPensionConnectorHelper, mockUserDataConnector)
 
-  val userWithEmptyCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+  val userWithEmptyCya = aPensionsUserData.copy(pensions = emptyPensionsData)
 
   val unauthorisedSessionUserData =
-    aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(unauthorisedPayments = aPensionsUserData.pensions.unauthorisedPayments))
+    aPensionsUserData.copy(pensions = emptyPensionsData.copy(unauthorisedPayments = aPensionsUserData.pensions.unauthorisedPayments))
   val transferIOPSessionUserData =
     aPensionsUserData.copy(pensions =
-      aPensionsCYAEmptyModel.copy(transfersIntoOverseasPensions = aPensionsUserData.pensions.transfersIntoOverseasPensions))
+      emptyPensionsData.copy(transfersIntoOverseasPensions = aPensionsUserData.pensions.transfersIntoOverseasPensions))
 
   val shortServiceRefundsSessionUserData =
-    aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(shortServiceRefunds = aPensionsUserData.pensions.shortServiceRefunds))
+    aPensionsUserData.copy(pensions = emptyPensionsData.copy(shortServiceRefunds = aPensionsUserData.pensions.shortServiceRefunds))
 
   val annualAllowanceSessionUserData =
-    aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(pensionsAnnualAllowances = aPensionsUserData.pensions.pensionsAnnualAllowances))
+    aPensionsUserData.copy(pensions = emptyPensionsData.copy(pensionsAnnualAllowances = aPensionsUserData.pensions.pensionsAnnualAllowances))
 
   val priorPensionChargesData = IncomeTaxUserData(Some(anAllPensionsData)).pensions.flatMap(_.pensionCharges)
   val unauthorisedPaymentsRequestModel = CreateUpdatePensionChargesRequestModel(

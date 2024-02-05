@@ -38,7 +38,7 @@ import scala.concurrent.Future
 @Singleton
 class QOPSReferenceController @Inject() (
     actionsProvider: ActionsProvider,
-    qopsReferenceView: QOPSReferenceView,
+    view: QOPSReferenceView,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
     extends FrontendController(mcc)
@@ -52,8 +52,8 @@ class QOPSReferenceController @Inject() (
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
     indexCheckThenJourneyCheck(sessionData.pensionsUserData, index, QOPSReferencePage, taxYear) { relief: Relief =>
       relief.qopsReference match {
-        case Some(qopsNumber) => Future.successful(Ok(qopsReferenceView(referenceForm.fill(removePrefix(qopsNumber)), taxYear, index)))
-        case None             => Future.successful(Ok(qopsReferenceView(referenceForm, taxYear, index)))
+        case Some(qopsNumber) => Future.successful(Ok(view(referenceForm.fill(removePrefix(qopsNumber)), taxYear, index)))
+        case None             => Future.successful(Ok(view(referenceForm, taxYear, index)))
       }
     }
   }
@@ -65,7 +65,7 @@ class QOPSReferenceController @Inject() (
       referenceForm
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(qopsReferenceView(formWithErrors, taxYear, index))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
           referenceNumber => {
             val maybeRef = if (referenceNumber.isEmpty) None else Some(referenceNumber)
 

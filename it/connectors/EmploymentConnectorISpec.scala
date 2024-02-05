@@ -16,7 +16,7 @@
 
 package connectors
 
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import connectors.httpParsers.EmploymentSessionHttpParser.EmploymentSessionResponse
 import models.{APIErrorBodyModel, APIErrorModel}
@@ -76,7 +76,7 @@ class EmploymentConnectorISpec extends IntegrationTest {
           "mtditid"      -> mtditid)
 
         val sessionUserData =
-          aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions))
+          aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions))
 
         val model = sessionUserData.pensions.incomeFromPensions.uKPensionIncomes.map(_.toCreateUpdateEmploymentRequest).head
         Await.result(connector.saveEmploymentPensionsData(nino, taxYear, model)(hc, ec), Duration.Inf)

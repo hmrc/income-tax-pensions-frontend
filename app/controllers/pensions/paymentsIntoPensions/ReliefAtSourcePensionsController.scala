@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
-                                                  pageView: ReliefAtSourcePensionsView,
+                                                  view: ReliefAtSourcePensionsView,
                                                   pensionSessionService: PensionSessionService,
                                                   errorHandler: ErrorHandler,
                                                   formsProvider: PaymentsIntoPensionFormProvider)(implicit
@@ -49,16 +49,16 @@ class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     val yesNoForm = formsProvider.reliefAtSourcePensionsForm(request.user.isAgent)
 
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optPensionUserDate) =>
         optPensionUserDate match {
           case Some(data) =>
             data.pensions.paymentsIntoPension.rasPensionPaymentQuestion match {
-              case Some(value) => Future.successful(Ok(pageView(yesNoForm.fill(value), taxYear)))
-              case None        => Future.successful(Ok(pageView(yesNoForm, taxYear)))
+              case Some(value) => Future.successful(Ok(view(yesNoForm.fill(value), taxYear)))
+              case None        => Future.successful(Ok(view(yesNoForm, taxYear)))
             }
-          case None => Future.successful(Ok(pageView(yesNoForm, taxYear)))
+          case None => Future.successful(Ok(view(yesNoForm, taxYear)))
         }
     }
   }
@@ -68,9 +68,9 @@ class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
       .reliefAtSourcePensionsForm(request.user.isAgent)
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(pageView(formWithErrors, taxYear))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNo =>
-          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
             case Right(optData) =>
               val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
               val viewModel   = pensionsCya.paymentsIntoPension

@@ -34,11 +34,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-abstract class BaseYesNoAmountController @Inject() (messagesControllerComponents: MessagesControllerComponents,
+abstract class BaseYesNoAmountController @Inject() (cc: MessagesControllerComponents,
                                                     pensionSessionService: PensionSessionService,
                                                     authAction: AuthorisedAction,
                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
-    extends FrontendController(messagesControllerComponents) {
+    extends FrontendController(cc) {
 
   def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html
 
@@ -61,7 +61,7 @@ abstract class BaseYesNoAmountController @Inject() (messagesControllerComponents
   def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(onError)
       case Right(pensionsUserDataOpt) =>
         pensionsUserDataOpt
@@ -71,7 +71,7 @@ abstract class BaseYesNoAmountController @Inject() (messagesControllerComponents
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(onError)
       case Right(pensionsUserDataOpt) =>
         pensionsUserDataOpt

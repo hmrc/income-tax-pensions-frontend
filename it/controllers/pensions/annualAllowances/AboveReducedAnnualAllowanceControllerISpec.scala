@@ -28,6 +28,7 @@ import models.pension.charges.PensionAnnualAllowancesViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
+import org.scalatest.OptionValues.convertOptionToValuable
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
@@ -256,7 +257,7 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
       }
     }
 
-    "redirect to annual allowance CYA if there is no session data" which {
+    "redirect to the pension summary task list if there is no session data" in {
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
@@ -265,12 +266,8 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
           follow = false,
           headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
-
-      "has a SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        // TODO redirect to annual CYA Page
-        result.header("location").contains(pensionSummaryUrl(taxYearEOY)) shouldBe true
-      }
+      result.status shouldBe SEE_OTHER
+      result.header("location").value shouldBe pensionSummaryUrl(taxYearEOY)
 
     }
 

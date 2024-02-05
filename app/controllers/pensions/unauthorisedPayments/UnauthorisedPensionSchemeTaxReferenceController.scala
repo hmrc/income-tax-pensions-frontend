@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class UnauthorisedPensionSchemeTaxReferenceController @Inject() (implicit
     val cc: MessagesControllerComponents,
     authAction: AuthorisedAction,
-    pensionSchemeTaxReferenceView: PensionSchemeTaxReferenceView,
+    view: PensionSchemeTaxReferenceView,
     appConfig: AppConfig,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
@@ -57,7 +57,7 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject() (implicit
       )
       val emptyForm: Form[String] = PensionSchemeTaxReferenceForm.pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
 
-      pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+      pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
         case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
         case Right(optData) =>
           val checkRedirect = journeyCheck(PSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)
@@ -65,9 +65,9 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject() (implicit
             val pstrList: Seq[String] = data.pensions.unauthorisedPayments.pensionSchemeTaxReference.getOrElse(Seq.empty)
             checkIndexScheme(pensionSchemeIndex, pstrList) match {
               case Some(scheme) =>
-                Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm.fill(scheme), pensionSchemeIndex, taxYear)))
+                Future.successful(Ok(view(emptyForm.fill(scheme), pensionSchemeIndex, taxYear)))
               case None =>
-                Future.successful(Ok(pensionSchemeTaxReferenceView(emptyForm, pensionSchemeIndex, taxYear)))
+                Future.successful(Ok(view(emptyForm, pensionSchemeIndex, taxYear)))
             }
           }
       }
@@ -83,9 +83,9 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject() (implicit
       .pensionSchemeTaxReferenceForm(errorMsgDetails._1, errorMsgDetails._2)
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(pensionSchemeTaxReferenceView(formWithErrors, pensionSchemeIndex, taxYear))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, pensionSchemeIndex, taxYear))),
         pstr =>
-          pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+          pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
             case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
             case Right(optData) =>
               val checkRedirect = journeyCheck(PSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)

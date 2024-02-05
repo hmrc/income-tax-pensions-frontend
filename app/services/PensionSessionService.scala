@@ -16,81 +16,61 @@
 
 package services
 
-import config.{AppConfig, ErrorHandler}
+import cats.data.EitherT
+import cats.implicits.{catsSyntaxApplicativeId, toBifunctorOps}
+import config.ErrorHandler
 import connectors.IncomeTaxUserDataConnector
 import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
-import models.User
-import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData}
+import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.AllPensionsData
 import models.session.PensionCYAMergedWithPriorData
+import models.{APIErrorModel, User}
 import org.joda.time.DateTimeZone
 import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Clock
+import utils.EitherTUtils.EitherTOps
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PensionSessionService @Inject() (pensionUserDataRepository: PensionsUserDataRepository,
-                                       incomeTaxUserDataConnector: IncomeTaxUserDataConnector,
-                                       implicit private val appConfig: AppConfig,
-                                       errorHandler: ErrorHandler,
-                                       implicit val ec: ExecutionContext)
+class PensionSessionService @Inject() (sessionRepository: PensionsUserDataRepository,
+                                       incomeTaxConnector: IncomeTaxUserDataConnector,
+                                       errorHandler: ErrorHandler)(implicit ec: ExecutionContext)
     extends Logging {
 
-  def getPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] =
-    incomeTaxUserDataConnector.getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid))
+  def loadPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] =
+    incomeTaxConnector.getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid))
 
-  private def getSessionData(taxYear: Int, user: User)(implicit request: Request[_]): Future[Either[Result, Option[PensionsUserData]]] =
-    pensionUserDataRepository.find(taxYear, user).map {
-      case Left(_)      => Left(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      case Right(value) => Right(value)
-    }
-
-  def getPensionSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[PensionsUserData]]] =
-    pensionUserDataRepository.find(taxYear, user).map {
-      case Left(_)     => Left(())
-      case Right(data) => Right(data)
-    }
+  def loadSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[PensionsUserData]]] =
+    sessionRepository
+      .find(taxYear, user)
+      .map(_.leftMap(_ => ()))
 
   def getPensionsSessionDataResult(taxYear: Int, user: User)(result: Option[PensionsUserData] => Future[Result])(implicit
       request: Request[_]): Future[Result] =
-    pensionUserDataRepository.find(taxYear, user).flatMap {
+    sessionRepository.find(taxYear, user).flatMap {
       case Left(_)      => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(value) => result(value)
     }
 
-  def getAndHandle(taxYear: Int, user: User, redirectWhenNoPrior: Boolean = false)(
-      block: (Option[PensionsUserData], Option[AllPensionsData]) => Future[Result])(implicit
+  def loadDataAndHandle(taxYear: Int, user: User)(block: (Option[PensionsUserData], Option[AllPensionsData]) => Future[Result])(implicit
       request: Request[_],
       hc: HeaderCarrier): Future[Result] = {
-    val result = for {
-      optionalCya       <- getSessionData(taxYear, user)
-      priorDataResponse <- getPriorData(taxYear, user)
-    } yield {
-      if (optionalCya.isRight) {
-        if (optionalCya.toOption.get.isEmpty) {
-          logger.info(s"[PensionSessionService][getAndHandle] No pension CYA data found for user. SessionId: ${user.sessionId}")
-        }
-      }
-      val pensionDataResponse = priorDataResponse.map(_.pensions)
-      (optionalCya, pensionDataResponse) match {
-        case (Right(None), Right(None)) if redirectWhenNoPrior =>
-          logger.info(
-            s"[PensionSessionService][getAndHandle] No pension data found for user." +
-              s"Redirecting to overview page. SessionId: ${user.sessionId}")
-          Future(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
-        case (Right(optionalCya), Right(pensionData)) => block(optionalCya, pensionData)
-        case (_, Left(error))                         => Future(errorHandler.handleError(error.status))
-        case (Left(_), _)                             => Future(errorHandler.handleError(INTERNAL_SERVER_ERROR))
-      }
+    val resultT = for {
+      maybeSession <- EitherT(sessionRepository.find(taxYear, user)).leftAs[ServiceError]
+      prior        <- EitherT(loadPriorData(taxYear, user)).leftAs[ServiceError]
+    } yield block(maybeSession, prior.pensions)
+
+    resultT.value.flatMap {
+      case Left(error: APIErrorModel) => errorHandler.handleError(error.status).pure[Future]
+      case Left(_)                    => errorHandler.handleError(INTERNAL_SERVER_ERROR).pure[Future]
+      case Right(value)               => value
     }
-    result.flatten
   }
 
   // scalastyle:off
@@ -107,14 +87,14 @@ class PensionSessionService @Inject() (pensionUserDataRepository: PensionsUserDa
       clock.now(DateTimeZone.UTC)
     )
 
-    pensionUserDataRepository.createOrUpdate(userData).map {
+    sessionRepository.createOrUpdate(userData).map {
       case Right(_) => onSuccess
       case Left(_)  => onFail
     }
   }
 
   def createOrUpdateSessionData(pensionsUserData: PensionsUserData): Future[Either[DatabaseError, Unit]] =
-    pensionUserDataRepository.createOrUpdate(pensionsUserData).map {
+    sessionRepository.createOrUpdate(pensionsUserData).map {
       case Left(error: DatabaseError) => Left(error)
       case Right(_)                   => Right(())
     }
@@ -124,7 +104,7 @@ class PensionSessionService @Inject() (pensionUserDataRepository: PensionsUserDa
       user: User,
       renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
   )(implicit request: Request[_], hc: HeaderCarrier, clock: Clock): Future[Result] =
-    getAndHandle(taxYear, user) { (sessionData, priorData) =>
+    loadDataAndHandle(taxYear, user) { (sessionData, priorData) =>
       createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear, user, renderView)
     }
 

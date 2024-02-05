@@ -24,7 +24,7 @@ import models.IncomeTaxUserData
 import models.mongo._
 import models.pension.AllPensionsData.generateCyaFromPrior
 import org.scalatest.concurrent.ScalaFutures
-import play.api.http.Status._
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.MessagesApi
 import play.api.mvc.Result
 import play.api.mvc.Results.{Ok, Redirect}
@@ -47,44 +47,31 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
   val messages: MessagesApi = app.injector.instanceOf[MessagesApi]
 
   val service: PensionSessionService =
-    new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, mockAppConfig, errorHandler, mockExecutionContext)
+    new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, errorHandler)(mockExecutionContext)
 
-  private val user = authorisationRequest.user
-
-  // TODO add view models
-  val pensionCYA: PensionsCYAModel = aPensionsCYAEmptyModel
-
-  val pensionDataFull: PensionsUserData = PensionsUserData(
-    sessionId,
-    "1234567890",
-    nino,
-    taxYear,
-    isPriorSubmission = true,
-    pensionCYA,
-    testClock.now()
-  )
-
-  "getAndHandle" should {
-    "redirect if no data and redirect is set to true" in {
+  "loadDataAndHandle" should {
+    "invoke block if no errors retrieving session and prior data" in {
       mockFind(taxYear, user, Right(None))
       mockFindNoContent(nino, taxYear)
-      val response = service.getAndHandle(taxYear, redirectWhenNoPrior = true, user = user)((_, _) => Future(Ok))
 
-      status(response) shouldBe SEE_OTHER
+      val response = service.loadDataAndHandle(taxYear, user)(block = (_, _) => Future(Ok))
+
+      status(response) shouldBe OK
     }
-
-    "return an error if the call failed" in {
+    "return a 500 if an error loading prior data" in {
       mockFind(taxYear, user, Right(None))
       mockFindFail(nino, taxYear)
-      val response = service.getAndHandle(taxYear, user)((_, _) => Future(Ok))
+
+      val response = service.loadDataAndHandle(taxYear, user)((_, _) => Future(Ok))
 
       status(response) shouldBe INTERNAL_SERVER_ERROR
     }
 
-    "return an internal server error if the CYA find failed" in {
+    "return a 500 if failed to load session data" in {
       mockFind(taxYear, user, Left(DataNotFound))
       mockFindNoContent(nino, taxYear)
-      val response = service.getAndHandle(taxYear, user)((_, _) => Future(Ok))
+
+      val response = service.loadDataAndHandle(taxYear, user)((_, _) => Future(Ok))
 
       status(response) shouldBe INTERNAL_SERVER_ERROR
     }
@@ -92,17 +79,17 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
 
   ".createOrUpdateSessionData" should {
     "return SEE_OTHER(303) status when createOrUpdate succeeds" in {
-      mockCreateOrUpdate(pensionDataFull, Right(()))
-      val response = service.createOrUpdateSessionData(user, pensionCYA, taxYear, isPriorSubmission = true)(Redirect("400"))(Redirect("303"))
+      mockCreateOrUpdate(emptySessionData, Right(()))
+      val response = service.createOrUpdateSessionData(user, emptyPensionsData, taxYear, isPriorSubmission = true)(Redirect("400"))(Redirect("303"))
 
       status(response) shouldBe SEE_OTHER
       redirectUrl(response) shouldBe "303"
     }
 
     "return BAD_REQUEST(400) status when createOrUpdate fails" in {
-      mockCreateOrUpdate(pensionDataFull, Left(DataNotUpdated))
+      mockCreateOrUpdate(emptySessionData, Left(DataNotUpdated))
       val response: Future[Result] =
-        service.createOrUpdateSessionData(user, pensionCYA, taxYear, isPriorSubmission = true)(Redirect("400"))(Redirect("303"))
+        service.createOrUpdateSessionData(user, emptyPensionsData, taxYear, isPriorSubmission = true)(Redirect("400"))(Redirect("303"))
 
       status(response) shouldBe SEE_OTHER
       redirectUrl(response) shouldBe "400"
@@ -111,7 +98,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
 
   "generateCyaFromPrior" should {
     "generate a PensionsCYAModel from prior AllPensionsData" in {
-      mockCreateOrUpdate(pensionDataFull, Right(()))
+      mockCreateOrUpdate(emptySessionData, Right(()))
       val response = generateCyaFromPrior(anAllPensionDataEmpty)
       response shouldBe aPensionsCYAGeneratedFromPriorEmpty
     }
@@ -119,14 +106,14 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
 
   ".createOrUpdateSessionData" should {
     "return Right(unit) when createOrUpdate succeeds" in {
-      mockCreateOrUpdate(pensionDataFull, Right(()))
-      val response = await(service.createOrUpdateSessionData(pensionDataFull))
+      mockCreateOrUpdate(emptySessionData, Right(()))
+      val response = await(service.createOrUpdateSessionData(emptySessionData))
       response shouldBe Right(())
     }
 
     "return Left DB Error(400) when createOrUpdate fails" in {
-      mockCreateOrUpdate(pensionDataFull, Left(DataNotUpdated))
-      val response = await(service.createOrUpdateSessionData(pensionDataFull))
+      mockCreateOrUpdate(emptySessionData, Left(DataNotUpdated))
+      val response = await(service.createOrUpdateSessionData(emptySessionData))
       response shouldBe Left(DataNotUpdated)
     }
   }

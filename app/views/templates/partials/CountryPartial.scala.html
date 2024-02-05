@@ -43,7 +43,6 @@
                 content = Text(messages("incomeFromOverseasPensions.pensionOverseasIncomeCountry.subheading")),
                 classes = "govuk-label govuk-label--m"
             )
-            //TODO: County Code is not to prefilled on returning to the page due to GDS autocomplete bug which forces a change to the defaulted prefill value
         ).asAccessibleAutocomplete(Some(
             AccessibleAutocomplete(
                 showAllValues = false,

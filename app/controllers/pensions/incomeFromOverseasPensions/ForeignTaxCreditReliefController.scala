@@ -49,7 +49,7 @@ class ForeignTaxCreditReliefController @Inject() (
     with I18nSupport {
 
   def show(taxYear: Int, index: Option[Int] = None): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, ForeignTaxCreditReliefPage, taxYear) { data =>
@@ -62,7 +62,7 @@ class ForeignTaxCreditReliefController @Inject() (
   }
 
   def submit(taxYear: Int, index: Option[Int] = None): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, ForeignTaxCreditReliefPage, taxYear) { data =>

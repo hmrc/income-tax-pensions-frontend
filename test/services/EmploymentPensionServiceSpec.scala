@@ -16,7 +16,7 @@
 
 package services
 
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import config.{MockEmploymentConnector, MockPensionUserDataRepository}
@@ -72,7 +72,7 @@ class EmploymentPensionServiceSpec extends UnitTest with MockPensionUserDataRepo
       val updateSessionResponse: Either[DatabaseError, Unit]            = Right(())
 
       lazy val sessionUserData =
-        aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions))
+        aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions))
 
       def mockSessionFind(): Unit = mockFind(taxYear, aUser, findResponse)
 
@@ -82,7 +82,7 @@ class EmploymentPensionServiceSpec extends UnitTest with MockPensionUserDataRepo
           .foreach(cuer => mockSaveEmploymentPensionsData(nino, taxYear, cuer, saveResponse))
 
       lazy val userWithEmptySaveIncomeFromPensionCya = aPensionsUserData
-        .copy(pensions = aPensionsCYAEmptyModel.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = Nil)))
+        .copy(pensions = emptyPensionsData.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = Nil)))
 
       def mockUpdateSession(): Unit =
         mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionCya, updateSessionResponse)

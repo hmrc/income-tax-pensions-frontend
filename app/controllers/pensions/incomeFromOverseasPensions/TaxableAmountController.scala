@@ -41,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class TaxableAmountController @Inject() (
     authAction: AuthorisedAction,
     pensionSessionService: PensionSessionService,
-    taxableAmountView: TaxableAmountView,
+    view: TaxableAmountView,
     errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
@@ -49,13 +49,13 @@ class TaxableAmountController @Inject() (
     with FormUtils {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, YourTaxableAmountPage, taxYear) { data =>
           if (validTaxAmounts(data, index.getOrElse(0))) {
             val (amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr) = populateView(data, index.getOrElse(0))
-            Future.successful(Ok(taxableAmountView(amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr, taxYear, index)))
+            Future.successful(Ok(view(amountBeforeTax, signedNonUkTaxPaid, taxableAmount, ftcr, taxYear, index)))
           } else {
             Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
           }
@@ -66,7 +66,7 @@ class TaxableAmountController @Inject() (
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
-    pensionSessionService.getPensionSessionData(taxYear, request.user).flatMap {
+    pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, YourTaxableAmountPage, taxYear) { data =>

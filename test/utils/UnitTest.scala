@@ -17,10 +17,12 @@
 package utils
 
 import akka.actor.ActorSystem
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
 import config.{AppConfig, ErrorHandler, MockAppConfig}
 import controllers.predicates.actions.AuthorisedAction
+import models.mongo.PensionsUserData
 import models.{AuthorisationRequest, User}
 import org.scalamock.handlers.CallHandler4
 import org.scalamock.scalatest.MockFactory
@@ -152,6 +154,10 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
       .expects(*, *, *, *)
       .returning(Future.failed(exception))
 
-  val nino    = "AA123456A"
-  val mtditid = "1234567890"
+  val nino       = "AA123456A"
+  val mtditid    = "1234567890"
+  val user: User = authorisationRequest.user
+
+  val emptySessionData: PensionsUserData =
+    PensionsUserData(sessionId, "1234567890", nino, taxYear, isPriorSubmission = true, emptyPensionsData, testClock.now())
 }

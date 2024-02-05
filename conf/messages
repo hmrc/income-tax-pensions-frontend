@@ -1098,8 +1098,6 @@ incomeFromOverseasPensions.summary.tax.amount = Taxable amount
 #Overseas Pension Income Summary Page
 overseasPensionIncomeSummary.heading = Overseas pension income
 overseasPensionIncomeSummary.hidden = Change Overseas pension income
-#TODO: overseasPensionIncomeSummary.addAnotherPensionIncomeLink = Add another overseas pension scheme
-#TODO:overseasPensionIncomeSummary.addPensionIncomeLink = Add an overseas pension scheme
 
 ############################################## TRANSFER INTO OVERSEAS PENSION ##############################################
 

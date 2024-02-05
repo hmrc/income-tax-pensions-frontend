@@ -16,7 +16,7 @@
 
 package controllers.pensions.unauthorisedPayments
 
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import controllers.ControllerSpec
 import controllers.ControllerSpec.PreferredLanguages.{English, Welsh}
@@ -31,7 +31,7 @@ import play.api.libs.ws.WSResponse
 class UnauthorisedPensionSchemeTaxReferenceControllerISpec
     extends ControllerSpec("/unauthorised-payments-from-pensions/pension-scheme-tax-reference") {
 
-  private val minimalSessionDataToAccessThisPage: PensionsCYAModel = aPensionsCYAEmptyModel
+  private val minimalSessionDataToAccessThisPage: PensionsCYAModel = emptyPensionsData
   private val selectorForFirstParagraph                            = "#main-content > div > div > p:nth-of-type(1)"
   private val selectorForSecondParagraph                           = "#main-content > div > div > p:nth-of-type(2)"
   private val selectorForHint                                      = "#taxReferenceId-hint"

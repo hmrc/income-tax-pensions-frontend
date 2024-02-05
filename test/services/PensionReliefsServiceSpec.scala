@@ -16,7 +16,7 @@
 
 package services
 
-import builders.PensionsCYAModelBuilder.aPensionsCYAEmptyModel
+import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import config.{MockPensionUserDataRepository, MockPensionsConnector}
@@ -33,9 +33,9 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
 
   ".persistPaymentIntoPensionViewModel" should {
     "return Right when model is saved successfully and payment into pensions cya is cleared from DB" in {
-      val sessionCya                              = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
+      val sessionCya                              = emptyPensionsData.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
       val sessionUserData                         = aPensionsUserData.copy(pensions = sessionCya)
-      val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+      val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = emptyPensionsData)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
 
@@ -64,7 +64,7 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
     }
 
     "return Left(APIErrorModel) when pension connector could not be connected" in {
-      val sessionCya      = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
+      val sessionCya      = emptyPensionsData.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
@@ -87,9 +87,9 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
     }
 
     "return Left(DataNotUpdated) when data could not be updated" in {
-      val sessionCya                              = aPensionsCYAEmptyModel.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
+      val sessionCya                              = emptyPensionsData.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
       val sessionUserData                         = aPensionsUserData.copy(pensions = sessionCya)
-      val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = aPensionsCYAEmptyModel)
+      val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = emptyPensionsData)
 
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
 
