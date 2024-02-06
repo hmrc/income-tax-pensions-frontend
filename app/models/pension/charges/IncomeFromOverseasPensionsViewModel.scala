@@ -119,17 +119,14 @@ case class PensionScheme(alphaThreeCode: Option[String] = None,
                          foreignTaxCreditReliefQuestion: Option[Boolean] = None,
                          taxableAmount: Option[BigDecimal] = None) {
 
-  def updateFTCR(newForeignTaxCreditReliefQuestion: Boolean): PensionScheme = {
-    val newTaxableAmount = if (Option(newForeignTaxCreditReliefQuestion) != foreignTaxCreditReliefQuestion) {
-      taxableAmountForUpdate(Some(newForeignTaxCreditReliefQuestion))
-    } else {
-      taxableAmount
-    }
+  private def resetTaxableAmountIfDifferent(newPensionScheme: PensionScheme) =
+    if (newPensionScheme == this) this else newPensionScheme.copy(taxableAmount = None)
 
-    copy(
-      foreignTaxCreditReliefQuestion = Some(newForeignTaxCreditReliefQuestion),
-      taxableAmount = newTaxableAmount
+  def updateFTCR(newForeignTaxCreditReliefQuestion: Boolean): PensionScheme = {
+    val updatedPensionScheme = copy(
+      foreignTaxCreditReliefQuestion = Some(newForeignTaxCreditReliefQuestion)
     )
+    resetTaxableAmountIfDifferent(updatedPensionScheme)
   }
 
   def updatePensionPayment(newPensionPaymentAmount: Option[BigDecimal], newPensionPaymentTaxPaid: Option[BigDecimal]): PensionScheme = {
@@ -137,10 +134,7 @@ case class PensionScheme(alphaThreeCode: Option[String] = None,
       pensionPaymentAmount = newPensionPaymentAmount,
       pensionPaymentTaxPaid = newPensionPaymentTaxPaid
     )
-
-    updatedPensionScheme.copy(
-      taxableAmount = updatedPensionScheme.taxableAmountForUpdate(updatedPensionScheme.foreignTaxCreditReliefQuestion)
-    )
+    resetTaxableAmountIfDifferent(updatedPensionScheme)
   }
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionSchemeSummary =
@@ -162,20 +156,6 @@ case class PensionScheme(alphaThreeCode: Option[String] = None,
       this.specialWithholdingTaxQuestion.exists(value => !value || (value && this.specialWithholdingTaxAmount.nonEmpty)) &&
       foreignTaxCreditReliefQuestion.isDefined &&
       taxableAmount.isDefined
-
-  /** if we change some of the values in Pension Scheme, we may need to recalculate taxableAmount.
-    *
-    * It is calculated based on FTCR, we need to set taxableAmount to None or leave it as it is:
-    *   - If we set it to None, on FTCR page when Continue is clicked it will go to Taxable Amount summary.
-    *   - if we set calculated amount we don't show calculation to the user (this case is applied when FTCR=true, then the
-    *     taxableAmount=pensionPaymentAmount, without subtracting pensionPaymentTaxPaid).
-    */
-  private def taxableAmountForUpdate(newForeignTaxCreditReliefQuestion: Option[Boolean]): Option[BigDecimal] =
-    if (newForeignTaxCreditReliefQuestion.contains(true)) {
-      PensionScheme.calcTaxableAmount(pensionPaymentAmount, pensionPaymentTaxPaid, newForeignTaxCreditReliefQuestion)
-    } else {
-      None
-    }
 }
 
 object PensionScheme {

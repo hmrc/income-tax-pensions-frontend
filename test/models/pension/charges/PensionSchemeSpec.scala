@@ -81,41 +81,41 @@ class PensionSchemeSpec extends AnyWordSpecLike with TableDrivenPropertyChecks w
   "updateFTCR" should {
     val existingScheme = scheme.copy(foreignTaxCreditReliefQuestion = Some(true))
 
-    "return old taxable amount when FTCR did not change" in {
+    "return an existing PensionScheme when FTCR did not change" in {
       assert(scheme.updateFTCR(true) === existingScheme)
     }
 
-    "return updated ftcr and taxable amount set to None for FTCR changing from true to false" in {
+    "return updated FTCR and the taxable amount set to None for FTCR changing from true to false" in {
       assert(
         scheme.updateFTCR(false) ===
           existingScheme.copy(foreignTaxCreditReliefQuestion = Some(false), taxableAmount = None)
       )
     }
 
-    "return updated ftcr and newly calculated taxable amount for FTCR changing from false to true" in {
+    "return updated FTCR and the taxable amount set to None for FTCR changing from false to true" in {
       assert(
         scheme
           .copy(foreignTaxCreditReliefQuestion = Some(false))
           .updateFTCR(true) ===
-          existingScheme.copy(foreignTaxCreditReliefQuestion = Some(true), taxableAmount = Some(BigDecimal("2000.00")))
+          existingScheme.copy(foreignTaxCreditReliefQuestion = Some(true), taxableAmount = None)
       )
     }
   }
 
   "updatePensionPayment" should {
-    "update pension payments and reflect this change for taxable amount for FTCR=true" in {
+    "update pension payments and set the taxable amount to None for FTCR=true" in {
       val existingScheme = scheme.copy(pensionPaymentAmount = Some(2000.00), pensionPaymentTaxPaid = Some(400.00))
       assert(
         existingScheme.updatePensionPayment(Some(3000.00), Some(600.00)) ===
           existingScheme.copy(
             pensionPaymentAmount = Some(3000.00),
             pensionPaymentTaxPaid = Some(600.00),
-            taxableAmount = Some(3000.00)
+            taxableAmount = None
           )
       )
     }
 
-    "update pension payments and reset taxable amount to None for FTCR=false" in {
+    "update pension payments and set the taxable amount to None for FTCR=false" in {
       val existingScheme = scheme.copy(
         pensionPaymentAmount = Some(2000.00),
         pensionPaymentTaxPaid = Some(400.00),
