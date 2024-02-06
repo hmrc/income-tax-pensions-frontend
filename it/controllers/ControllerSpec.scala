@@ -143,7 +143,7 @@ class ControllerSpec(val pathForThisPage: String)
         "microservice.services.income-tax-nrs-proxy.url"           -> wiremockBaseUrl,
         "microservice.services.sign-in.url"                        -> "/auth-login-stub/gg-sign-in",
         "taxYearErrorFeatureSwitch"                                -> "false",
-        "useEncryption"                                            -> "false"
+        "useEncryption"                                            -> "true"
       )
     )
     .build()
