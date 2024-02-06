@@ -37,7 +37,6 @@ object RedirectService extends Logging {
 
   // 1. Current Redirects
   // 2. Next Page Redirects
-
   def redirectBasedOnRequest[T](optUserData: Option[PensionsUserData], taxYear: Int): Either[Result, PensionsUserData] =
     optUserData match {
       case Some(userData) => Right(userData)
