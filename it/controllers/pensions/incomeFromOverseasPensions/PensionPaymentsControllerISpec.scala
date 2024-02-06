@@ -265,7 +265,7 @@ class PensionPaymentsControllerISpec
 
           val expectedViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
             aPensionScheme1,
-            aPensionScheme2.copy(pensionPaymentAmount = Some(1234.56), pensionPaymentTaxPaid = Some(78.90), taxableAmount = Some(1234.56))))
+            aPensionScheme2.copy(pensionPaymentAmount = Some(1234.56), pensionPaymentTaxPaid = Some(78.90), taxableAmount = None)))
 
           assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsSwt + "?index=1")
           getViewModel mustBe Some(expectedViewModel)
