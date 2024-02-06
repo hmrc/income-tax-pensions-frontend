@@ -135,7 +135,7 @@ case class PensionScheme(alphaThreeCode: Option[String] = None,
   def updatePensionPayment(newPensionPaymentAmount: Option[BigDecimal], newPensionPaymentTaxPaid: Option[BigDecimal]): PensionScheme = {
     val updatedPensionScheme = copy(
       pensionPaymentAmount = newPensionPaymentAmount,
-      pensionPaymentTaxPaid = newPensionPaymentTaxPaid,
+      pensionPaymentTaxPaid = newPensionPaymentTaxPaid
     )
 
     updatedPensionScheme.copy(
@@ -163,8 +163,8 @@ case class PensionScheme(alphaThreeCode: Option[String] = None,
       foreignTaxCreditReliefQuestion.isDefined &&
       taxableAmount.isDefined
 
-  /** if we change some of the values, based on FTCR, we need to set taxableAmount to None or leave it as it is.
-    * If we set it to None, on Continue it will go to the Taxable Calculation summary presenting to user clearly the calculation.
+  /** if we change some of the values, based on FTCR, we need to set taxableAmount to None or leave it as it is. If we set it to None, on Continue it
+    * will go to the Taxable Calculation summary presenting to user clearly the calculation.
     */
   private def taxableAmountForUpdate(newForeignTaxCreditReliefQuestion: Option[Boolean]): Option[BigDecimal] =
     if (newForeignTaxCreditReliefQuestion.contains(true)) {
