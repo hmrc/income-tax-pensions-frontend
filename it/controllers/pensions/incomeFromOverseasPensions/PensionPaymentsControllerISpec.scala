@@ -263,8 +263,9 @@ class PensionPaymentsControllerISpec
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1234.56"), Some("78.90")), 1)
 
-          val expectedViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes =
-            Seq(aPensionScheme1, aPensionScheme2.copy(pensionPaymentAmount = Some(1234.56), pensionPaymentTaxPaid = Some(78.90))))
+          val expectedViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
+            aPensionScheme1,
+            aPensionScheme2.copy(pensionPaymentAmount = Some(1234.56), pensionPaymentTaxPaid = Some(78.90), taxableAmount = Some(1234.56))))
 
           assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsScheme + "?index=1")
           getViewModel mustBe Some(expectedViewModel)
