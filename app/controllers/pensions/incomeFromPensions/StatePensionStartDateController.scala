@@ -39,12 +39,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StatePensionStartDateController @Inject() (
-    actionsProvider: ActionsProvider,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    view: StatePensionStartDateView,
-    formProvider: FormsProvider)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
+class StatePensionStartDateController @Inject() (actionsProvider: ActionsProvider,
+                                                 pensionSessionService: PensionSessionService,
+                                                 errorHandler: ErrorHandler,
+                                                 view: StatePensionStartDateView,
+                                                 formProvider: FormsProvider,
+                                                 mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

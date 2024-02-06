@@ -37,12 +37,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class AboveReducedAnnualAllowanceController @Inject() (
-    actionsProvider: ActionsProvider,
-    pensionSessionService: PensionSessionService,
-    view: AboveReducedAnnualAllowanceView,
-    errorHandler: ErrorHandler,
-    formsProvider: FormsProvider)(implicit val cc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+class AboveReducedAnnualAllowanceController @Inject() (actionsProvider: ActionsProvider,
+                                                       pensionSessionService: PensionSessionService,
+                                                       view: AboveReducedAnnualAllowanceView,
+                                                       errorHandler: ErrorHandler,
+                                                       formsProvider: FormsProvider,
+                                                       cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
     extends FrontendController(cc)
     with I18nSupport {
 

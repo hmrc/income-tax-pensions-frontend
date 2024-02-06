@@ -36,12 +36,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class WorkplacePensionController @Inject() (
-    authAction: AuthorisedAction,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    workplacePensionView: WorkplacePensionView,
-    formProvider: PaymentsIntoPensionFormProvider)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+class WorkplacePensionController @Inject() (authAction: AuthorisedAction,
+                                            pensionSessionService: PensionSessionService,
+                                            errorHandler: ErrorHandler,
+                                            workplacePensionView: WorkplacePensionView,
+                                            formProvider: PaymentsIntoPensionFormProvider,
+                                            mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
     extends FrontendController(mcc)
     with I18nSupport {
 

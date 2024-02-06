@@ -37,15 +37,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UnauthorisedPaymentsController @Inject() (implicit
-    val mcc: MessagesControllerComponents,
-    appConfig: AppConfig,
-    authAction: AuthorisedAction,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    view: UnauthorisedPaymentsView,
-    clock: Clock,
-    ec: ExecutionContext)
+class UnauthorisedPaymentsController @Inject() (mcc: MessagesControllerComponents,
+                                                authAction: AuthorisedAction,
+                                                pensionSessionService: PensionSessionService,
+                                                errorHandler: ErrorHandler,
+                                                view: UnauthorisedPaymentsView)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

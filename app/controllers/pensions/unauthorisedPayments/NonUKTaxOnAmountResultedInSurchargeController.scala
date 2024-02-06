@@ -41,7 +41,8 @@ class NonUKTaxOnAmountResultedInSurchargeController @Inject() (
     view: NonUKTaxOnAmountResultedInSurchargeView,
     pensionSessionService: PensionSessionService,
     formsProvider: FormsProvider,
-    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    errorHandler: ErrorHandler,
+    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with SessionHelper
     with I18nSupport {

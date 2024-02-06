@@ -37,11 +37,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SurchargeAmountController @Inject() (
-    authAction: AuthorisedAction,
-    view: SurchargeAmountView,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class SurchargeAmountController @Inject() (authAction: AuthorisedAction,
+                                           view: SurchargeAmountView,
+                                           pensionSessionService: PensionSessionService,
+                                           errorHandler: ErrorHandler,
+                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with FormUtils {

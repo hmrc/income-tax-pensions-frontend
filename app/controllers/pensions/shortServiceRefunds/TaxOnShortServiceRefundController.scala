@@ -41,10 +41,8 @@ class TaxOnShortServiceRefundController @Inject() (actionsProvider: ActionsProvi
                                                    view: TaxPaidOnShortServiceRefundView,
                                                    formsProvider: FormsProvider,
                                                    errorHandler: ErrorHandler,
-                                                   shortServiceRefundsService: ShortServiceRefundsService)(implicit
-    val mcc: MessagesControllerComponents,
-    appConfig: AppConfig,
-    ec: ExecutionContext)
+                                                   shortServiceRefundsService: ShortServiceRefundsService,
+                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

@@ -37,12 +37,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class RemoveOverseasIncomeSchemeController @Inject() (
-    actionsProvider: ActionsProvider,
-    pensionSessionService: PensionSessionService,
-    view: RemoveOverseasIncomeSchemeView,
-    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
-    extends FrontendController(mcc)
+class RemoveOverseasIncomeSchemeController @Inject() (actionsProvider: ActionsProvider,
+                                                      pensionSessionService: PensionSessionService,
+                                                      view: RemoveOverseasIncomeSchemeView,
+                                                      errorHandler: ErrorHandler,
+                                                      cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+    extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {
 

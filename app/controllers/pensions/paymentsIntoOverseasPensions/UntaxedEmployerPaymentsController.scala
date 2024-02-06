@@ -34,12 +34,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UntaxedEmployerPaymentsController @Inject() (
-    actionsProvider: ActionsProvider,
-    view: UntaxedEmployerPaymentsView,
-    paymentsIntoOverseasService: PaymentsIntoOverseasPensionsService,
-    formsProvider: FormsProvider,
-    errorHandler: ErrorHandler)(implicit val cc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
+class UntaxedEmployerPaymentsController @Inject() (actionsProvider: ActionsProvider,
+                                                   view: UntaxedEmployerPaymentsView,
+                                                   paymentsIntoOverseasService: PaymentsIntoOverseasPensionsService,
+                                                   formsProvider: FormsProvider,
+                                                   errorHandler: ErrorHandler,
+                                                   cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

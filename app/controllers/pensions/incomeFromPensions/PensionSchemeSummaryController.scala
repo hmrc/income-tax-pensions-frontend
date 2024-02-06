@@ -30,10 +30,9 @@ import views.html.pensions.incomeFromPensions.PensionSchemeSummaryView
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class PensionSchemeSummaryController @Inject() (view: PensionSchemeSummaryView, actionsProvider: ActionsProvider)(implicit
-    val mcc: MessagesControllerComponents,
-    appConfig: AppConfig)
-    extends FrontendController(mcc)
+class PensionSchemeSummaryController @Inject() (view: PensionSchemeSummaryView, actionsProvider: ActionsProvider, cc: MessagesControllerComponents)(
+    implicit appConfig: AppConfig)
+    extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {
 

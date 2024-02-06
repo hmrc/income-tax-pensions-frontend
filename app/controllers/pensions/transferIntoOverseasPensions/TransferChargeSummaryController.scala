@@ -17,8 +17,8 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import config.AppConfig
-import models.mongo.PensionsCYAModel
 import controllers.predicates.actions.ActionsProvider
+import models.mongo.PensionsCYAModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
@@ -32,9 +32,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class TransferChargeSummaryController @Inject() (actionsProvider: ActionsProvider, view: TransferChargeSummaryView)(implicit
-    mcc: MessagesControllerComponents,
-    appConfig: AppConfig)
+class TransferChargeSummaryController @Inject() (actionsProvider: ActionsProvider,
+                                                 view: TransferChargeSummaryView,
+                                                 mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

@@ -42,8 +42,9 @@ class StatePensionLumpSumController @Inject() (
     pensionSessionService: PensionSessionService,
     view: StatePensionLumpSumView,
     errorHandler: ErrorHandler,
-    formsProvider: FormsProvider
-)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock)
+    formsProvider: FormsProvider,
+    mcc: MessagesControllerComponents
+)(implicit appConfig: AppConfig, clock: Clock)
     extends FrontendController(mcc)
     with SessionHelper
     with I18nSupport {
