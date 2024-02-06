@@ -167,7 +167,8 @@ case class PensionScheme(alphaThreeCode: Option[String] = None,
     *
     * It is calculated based on FTCR, we need to set taxableAmount to None or leave it as it is:
     *   - If we set it to None, on FTCR page when Continue is clicked it will go to Taxable Amount summary.
-    *   - if we set calculated amount we don't show calculation to the user (this case is when FTCR=false)
+    *   - if we set calculated amount we don't show calculation to the user (this case is applied when FTCR=true, then the
+    *     taxableAmount=pensionPaymentAmount, without subtracting pensionPaymentTaxPaid).
     */
   private def taxableAmountForUpdate(newForeignTaxCreditReliefQuestion: Option[Boolean]): Option[BigDecimal] =
     if (newForeignTaxCreditReliefQuestion.contains(true)) {
