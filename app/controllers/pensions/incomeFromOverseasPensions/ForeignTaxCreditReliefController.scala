@@ -40,12 +40,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ForeignTaxCreditReliefController @Inject() (
-    authAction: AuthorisedAction,
-    view: ForeignTaxCreditReliefView,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler)(implicit mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
-    extends FrontendController(mcc)
+class ForeignTaxCreditReliefController @Inject() (authAction: AuthorisedAction,
+                                                  view: ForeignTaxCreditReliefView,
+                                                  pensionSessionService: PensionSessionService,
+                                                  errorHandler: ErrorHandler,
+                                                  cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(cc)
     with I18nSupport {
 
   def show(taxYear: Int, index: Option[Int] = None): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>

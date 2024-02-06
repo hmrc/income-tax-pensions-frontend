@@ -42,8 +42,9 @@ class IncomeFromOverseasPensionsCYAController @Inject() (
     auditProvider: AuditActionsProvider,
     view: IncomeFromOverseasPensionsCYAView,
     pensionIncomeService: PensionIncomeService,
-    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
-    extends FrontendController(mcc)
+    errorHandler: ErrorHandler,
+    cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(cc)
     with I18nSupport {
 
   lazy val logger: Logger = Logger(this.getClass.getName)

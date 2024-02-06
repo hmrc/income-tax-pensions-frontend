@@ -32,8 +32,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class BenefitsFromSchemeController @Inject() (authAction: AuthorisedAction, view: BenefitsFromSchemeView)(implicit
-    cc: MessagesControllerComponents,
+class BenefitsFromSchemeController @Inject() (authAction: AuthorisedAction, view: BenefitsFromSchemeView, cc: MessagesControllerComponents)(implicit
     appConfig: AppConfig,
     ec: ExecutionContext)
     extends FrontendController(cc)

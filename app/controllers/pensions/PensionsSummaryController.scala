@@ -31,13 +31,10 @@ import views.html.pensions.PensionsSummaryView
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class PensionsSummaryController @Inject() (implicit
-    val mcc: MessagesControllerComponents,
-    appConfig: AppConfig,
-    authAction: AuthorisedAction,
-    pensionSessionService: PensionSessionService,
-    clock: Clock,
-    pensionsSummaryView: PensionsSummaryView)
+class PensionsSummaryController @Inject() (mcc: MessagesControllerComponents,
+                                           authAction: AuthorisedAction,
+                                           pensionSessionService: PensionSessionService,
+                                           pensionsSummaryView: PensionsSummaryView)(implicit appConfig: AppConfig, clock: Clock)
     extends FrontendController(mcc)
     with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>

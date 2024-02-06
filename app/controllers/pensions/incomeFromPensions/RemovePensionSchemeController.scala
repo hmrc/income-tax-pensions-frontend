@@ -35,14 +35,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class RemovePensionSchemeController @Inject() (implicit
-    val mcc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    view: RemovePensionSchemeView,
-    appConfig: AppConfig,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    clock: Clock)
+class RemovePensionSchemeController @Inject() (mcc: MessagesControllerComponents,
+                                               authAction: AuthorisedAction,
+                                               view: RemovePensionSchemeView,
+                                               pensionSessionService: PensionSessionService,
+                                               errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

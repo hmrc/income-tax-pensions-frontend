@@ -37,12 +37,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class PaymentIntoPensionSchemeController @Inject() (messagesControllerComponents: MessagesControllerComponents,
+class PaymentIntoPensionSchemeController @Inject() (cc: MessagesControllerComponents,
                                                     authAction: AuthorisedAction,
                                                     view: PaymentIntoPensionSchemeView,
                                                     pensionSessionService: PensionSessionService,
                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
-    extends BaseYesNoAmountController(messagesControllerComponents, pensionSessionService, authAction, errorHandler)
+    extends BaseYesNoAmountController(cc, pensionSessionService, authAction, errorHandler)
     with I18nSupport {
 
   override val errorMessageSet: YesNoAmountForm = PaymentIntoScheme

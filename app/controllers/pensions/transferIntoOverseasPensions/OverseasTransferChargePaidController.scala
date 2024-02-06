@@ -42,10 +42,8 @@ class OverseasTransferChargePaidController @Inject() (actionsProvider: ActionsPr
                                                       view: OverseasTransferChargesPaidView,
                                                       pensionSessionService: PensionSessionService,
                                                       errorHandler: ErrorHandler,
-                                                      overseasTransferChargesService: OverseasTransferChargesService)(implicit
-    mcc: MessagesControllerComponents,
-    appConfig: AppConfig,
-    ec: ExecutionContext)
+                                                      overseasTransferChargesService: OverseasTransferChargesService,
+                                                      mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

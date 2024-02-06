@@ -35,15 +35,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RemovePSTRController @Inject() (implicit
-    val mcc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    view: RemovePSTRView,
-    appConfig: AppConfig,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    clock: Clock,
-    ec: ExecutionContext)
+class RemovePSTRController @Inject() (mcc: MessagesControllerComponents,
+                                      authAction: AuthorisedAction,
+                                      view: RemovePSTRView,
+                                      pensionSessionService: PensionSessionService,
+                                      errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
@@ -51,7 +47,8 @@ class RemovePSTRController @Inject() (implicit
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async {
     implicit request =>
       pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
-        case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
+        case Left(_) =>
+          Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
 
         case Right(optData) =>
           val checkRedirect = journeyCheck(RemovePSTRPage, _: PensionsCYAModel, taxYear, pensionSchemeIndex)

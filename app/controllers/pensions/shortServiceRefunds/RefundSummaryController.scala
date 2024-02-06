@@ -33,12 +33,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RefundSummaryController @Inject() (actionsProvider: ActionsProvider, view: RefundSummaryView, pensionSessionService: PensionSessionService)(
-    implicit
-    mcc: MessagesControllerComponents,
-    appConfig: AppConfig,
-    ec: ExecutionContext,
-    errorHandler: ErrorHandler)
+class RefundSummaryController @Inject() (actionsProvider: ActionsProvider,
+                                         view: RefundSummaryView,
+                                         pensionSessionService: PensionSessionService,
+                                         errorHandler: ErrorHandler,
+                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

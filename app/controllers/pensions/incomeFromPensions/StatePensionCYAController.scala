@@ -36,15 +36,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StatePensionCYAController @Inject() (auditProvider: AuditActionsProvider,
-                                           pensionSessionService: PensionSessionService,
-                                           statePensionService: StatePensionService,
-                                           view: StatePensionCYAView)(implicit
-    val mcc: MessagesControllerComponents,
-    appConfig: AppConfig,
-    clock: Clock,
-    executionContext: ExecutionContext,
-    errorHandler: ErrorHandler)
+class StatePensionCYAController @Inject() (
+    auditProvider: AuditActionsProvider,
+    pensionSessionService: PensionSessionService,
+    statePensionService: StatePensionService,
+    view: StatePensionCYAView,
+    mcc: MessagesControllerComponents,
+    errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, executionContext: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

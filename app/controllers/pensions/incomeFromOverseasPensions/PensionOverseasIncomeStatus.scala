@@ -37,12 +37,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PensionOverseasIncomeStatus @Inject() (
-    authAction: AuthorisedAction,
-    view: IncomeFromOverseasPensionsView,
-    service: PensionSessionService,
-    errorHandler: ErrorHandler)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
-    extends FrontendController(mcc)
+class PensionOverseasIncomeStatus @Inject() (authAction: AuthorisedAction,
+                                             view: IncomeFromOverseasPensionsView,
+                                             service: PensionSessionService,
+                                             errorHandler: ErrorHandler,
+                                             cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    extends FrontendController(cc)
     with I18nSupport {
 
   def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(

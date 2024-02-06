@@ -37,15 +37,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class ReducedAnnualAllowanceTypeController @Inject() (implicit
-    val mcc: MessagesControllerComponents,
-    appConfig: AppConfig,
-    authAction: AuthorisedAction,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    view: ReducedAnnualAllowanceTypeView,
-    clock: Clock)
-    extends FrontendController(mcc)
+class ReducedAnnualAllowanceTypeController @Inject() (cc: MessagesControllerComponents,
+                                                      authAction: AuthorisedAction,
+                                                      pensionSessionService: PensionSessionService,
+                                                      errorHandler: ErrorHandler,
+                                                      view: ReducedAnnualAllowanceTypeView)(implicit appConfig: AppConfig, clock: Clock)
+    extends FrontendController(cc)
     with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>

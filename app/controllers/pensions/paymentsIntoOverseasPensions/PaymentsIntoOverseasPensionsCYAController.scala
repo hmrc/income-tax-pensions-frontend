@@ -41,7 +41,8 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (
     view: PaymentsIntoOverseasPensionsCYAView,
     errorHandler: ErrorHandler,
     pensionOverseasPaymentService: PensionOverseasPaymentService,
-    nrsService: NrsService)(implicit val mcc: MessagesControllerComponents, appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    nrsService: NrsService,
+    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

@@ -33,12 +33,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CountrySummaryListController @Inject() (
-    actionsProvider: ActionsProvider,
-    countrySummary: CountrySummaryList,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler)(implicit mcc: MessagesControllerComponents, appConfig: AppConfig, ec: ExecutionContext)
-    extends FrontendController(mcc)
+class CountrySummaryListController @Inject() (actionsProvider: ActionsProvider,
+                                              countrySummary: CountrySummaryList,
+                                              pensionSessionService: PensionSessionService,
+                                              errorHandler: ErrorHandler,
+                                              cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+    extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {
 
