@@ -39,7 +39,7 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
               specialWithholdingTaxQuestion = Some(false),
               specialWithholdingTaxAmount = None,
               foreignTaxCreditReliefQuestion = Some(false),
-              taxableAmount = None
+              taxableAmount = Some(1999.99)
             )
           ))
           .isFinished shouldBe true
