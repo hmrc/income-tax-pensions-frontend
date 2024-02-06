@@ -286,15 +286,15 @@ class ForeignTaxCreditReliefControllerISpec
               Seq(aPensionScheme1, aPensionScheme2.copy(foreignTaxCreditReliefQuestion = Some(false), taxableAmount = None))))
         }
 
-        "selected 'Yes', redirecting to the scheme summary page when scheme is now complete" in {
+        "selected 'Yes', redirecting to the Taxable Amount page" in {
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(true)))
 
           val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
             anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
-              .copy(foreignTaxCreditReliefQuestion = Some(true))))
+              .copy(foreignTaxCreditReliefQuestion = Some(true), taxableAmount = None)))
 
-          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsScheme + "?index=0")
+          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionstaxable + "?index=0")
           getViewModel mustBe Some(incomeViewModel)
         }
       }
