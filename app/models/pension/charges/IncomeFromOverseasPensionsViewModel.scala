@@ -119,6 +119,24 @@ case class PensionScheme(alphaThreeCode: Option[String] = None,
                          foreignTaxCreditReliefQuestion: Option[Boolean] = None,
                          taxableAmount: Option[BigDecimal] = None) {
 
+  private def resetTaxableAmountIfDifferent(newPensionScheme: PensionScheme) =
+    if (newPensionScheme == this) this else newPensionScheme.copy(taxableAmount = None)
+
+  def updateFTCR(newForeignTaxCreditReliefQuestion: Boolean): PensionScheme = {
+    val updatedPensionScheme = copy(
+      foreignTaxCreditReliefQuestion = Some(newForeignTaxCreditReliefQuestion)
+    )
+    resetTaxableAmountIfDifferent(updatedPensionScheme)
+  }
+
+  def updatePensionPayment(newPensionPaymentAmount: Option[BigDecimal], newPensionPaymentTaxPaid: Option[BigDecimal]): PensionScheme = {
+    val updatedPensionScheme = copy(
+      pensionPaymentAmount = newPensionPaymentAmount,
+      pensionPaymentTaxPaid = newPensionPaymentTaxPaid
+    )
+    resetTaxableAmountIfDifferent(updatedPensionScheme)
+  }
+
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionSchemeSummary =
     EncryptedPensionSchemeSummary(
       alphaThreeCode = alphaThreeCode.map(_.encrypted),
@@ -136,9 +154,25 @@ case class PensionScheme(alphaThreeCode: Option[String] = None,
       this.pensionPaymentAmount.isDefined &&
       this.pensionPaymentTaxPaid.isDefined &&
       this.specialWithholdingTaxQuestion.exists(value => !value || (value && this.specialWithholdingTaxAmount.nonEmpty)) &&
-      this.foreignTaxCreditReliefQuestion.exists(value => !value || (value && this.taxableAmount.nonEmpty))
+      foreignTaxCreditReliefQuestion.isDefined &&
+      taxableAmount.isDefined
 }
 
 object PensionScheme {
   implicit val format: OFormat[PensionScheme] = Json.format[PensionScheme]
+
+  def calcTaxableAmount(pensionPaymentAmount: Option[BigDecimal],
+                        pensionPaymentTaxPaid: Option[BigDecimal],
+                        foreignTaxCreditReliefQuestion: Option[Boolean]): Option[BigDecimal] =
+    for {
+      amountBeforeTax <- pensionPaymentAmount
+      nonUkTaxPaid    <- pensionPaymentTaxPaid
+      isFtcr          <- foreignTaxCreditReliefQuestion
+      taxableAmount =
+        if (isFtcr) {
+          amountBeforeTax
+        } else {
+          amountBeforeTax - nonUkTaxPaid
+        }
+    } yield taxableAmount
 }

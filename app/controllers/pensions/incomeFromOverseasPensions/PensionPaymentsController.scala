@@ -107,7 +107,7 @@ class PensionPaymentsController @Inject() (
         index,
         viewModel
           .overseasIncomePensionSchemes(index)
-          .copy(pensionPaymentAmount = amountBeforeTaxOpt, pensionPaymentTaxPaid = nonUkTaxPaidOpt))
+          .updatePensionPayment(amountBeforeTaxOpt, nonUkTaxPaidOpt))
     val updatedCyaModel: PensionsCYAModel =
       data.pensions.copy(incomeFromOverseasPensions = viewModel.copy(overseasIncomePensionSchemes = updatedSchemes))
 

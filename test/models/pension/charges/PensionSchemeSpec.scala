@@ -16,9 +16,21 @@
 
 package models.pension.charges
 
-import utils.UnitTest
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
+import org.scalatest.wordspec.AnyWordSpecLike
 
-class PensionSchemeSpec extends UnitTest {
+class PensionSchemeSpec extends AnyWordSpecLike with TableDrivenPropertyChecks with Matchers {
+  val scheme = PensionScheme(
+    alphaThreeCode = None,
+    alphaTwoCode = Some("DE"),
+    pensionPaymentAmount = Some(2000.00),
+    pensionPaymentTaxPaid = Some(400.00),
+    specialWithholdingTaxQuestion = Some(false),
+    specialWithholdingTaxAmount = None,
+    foreignTaxCreditReliefQuestion = Some(true),
+    taxableAmount = Some(2000.00)
+  )
 
   "isFinished" should {
     "return true" when {
@@ -35,26 +47,8 @@ class PensionSchemeSpec extends UnitTest {
         ).isFinished
       }
       "all required questions are answered" in {
-        PensionScheme(
-          alphaThreeCode = None,
-          alphaTwoCode = Some("DE"),
-          pensionPaymentAmount = Some(2000.00),
-          pensionPaymentTaxPaid = Some(400.00),
-          specialWithholdingTaxQuestion = Some(false),
-          specialWithholdingTaxAmount = None,
-          foreignTaxCreditReliefQuestion = Some(true),
-          taxableAmount = Some(2000.00)
-        ).isFinished shouldBe true
-        PensionScheme(
-          alphaThreeCode = None,
-          alphaTwoCode = Some("DE"),
-          pensionPaymentAmount = Some(2000.00),
-          pensionPaymentTaxPaid = Some(400.00),
-          specialWithholdingTaxQuestion = Some(false),
-          specialWithholdingTaxAmount = None,
-          foreignTaxCreditReliefQuestion = Some(false),
-          taxableAmount = None
-        ).isFinished shouldBe true
+        scheme.isFinished shouldBe true
+        scheme.copy(taxableAmount = None).isFinished shouldBe false
       }
     }
 
@@ -84,4 +78,74 @@ class PensionSchemeSpec extends UnitTest {
     }
   }
 
+  "updateFTCR" should {
+    val existingScheme = scheme.copy(foreignTaxCreditReliefQuestion = Some(true))
+
+    "return an existing PensionScheme when FTCR did not change" in {
+      assert(scheme.updateFTCR(true) === existingScheme)
+    }
+
+    "return updated FTCR and the taxable amount set to None for FTCR changing from true to false" in {
+      assert(
+        scheme.updateFTCR(false) ===
+          existingScheme.copy(foreignTaxCreditReliefQuestion = Some(false), taxableAmount = None)
+      )
+    }
+
+    "return updated FTCR and the taxable amount set to None for FTCR changing from false to true" in {
+      assert(
+        scheme
+          .copy(foreignTaxCreditReliefQuestion = Some(false))
+          .updateFTCR(true) ===
+          existingScheme.copy(foreignTaxCreditReliefQuestion = Some(true), taxableAmount = None)
+      )
+    }
+  }
+
+  "updatePensionPayment" should {
+    "update pension payments and set the taxable amount to None for FTCR=true" in {
+      val existingScheme = scheme.copy(pensionPaymentAmount = Some(2000.00), pensionPaymentTaxPaid = Some(400.00))
+      assert(
+        existingScheme.updatePensionPayment(Some(3000.00), Some(600.00)) ===
+          existingScheme.copy(
+            pensionPaymentAmount = Some(3000.00),
+            pensionPaymentTaxPaid = Some(600.00),
+            taxableAmount = None
+          )
+      )
+    }
+
+    "update pension payments and set the taxable amount to None for FTCR=false" in {
+      val existingScheme = scheme.copy(
+        pensionPaymentAmount = Some(2000.00),
+        pensionPaymentTaxPaid = Some(400.00),
+        foreignTaxCreditReliefQuestion = Some(false)
+      )
+      assert(
+        existingScheme.updatePensionPayment(Some(3000.00), Some(600.00)) ===
+          existingScheme.copy(
+            pensionPaymentAmount = Some(3000.00),
+            pensionPaymentTaxPaid = Some(600.00),
+            taxableAmount = None
+          )
+      )
+    }
+  }
+
+  "calcTaxableAmount" should {
+    val cases = Table(
+      ("pensionPaymentAmount", "pensionPaymentTaxPaid", "foreignTaxCreditReliefQuestion", "expectedTaxableAmount"),
+      (None, None, None, None),
+      (Some(BigDecimal("500")), None, None, None),
+      (None, Some(BigDecimal("500")), None, None),
+      (None, None, Some(true), None),
+      (Some(BigDecimal("500")), Some(BigDecimal("100")), Some(true), Some(BigDecimal("500"))),
+      (Some(BigDecimal("500")), Some(BigDecimal("100")), Some(false), Some(BigDecimal("400")))
+    )
+
+    "return correct taxable amount" in forAll(cases) {
+      case (pensionPaymentAmount, pensionPaymentTaxPaid, foreignTaxCreditReliefQuestion, expectedTaxableAmount) =>
+        assert(PensionScheme.calcTaxableAmount(pensionPaymentAmount, pensionPaymentTaxPaid, foreignTaxCreditReliefQuestion) === expectedTaxableAmount)
+    }
+  }
 }
