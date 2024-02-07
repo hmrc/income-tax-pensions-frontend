@@ -258,15 +258,16 @@ class PensionPaymentsControllerISpec
 
     "succeed" when {
       "the user submits both amount values which are persisted" when {
-        "the scheme is now complete and so redirects to the Scheme Summary page" in {
+        "the scheme is not yet complete for first pension and so redirects to the Special Withholding Tax page" in {
           val sessionData                     = pensionsUserData(aPensionsCYAModel)
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForOptionTupleAmountPage(Some("1234.56"), Some("78.90")), 1)
 
-          val expectedViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes =
-            Seq(aPensionScheme1, aPensionScheme2.copy(pensionPaymentAmount = Some(1234.56), pensionPaymentTaxPaid = Some(78.90))))
+          val expectedViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
+            aPensionScheme1,
+            aPensionScheme2.copy(pensionPaymentAmount = Some(1234.56), pensionPaymentTaxPaid = Some(78.90), taxableAmount = None)))
 
-          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsScheme + "?index=1")
+          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsSwt + "?index=1")
           getViewModel mustBe Some(expectedViewModel)
         }
 

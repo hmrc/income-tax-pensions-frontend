@@ -23,6 +23,7 @@ import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.FormUtils
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.charges.PensionScheme
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -70,7 +71,7 @@ class TaxableAmountController @Inject() (authAction: AuthorisedAction,
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(Some(data)) =>
         indexCheckThenJourneyCheck(data, index, YourTaxableAmountPage, taxYear) { data =>
-          val updatedCyaModel = updatePensionScheme(data, getTaxableAmount(data, index.getOrElse(0)), taxYear, index.getOrElse(0))
+          val updatedCyaModel = updatePensionScheme(data, getTaxableAmount(data, index.getOrElse(0)), index.getOrElse(0))
           pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
             errorHandler.internalServerError()) {
             Redirect(PensionSchemeSummaryController.show(taxYear, index))
@@ -118,22 +119,15 @@ class TaxableAmountController @Inject() (authAction: AuthorisedAction,
   }
 
   private def getTaxableAmount(data: PensionsUserData, index: Int): Option[BigDecimal] = {
-    val amountBeforeTaxOpt = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentAmount
-    val nonUkTaxPaidOpt    = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).pensionPaymentTaxPaid
-    for {
-      amountBeforeTax <- amountBeforeTaxOpt
-      nonUkTaxPaid    <- nonUkTaxPaidOpt
-      isFtcr          <- data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index).foreignTaxCreditReliefQuestion
-      taxableAmount =
-        if (isFtcr) {
-          amountBeforeTax
-        } else {
-          amountBeforeTax - nonUkTaxPaid
-        }
-    } yield taxableAmount
+    val scheme             = data.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes(index)
+    val amountBeforeTaxOpt = scheme.pensionPaymentAmount
+    val nonUkTaxPaidOpt    = scheme.pensionPaymentTaxPaid
+    val isFtcrOpt          = scheme.foreignTaxCreditReliefQuestion
+
+    PensionScheme.calcTaxableAmount(amountBeforeTaxOpt, nonUkTaxPaidOpt, isFtcrOpt)
   }
 
-  private def updatePensionScheme(data: PensionsUserData, taxableAmount: Option[BigDecimal], taxYear: Int, index: Int): PensionsCYAModel = {
+  private def updatePensionScheme(data: PensionsUserData, taxableAmount: Option[BigDecimal], index: Int): PensionsCYAModel = {
     val viewModel = data.pensions.incomeFromOverseasPensions
     data.pensions.copy(
       incomeFromOverseasPensions = viewModel.copy(

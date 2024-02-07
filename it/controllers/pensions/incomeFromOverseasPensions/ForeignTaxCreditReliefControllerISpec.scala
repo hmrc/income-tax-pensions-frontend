@@ -273,42 +273,30 @@ class ForeignTaxCreditReliefControllerISpec
       "the user has relevant session data and" when {
         val sessionData = getSessionData
 
-        "selected 'Yes', redirecting to the Taxable Amount page" in {
+        "selected 'No', redirecting to the Taxable Amount page" in {
           val ifopViewModel: IncomeFromOverseasPensionsViewModel = anIncomeFromOverseasPensionsViewModel.copy(
             overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2.copy(foreignTaxCreditReliefQuestion = None, taxableAmount = None)))
           implicit val userConfig: UserConfig =
             userConfigWhenIrrelevant(Some(sessionData.copy(pensions = sessionData.pensions.copy(incomeFromOverseasPensions = ifopViewModel))))
-          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(true)), 1)
+          implicit val response: WSResponse = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(false)), 1)
 
           assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionstaxable + "?index=1")
           getViewModel mustBe Some(
-            ifopViewModel.copy(overseasIncomePensionSchemes = Seq(aPensionScheme1, aPensionScheme2.copy(taxableAmount = None))))
+            ifopViewModel.copy(overseasIncomePensionSchemes =
+              Seq(aPensionScheme1, aPensionScheme2.copy(foreignTaxCreditReliefQuestion = Some(false), taxableAmount = None))))
         }
 
-        "selected 'Yes', redirecting to the scheme summary page when scheme is now complete" in {
+        "selected 'Yes', redirecting to the Taxable Amount page" in {
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(true)))
 
           val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
             anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
-              .copy(foreignTaxCreditReliefQuestion = Some(true))))
+              .copy(foreignTaxCreditReliefQuestion = Some(true), taxableAmount = None)))
 
-          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsScheme + "?index=0")
+          assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionstaxable + "?index=0")
           getViewModel mustBe Some(incomeViewModel)
         }
-      }
-
-      "the user has relevant session data and selected 'No'" in {
-        val sessionData                     = getSessionData
-        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse   = submitFormWithIndex(SubmittedFormDataForYesNoPage(Some(false)))
-
-        val incomeViewModel = anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq(
-          anIncomeFromOverseasPensionsViewModel.overseasIncomePensionSchemes.head
-            .copy(foreignTaxCreditReliefQuestion = Some(false))))
-
-        assertRedirectionAsExpected(PageRelativeURLs.incomeFromOverseasPensionsScheme + "?index=0")
-        getViewModel mustBe Some(incomeViewModel)
       }
     }
 

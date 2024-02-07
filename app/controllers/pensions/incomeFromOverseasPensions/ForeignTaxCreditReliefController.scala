@@ -95,7 +95,11 @@ class ForeignTaxCreditReliefController @Inject() (authAction: AuthorisedAction,
       case yesWasSelected =>
         val ifopData: IncomeFromOverseasPensionsViewModel = pensionsUserData.pensions.incomeFromOverseasPensions
         val updatedSchemes: Seq[PensionScheme] = ifopData.overseasIncomePensionSchemes
-          .updated(index, ifopData.overseasIncomePensionSchemes(index).copy(foreignTaxCreditReliefQuestion = Some(yesWasSelected)))
+          .updated(
+            index,
+            ifopData
+              .overseasIncomePensionSchemes(index)
+              .updateFTCR(yesWasSelected))
         val updatedCyaModel: PensionsCYAModel =
           pensionsUserData.pensions.copy(incomeFromOverseasPensions = ifopData.copy(overseasIncomePensionSchemes = updatedSchemes))
 
