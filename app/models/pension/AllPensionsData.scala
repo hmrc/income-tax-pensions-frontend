@@ -37,6 +37,8 @@ case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
 object AllPensionsData {
   implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
 
+  val Zero = BigDecimal(0)
+
   def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = // scalastyle:off method.length
     PensionsCYAModel(
       paymentsIntoPension = generatePaymentsIntoPensionsCyaFromPrior(prior),
@@ -49,8 +51,8 @@ object AllPensionsData {
       shortServiceRefunds = generateShortServiceRefundCyaFromPrior(prior)
     )
 
-  private def generatePaymentsIntoPensionsCyaFromPrior(prior: AllPensionsData): PaymentsIntoPensionsViewModel = {
-    val rasPensionPaymentQuestion = prior.pensionReliefs.map(_.pensionReliefs.regularPensionContributions.isDefined)
+  private[pension] def generatePaymentsIntoPensionsCyaFromPrior(prior: AllPensionsData): PaymentsIntoPensionsViewModel = {
+    val rasPensionPaymentQuestion = prior.pensionReliefs.flatMap(_.pensionReliefs.regularPensionContributions.map(_ != Zero))
     val totalRASPaymentsAndTaxRelief =
       if (rasPensionPaymentQuestion.contains(true))
         prior.pensionReliefs.flatMap(_.pensionReliefs.regularPensionContributions)
@@ -59,7 +61,7 @@ object AllPensionsData {
 
     val oneOffRasPaymentPlusTaxReliefQuestion =
       if (rasPensionPaymentQuestion.contains(true))
-        prior.pensionReliefs.map(_.pensionReliefs.oneOffPensionContributionsPaid.isDefined)
+        prior.pensionReliefs.flatMap(_.pensionReliefs.oneOffPensionContributionsPaid.map(_ != Zero))
       else
         None
 

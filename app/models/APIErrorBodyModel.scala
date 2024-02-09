@@ -17,7 +17,6 @@
 package models
 
 import models.mongo.ServiceError
-import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.{JsValue, Json, OFormat}
 
 sealed trait APIErrorBody

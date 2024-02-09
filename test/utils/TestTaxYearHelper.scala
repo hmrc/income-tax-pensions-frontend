@@ -16,6 +16,8 @@
 
 package utils
 
+import common.TaxYear
+
 import java.time.LocalDate
 
 trait TestTaxYearHelper {
@@ -24,6 +26,7 @@ trait TestTaxYearHelper {
   private val taxYearCutoffDate: LocalDate = LocalDate.parse(s"${dateNow.getYear}-04-05")
 
   val taxYear: Int = if (dateNow.isAfter(taxYearCutoffDate)) LocalDate.now().getYear + 1 else LocalDate.now().getYear
+  val currentTaxYear = TaxYear(taxYear)
 
   val taxYearEOY: Int = taxYear - 1
 

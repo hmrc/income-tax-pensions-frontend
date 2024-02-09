@@ -17,13 +17,13 @@
 package services
 
 import cats.data.EitherT
+import common.TaxYear
+import models.User
 import models.error.ApiError
 import models.error.ApiError.CreateOrUpdateError
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
-import models.{APIErrorBodyModel, APIErrorModel, User}
 import org.joda.time.DateTimeZone
-import play.api.http.Status.BAD_REQUEST
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Clock
@@ -34,22 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDataRepository,
                                        pensionReliefsConnectorHelper: PensionReliefsConnectorHelper) {
 
-  private def removeSubmittedData(taxYear: Int, userData: Option[PensionsUserData], user: User)(implicit clock: Clock): PensionsUserData =
-    userData match {
-      case Some(value) => value.copy(pensions = value.pensions.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel()))
-      case None =>
-        PensionsUserData(
-          user.sessionId,
-          user.mtditid,
-          user.nino,
-          taxYear,
-          isPriorSubmission = false,
-          PensionsCYAModel.emptyModels,
-          clock.now(DateTimeZone.UTC)
-        )
-    }
-
-  def persistPaymentIntoPensionViewModel(user: User, taxYear: Int, paymentsIntoPensions: PaymentsIntoPensionsViewModel)(implicit
+  def persistPaymentIntoPensionViewModel(user: User, taxYear: TaxYear, paymentsIntoPensions: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
       clock: Clock): EitherT[Future, ApiError, Unit] = {
@@ -57,10 +42,10 @@ class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDa
     val updatedReliefsData = CreateOrUpdatePensionReliefsModel(pensionReliefs = reliefs)
 
     (for {
-      allSessionData <- EitherT(pensionUserDataRepository.find(taxYear, user))
+      allSessionData <- EitherT(pensionUserDataRepository.find(taxYear.endYear, user))
       _ <- EitherT(
         pensionReliefsConnectorHelper
-          .sendDownstream(user.nino, taxYear, subRequestModel = None, cya = Some(paymentsIntoPensions), requestModel = updatedReliefsData)(
+          .sendDownstream(user.nino, taxYear.endYear, subRequestModel = None, cya = Some(paymentsIntoPensions), requestModel = updatedReliefsData)(
             hc.withExtraHeaders("mtditid" -> user.mtditid),
             ec))
       updatedCYA = removeSubmittedData(taxYear, allSessionData, user)
@@ -69,4 +54,10 @@ class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDa
       CreateOrUpdateError(err.toString)
     }
   }
+
+  private def removeSubmittedData(taxYear: TaxYear, userData: Option[PensionsUserData], user: User)(implicit clock: Clock): PensionsUserData =
+    userData
+      .map(data => data.copy(pensions = data.pensions.removePaymentsIntoPension))
+      .getOrElse(PensionsUserData.empty(user, taxYear))
+
 }

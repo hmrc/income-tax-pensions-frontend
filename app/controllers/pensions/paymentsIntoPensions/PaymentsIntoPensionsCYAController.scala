@@ -18,6 +18,7 @@ package controllers.pensions.paymentsIntoPensions
 
 import cats.data.EitherT
 import cats.implicits._
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
@@ -32,6 +33,7 @@ import services.{ExcludeJourneyService, PensionReliefsService, PensionSessionSer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
+import utils.EqualsHelper.isDifferent
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -69,13 +71,13 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
     val priorData   = priorAndSessionRequest.pensions.map(_.getPaymentsIntoPensionsCyaFromPrior)
 
     if (isDifferent(sessionData, priorData)) {
-      performSubmission(taxYear, sessionData)(hc, priorAndSessionRequest)
+      performSubmission(TaxYear(taxYear), sessionData)(hc, priorAndSessionRequest)
     } else {
       Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
     }
   }
 
-  private def excludeJourney(taxYear: Int, paymentsIntoPensionFromSession: PaymentsIntoPensionsViewModel)(implicit
+  private def excludeJourney(taxYear: TaxYear, paymentsIntoPensionFromSession: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
       request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Unit] = {
     val user = request.user
@@ -84,7 +86,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
           x) && !paymentsIntoPensionFromSession.pensionTaxReliefNotClaimedQuestion
           .exists(x => x)) {
         // TODO: check conditions for excluding Pensions from submission without gateway
-        excludeJourneyService.excludeJourney("pensions", taxYear, user.nino)(user, hc).void
+        excludeJourneyService.excludeJourney("pensions", taxYear.endYear, user.nino)(user, hc).void
       } else {
         Future.successful(())
       }
@@ -94,7 +96,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
       .leftMap(_ => errorHandler.internalServerError())
   }
 
-  private def performSubmission(taxYear: Int, sessionData: PaymentsIntoPensionsViewModel)(implicit
+  private def performSubmission(taxYear: TaxYear, sessionData: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
       request: UserPriorAndSessionDataRequest[AnyContent]): Future[Result] =
     (for {
@@ -102,21 +104,14 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
       result <- persist(taxYear, sessionData)
     } yield result).merge
 
-  private def persist(taxYear: Int, sessionData: PaymentsIntoPensionsViewModel)(implicit
+  private def persist(taxYear: TaxYear, sessionData: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
       request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] = {
     val res = pensionReliefsService.persistPaymentIntoPensionViewModel(request.user, taxYear, sessionData)
 
-    res.map(_ => Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear))).leftMap { err =>
+    res.map(_ => Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear.endYear))).leftMap { err =>
       logger.info(s"[PaymentIntoPensionsCYAController][submit] Failed to create or update session: ${err}")
       errorHandler.handleError(err.status)
     }
   }
-
-  private def isDifferent(paymentsIntoPensionFromSession: PaymentsIntoPensionsViewModel, priorData: Option[PaymentsIntoPensionsViewModel]): Boolean =
-    priorData match {
-      case None        => true
-      case Some(prior) => !paymentsIntoPensionFromSession.equals(prior)
-    }
-
 }
