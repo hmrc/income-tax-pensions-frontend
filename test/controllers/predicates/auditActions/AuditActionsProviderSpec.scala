@@ -23,7 +23,7 @@ import common.SessionValues.{TAX_YEAR, VALID_TAX_YEARS}
 import controllers.errors
 import models.audit.UkPensionIncomeAudit.AuditUkPensionIncome
 import models.audit._
-import models.pension.AllPensionsData.{populateSessionFromPrior, generateUkPensionSessionFromPrior}
+import models.pension.AllPensionsData.{generateSessionModelFromPrior, generateUkPensionSessionFromPrior}
 import models.{APIErrorBodyModel, APIErrorModel}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.MessagesApi
@@ -133,7 +133,7 @@ class AuditActionsProviderSpec
                 taxYearEOY,
                 aUser,
                 aPensionsUserData.pensions.paymentsIntoPension,
-                priorData.pensions.map(populateSessionFromPrior).map(_.paymentsIntoPension))
+                priorData.pensions.map(generateSessionModelFromPrior).map(_.paymentsIntoPension))
               if (audModel.priorPaymentsIntoPension.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "paymentsIntoPensionsViewAuditing" =>
               PaymentsIntoPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.paymentsIntoPension, None).toAuditModelView
@@ -145,7 +145,7 @@ class AuditActionsProviderSpec
                 taxYearEOY,
                 aUser,
                 aPensionsUserData.pensions.unauthorisedPayments,
-                priorData.pensions.map(populateSessionFromPrior).map(_.unauthorisedPayments))
+                priorData.pensions.map(generateSessionModelFromPrior).map(_.unauthorisedPayments))
               if (audModel.priorUnauthorisedPayments.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "unauthorisedPaymentsViewAuditing" =>
               UnauthorisedPaymentsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.unauthorisedPayments, None).toAuditModelView
@@ -157,7 +157,7 @@ class AuditActionsProviderSpec
                 taxYearEOY,
                 aUser,
                 aPensionsUserData.pensions.incomeFromOverseasPensions,
-                priorData.pensions.map(populateSessionFromPrior).map(_.incomeFromOverseasPensions))
+                priorData.pensions.map(generateSessionModelFromPrior).map(_.incomeFromOverseasPensions))
               if (audModel.priorIncomeFromOverseasPensions.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "incomeFromOverseasPensionsViewAuditing" =>
               IncomeFromOverseasPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.incomeFromOverseasPensions, None).toAuditModelView
@@ -169,7 +169,7 @@ class AuditActionsProviderSpec
                 taxYearEOY,
                 aUser,
                 aPensionsUserData.pensions.paymentsIntoOverseasPensions,
-                priorData.pensions.map(populateSessionFromPrior).map(_.paymentsIntoOverseasPensions)
+                priorData.pensions.map(generateSessionModelFromPrior).map(_.paymentsIntoOverseasPensions)
               )
               if (audModel.priorPaymentsIntoOverseasPensions.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "paymentsIntoOverseasPensionsViewAuditing" =>
@@ -182,7 +182,7 @@ class AuditActionsProviderSpec
                 taxYearEOY,
                 aUser,
                 aPensionsUserData.pensions.shortServiceRefunds,
-                priorData.pensions.map(populateSessionFromPrior).map(_.shortServiceRefunds))
+                priorData.pensions.map(generateSessionModelFromPrior).map(_.shortServiceRefunds))
               if (audModel.priorShortServiceRefunds.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "shortServiceRefundsViewAuditing" =>
               ShortServiceRefundsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.shortServiceRefunds, None).toAuditModelView
@@ -194,7 +194,7 @@ class AuditActionsProviderSpec
                 taxYearEOY,
                 aUser,
                 aPensionsUserData.pensions.incomeFromPensions,
-                priorData.pensions.map(populateSessionFromPrior).map(_.incomeFromPensions))
+                priorData.pensions.map(generateSessionModelFromPrior).map(_.incomeFromPensions))
               if (audModel.priorIncomeFromStatePensions.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "incomeFromStatePensionsViewAuditing" =>
               IncomeFromStatePensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.incomeFromPensions, None).toAuditModelView
@@ -232,7 +232,7 @@ class AuditActionsProviderSpec
                 taxYearEOY,
                 aUser,
                 aPensionsUserData.pensions.pensionsAnnualAllowances,
-                priorData.pensions.map(populateSessionFromPrior).map(_.pensionsAnnualAllowances))
+                priorData.pensions.map(generateSessionModelFromPrior).map(_.pensionsAnnualAllowances))
               if (audModel.priorAnnualAllowances.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "annualAllowancesViewAuditing" =>
               AnnualAllowancesAudit(taxYearEOY, aUser, aPensionsUserData.pensions.pensionsAnnualAllowances, None).toAuditModelView
@@ -244,7 +244,7 @@ class AuditActionsProviderSpec
                 taxYearEOY,
                 aUser,
                 aPensionsUserData.pensions.transfersIntoOverseasPensions,
-                priorData.pensions.map(populateSessionFromPrior).map(_.transfersIntoOverseasPensions)
+                priorData.pensions.map(generateSessionModelFromPrior).map(_.transfersIntoOverseasPensions)
               )
               if (audModel.priorTransfersIntoOverseasPensions.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "transfersIntoOverseasPensionsViewAuditing" =>

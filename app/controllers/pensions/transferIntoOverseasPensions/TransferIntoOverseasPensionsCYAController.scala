@@ -21,7 +21,7 @@ import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.pension.AllPensionsData.populateSessionFromPrior
+import models.pension.AllPensionsData.generateSessionModelFromPrior
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
@@ -77,7 +77,7 @@ class TransferIntoOverseasPensionsCYAController @Inject() (
   private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData match {
       case None        => true
-      case Some(prior) => !cyaData.equals(populateSessionFromPrior(prior))
+      case Some(prior) => !cyaData.equals(generateSessionModelFromPrior(prior))
     }
 
 }

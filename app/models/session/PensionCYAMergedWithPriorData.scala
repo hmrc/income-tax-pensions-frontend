@@ -28,7 +28,7 @@ object PensionCYAMergedWithPriorData {
   def mergeSessionAndPriorData(existingSessionData: Option[PensionsUserData], priorData: Option[AllPensionsData]): PensionCYAMergedWithPriorData = {
     val maybeExistingSessionPension = existingSessionData.map(_.pensions)
 
-    val userSessionFromOnlyPriorData = priorData.map(AllPensionsData.populateSessionFromPrior).getOrElse(PensionsCYAModel.emptyModels)
+    val userSessionFromOnlyPriorData = priorData.map(AllPensionsData.generateSessionModelFromPrior).getOrElse(PensionsCYAModel.emptyModels)
     val mergedSession                = userSessionFromOnlyPriorData.merge(maybeExistingSessionPension)
     val existingSessionDidNotChanged = maybeExistingSessionPension.exists(_.equals(mergedSession))
 

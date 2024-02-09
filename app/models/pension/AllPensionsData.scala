@@ -34,7 +34,7 @@ case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
 object AllPensionsData {
   implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
 
-  def populateSessionFromPrior(prior: AllPensionsData): PensionsCYAModel =
+  def generateSessionModelFromPrior(prior: AllPensionsData): PensionsCYAModel =
     PensionsCYAModel(
       paymentsIntoPension = generatePaymentsIntoPensionsCyaFromPrior(prior),
       pensionsAnnualAllowances = generateAnnualAllowanceSessionFromPrior(prior),

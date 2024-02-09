@@ -32,7 +32,7 @@ class PensionCYAMergedWithPriorDataSpec extends AnyWordSpecLike with TableDriven
   "mergeSessionAndPriorData" should {
     val emptyModel            = PensionsCYAModel.emptyModels
     val sessionWithEmptyModel = aPensionsUserData.copy(pensions = emptyModel)
-    val expectedFullSession   = AllPensionsData.populateSessionFromPrior(fullPensionsModel)
+    val expectedFullSession   = AllPensionsData.generateSessionModelFromPrior(fullPensionsModel)
     val sessionFullModel      = sessionWithEmptyModel.copy(pensions = expectedFullSession)
     val sessionNoPaymentIntoPension =
       sessionWithEmptyModel.copy(pensions = expectedFullSession.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel()))

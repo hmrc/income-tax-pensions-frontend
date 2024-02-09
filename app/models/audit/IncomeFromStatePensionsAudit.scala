@@ -66,7 +66,7 @@ object IncomeFromStatePensionsAudit {
       nino = sessionData.nino,
       mtdItId = sessionData.mtdItId,
       incomeFromStatePensions = sessionData.pensions.incomeFromPensions,
-      priorIncomeFromStatePensions = priorData.map(pd => AllPensionsData.populateSessionFromPrior(pd).incomeFromPensions)
+      priorIncomeFromStatePensions = priorData.map(pd => AllPensionsData.generateSessionModelFromPrior(pd).incomeFromPensions)
     )
 
   def standardAudit(user: User, sessionData: PensionsUserData): IncomeFromStatePensionsAudit =

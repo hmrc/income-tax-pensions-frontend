@@ -69,7 +69,7 @@ object PaymentsIntoPensionsAudit {
       nino = sessionData.nino,
       mtdItId = sessionData.mtdItId,
       paymentsIntoPension = sessionData.pensions.paymentsIntoPension,
-      priorPaymentsIntoPension = priorData.map(pd => AllPensionsData.populateSessionFromPrior(pd).paymentsIntoPension)
+      priorPaymentsIntoPension = priorData.map(pd => AllPensionsData.generateSessionModelFromPrior(pd).paymentsIntoPension)
     )
 
   def standardAudit(user: User, sessionData: PensionsUserData): PaymentsIntoPensionsAudit =
