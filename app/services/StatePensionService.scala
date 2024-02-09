@@ -16,107 +16,98 @@
 
 package services
 
+import cats.data.EitherT
 import connectors.StateBenefitsConnector
 import models.User
-import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError, StateBenefitsUserData}
-import models.pension.statebenefits.{ClaimCYAModel, IncomeFromPensionsViewModel, StateBenefitViewModel}
-import org.joda.time.DateTimeZone
+import models.mongo._
+import models.pension.statebenefits.ClaimCYAModel
 import repositories.PensionsUserDataRepository
+import services.BenefitType.{StatePension, StatePensionLumpSum}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{Clock, FutureEitherOps}
+import utils.EitherTUtils.EitherTOps
 
 import java.time.{Instant, LocalDate}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class StatePensionService @Inject() (pensionUserDataRepository: PensionsUserDataRepository, stateBenefitsConnector: StateBenefitsConnector) {
+sealed trait BenefitType {
+  val value: String
+}
 
-  def persistStatePensionIncomeViewModel(user: User, taxYear: Int)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext,
-      clock: Clock): Future[Either[ServiceError, Unit]] = {
+object BenefitType {
+  case object StatePension extends BenefitType {
+    override val value: String = "statePension"
+  }
+  case object StatePensionLumpSum extends BenefitType {
+    override val value: String = "statePensionLumpSum"
+  }
+}
 
-    // scalastyle:off method.length
+class StatePensionService @Inject() (repository: PensionsUserDataRepository, connector: StateBenefitsConnector) {
+
+  def persistJourneyAnswers(user: User, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
 
-    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData =
-      userData match {
-        case Some(value) => value.copy(pensions = value.pensions.copy(incomeFromPensions = IncomeFromPensionsViewModel()))
-        case None =>
-          PensionsUserData(
-            user.sessionId,
-            user.mtditid,
-            user.nino,
-            taxYear,
-            isPriorSubmission = false,
-            PensionsCYAModel.emptyModels,
-            clock.now(DateTimeZone.UTC)
-          )
-      }
+    def clearJourneyFromSession(session: PensionsUserData): Future[Either[DatabaseError, Unit]] = {
+      val clearedJourneyModel =
+        session.pensions.incomeFromPensions.copy(
+          statePension = None,
+          statePensionLumpSum = None
+        )
+      val updatedSessionModel =
+        session.copy(pensions = session.pensions.copy(incomeFromPensions = clearedJourneyModel))
 
-    def buildStateBenefitsUserData(sessionData: PensionsUserData,
-                                   stateBenefit: Option[StateBenefitViewModel],
-                                   benefitType: String): StateBenefitsUserData = {
-
-      val claimModel = ClaimCYAModel(
-        benefitId = stateBenefit.flatMap(_.benefitId),
-        startDate = stateBenefit.flatMap(_.startDate).getOrElse(LocalDate.now()),
-        endDateQuestion = stateBenefit.flatMap(_.endDateQuestion),
-        endDate = stateBenefit.flatMap(_.endDate),
-        dateIgnored = stateBenefit.flatMap(_.dateIgnored),
-        submittedOn = stateBenefit.flatMap(_.submittedOn),
-        amount = stateBenefit.flatMap(_.amount),
-        taxPaidQuestion = stateBenefit.flatMap(_.taxPaidQuestion),
-        taxPaid = stateBenefit.flatMap(_.taxPaid)
-      )
-
-      StateBenefitsUserData(
-        benefitType = benefitType,
-        sessionDataId = None,
-        sessionId = sessionData.sessionId,
-        mtdItId = sessionData.mtdItId,
-        nino = sessionData.nino,
-        taxYear = taxYear,
-        benefitDataType = if (claimModel.benefitId.isEmpty) "customerAdded" else "customerOverride",
-        claim = Some(claimModel),
-        lastUpdated = Instant.parse(sessionData.lastUpdated.toLocalDateTime.toString + "Z")
-      )
+      repository.createOrUpdate(updatedSessionModel)
     }
 
     (for {
-      optSessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
+      maybeSession <- EitherT(repository.find(taxYear, user)).leftAs[ServiceError]
+      session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
+      statePensionSubmission        = buildDownstreamRequestModel(session, StatePension, taxYear)
+      statePensionLumpSumSubmission = buildDownstreamRequestModel(session, StatePensionLumpSum, taxYear)
+      _ <- processClaim(statePensionSubmission, hcWithExtras, user)
+      _ <- processClaim(statePensionLumpSumSubmission, hcWithExtras, user)
+      _ <- EitherT(clearJourneyFromSession(session)).leftAs[ServiceError]
+    } yield ()).value
 
-      sessionData = optSessionData.getOrElse(throw new RuntimeException("Session data is empty"))
+  }
 
-      statePensionSubmission = buildStateBenefitsUserData(
-        sessionData,
-        sessionData.pensions.incomeFromPensions.statePension,
-        "statePension"
-      )
-      statePensionLumpSumSubmission = buildStateBenefitsUserData(
-        sessionData,
-        sessionData.pensions.incomeFromPensions.statePensionLumpSum,
-        "statePensionLumpSum"
-      )
+  private def processClaim(answers: StateBenefitsUserData, hc: HeaderCarrier, user: User)(implicit
+      ec: ExecutionContext): EitherT[Future, ServiceError, Unit] =
+    if (answers.claim.exists(_.amount.nonEmpty)) {
+      EitherT(connector.saveClaimData(user.nino, answers)(hc, ec)).leftAs[ServiceError]
+    } else {
+      EitherT.pure[Future, ServiceError](())
+    }
 
-      _ <- FutureEitherOps[ServiceError, Unit] {
-        if (statePensionSubmission.claim.get.amount.nonEmpty) {
-          stateBenefitsConnector.saveClaimData(user.nino, statePensionSubmission)(hcWithExtras, ec)
-        } else {
-          Future(Right(()))
-        }
-      }
-      _ <- FutureEitherOps[ServiceError, Unit] {
-        if (statePensionLumpSumSubmission.claim.get.amount.nonEmpty) {
-          stateBenefitsConnector.saveClaimData(user.nino, statePensionLumpSumSubmission)(hcWithExtras, ec)
-        } else {
-          Future(Right(()))
-        }
+  private def buildDownstreamRequestModel(sessionData: PensionsUserData, benefitType: BenefitType, taxYear: Int): StateBenefitsUserData = {
+    val stateBenefit = benefitType match {
+        case StatePension        => sessionData.pensions.incomeFromPensions.statePension
+        case StatePensionLumpSum => sessionData.pensions.incomeFromPensions.statePensionLumpSum
       }
 
-      updatedCYA = getPensionsUserData(Some(sessionData), user)
-      result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
-    } yield result).value
+    val claimModel = ClaimCYAModel(
+      benefitId = stateBenefit.flatMap(_.benefitId),
+      startDate = stateBenefit.flatMap(_.startDate).getOrElse(LocalDate.now()),
+      endDateQuestion = stateBenefit.flatMap(_.endDateQuestion),
+      endDate = stateBenefit.flatMap(_.endDate),
+      dateIgnored = stateBenefit.flatMap(_.dateIgnored),
+      submittedOn = stateBenefit.flatMap(_.submittedOn),
+      amount = stateBenefit.flatMap(_.amount),
+      taxPaidQuestion = stateBenefit.flatMap(_.taxPaidQuestion),
+      taxPaid = stateBenefit.flatMap(_.taxPaid)
+    )
 
+    StateBenefitsUserData(
+      benefitType = benefitType.value,
+      sessionDataId = None,
+      sessionId = sessionData.sessionId,
+      mtdItId = sessionData.mtdItId,
+      nino = sessionData.nino,
+      taxYear = taxYear,
+      benefitDataType = if (claimModel.benefitId.isEmpty) "customerAdded" else "customerOverride",
+      claim = Some(claimModel),
+      lastUpdated = Instant.parse(sessionData.lastUpdated.toLocalDateTime.toString + "Z")
+    )
   }
 }

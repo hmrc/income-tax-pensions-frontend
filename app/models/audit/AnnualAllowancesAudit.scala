@@ -66,7 +66,7 @@ object AnnualAllowancesAudit {
       nino = sessionData.nino,
       mtdItId = sessionData.mtdItId,
       annualAllowances = sessionData.pensions.pensionsAnnualAllowances,
-      priorAnnualAllowances = priorData.map(pd => AllPensionsData.generateCyaFromPrior(pd).pensionsAnnualAllowances)
+      priorAnnualAllowances = priorData.map(pd => AllPensionsData.populateSessionFromPrior(pd).pensionsAnnualAllowances)
     )
 
   def standardAudit(user: User, sessionData: PensionsUserData): AnnualAllowancesAudit =

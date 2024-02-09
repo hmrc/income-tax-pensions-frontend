@@ -22,7 +22,7 @@ import controllers.predicates.auditActions.AuditActionsProvider
 import forms.FormUtils
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.pension.AllPensionsData.generateCyaFromPrior
+import models.pension.AllPensionsData.populateSessionFromPrior
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.EmploymentPensionService
@@ -30,7 +30,7 @@ import services.redirects.IncomeFromOtherUkPensionsPages.CheckUkPensionIncomeCYA
 import services.redirects.IncomeFromOtherUkPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.UkPensionIncomeCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -40,8 +40,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class UkPensionIncomeCYAController @Inject() (mcc: MessagesControllerComponents,
                                               auditProvider: AuditActionsProvider,
                                               view: UkPensionIncomeCYAView,
-                                              employmentPensionService: EmploymentPensionService,
-                                              errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                              service: EmploymentPensionService,
+                                              errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper
@@ -58,7 +58,7 @@ class UkPensionIncomeCYAController @Inject() (mcc: MessagesControllerComponents,
     val checkRedirect = journeyCheck(CheckUkPensionIncomeCYAPage, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
-        employmentPensionService.persistUkPensionIncomeViewModel(request.user, taxYear).map {
+        service.persistJourneyAnswers(request.user, taxYear).map {
           case Left(_)  => errorHandler.internalServerError()
           case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
         }
@@ -70,7 +70,7 @@ class UkPensionIncomeCYAController @Inject() (mcc: MessagesControllerComponents,
 
   private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData match {
-      case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
+      case Some(prior) => !cyaData.equals(populateSessionFromPrior(prior))
       case None        => true
     }
 

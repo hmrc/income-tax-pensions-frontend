@@ -66,7 +66,7 @@ object UnauthorisedPaymentsAudit {
       nino = sessionData.nino,
       mtdItId = sessionData.mtdItId,
       unauthorisedPayments = sessionData.pensions.unauthorisedPayments,
-      priorUnauthorisedPayments = priorData.map(pd => AllPensionsData.generateCyaFromPrior(pd).unauthorisedPayments)
+      priorUnauthorisedPayments = priorData.map(pd => AllPensionsData.populateSessionFromPrior(pd).unauthorisedPayments)
     )
 
   def standardAudit(user: User, sessionData: PensionsUserData): UnauthorisedPaymentsAudit =

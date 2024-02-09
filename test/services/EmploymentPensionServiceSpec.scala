@@ -36,14 +36,14 @@ class EmploymentPensionServiceSpec extends UnitTest with MockPensionUserDataRepo
       mockSessionFind()
       mockEmploymentSaves()
       mockUpdateSession()
-      val result = await(employmentPensionService.persistUkPensionIncomeViewModel(aUser, taxYear))
+      val result = await(employmentPensionService.persistJourneyAnswers(aUser, taxYear))
       result shouldBe Right(())
     }
 
     "return Left(DataNotFound) when user can not be found in DB" in new Setup {
       override val findResponse: Either[DatabaseError, Option[PensionsUserData]] = Left(DataNotFound)
       mockSessionFind()
-      val result = await(employmentPensionService.persistUkPensionIncomeViewModel(aUser, taxYear))
+      val result = await(employmentPensionService.persistJourneyAnswers(aUser, taxYear))
       result shouldBe Left(DataNotFound)
     }
 
@@ -51,7 +51,7 @@ class EmploymentPensionServiceSpec extends UnitTest with MockPensionUserDataRepo
       override val saveResponse = Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
       mockSessionFind()
       mockEmploymentSaves()
-      val result = await(employmentPensionService.persistUkPensionIncomeViewModel(aUser, taxYear))
+      val result = await(employmentPensionService.persistJourneyAnswers(aUser, taxYear))
       result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
     }
 
@@ -60,7 +60,7 @@ class EmploymentPensionServiceSpec extends UnitTest with MockPensionUserDataRepo
       mockSessionFind()
       mockEmploymentSaves()
       mockUpdateSession()
-      val result = await(employmentPensionService.persistUkPensionIncomeViewModel(aUser, taxYear))
+      val result = await(employmentPensionService.persistJourneyAnswers(aUser, taxYear))
       result shouldBe Left(DataNotUpdated)
     }
 
@@ -78,11 +78,12 @@ class EmploymentPensionServiceSpec extends UnitTest with MockPensionUserDataRepo
 
       def mockEmploymentSaves(): Unit =
         sessionUserData.pensions.incomeFromPensions.uKPensionIncomes
-          .map(_.toCreateUpdateEmploymentRequest)
+          .map(_.toDownstreamRequest)
           .foreach(cuer => mockSaveEmploymentPensionsData(nino, taxYear, cuer, saveResponse))
 
       lazy val userWithEmptySaveIncomeFromPensionCya = aPensionsUserData
-        .copy(pensions = emptyPensionsData.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = Nil)))
+        .copy(pensions = emptyPensionsData.copy(incomeFromPensions =
+          aPensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = Nil, uKPensionIncomesQuestion = None)))
 
       def mockUpdateSession(): Unit =
         mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionCya, updateSessionResponse)

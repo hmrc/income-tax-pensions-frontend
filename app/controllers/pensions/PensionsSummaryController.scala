@@ -38,8 +38,8 @@ class PensionsSummaryController @Inject() (mcc: MessagesControllerComponents,
     extends FrontendController(mcc)
     with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    def summaryViewResult(taxYear: Int, cyaModel: PensionsCYAModel, priorData: Option[AllPensionsData]) =
-      Ok(pensionsSummaryView(taxYear, Some(cyaModel), priorData))
+    def summaryViewResult(taxYear: Int, sessionData: PensionsCYAModel, priorData: Option[AllPensionsData]) =
+      Ok(pensionsSummaryView(taxYear, Some(sessionData), priorData))
 
     pensionSessionService.mergePriorDataToSession(taxYear, request.user, summaryViewResult)
   }

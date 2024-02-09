@@ -30,12 +30,6 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
                             transfersIntoOverseasPensions: TransfersIntoOverseasPensionsViewModel,
                             shortServiceRefunds: ShortServiceRefundsViewModel) {
 
-  def isEmpty: Boolean = paymentsIntoPension.isEmpty && pensionsAnnualAllowances.isEmpty &&
-    incomeFromPensions.isEmpty && paymentsIntoOverseasPensions.isEmpty &&
-    incomeFromOverseasPensions.isEmpty && transfersIntoOverseasPensions.isEmpty && shortServiceRefunds.isEmpty
-
-  def nonEmpty: Boolean = !isEmpty
-
   /* It merges the current model with the overrides. It favors the overrides over the current model fields if they exists.
    * It means that the user has changed the data but not yet submitted */
   def merge(overrides: Option[PensionsCYAModel]): PensionsCYAModel = {
@@ -51,7 +45,7 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
     copy(
       paymentsIntoPension = if (overridesPaymentsIntoPension.nonEmpty) overridesPaymentsIntoPension else paymentsIntoPension,
       pensionsAnnualAllowances = if (overridesPensionsAnnualAllowances.nonEmpty) overridesPensionsAnnualAllowances else pensionsAnnualAllowances,
-      incomeFromPensions = if (overridesIncomeFromPensions.nonEmpty) overridesIncomeFromPensions else incomeFromPensions,
+      incomeFromPensions = updateIncomeFromPensions(overridesIncomeFromPensions),
       unauthorisedPayments = if (overridesUnauthorisedPayments.nonEmpty) overridesUnauthorisedPayments else unauthorisedPayments,
       paymentsIntoOverseasPensions =
         if (overridesPaymentsIntoOverseasPensions.nonEmpty) overridesPaymentsIntoOverseasPensions else paymentsIntoOverseasPensions,
@@ -61,6 +55,26 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
         if (overridesTransfersIntoOverseasPensions.nonEmpty) overridesTransfersIntoOverseasPensions else transfersIntoOverseasPensions,
       shortServiceRefunds = if (overridesShortServiceRefunds.nonEmpty) overridesShortServiceRefunds else shortServiceRefunds
     )
+  }
+
+  private def updateIncomeFromPensions(session: IncomeFromPensionsViewModel): IncomeFromPensionsViewModel = {
+    val hasStatePensionsSession = session.statePension.nonEmpty || session.statePensionLumpSum.nonEmpty
+    val hasUkPensionSession     = session.uKPensionIncomesQuestion.nonEmpty && session.uKPensionIncomes.nonEmpty
+
+    (hasStatePensionsSession, hasUkPensionSession) match {
+      case (false, false) => incomeFromPensions
+      case (true, true)   => session
+      case (true, false) =>
+        session.copy(
+          uKPensionIncomesQuestion = incomeFromPensions.uKPensionIncomesQuestion,
+          uKPensionIncomes = incomeFromPensions.uKPensionIncomes
+        )
+      case (false, true) =>
+        session.copy(
+          statePension = incomeFromPensions.statePension,
+          statePensionLumpSum = incomeFromPensions.statePensionLumpSum
+        )
+    }
   }
 }
 

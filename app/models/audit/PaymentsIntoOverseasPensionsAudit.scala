@@ -65,7 +65,7 @@ object PaymentsIntoOverseasPensionsAudit {
       nino = sessionData.nino,
       mtdItId = sessionData.mtdItId,
       paymentsIntoOverseasPensions = sessionData.pensions.paymentsIntoOverseasPensions,
-      priorPaymentsIntoOverseasPensions = priorData.map(pd => AllPensionsData.generateCyaFromPrior(pd).paymentsIntoOverseasPensions)
+      priorPaymentsIntoOverseasPensions = priorData.map(pd => AllPensionsData.populateSessionFromPrior(pd).paymentsIntoOverseasPensions)
     )
 
   def standardAudit(user: User, sessionData: PensionsUserData): PaymentsIntoOverseasPensionsAudit =

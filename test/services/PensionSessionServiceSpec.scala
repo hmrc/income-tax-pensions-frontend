@@ -22,7 +22,7 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import config._
 import models.IncomeTaxUserData
 import models.mongo._
-import models.pension.AllPensionsData.generateCyaFromPrior
+import models.pension.AllPensionsData.populateSessionFromPrior
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.MessagesApi
@@ -99,7 +99,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
   "generateCyaFromPrior" should {
     "generate a PensionsCYAModel from prior AllPensionsData" in {
       mockCreateOrUpdate(emptySessionData, Right(()))
-      val response = generateCyaFromPrior(anAllPensionDataEmpty)
+      val response = populateSessionFromPrior(anAllPensionDataEmpty)
       response shouldBe aPensionsCYAGeneratedFromPriorEmpty
     }
   }

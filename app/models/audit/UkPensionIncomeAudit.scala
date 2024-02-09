@@ -76,7 +76,7 @@ object UkPensionIncomeAudit {
         sessionData.pensions.incomeFromPensions.uKPensionIncomesQuestion,
         sessionData.pensions.incomeFromPensions.uKPensionIncomes),
       priorUkPensionIncome = priorData
-        .map(pd => AllPensionsData.generateUkPensionCyaFromPrior(pd))
+        .map(pd => AllPensionsData.generateUkPensionSessionFromPrior(pd))
         .map { case (ukPensionIncomeQ, ukPensionIncomes) => AuditUkPensionIncome(ukPensionIncomeQ, ukPensionIncomes) }
     )
 
