@@ -85,6 +85,16 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
         retirementAnnuityContractPaymentsQuestion.isEmpty && workplacePensionPaymentsQuestion.isEmpty
       case _ => false
     }
+
+  def toReliefs: Reliefs = {
+    Reliefs(
+      regularPensionContributions = totalRASPaymentsAndTaxRelief,
+      oneOffPensionContributionsPaid = totalOneOffRasPaymentPlusTaxRelief,
+      retirementAnnuityPayments = totalRetirementAnnuityContractPayments,
+      paymentToEmployersSchemeNoTaxRelief = totalWorkplacePensionPayments,
+      overseasPensionSchemeContributions = None // TODO LT Is this what we want for this journey?
+    )
+  }
 }
 
 object PaymentsIntoPensionsViewModel {

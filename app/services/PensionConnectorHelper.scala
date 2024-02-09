@@ -39,6 +39,7 @@ trait PensionConnectorHelper[SubRequestModel <: PensionSubRequestModel, RequestM
     def isSubModelEmpty(subModel: Option[SubRequestModel]): Boolean =
       subModel.exists(_.isEmpty)
 
+    // TODO - The below code requires refactoring
     if (cya.exists(_.journeyIsNo) || cya.exists(_.journeyIsUnanswered)) {
       (otherModels, subRequestModel.isEmpty || isSubModelEmpty(subRequestModel)) match {
         case (true, true) =>
