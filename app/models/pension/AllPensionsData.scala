@@ -34,7 +34,7 @@ case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
 object AllPensionsData {
   implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
 
-  def populateSessionFromPrior(prior: AllPensionsData): PensionsCYAModel = // scalastyle:off method.length
+  def populateSessionFromPrior(prior: AllPensionsData): PensionsCYAModel =
     PensionsCYAModel(
       paymentsIntoPension = generatePaymentsIntoPensionsCyaFromPrior(prior),
       pensionsAnnualAllowances = generateAnnualAllowanceSessionFromPrior(prior),
@@ -77,7 +77,7 @@ object AllPensionsData {
     val (statePen, statePenLumpSum)   = populateStatePensionSessionFromPrior(prior)
     val (uKPenIncomesQ, uKPenIncomes) = generateUkPensionSessionFromPrior(prior)
 
-    val x = IncomeFromPensionsViewModel(
+    IncomeFromPensionsViewModel(
       statePension = statePen,
       statePensionLumpSum = statePenLumpSum,
 
@@ -85,17 +85,12 @@ object AllPensionsData {
       uKPensionIncomesQuestion = uKPenIncomesQ,
       uKPensionIncomes = uKPenIncomes
     )
-
-    println("session from prior for uk pensions income : " + x.uKPensionIncomes)
-
-    x
   }
 
   private def populateStatePensionSessionFromPrior(prior: AllPensionsData): (Option[StateBenefitViewModel], Option[StateBenefitViewModel]) = {
     def getStatePensionModel(statePension: Option[StateBenefit]): Option[StateBenefitViewModel] =
       statePension match {
         case Some(benefit) =>
-          println("benefit is: " + benefit)
           Some(
             StateBenefitViewModel(
               benefitId = Some(benefit.benefitId),
@@ -124,7 +119,6 @@ object AllPensionsData {
     def getUkPensionIncome(prior: AllPensionsData): Seq[UkPensionIncomeViewModel] =
       prior.employmentPensions match {
         case Some(ep) =>
-          println("prior employment pensions: " + prior.employmentPensions)
           ep.employmentData.map(data =>
             UkPensionIncomeViewModel(
               employmentId = Some(data.employmentId),
@@ -137,9 +131,7 @@ object AllPensionsData {
               taxPaid = data.taxPaid,
               isCustomerEmploymentData = data.isCustomerEmploymentData
             ))
-        case _ =>
-          println("got here ccc")
-          Seq()
+        case _ => Seq()
       }
     def getUkPensionQuestion(prior: AllPensionsData) =
       if (getUkPensionIncome(prior).nonEmpty) Some(true) else None

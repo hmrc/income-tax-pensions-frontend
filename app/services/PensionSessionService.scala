@@ -73,7 +73,6 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
     }
   }
 
-  // scalastyle:off
   def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)(onFail: A)(onSuccess: A)(implicit
       clock: Clock): Future[A] = {
 
@@ -105,10 +104,6 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
       renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
   )(implicit request: Request[_], hc: HeaderCarrier, clock: Clock): Future[Result] =
     loadDataAndHandle(taxYear, user) { (sessionData, priorData) =>
-      println()
-      println("priorData for state benefits: " + priorData.flatMap(_.stateBenefits))
-      println()
-      println("priorData for employments: " + priorData.flatMap(_.employmentPensions))
       createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear, user, renderView)
     }
 
