@@ -86,7 +86,7 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
       case _ => false
     }
 
-  def toReliefs: Reliefs = {
+  def toReliefs: Reliefs =
     Reliefs(
       regularPensionContributions = totalRASPaymentsAndTaxRelief,
       oneOffPensionContributionsPaid = totalOneOffRasPaymentPlusTaxRelief,
@@ -94,7 +94,6 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
       paymentToEmployersSchemeNoTaxRelief = totalWorkplacePensionPayments,
       overseasPensionSchemeContributions = None // TODO LT Is this what we want for this journey?
     )
-  }
 }
 
 object PaymentsIntoPensionsViewModel {

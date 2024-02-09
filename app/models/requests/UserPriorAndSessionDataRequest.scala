@@ -21,7 +21,7 @@ import models.mongo.PensionsUserData
 import models.pension.AllPensionsData
 import play.api.mvc.{Request, WrappedRequest}
 
-case class UserPriorAndSessionDataRequest[T](pensionsUserData: PensionsUserData, // TODO Rename: sessionData
+case class UserPriorAndSessionDataRequest[T](pensionsUserData: PensionsUserData,       // TODO Rename: sessionData
                                              pensions: Option[AllPensionsData] = None, // TODO Rename: priorData
                                              user: User,
                                              request: Request[T])

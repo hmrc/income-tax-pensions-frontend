@@ -17,6 +17,8 @@
 package services
 
 import cats.data.EitherT
+import models.error.ApiError
+import models.error.ApiError.CreateOrUpdateError
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
 import models.{APIErrorBodyModel, APIErrorModel, User}
@@ -50,7 +52,7 @@ class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDa
   def persistPaymentIntoPensionViewModel(user: User, taxYear: Int, paymentsIntoPensions: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
-      clock: Clock): EitherT[Future, APIErrorModel, Unit] = {
+      clock: Clock): EitherT[Future, ApiError, Unit] = {
     val reliefs            = paymentsIntoPensions.toReliefs
     val updatedReliefsData = CreateOrUpdatePensionReliefsModel(pensionReliefs = reliefs)
 
@@ -64,7 +66,7 @@ class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDa
       updatedCYA = removeSubmittedData(taxYear, allSessionData, user)
       result <- EitherT[Future, ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
     } yield result).leftMap { err =>
-      APIErrorModel(BAD_REQUEST, APIErrorBodyModel(BAD_REQUEST.toString, s"Unable to createOrUpdate pension service because: ${err.message}"))
+      CreateOrUpdateError(err.toString)
     }
   }
 }

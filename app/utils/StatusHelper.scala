@@ -60,9 +60,8 @@ object StatusHelper {
     first either navigate to the CYA page or the 1st page of the journey
    */
 
-  def paymentIntoPensionHasPriorData(prior: Option[AllPensionsData]): Boolean = {
+  def paymentIntoPensionHasPriorData(prior: Option[AllPensionsData]): Boolean =
     prior.map(_.getPaymentsIntoPensionsCyaFromPrior).exists(_.isFinished)
-  }
 
   def statePensionsHasPriorData(prior: Option[AllPensionsData]): Boolean =
     prior.exists(_.stateBenefits.exists(_.stateBenefitsData.exists(_.statePension.nonEmpty)))

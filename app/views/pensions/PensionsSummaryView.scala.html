@@ -36,7 +36,7 @@
 }
 
 @paymentsIntoPensionUrlRedirect() = @{
-  if(paymentIntoPensionHasPriorData(cya.map(_.paymentsIntoPension), prior)) {
+  if(paymentIntoPensionHasPriorData(prior)) {
     pipRoutes.PaymentsIntoPensionsCYAController.show(taxYear).url
   } else {
     pipRoutes.ReliefAtSourcePensionsController.show(taxYear).url
