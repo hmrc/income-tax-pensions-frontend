@@ -73,12 +73,21 @@ object AllPensionsData {
 
     val totalPaymentsIntoRASQuestion = Some(true) // TODO https://jira.tools.tax.service.gov.uk/browse/SASS-7187 - Why it is set to true?
 
-    val pensionTaxReliefNotClaimedQuestion = prior.pensionReliefs.map(a =>
-      a.pensionReliefs.retirementAnnuityPayments.isDefined || a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined)
+    val pensionTaxReliefNotClaimedQuestion = prior.pensionReliefs.flatMap { a =>
+      val hasRetirementAnnuityPayments           = a.pensionReliefs.retirementAnnuityPayments.map(_ != Zero)
+      val hasPaymentToEmployersSchemeNoTaxRelief = a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.map(_ != Zero)
+
+      (hasRetirementAnnuityPayments, hasPaymentToEmployersSchemeNoTaxRelief) match {
+        case (Some(hasRetirement), Some(hasPayment)) => Some(hasRetirement || hasPayment)
+        case (None, Some(hasPayment))                => Some(hasPayment)
+        case (Some(hasRetirement), None)             => Some(hasRetirement)
+        case (None, None)                            => None
+      }
+    }
 
     val retirementAnnuityContractPaymentsQuestion =
       if (pensionTaxReliefNotClaimedQuestion.contains(true))
-        prior.pensionReliefs.map(_.pensionReliefs.retirementAnnuityPayments.isDefined)
+        prior.pensionReliefs.flatMap(_.pensionReliefs.retirementAnnuityPayments.map(_ != Zero))
       else
         None
 
@@ -90,7 +99,7 @@ object AllPensionsData {
 
     val workplacePensionPaymentsQuestion =
       if (pensionTaxReliefNotClaimedQuestion.contains(true))
-        prior.pensionReliefs.map(_.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.isDefined)
+        prior.pensionReliefs.flatMap(_.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.map(_ != Zero))
       else
         None
 
