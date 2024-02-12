@@ -18,7 +18,7 @@ package services
 
 import cats.Foldable
 import cats.data.EitherT
-import cats.implicits.{toFoldableOps, toTraverseOps}
+import cats.implicits._
 import connectors.EmploymentConnector
 import models.mongo._
 import models.pension.statebenefits.UkPensionIncomeViewModel

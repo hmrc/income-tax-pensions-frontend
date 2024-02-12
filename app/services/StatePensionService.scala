@@ -82,9 +82,9 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository, con
 
   private def buildDownstreamRequestModel(sessionData: PensionsUserData, benefitType: BenefitType, taxYear: Int): StateBenefitsUserData = {
     val stateBenefit = benefitType match {
-        case StatePension        => sessionData.pensions.incomeFromPensions.statePension
-        case StatePensionLumpSum => sessionData.pensions.incomeFromPensions.statePensionLumpSum
-      }
+      case StatePension        => sessionData.pensions.incomeFromPensions.statePension
+      case StatePensionLumpSum => sessionData.pensions.incomeFromPensions.statePensionLumpSum
+    }
 
     val claimModel = ClaimCYAModel(
       benefitId = stateBenefit.flatMap(_.benefitId),

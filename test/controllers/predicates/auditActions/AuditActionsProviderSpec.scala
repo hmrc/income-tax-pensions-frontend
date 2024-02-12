@@ -157,7 +157,8 @@ class AuditActionsProviderSpec
                 taxYearEOY,
                 aUser,
                 aPensionsUserData.pensions.incomeFromOverseasPensions,
-                priorData.pensions.map(generateSessionModelFromPrior).map(_.incomeFromOverseasPensions))
+                priorData.pensions.map(generateSessionModelFromPrior).map(_.incomeFromOverseasPensions)
+              )
               if (audModel.priorIncomeFromOverseasPensions.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "incomeFromOverseasPensionsViewAuditing" =>
               IncomeFromOverseasPensionsAudit(taxYearEOY, aUser, aPensionsUserData.pensions.incomeFromOverseasPensions, None).toAuditModelView
@@ -232,7 +233,8 @@ class AuditActionsProviderSpec
                 taxYearEOY,
                 aUser,
                 aPensionsUserData.pensions.pensionsAnnualAllowances,
-                priorData.pensions.map(generateSessionModelFromPrior).map(_.pensionsAnnualAllowances))
+                priorData.pensions.map(generateSessionModelFromPrior).map(_.pensionsAnnualAllowances)
+              )
               if (audModel.priorAnnualAllowances.isEmpty) audModel.toAuditModelCreate else audModel.toAuditModelAmend
             case "annualAllowancesViewAuditing" =>
               AnnualAllowancesAudit(taxYearEOY, aUser, aPensionsUserData.pensions.pensionsAnnualAllowances, None).toAuditModelView
