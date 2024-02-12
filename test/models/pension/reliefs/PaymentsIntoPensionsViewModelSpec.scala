@@ -21,7 +21,7 @@ import support.UnitTest
 
 class PaymentsIntoPensionsViewModelSpec extends UnitTest {
 
-  ".isEmpty" should {
+  "isEmpty" should {
     "return true when no questions have been answered" in {
       aPaymentsIntoPensionsEmptyViewModel.isEmpty
     }
@@ -31,7 +31,7 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest {
     }
   }
 
-  ".isFinished" should {
+  "isFinished" should {
     "return true" when {
       "all questions are populated" in {
         aPaymentsIntoPensionViewModel.isFinished
@@ -55,7 +55,7 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest {
     }
   }
 
-  ".journeyIsNo" should {
+  "journeyIsNo" should {
     "return true when rasPensionPaymentQuestion is 'false' and no others have been answered" in {
       aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(false)).journeyIsNo
     }
@@ -64,5 +64,28 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest {
       aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(true)).journeyIsNo shouldBe false
       aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(false)).journeyIsNo shouldBe false
     }
+  }
+
+  "toReliefs" should {
+    "set BigDecimal values to 0.0 if None" in {
+      assert(aPaymentsIntoPensionsEmptyViewModel.toReliefs === Reliefs(Some(0.0), Some(0.0), Some(0.0), Some(0.0), None))
+    }
+
+    "set BigDecimal values if defined" in {
+      assert(
+        PaymentsIntoPensionsViewModel(
+          Some(true),
+          Some(1.0),
+          Some(true),
+          Some(2.0),
+          Some(true),
+          Some(true),
+          Some(true),
+          Some(3.0),
+          Some(true),
+          Some(4.0)
+        ).toReliefs === Reliefs(Some(1.0), Some(2.0), Some(3.0), Some(4.0), None))
+    }
+
   }
 }

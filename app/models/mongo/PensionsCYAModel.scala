@@ -62,6 +62,9 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
       shortServiceRefunds = if (overridesShortServiceRefunds.nonEmpty) overridesShortServiceRefunds else shortServiceRefunds
     )
   }
+
+  def removePaymentsIntoPension: PensionsCYAModel =
+    copy(paymentsIntoPension = PaymentsIntoPensionsViewModel())
 }
 
 object PensionsCYAModel {
