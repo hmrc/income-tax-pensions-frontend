@@ -24,7 +24,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks {
 
   "generatePaymentsIntoPensionsCyaFromPrior" should {
-    val priorBase = anAllPensionsData
+    val priorBase    = anAllPensionsData
     val emptyReliefs = Reliefs(None, None, None, None, None)
     val emptyModel = PaymentsIntoPensionsViewModel(
       rasPensionPaymentQuestion = None,
