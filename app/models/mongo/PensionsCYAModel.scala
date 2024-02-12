@@ -59,7 +59,7 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
 
   private def updateIncomeFromPensions(session: IncomeFromPensionsViewModel): IncomeFromPensionsViewModel = {
     val hasStatePensionsSession = session.statePension.nonEmpty || session.statePensionLumpSum.nonEmpty
-    val hasUkPensionSession     = session.uKPensionIncomesQuestion.nonEmpty && session.uKPensionIncomes.nonEmpty
+    val hasUkPensionSession     = session.uKPensionIncomesQuestion.nonEmpty || session.uKPensionIncomes.nonEmpty
 
     (hasStatePensionsSession, hasUkPensionSession) match {
       case (false, false) => incomeFromPensions

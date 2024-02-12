@@ -17,7 +17,7 @@
 package controllers.pensions.incomeFromPensions
 
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
-import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
+import builders.IncomeTaxUserDataBuilder.{anIncomeTaxUserData, anIncomeTaxUserDataEmpty}
 import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
 import builders.StateBenefitViewModelBuilder.{anEmptyStateBenefitViewModel, anStateBenefitViewModelOne}
 import models.pension.statebenefits.StateBenefitViewModel
@@ -174,12 +174,12 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
           }
         }
 
-        "render page when other UK pension are not started " which {
+        "render page when Other UK Pensions are not started " which {
 
           val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomesQuestion = None)
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false))
           lazy val result: WSResponse =
-            showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
+            showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserDataEmpty)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 

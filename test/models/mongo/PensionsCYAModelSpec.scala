@@ -60,17 +60,17 @@ class PensionsCYAModelSpec extends AnyWordSpecLike with Matchers {
     }
 
     "ensure state and uk pension overrides are independent of eachother" in {
-      val sessionStatePension = StateBenefitViewModel(startDateQuestion = true.some) // Session present
+      val sessionStatePension = StateBenefitViewModel(startDateQuestion = true.some)
       val priorStatePension   = StateBenefitViewModel(startDateQuestion = false.some)
 
-      val sessionUkPension = UkPensionIncomeViewModel() // Empty session
-      val priorUkPension   = UkPensionIncomeViewModel(pensionId = "id".some)
+      val priorUkPension = UkPensionIncomeViewModel(pensionId = "id".some)
 
+      // I.e. some session state present for the state pensions journey, but no session present for the uk pensions journey.
       val sessionIncomeFromPensions = IncomeFromPensionsViewModel(
         statePension = sessionStatePension.some,
         statePensionLumpSum = None,
         uKPensionIncomesQuestion = None,
-        uKPensionIncomes = Seq(sessionUkPension)
+        uKPensionIncomes = Seq.empty
       )
       val priorIncomeFromPensions = IncomeFromPensionsViewModel(
         statePension = priorStatePension.some,
