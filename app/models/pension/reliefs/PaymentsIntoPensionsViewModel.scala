@@ -88,11 +88,11 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
 
   def toReliefs: Reliefs =
     Reliefs(
-      regularPensionContributions = totalRASPaymentsAndTaxRelief,
-      oneOffPensionContributionsPaid = totalOneOffRasPaymentPlusTaxRelief,
-      retirementAnnuityPayments = totalRetirementAnnuityContractPayments,
-      paymentToEmployersSchemeNoTaxRelief = totalWorkplacePensionPayments,
-      overseasPensionSchemeContributions = None // TODO LT Is this what we want for this journey?
+      regularPensionContributions = Some(totalRASPaymentsAndTaxRelief.getOrElse(0.0)),
+      oneOffPensionContributionsPaid = Some(totalOneOffRasPaymentPlusTaxRelief.getOrElse(0.0)),
+      retirementAnnuityPayments = Some(totalRetirementAnnuityContractPayments.getOrElse(0.0)),
+      paymentToEmployersSchemeNoTaxRelief = Some(totalWorkplacePensionPayments.getOrElse(0.0)),
+      overseasPensionSchemeContributions = None
     )
 }
 
