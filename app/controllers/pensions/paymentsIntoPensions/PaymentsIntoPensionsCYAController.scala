@@ -16,13 +16,13 @@
 
 package controllers.pensions.paymentsIntoPensions
 
+import cats.data.EitherT
+import cats.implicits._
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
-import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.AllPensionsData
-import models.pension.AllPensionsData.generateSessionModelFromPrior
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.requests.UserPriorAndSessionDataRequest
-import models.{APIErrorBodyModel, APIErrorModel, User}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -33,6 +33,7 @@ import services.{ExcludeJourneyService, PensionReliefsService, PensionSessionSer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
+import utils.EqualsHelper.isDifferent
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -66,52 +67,51 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsUpdateAuditing(taxYear) async { implicit priorAndSessionRequest =>
-    val (cya, prior, pIP) =
-      (priorAndSessionRequest.pensionsUserData, priorAndSessionRequest.pensions, priorAndSessionRequest.pensionsUserData.pensions.paymentsIntoPension)
+    val sessionData = priorAndSessionRequest.pensionsUserData.pensions.paymentsIntoPension
+    val priorData   = priorAndSessionRequest.pensions.map(_.getPaymentsIntoPensionsCyaFromPrior)
 
-    if (!pIP.rasPensionPaymentQuestion.exists(x => x) && !pIP.pensionTaxReliefNotClaimedQuestion.exists(x => x)) {
-      // TODO: check conditions for excluding Pensions from submission without gateway
-      excludeJourneyService
-        .excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)
-        .flatMap {
-          case Right(_) => performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest, clock)
-          case Left(_)  => errorHandler.futureInternalServerError()
-        }
-    }
-    if (!comparePriorData(cya.pensions, prior)) {
-      Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
+    if (isDifferent(sessionData, priorData)) {
+      performSubmission(TaxYear(taxYear), sessionData)(hc, priorAndSessionRequest)
     } else {
-      performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest, clock)
+      Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
     }
   }
 
-  private def performSubmission(taxYear: Int, cya: Option[PensionsUserData])(implicit
-      user: User,
+  private def excludeJourney(taxYear: TaxYear, paymentsIntoPensionFromSession: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
-      request: UserPriorAndSessionDataRequest[AnyContent],
-      clock: Clock): Future[Result] =
-    (cya match {
-      case Some(_) =>
-        pensionReliefsService.persistPaymentIntoPensionViewModel(user, taxYear) map {
-          case Left(_) =>
-            logger.info("[PaymentIntoPensionsCYAController][submit] Failed to create or update session")
-            Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel(BAD_REQUEST.toString, "Unable to createOrUpdate pension service")))
-          case Right(_) =>
-            Right(Ok)
-        }
-      case _ =>
-        logger.info("[PaymentIntoPensionsCYAController][submit] CYA data or NINO missing from session.")
-        Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
-    }).flatMap {
-      case Right(_) => // TODO: investigate  the use of the previously used pensionSessionService.clear
-        Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
-      case Left(error) => Future.successful(errorHandler.handleError(error.status))
-    }
+      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Unit] = {
+    val user = request.user
+    val res =
+      if (!paymentsIntoPensionFromSession.rasPensionPaymentQuestion.exists(x =>
+          x) && !paymentsIntoPensionFromSession.pensionTaxReliefNotClaimedQuestion
+          .exists(x => x)) {
+        // TODO: check conditions for excluding Pensions from submission without gateway
+        excludeJourneyService.excludeJourney("pensions", taxYear.endYear, user.nino)(user, hc).void
+      } else {
+        Future.successful(())
+      }
 
-  private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
-    priorData match {
-      case None        => true
-      case Some(prior) => !cyaData.equals(generateSessionModelFromPrior(prior))
-    }
+    EitherT
+      .right[Result](res)
+      .leftMap(_ => errorHandler.internalServerError())
+  }
 
+  private def performSubmission(taxYear: TaxYear, sessionData: PaymentsIntoPensionsViewModel)(implicit
+      hc: HeaderCarrier,
+      request: UserPriorAndSessionDataRequest[AnyContent]): Future[Result] =
+    (for {
+      _      <- excludeJourney(taxYear, sessionData)
+      result <- persist(taxYear, sessionData)
+    } yield result).merge
+
+  private def persist(taxYear: TaxYear, sessionData: PaymentsIntoPensionsViewModel)(implicit
+      hc: HeaderCarrier,
+      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] = {
+    val res = pensionReliefsService.persistPaymentIntoPensionViewModel(request.user, taxYear, sessionData)
+
+    res.map(_ => Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear.endYear))).leftMap { err =>
+      logger.info(s"[PaymentIntoPensionsCYAController][submit] Failed to create or update session: ${err}")
+      errorHandler.handleError(err.status)
+    }
+  }
 }

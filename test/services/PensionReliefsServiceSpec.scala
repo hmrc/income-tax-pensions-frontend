@@ -20,24 +20,26 @@ import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import config.{MockPensionUserDataRepository, MockPensionsConnector}
+import models.error.ApiError.CreateOrUpdateError
 import models.mongo.{DataNotFound, DataNotUpdated}
-import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}
+import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel, Reliefs}
 import models.{APIErrorBodyModel, APIErrorModel}
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status.BAD_REQUEST
-import utils.UnitTest
+import utils.CommonData._
 
-class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataRepository with MockPensionsConnector with ScalaFutures {
+class PensionReliefsServiceSpec extends AnyWordSpecLike with MockPensionUserDataRepository with MockPensionsConnector with ScalaFutures {
 
   val pensionReliefsService = new PensionReliefsService(mockPensionUserDataRepository, mockPensionReliefsConnectorHelper)
 
-  ".persistPaymentIntoPensionViewModel" should {
+  "persistPaymentIntoPensionViewModel" should {
     "return Right when model is saved successfully and payment into pensions cya is cleared from DB" in {
       val sessionCya                              = emptyPensionsData.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
       val sessionUserData                         = aPensionsUserData.copy(pensions = sessionCya)
       val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = emptyPensionsData)
 
-      mockFind(taxYear, aUser, Right(Option(sessionUserData)))
+      mockFind(currTaxYear.endYear, aUser, Right(Option(sessionUserData)))
 
       val viewModel = sessionUserData.pensions.paymentsIntoPension
       val model = CreateOrUpdatePensionReliefsModel(
@@ -49,25 +51,25 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
           overseasPensionSchemeContributions = None
         )
       )
-      mockSavePensionReliefSessionData(nino, taxYear, model, Right(()))
+      mockSavePensionReliefSessionData(nino, currTaxYear.endYear, model, Right(()))
       mockCreateOrUpdate(userWithEmptySavePaymentsIntoPensionCya, Right(()))
 
-      val result = await(pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, taxYear))
-      result shouldBe Right(())
+      val result = pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, currTaxYear, viewModel).value.futureValue
+      assert(result === Right(()))
     }
 
     "return Left(DataNotFound) when user can not be found in DB" in {
-      mockFind(taxYear, aUser, Left(DataNotFound))
-      val result = await(pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, taxYear))
+      mockFind(currTaxYear.endYear, aUser, Left(DataNotFound))
+      val result = pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, currTaxYear, PaymentsIntoPensionsViewModel()).value.futureValue
 
-      result shouldBe Left(DataNotFound)
+      assert(result === Left(CreateOrUpdateError("DataNotFound")))
     }
 
     "return Left(APIErrorModel) when pension connector could not be connected" in {
       val sessionCya      = emptyPensionsData.copy(paymentsIntoPension = aPensionsUserData.pensions.paymentsIntoPension)
       val sessionUserData = aPensionsUserData.copy(pensions = sessionCya)
 
-      mockFind(taxYear, aUser, Right(Option(sessionUserData)))
+      mockFind(currTaxYear.endYear, aUser, Right(Option(sessionUserData)))
 
       val viewModel = sessionUserData.pensions.paymentsIntoPension
       val model = CreateOrUpdatePensionReliefsModel(
@@ -80,10 +82,10 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
         )
       )
 
-      mockSavePensionReliefSessionData(nino, taxYear, model, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+      mockSavePensionReliefSessionData(nino, currTaxYear.endYear, model, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
 
-      val result = await(pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, taxYear))
-      result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
+      val result = pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, currTaxYear, viewModel).value.futureValue
+      assert(result === Left(CreateOrUpdateError("APIErrorModel(400,APIErrorBodyModel(FAILED,failed))")))
     }
 
     "return Left(DataNotUpdated) when data could not be updated" in {
@@ -91,7 +93,7 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
       val sessionUserData                         = aPensionsUserData.copy(pensions = sessionCya)
       val userWithEmptySavePaymentsIntoPensionCya = aPensionsUserData.copy(pensions = emptyPensionsData)
 
-      mockFind(taxYear, aUser, Right(Option(sessionUserData)))
+      mockFind(currTaxYear.endYear, aUser, Right(Option(sessionUserData)))
 
       val viewModel = sessionUserData.pensions.paymentsIntoPension
       val model = CreateOrUpdatePensionReliefsModel(
@@ -103,11 +105,11 @@ class PensionReliefsServiceSpec extends UnitTest with MockPensionUserDataReposit
           overseasPensionSchemeContributions = None
         )
       )
-      mockSavePensionReliefSessionData(nino, taxYear, model, Right(()))
+      mockSavePensionReliefSessionData(nino, currTaxYear.endYear, model, Right(()))
       mockCreateOrUpdate(userWithEmptySavePaymentsIntoPensionCya, Left(DataNotUpdated))
 
-      val result = await(pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, taxYear))
-      result shouldBe Left(DataNotUpdated)
+      val result = pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, currTaxYear, viewModel).value.futureValue
+      assert(result === Left(CreateOrUpdateError("DataNotUpdated")))
     }
   }
 }

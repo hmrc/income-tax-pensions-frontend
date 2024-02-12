@@ -76,6 +76,9 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
         )
     }
   }
+
+  def removePaymentsIntoPension(): PensionsCYAModel =
+    copy(paymentsIntoPension = PaymentsIntoPensionsViewModel())
 }
 
 object PensionsCYAModel {

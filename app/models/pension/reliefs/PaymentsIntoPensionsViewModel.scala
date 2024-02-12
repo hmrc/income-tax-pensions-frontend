@@ -85,6 +85,17 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
         retirementAnnuityContractPaymentsQuestion.isEmpty && workplacePensionPaymentsQuestion.isEmpty
       case _ => false
     }
+
+  /** If we submit values to downstream, we are setting 0.0 for answers which are selected to No and therefore values which are not defined None
+    */
+  def toReliefs: Reliefs =
+    Reliefs(
+      regularPensionContributions = Some(totalRASPaymentsAndTaxRelief.getOrElse(0.0)),
+      oneOffPensionContributionsPaid = Some(totalOneOffRasPaymentPlusTaxRelief.getOrElse(0.0)),
+      retirementAnnuityPayments = Some(totalRetirementAnnuityContractPayments.getOrElse(0.0)),
+      paymentToEmployersSchemeNoTaxRelief = Some(totalWorkplacePensionPayments.getOrElse(0.0)),
+      overseasPensionSchemeContributions = None // not part of this journey
+    )
 }
 
 object PaymentsIntoPensionsViewModel {
