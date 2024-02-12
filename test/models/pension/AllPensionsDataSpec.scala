@@ -17,7 +17,6 @@
 package models.pension
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
-import models.pension.AllPensionsData.generatePaymentsIntoPensionsCyaFromPrior
 import models.pension.reliefs.{PaymentsIntoPensionsViewModel, Reliefs}
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpecLike

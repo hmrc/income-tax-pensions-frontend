@@ -23,21 +23,21 @@ class EqualsHelperSpec extends AnyWordSpecLike {
   final case class Model(a: Option[Boolean], b: Option[BigDecimal])
 
   "isDifferent" should {
-    "return false for None on the right hand side" in {
+    "return true for None on the right hand side" in {
       val left = Model(None, None)
-      assert(isDifferent(left, None) === false)
+      assert(isDifferent(left, None) === true)
     }
 
-    "return false for equal objects" in {
+    "return true for different objects" in {
       val left  = Model(Some(true), Some(BigDecimal("123.0")))
       val right = Some(Model(Some(true), Some(BigDecimal("130.0"))))
-      assert(isDifferent(left, right) === false)
+      assert(isDifferent(left, right) === true)
     }
 
     "return true for equal objects" in {
       val left  = Model(Some(true), Some(BigDecimal("123.0")))
       val right = Some(Model(Some(true), Some(BigDecimal("123.0"))))
-      assert(isDifferent(left, right) === true)
+      assert(isDifferent(left, right) === false)
     }
 
   }
