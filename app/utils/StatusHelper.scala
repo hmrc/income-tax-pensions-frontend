@@ -18,6 +18,7 @@ package utils
 
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 
 object StatusHelper {
 
@@ -60,7 +61,7 @@ object StatusHelper {
    */
 
   def paymentIntoPensionHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.exists(_.pensionReliefs.exists(_.pensionReliefs.regularPensionContributions.isDefined))
+    prior.map(_.getPaymentsIntoPensionsCyaFromPrior).exists(_.isFinished)
 
   def statePensionsHasPriorData(prior: Option[AllPensionsData]): Boolean =
     prior.exists(_.stateBenefits.exists(_.stateBenefitsData.exists(_.statePension.nonEmpty)))

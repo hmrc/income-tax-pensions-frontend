@@ -16,9 +16,12 @@
 
 package models.mongo
 
+import common.TaxYear
+import models.User
 import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
+import utils.Clock
 
 case class PensionsUserData(sessionId: String,
                             mtdItId: String,
@@ -33,6 +36,18 @@ object PensionsUserData extends MongoJodaFormats {
   implicit val mongoJodaDateTimeFormats: Format[DateTime] = dateTimeFormat
 
   implicit val formats: Format[PensionsUserData] = Json.format[PensionsUserData]
+
+  def empty(user: User, taxYear: TaxYear)(implicit clock: Clock): PensionsUserData =
+    PensionsUserData(
+      user.sessionId,
+      user.mtditid,
+      user.nino,
+      taxYear.endYear,
+      isPriorSubmission = false,
+      PensionsCYAModel.emptyModels,
+      clock.now(DateTimeZone.UTC)
+    )
+
 }
 
 case class EncryptedPensionsUserData(sessionId: String,
