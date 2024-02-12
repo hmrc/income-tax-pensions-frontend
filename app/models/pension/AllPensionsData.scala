@@ -24,6 +24,8 @@ import models.pension.income.{OverseasPensionContribution, PensionIncome}
 import models.pension.reliefs.{PaymentsIntoPensionsViewModel, PensionReliefs}
 import models.pension.statebenefits._
 import play.api.libs.json.{Json, OFormat}
+import models.questions.QuestionYesNoAnswer
+import models.questions.QuestionYesNoAnswer._
 
 case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
                            pensionCharges: Option[PensionCharges],
@@ -51,75 +53,51 @@ object AllPensionsData {
       shortServiceRefunds = generateShortServiceRefundCyaFromPrior(prior)
     )
 
-  private[pension] def generatePaymentsIntoPensionsCyaFromPrior(prior: AllPensionsData): PaymentsIntoPensionsViewModel = {
-    val rasPensionPaymentQuestion = prior.pensionReliefs.flatMap(_.pensionReliefs.regularPensionContributions.map(_ != Zero))
-    val totalRASPaymentsAndTaxRelief =
-      if (rasPensionPaymentQuestion.contains(true))
-        prior.pensionReliefs.flatMap(_.pensionReliefs.regularPensionContributions)
-      else
-        None
+  private def determinePensionTaxReliefNotClaimedQuestion(pensionReliefs: Option[PensionReliefs]): Option[Boolean] =
+    pensionReliefs.flatMap { a =>
+      val retirementAnnuityPayments           = QuestionYesNoAnswer(a.pensionReliefs.retirementAnnuityPayments)
+      val paymentToEmployersSchemeNoTaxRelief = QuestionYesNoAnswer(a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief)
 
-    val oneOffRasPaymentPlusTaxReliefQuestion =
-      if (rasPensionPaymentQuestion.contains(true))
-        prior.pensionReliefs.flatMap(_.pensionReliefs.oneOffPensionContributionsPaid.map(_ != Zero))
-      else
-        None
-
-    val totalOneOffRasPaymentPlusTaxRelief =
-      if (oneOffRasPaymentPlusTaxReliefQuestion.contains(true))
-        prior.pensionReliefs.flatMap(_.pensionReliefs.oneOffPensionContributionsPaid)
-      else
-        None
-
-    val totalPaymentsIntoRASQuestion = Some(true) // TODO https://jira.tools.tax.service.gov.uk/browse/SASS-7187 - Why it is set to true?
-
-    val pensionTaxReliefNotClaimedQuestion = prior.pensionReliefs.flatMap { a =>
-      val hasRetirementAnnuityPayments           = a.pensionReliefs.retirementAnnuityPayments.map(_ != Zero)
-      val hasPaymentToEmployersSchemeNoTaxRelief = a.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.map(_ != Zero)
-
-      (hasRetirementAnnuityPayments, hasPaymentToEmployersSchemeNoTaxRelief) match {
-        case (Some(hasRetirement), Some(hasPayment)) => Some(hasRetirement || hasPayment)
-        case (None, Some(hasPayment))                => Some(hasPayment)
-        case (Some(hasRetirement), None)             => Some(hasRetirement)
-        case (None, None)                            => None
+      (retirementAnnuityPayments, paymentToEmployersSchemeNoTaxRelief) match {
+        case (Yes(_), _) | (_, Yes(_)) => Some(true)
+        case ((No, _) | (_, No))       => Some(false)
+        case (NotDefined, NotDefined)  => None
       }
     }
 
+  private def generatePaymentsIntoPensionsCyaFromPrior(prior: AllPensionsData): PaymentsIntoPensionsViewModel = {
+    val rasPensionPaymentQuestion = QuestionYesNoAnswer(prior.pensionReliefs.flatMap(_.pensionReliefs.regularPensionContributions))
+
+    val oneOffRasPaymentPlusTaxReliefQuestion =
+      if (rasPensionPaymentQuestion.isYes)
+        QuestionYesNoAnswer(prior.pensionReliefs.flatMap(_.pensionReliefs.oneOffPensionContributionsPaid))
+      else
+        NotDefined
+
+    val pensionTaxReliefNotClaimedQuestion = determinePensionTaxReliefNotClaimedQuestion(prior.pensionReliefs)
     val retirementAnnuityContractPaymentsQuestion =
       if (pensionTaxReliefNotClaimedQuestion.contains(true))
-        prior.pensionReliefs.flatMap(_.pensionReliefs.retirementAnnuityPayments.map(_ != Zero))
+        QuestionYesNoAnswer(prior.pensionReliefs.flatMap(_.pensionReliefs.retirementAnnuityPayments))
       else
-        None
-
-    val totalRetirementAnnuityContractPayments =
-      if (retirementAnnuityContractPaymentsQuestion.contains(true))
-        prior.pensionReliefs.flatMap(_.pensionReliefs.retirementAnnuityPayments)
-      else
-        None
+        NotDefined
 
     val workplacePensionPaymentsQuestion =
       if (pensionTaxReliefNotClaimedQuestion.contains(true))
-        prior.pensionReliefs.flatMap(_.pensionReliefs.paymentToEmployersSchemeNoTaxRelief.map(_ != Zero))
+        QuestionYesNoAnswer(prior.pensionReliefs.flatMap(_.pensionReliefs.paymentToEmployersSchemeNoTaxRelief))
       else
-        None
-
-    val totalWorkplacePensionPayments =
-      if (workplacePensionPaymentsQuestion.contains(true))
-        prior.pensionReliefs.flatMap(_.pensionReliefs.paymentToEmployersSchemeNoTaxRelief)
-      else
-        None
+        NotDefined
 
     PaymentsIntoPensionsViewModel(
-      rasPensionPaymentQuestion = rasPensionPaymentQuestion,
-      totalRASPaymentsAndTaxRelief = totalRASPaymentsAndTaxRelief,
-      oneOffRasPaymentPlusTaxReliefQuestion = oneOffRasPaymentPlusTaxReliefQuestion,
-      totalOneOffRasPaymentPlusTaxRelief = totalOneOffRasPaymentPlusTaxRelief,
-      totalPaymentsIntoRASQuestion = totalPaymentsIntoRASQuestion,
+      rasPensionPaymentQuestion = rasPensionPaymentQuestion.toBooleanOpt,
+      totalRASPaymentsAndTaxRelief = rasPensionPaymentQuestion.toBigDecimalOpt,
+      oneOffRasPaymentPlusTaxReliefQuestion = oneOffRasPaymentPlusTaxReliefQuestion.toBooleanOpt,
+      totalOneOffRasPaymentPlusTaxRelief = oneOffRasPaymentPlusTaxReliefQuestion.toBigDecimalOpt,
+      totalPaymentsIntoRASQuestion = Some(true), // TODO https://jira.tools.tax.service.gov.uk/browse/SASS-7187 - Why it is set to true?
       pensionTaxReliefNotClaimedQuestion = pensionTaxReliefNotClaimedQuestion,
-      retirementAnnuityContractPaymentsQuestion = retirementAnnuityContractPaymentsQuestion,
-      totalRetirementAnnuityContractPayments = totalRetirementAnnuityContractPayments,
-      workplacePensionPaymentsQuestion = workplacePensionPaymentsQuestion,
-      totalWorkplacePensionPayments = totalWorkplacePensionPayments
+      retirementAnnuityContractPaymentsQuestion = retirementAnnuityContractPaymentsQuestion.toBooleanOpt,
+      totalRetirementAnnuityContractPayments = retirementAnnuityContractPaymentsQuestion.toBigDecimalOpt,
+      workplacePensionPaymentsQuestion = workplacePensionPaymentsQuestion.toBooleanOpt,
+      totalWorkplacePensionPayments = workplacePensionPaymentsQuestion.toBigDecimalOpt
     )
   }
 
