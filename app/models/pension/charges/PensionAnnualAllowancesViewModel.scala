@@ -20,6 +20,8 @@ import models.pension.{AllPensionsData, PensionCYABaseModel}
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
+// Does this `reducedAnnualAllowanceQuestion` need to be optional? It is the first question in the journey so should
+//    always be answered.
 case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Option[Boolean] = None,
                                             moneyPurchaseAnnualAllowance: Option[Boolean] = None,
                                             taperedAnnualAllowance: Option[Boolean] = None,
@@ -94,7 +96,7 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
         .flatMap(_.benefitInExcessOfLifetimeAllowance)
     )
 
-  def toAnnualAllowanceChargesModel(prior: Option[AllPensionsData]): AnnualAllowancesPensionCharges = {
+  def toDownstreamRequestModel(prior: Option[AllPensionsData]): AnnualAllowancesPensionCharges = {
     val pensionContributionsOpt =
       if (pensionSchemeTaxReferences.getOrElse(Nil) == Nil && aboveAnnualAllowance.isEmpty && taxPaidByPensionProvider.isEmpty) {
         None

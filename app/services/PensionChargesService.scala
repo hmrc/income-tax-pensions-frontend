@@ -57,7 +57,7 @@ class PensionChargesService @Inject() (pensionUserDataRepository: PensionsUserDa
             user = user,
             taxYear = taxYear,
             subModel = unauthModel,
-            cya = viewModel,
+            journeyAnswers = viewModel,
             submissionModel = createUnauthorisedChargesModel(viewModel, priorData),
             updatedCYA = getUnauthorisedPaymentsUserData(sessionData, user, taxYear, clock)
           ))
@@ -84,7 +84,7 @@ class PensionChargesService @Inject() (pensionUserDataRepository: PensionsUserDa
             user = user,
             taxYear = taxYear,
             subModel = overseasTransfersModel,
-            cya = viewModel,
+            journeyAnswers = viewModel,
             submissionModel = createTransfersIOPChargesModel(viewModel, priorData),
             updatedCYA = getTransfersIntoOverseasUserData(sessionData, user, taxYear, clock)
           ))
@@ -108,7 +108,7 @@ class PensionChargesService @Inject() (pensionUserDataRepository: PensionsUserDa
             user = user,
             taxYear = taxYear,
             subModel = subModel,
-            cya = viewModel,
+            journeyAnswers = viewModel,
             submissionModel = createShortServiceRefundsChargesModel(viewModel, priorData),
             updatedCYA = getShortServiceRefundsUserData(sessionData, user, taxYear, clock)
           ))
@@ -125,9 +125,15 @@ class PensionChargesService @Inject() (pensionUserDataRepository: PensionsUserDa
 
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
 
-      viewModel = sessionData.map(_.pensions.pensionsAnnualAllowances)
+      journeyAnswers = sessionData.map(_.pensions.pensionsAnnualAllowances)
+      _              = println()
+      _              = println("journey answers: " + journeyAnswers)
+      _              = println()
 
-      annualAllowanceSubModel = viewModel.map(_.toAnnualAllowanceChargesModel(priorData.pensions))
+      annualAllowanceSubModel = journeyAnswers.map(_.toDownstreamRequestModel(priorData.pensions))
+      _                       = println()
+      _                       = println("annualAllowanceSubModel is: " + annualAllowanceSubModel)
+      _                       = println()
 
       result <-
         FutureEitherOps[ServiceError, Unit](
@@ -135,8 +141,8 @@ class PensionChargesService @Inject() (pensionUserDataRepository: PensionsUserDa
             user = user,
             taxYear = taxYear,
             subModel = annualAllowanceSubModel,
-            cya = viewModel,
-            submissionModel = createAnnualAllowanceChargesModel(viewModel, priorData),
+            journeyAnswers = journeyAnswers,
+            submissionModel = createAnnualAllowanceChargesModel(journeyAnswers, priorData),
             updatedCYA = getAnnualAllowanceUserData(sessionData, user, taxYear, clock)
           ))
     } yield result).value
@@ -145,12 +151,13 @@ class PensionChargesService @Inject() (pensionUserDataRepository: PensionsUserDa
       user: User,
       taxYear: Int,
       subModel: Option[PensionChargesSubRequestModel],
-      cya: Option[PensionCYABaseModel],
+      journeyAnswers: Option[PensionCYABaseModel],
       submissionModel: CreateUpdatePensionChargesRequestModel,
       updatedCYA: PensionsUserData)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] =
     (for {
       _ <- FutureEitherOps[ServiceError, Unit](
-        pensionChargesHelper.sendDownstream(user.nino, taxYear, subModel, cya, submissionModel)(hc.withExtraHeaders("mtditid" -> user.mtditid), ec))
+        pensionChargesHelper
+          .sendDownstream(user.nino, taxYear, subModel, journeyAnswers, submissionModel)(hc.withExtraHeaders("mtditid" -> user.mtditid), ec))
       result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
     } yield result).value
 }
@@ -158,15 +165,21 @@ class PensionChargesService @Inject() (pensionUserDataRepository: PensionsUserDa
 object PensionChargesService {
 
   object AnnualAllowance {
-    def createAnnualAllowanceChargesModel(viewModel: Option[PensionAnnualAllowancesViewModel],
-                                          priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel =
-      CreateUpdatePensionChargesRequestModel(
-        pensionSavingsTaxCharges = viewModel.map(_.toPensionSavingsTaxCharges(priorData.pensions)),
+    def createAnnualAllowanceChargesModel(journeyAnswers: Option[PensionAnnualAllowancesViewModel],
+                                          priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel = {
+      // TODO: Why do we send all journeys if there is prior data?
+      val model = CreateUpdatePensionChargesRequestModel(
+        pensionSavingsTaxCharges = journeyAnswers.map(_.toPensionSavingsTaxCharges(priorData.pensions)),
         pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
         pensionSchemeUnauthorisedPayments = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)),
-        pensionContributions = viewModel.map(_.toPensionContributions),
+        pensionContributions = journeyAnswers.map(_.toPensionContributions),
         overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
       )
+      println()
+      println("annual allowances charges model: " + model)
+      println()
+      model
+    }
 
     def getAnnualAllowanceUserData(userData: Option[PensionsUserData], user: User, taxYear: Int, clock: Clock): PensionsUserData =
       userData match {

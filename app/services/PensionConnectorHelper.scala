@@ -31,7 +31,7 @@ trait PensionConnectorHelper[SubRequestModel <: PensionSubRequestModel, RequestM
   def sendDownstream(nino: String,
                      taxYear: Int,
                      subRequestModel: Option[SubRequestModel],
-                     cya: Option[PensionCYABaseModel],
+                     journeyAnswers: Option[PensionCYABaseModel],
                      requestModel: RequestModel)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]] = {
 
     val otherModels = requestModel.otherSubRequestModelsEmpty(subRequestModel)
@@ -40,22 +40,29 @@ trait PensionConnectorHelper[SubRequestModel <: PensionSubRequestModel, RequestM
       subModel.exists(_.isEmpty)
 
     // TODO - The below code requires understanding and refactoring
-    if (cya.exists(_.journeyIsNo) || cya.exists(_.journeyIsUnanswered)) {
+    if (journeyAnswers.exists(_.journeyIsNo) || journeyAnswers.exists(_.journeyIsUnanswered)) {
       (otherModels, subRequestModel.isEmpty || isSubModelEmpty(subRequestModel)) match {
         case (true, true) =>
+          println("1")
           // Do nothing or delete
           deleteData(nino, taxYear)
         case (true, false) =>
+          println("2")
           // delete
           deleteData(nino, taxYear)
         case (false, true) =>
+          println("3")
           // Put or do nothing
           saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[RequestModel])
         case (false, false) =>
+          println("4")
           // Put
           saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[RequestModel])
       }
     } else {
+      println()
+      println("model we send to BE: " + requestModel.createSubModel.asInstanceOf[RequestModel])
+      println()
       saveData(nino, taxYear, requestModel.createSubModel.asInstanceOf[RequestModel])
     }
   }
