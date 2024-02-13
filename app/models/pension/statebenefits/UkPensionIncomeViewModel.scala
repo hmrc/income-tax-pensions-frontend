@@ -49,7 +49,7 @@ case class UkPensionIncomeViewModel(employmentId: Option[String] = None,
       isCustomerEmploymentData = isCustomerEmploymentData.map(_.encrypted)
     )
 
-  def toCreateUpdateEmploymentRequest: CreateUpdateEmploymentRequest =
+  def toDownstreamRequest: CreateUpdateEmploymentRequest =
     CreateUpdateEmploymentRequest(
       employmentId = this.employmentId,
       employment = Some(

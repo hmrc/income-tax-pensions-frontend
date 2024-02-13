@@ -21,10 +21,11 @@ import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.charges._
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
-import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
+import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel, UkPensionIncomeViewModel}
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpecLike
 import utils.PensionDataStubs._
+
 import java.util.UUID
 
 class PensionCYAMergedWithPriorDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks {
@@ -32,7 +33,7 @@ class PensionCYAMergedWithPriorDataSpec extends AnyWordSpecLike with TableDriven
   "mergeSessionAndPriorData" should {
     val emptyModel            = PensionsCYAModel.emptyModels
     val sessionWithEmptyModel = aPensionsUserData.copy(pensions = emptyModel)
-    val expectedFullSession   = AllPensionsData.generateCyaFromPrior(fullPensionsModel)
+    val expectedFullSession   = AllPensionsData.generateSessionModelFromPrior(fullPensionsModel)
     val sessionFullModel      = sessionWithEmptyModel.copy(pensions = expectedFullSession)
     val sessionNoPaymentIntoPension =
       sessionWithEmptyModel.copy(pensions = expectedFullSession.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel()))
@@ -56,7 +57,11 @@ class PensionCYAMergedWithPriorDataSpec extends AnyWordSpecLike with TableDriven
     // (user is in the middle of the change, don't override their data)
     val pension1 = expectedFullSession.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel(Some(true)))
     val pension2 = expectedFullSession.copy(pensionsAnnualAllowances = PensionAnnualAllowancesViewModel(Some(true)))
-    val pension3 = expectedFullSession.copy(incomeFromPensions = IncomeFromPensionsViewModel(Some(StateBenefitViewModel(Some(UUID.randomUUID())))))
+    val pension3 = expectedFullSession.copy(incomeFromPensions = IncomeFromPensionsViewModel(
+      statePension = Some(StateBenefitViewModel(Some(UUID.randomUUID()))),
+      uKPensionIncomesQuestion = Some(true),
+      uKPensionIncomes = Seq(UkPensionIncomeViewModel(employmentId = Some("id")))
+    ))
     val pension4 = expectedFullSession.copy(unauthorisedPayments = UnauthorisedPaymentsViewModel(Some(true)))
     val pension5 = expectedFullSession.copy(paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel(Some(true)))
     val pension6 = expectedFullSession.copy(incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel(Some(true)))

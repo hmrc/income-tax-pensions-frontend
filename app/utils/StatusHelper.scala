@@ -18,7 +18,6 @@ package utils
 
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.pension.reliefs.PaymentsIntoPensionsViewModel
 
 object StatusHelper {
 

@@ -23,9 +23,9 @@ import models.pension.employmentPensions.EmploymentPensions
 import models.pension.income.{OverseasPensionContribution, PensionIncome}
 import models.pension.reliefs.{PaymentsIntoPensionsViewModel, PensionReliefs}
 import models.pension.statebenefits._
-import play.api.libs.json.{Json, OFormat}
 import models.questions.QuestionYesNoAnswer
 import models.questions.QuestionYesNoAnswer._
+import play.api.libs.json.{Json, OFormat}
 
 case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
                            pensionCharges: Option[PensionCharges],
@@ -39,9 +39,7 @@ case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
 object AllPensionsData {
   implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
 
-  val Zero = BigDecimal(0)
-
-  def generateCyaFromPrior(prior: AllPensionsData): PensionsCYAModel = // scalastyle:off method.length
+  def generateSessionModelFromPrior(prior: AllPensionsData): PensionsCYAModel =
     PensionsCYAModel(
       paymentsIntoPension = generatePaymentsIntoPensionsCyaFromPrior(prior),
       pensionsAnnualAllowances = generateAnnualAllowanceSessionFromPrior(prior),
@@ -114,8 +112,8 @@ object AllPensionsData {
     )
 
   private def generateIncomeFromPensionsModelFromPrior(prior: AllPensionsData): IncomeFromPensionsViewModel = {
-    val (statePen, statePenLumpSum)   = generateStatePensionCyaFromPrior(prior)
-    val (uKPenIncomesQ, uKPenIncomes) = generateUkPensionCyaFromPrior(prior)
+    val (statePen, statePenLumpSum)   = populateStatePensionSessionFromPrior(prior)
+    val (uKPenIncomesQ, uKPenIncomes) = generateUkPensionSessionFromPrior(prior)
 
     IncomeFromPensionsViewModel(
       statePension = statePen,
@@ -127,7 +125,7 @@ object AllPensionsData {
     )
   }
 
-  private def generateStatePensionCyaFromPrior(prior: AllPensionsData): (Option[StateBenefitViewModel], Option[StateBenefitViewModel]) = {
+  private def populateStatePensionSessionFromPrior(prior: AllPensionsData): (Option[StateBenefitViewModel], Option[StateBenefitViewModel]) = {
     def getStatePensionModel(statePension: Option[StateBenefit]): Option[StateBenefitViewModel] =
       statePension match {
         case Some(benefit) =>
@@ -155,7 +153,7 @@ object AllPensionsData {
     )
   }
 
-  def generateUkPensionCyaFromPrior(prior: AllPensionsData): (Option[Boolean], Seq[UkPensionIncomeViewModel]) = {
+  def generateUkPensionSessionFromPrior(prior: AllPensionsData): (Option[Boolean], Seq[UkPensionIncomeViewModel]) = {
     def getUkPensionIncome(prior: AllPensionsData): Seq[UkPensionIncomeViewModel] =
       prior.employmentPensions match {
         case Some(ep) =>

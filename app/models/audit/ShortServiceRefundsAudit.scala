@@ -66,7 +66,7 @@ object ShortServiceRefundsAudit {
       nino = sessionData.nino,
       mtdItId = sessionData.mtdItId,
       shortServiceRefunds = sessionData.pensions.shortServiceRefunds,
-      priorShortServiceRefunds = priorData.map(pd => AllPensionsData.generateCyaFromPrior(pd).shortServiceRefunds)
+      priorShortServiceRefunds = priorData.map(pd => AllPensionsData.generateSessionModelFromPrior(pd).shortServiceRefunds)
     )
 
   def standardAudit(user: User, sessionData: PensionsUserData): ShortServiceRefundsAudit =
