@@ -73,7 +73,6 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
     }
   }
 
-  // scalastyle:off
   def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)(onFail: A)(onSuccess: A)(implicit
       clock: Clock): Future[A] = {
 

@@ -21,9 +21,8 @@ import common.TaxYear
 import models.User
 import models.error.ApiError
 import models.error.ApiError.CreateOrUpdateError
-import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
+import models.mongo.{PensionsUserData, ServiceError}
 import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
-import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Clock
@@ -57,7 +56,7 @@ class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDa
 
   private def removeSubmittedData(taxYear: TaxYear, userData: Option[PensionsUserData], user: User)(implicit clock: Clock): PensionsUserData =
     userData
-      .map(data => data.copy(pensions = data.pensions.removePaymentsIntoPension))
+      .map(data => data.copy(pensions = data.pensions.removePaymentsIntoPension()))
       .getOrElse(PensionsUserData.empty(user, taxYear))
 
 }

@@ -16,52 +16,47 @@
 
 package services
 
+import cats.Foldable
+import cats.data.EitherT
+import cats.implicits._
 import connectors.EmploymentConnector
-import connectors.httpParsers.EmploymentSessionHttpParser.EmploymentSessionResponse
-import models.User
-import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
-import org.joda.time.DateTimeZone
+import models.mongo._
+import models.pension.statebenefits.UkPensionIncomeViewModel
+import models.{APIErrorModel, User}
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{Clock, FutureEitherOps}
+import utils.EitherTUtils.EitherTOps
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class EmploymentPensionService @Inject() (pensionUserDataRepository: PensionsUserDataRepository, employmentConnector: EmploymentConnector) {
+class EmploymentPensionService @Inject() (repository: PensionsUserDataRepository, connector: EmploymentConnector) {
 
-  def persistUkPensionIncomeViewModel(user: User, taxYear: Int)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext,
-      clock: Clock): Future[Either[ServiceError, Unit]] = {
-
+  def persistJourneyAnswers(user: User, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
     val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
 
-    def getPensionsUserData(userData: Option[PensionsUserData], user: User): PensionsUserData =
-      userData match {
-        case Some(value) =>
-          value.copy(pensions = value.pensions.copy(incomeFromPensions = value.pensions.incomeFromPensions.copy(uKPensionIncomes = Nil)))
-        case None =>
-          PensionsUserData(
-            user.sessionId,
-            user.mtditid,
-            user.nino,
-            taxYear,
-            isPriorSubmission = false,
-            PensionsCYAModel.emptyModels,
-            clock.now(DateTimeZone.UTC)
-          )
-      }
+    def clearJourneyFromSession(session: PensionsUserData): Future[Either[DatabaseError, Unit]] = {
+      val clearedJourneyModel =
+        session.pensions.incomeFromPensions.copy(
+          uKPensionIncomes = Nil,
+          uKPensionIncomesQuestion = None
+        )
+      val updatedSessionModel =
+        session.copy(pensions = session.pensions.copy(incomeFromPensions = clearedJourneyModel))
+
+      repository.createOrUpdate(updatedSessionModel)
+    }
+    def saveJourneyData(allIncomes: Seq[UkPensionIncomeViewModel]): Future[Either[APIErrorModel, Seq[Unit]]] =
+      allIncomes
+        .traverse(income => connector.saveEmploymentPensionsData(user.nino, taxYear, income.toDownstreamRequest)(hcWithExtras, ec))
+        .map(sequence)
 
     (for {
-      sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
-      optUkPensionIncomes = sessionData.map(p => p.pensions.incomeFromPensions.uKPensionIncomes)
-      saveEmployments = optUkPensionIncomes.fold(Seq[Future[EmploymentSessionResponse]]())(_.map(ukPensionIncome =>
-        employmentConnector.saveEmploymentPensionsData(user.nino, taxYear, ukPensionIncome.toCreateUpdateEmploymentRequest)(hcWithExtras, ec)))
-      _ <- FutureEitherOps[ServiceError, Seq[Unit]](Future.sequence(saveEmployments).map(sequence))
-      updatedCYA = getPensionsUserData(sessionData, user)
-      result <- FutureEitherOps[ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
-    } yield result).value
+      maybeSession <- EitherT(repository.find(taxYear, user)).leftAs[ServiceError]
+      session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
+      _            <- EitherT(saveJourneyData(session.pensions.incomeFromPensions.uKPensionIncomes)).leftAs[ServiceError]
+      _            <- EitherT(clearJourneyFromSession(session)).leftAs[ServiceError]
+    } yield ()).value
   }
 
   private def sequence[A, B](s: Seq[Either[A, B]]): Either[A, Seq[B]] =

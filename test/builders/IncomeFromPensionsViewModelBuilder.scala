@@ -33,7 +33,6 @@ object IncomeFromPensionsViewModelBuilder {
     uKPensionIncomesQuestion = Some(true),
     uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo)
   )
-
   val aStatePensionIncomeFromPensionsViewModel: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
     statePension = Some(aStatePensionViewModel),
     statePensionLumpSum = Some(aStatePensionLumpSumViewModel),

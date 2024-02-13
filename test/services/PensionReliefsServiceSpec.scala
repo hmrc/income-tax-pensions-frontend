@@ -27,7 +27,6 @@ import models.{APIErrorBodyModel, APIErrorModel}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.http.Status.BAD_REQUEST
-import utils.CommonData
 import utils.CommonData._
 
 class PensionReliefsServiceSpec extends AnyWordSpecLike with MockPensionUserDataRepository with MockPensionsConnector with ScalaFutures {

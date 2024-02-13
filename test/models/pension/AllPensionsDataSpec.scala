@@ -130,7 +130,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
     // @formatter:on
 
     "convert prior data to FE model" in forAll(cases) { (downstreamModel, expectedModel) =>
-      val actual = AllPensionsData.generateCyaFromPrior(setPensionReliefs(downstreamModel))
+      val actual = AllPensionsData.generateSessionModelFromPrior(setPensionReliefs(downstreamModel))
       assert(actual.paymentsIntoPension === expectedModel)
     }
 

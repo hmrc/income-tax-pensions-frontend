@@ -21,7 +21,7 @@ import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryC
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
-import models.pension.AllPensionsData.generateCyaFromPrior
+import models.pension.AllPensionsData.generateSessionModelFromPrior
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class StatePensionCYAController @Inject() (
     auditProvider: AuditActionsProvider,
-    pensionSessionService: PensionSessionService,
+    sessionService: PensionSessionService,
     statePensionService: StatePensionService,
     view: StatePensionCYAView,
     mcc: MessagesControllerComponents,
@@ -55,12 +55,12 @@ class StatePensionCYAController @Inject() (
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsUpdateAuditing(taxYear) async { implicit request =>
-    pensionSessionService.loadDataAndHandle(taxYear, request.user) { (cya, prior) =>
-      cya.fold(
+    sessionService.loadDataAndHandle(taxYear, request.user) { (session, prior) =>
+      session.fold(
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
-          statePensionService.persistStatePensionIncomeViewModel(request.user, taxYear) map {
+          statePensionService.persistJourneyAnswers(request.user, taxYear) map {
             case Left(_)  => errorHandler.internalServerError()
             case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
           }
@@ -73,7 +73,7 @@ class StatePensionCYAController @Inject() (
 
   private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData match {
-      case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
+      case Some(prior) => !cyaData.equals(generateSessionModelFromPrior(prior))
       case None        => true
     }
 

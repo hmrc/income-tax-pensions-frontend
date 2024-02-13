@@ -21,7 +21,7 @@ import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
-import models.pension.AllPensionsData.generateCyaFromPrior
+import models.pension.AllPensionsData.generateSessionModelFromPrior
 import models.requests.UserPriorAndSessionDataRequest
 import models.{APIErrorBodyModel, APIErrorModel, User}
 import play.api.Logger
@@ -110,7 +110,7 @@ class UnauthorisedPaymentsCYAController @Inject() (
   private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData match {
       case None        => true
-      case Some(prior) => !cyaData.equals(generateCyaFromPrior(prior))
+      case Some(prior) => !cyaData.equals(generateSessionModelFromPrior(prior))
     }
 
 }
