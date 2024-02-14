@@ -20,8 +20,6 @@ import models.pension.{AllPensionsData, PensionCYABaseModel}
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
-// Does this `reducedAnnualAllowanceQuestion` need to be optional? It is the first question in the journey so should
-//    always be answered.
 case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Option[Boolean] = None,
                                             moneyPurchaseAnnualAllowance: Option[Boolean] = None,
                                             taperedAnnualAllowance: Option[Boolean] = None,
