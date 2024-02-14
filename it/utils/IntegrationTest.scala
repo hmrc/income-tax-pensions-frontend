@@ -47,8 +47,6 @@ import views.html.templates.AgentAuthErrorPageView
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 
-// scalastyle:off number.of.methods
-// scalastyle:off number.of.types
 trait IntegrationTest
     extends AnyWordSpec
     with Matchers
@@ -69,8 +67,6 @@ trait IntegrationTest
 
   val defaultUser: PensionsUserData = aPensionsUserData
   val xSessionId: (String, String)  = "X-Session-ID" -> defaultUser.sessionId
-
-  val emptyJson = "{}"
 
   implicit val ec: ExecutionContext         = ExecutionContext.Implicits.global
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders("mtditid" -> mtditid)
@@ -301,6 +297,3 @@ trait IntegrationTest
 
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
 }
-
-// scalastyle:off number.of.methods
-// scalastyle:off number.of.types
