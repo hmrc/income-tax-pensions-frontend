@@ -43,8 +43,13 @@ trait MockPensionsConnector extends MockFactory {
   def mockSavePensionChargesSessionData(nino: String,
                                         taxYear: Int,
                                         model: CreateUpdatePensionChargesRequestModel,
-                                        response: Either[APIErrorModel, Unit])
-      : CallHandler5[String, Int, CreateUpdatePensionChargesRequestModel, HeaderCarrier, ExecutionContext, Future[SavePensionChargesAnswersResponse]] =
+                                        response: Either[APIErrorModel, Unit]): CallHandler5[
+    String,
+    Int,
+    CreateUpdatePensionChargesRequestModel,
+    HeaderCarrier,
+    ExecutionContext,
+    Future[SavePensionChargesAnswersResponse]] =
     (mockPensionsConnector
       .savePensionChargesSessionData(_: String, _: Int, _: CreateUpdatePensionChargesRequestModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, model, *, *)

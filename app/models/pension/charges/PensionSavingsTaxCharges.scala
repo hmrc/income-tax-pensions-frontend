@@ -32,24 +32,20 @@ case class PensionSavingsTaxCharges(pensionSchemeTaxReference: Option[Seq[String
 object PensionSavingsTaxCharges {
   implicit val format: OFormat[PensionSavingsTaxCharges] = Json.format[PensionSavingsTaxCharges]
 
-  def fromPriorData(prior: IncomeTaxUserData): Option[PensionSavingsTaxCharges] = {
+  def fromPriorData(prior: IncomeTaxUserData): Option[PensionSavingsTaxCharges] =
     prior.pensions.map { pensionsData =>
       PensionSavingsTaxCharges(
-        pensionSchemeTaxReference =
-          pensionsData.pensionCharges
-            .flatMap(_.pensionSavingsTaxCharges)
-            .flatMap(_.pensionSchemeTaxReference),
-        lumpSumBenefitTakenInExcessOfLifetimeAllowance =
-          pensionsData.pensionCharges
-            .flatMap(_.pensionSavingsTaxCharges)
-            .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
-        benefitInExcessOfLifetimeAllowance =
-          pensionsData.pensionCharges
-            .flatMap(_.pensionSavingsTaxCharges)
-            .flatMap(_.benefitInExcessOfLifetimeAllowance)
+        pensionSchemeTaxReference = pensionsData.pensionCharges
+          .flatMap(_.pensionSavingsTaxCharges)
+          .flatMap(_.pensionSchemeTaxReference),
+        lumpSumBenefitTakenInExcessOfLifetimeAllowance = pensionsData.pensionCharges
+          .flatMap(_.pensionSavingsTaxCharges)
+          .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
+        benefitInExcessOfLifetimeAllowance = pensionsData.pensionCharges
+          .flatMap(_.pensionSavingsTaxCharges)
+          .flatMap(_.benefitInExcessOfLifetimeAllowance)
       )
     }
-  }
 }
 
 case class EncryptedPensionSavingsTaxCharges(pensionSchemeTaxReference: Option[Seq[EncryptedValue]],

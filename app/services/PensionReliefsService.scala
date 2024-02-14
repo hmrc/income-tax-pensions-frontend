@@ -44,9 +44,12 @@ class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDa
       allSessionData <- EitherT(pensionUserDataRepository.find(taxYear.endYear, user))
       _ <- EitherT(
         pensionReliefsConnectorHelper
-          .sendDownstream(user.nino, taxYear.endYear, subRequestModel = None, journeyAnswers = Some(paymentsIntoPensions), requestModel = updatedReliefsData)(
-            hc.withExtraHeaders("mtditid" -> user.mtditid),
-            ec))
+          .sendDownstream(
+            user.nino,
+            taxYear.endYear,
+            subRequestModel = None,
+            journeyAnswers = Some(paymentsIntoPensions),
+            requestModel = updatedReliefsData)(hc.withExtraHeaders("mtditid" -> user.mtditid), ec))
       updatedCYA = removeSubmittedData(taxYear, allSessionData, user)
       result <- EitherT[Future, ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
     } yield result).leftMap { err =>

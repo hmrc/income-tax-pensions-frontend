@@ -70,13 +70,12 @@ case class CreateUpdatePensionChargesRequestModel(pensionSavingsTaxCharges: Opti
     }
 
   def createSubModel: CreateUpdatePensionChargesRequestModel = {
-    def processModel[T <: PensionChargesSubRequestModel](model: Option[T]): Option[T] = {
+    def processModel[T <: PensionChargesSubRequestModel](model: Option[T]): Option[T] =
       if (model.exists(_.isEmpty) || model.isEmpty) {
         None
       } else {
         model
       }
-    }
 
     CreateUpdatePensionChargesRequestModel(
       pensionSavingsTaxCharges = processModel(this.pensionSavingsTaxCharges),
