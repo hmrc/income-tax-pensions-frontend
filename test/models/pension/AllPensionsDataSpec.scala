@@ -26,13 +26,13 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
   "generatePaymentsIntoPensionsCyaFromPrior" should {
     val priorBase    = anAllPensionsData
     val emptyReliefs = Reliefs(None, None, None, None, None)
-    val emptyModel = PaymentsIntoPensionsViewModel(
-      rasPensionPaymentQuestion = None,
+    val baseModel = PaymentsIntoPensionsViewModel(
+      rasPensionPaymentQuestion = Some(false),
       totalRASPaymentsAndTaxRelief = None,
-      oneOffRasPaymentPlusTaxReliefQuestion = None,
+      oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
       totalOneOffRasPaymentPlusTaxRelief = None,
       totalPaymentsIntoRASQuestion = Some(true),
-      pensionTaxReliefNotClaimedQuestion = None,
+      pensionTaxReliefNotClaimedQuestion = Some(false),
       retirementAnnuityContractPaymentsQuestion = None,
       totalRetirementAnnuityContractPayments = None,
       workplacePensionPaymentsQuestion = None,
@@ -45,18 +45,18 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
     // @formatter:off
     val cases = Table(
       ("Downstream Model", "Expected FE Model"),
-      (emptyReliefs, emptyModel),
+      (emptyReliefs, baseModel),
       (
-        emptyReliefs.copy(regularPensionContributions = Some(0.0)),
-        emptyModel.copy(rasPensionPaymentQuestion = Some(false))
+        emptyReliefs.copy(regularPensionContributions = None),
+        baseModel.copy(rasPensionPaymentQuestion = Some(false))
       ),
       (
         emptyReliefs.copy(
-          regularPensionContributions = Some(0.0),
-          retirementAnnuityPayments = Some(0.0),
-          paymentToEmployersSchemeNoTaxRelief = Some(0.0)
+          regularPensionContributions = None,
+          retirementAnnuityPayments = None,
+          paymentToEmployersSchemeNoTaxRelief = None
         ),
-        emptyModel.copy(
+        baseModel.copy(
           rasPensionPaymentQuestion = Some(false),
           pensionTaxReliefNotClaimedQuestion = Some(false)
         )
@@ -64,9 +64,9 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
       (
         emptyReliefs.copy(
           regularPensionContributions = Some(10.0),
-          oneOffPensionContributionsPaid = Some(0.0)
+          oneOffPensionContributionsPaid = None
         ),
-        emptyModel.copy(
+        baseModel.copy(
           rasPensionPaymentQuestion = Some(true),
           totalRASPaymentsAndTaxRelief = Some(10.0),
           oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
@@ -75,10 +75,10 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
       (
         emptyReliefs.copy(
           regularPensionContributions = Some(10.0),
-          oneOffPensionContributionsPaid = Some(0.0),
-          retirementAnnuityPayments = Some(0.0),
+          oneOffPensionContributionsPaid = None,
+          retirementAnnuityPayments = None,
         ),
-        emptyModel.copy(
+        baseModel.copy(
           rasPensionPaymentQuestion = Some(true),
           totalRASPaymentsAndTaxRelief = Some(10.0),
           oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
@@ -93,7 +93,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
           retirementAnnuityPayments = Some(3.0),
           paymentToEmployersSchemeNoTaxRelief = Some(4.0)
         ),
-        emptyModel.copy(
+        baseModel.copy(
           rasPensionPaymentQuestion = Some(true),
           totalRASPaymentsAndTaxRelief = Some(1.0),
           oneOffRasPaymentPlusTaxReliefQuestion = Some(true),
@@ -111,9 +111,9 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
           regularPensionContributions = Some(1.0),
           oneOffPensionContributionsPaid = Some(2.0),
           retirementAnnuityPayments = Some(3.0),
-          paymentToEmployersSchemeNoTaxRelief = Some(0.0)
+          paymentToEmployersSchemeNoTaxRelief = None
         ),
-        emptyModel.copy(
+        baseModel.copy(
           rasPensionPaymentQuestion = Some(true),
           totalRASPaymentsAndTaxRelief = Some(1.0),
           oneOffRasPaymentPlusTaxReliefQuestion = Some(true),

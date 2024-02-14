@@ -19,6 +19,7 @@ package models.pension.reliefs
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
+import cats.implicits._
 
 case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boolean] = None,
                                          totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
@@ -86,20 +87,53 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
       case _ => false
     }
 
-  /** If we submit values to downstream, we are setting 0.0 for answers which are selected to No and therefore values which are not defined None
-    */
-  def toReliefs: Reliefs =
+  def toReliefs(overseasPensionSchemeContributions: Option[BigDecimal]): Reliefs =
     Reliefs(
-      regularPensionContributions = Some(totalRASPaymentsAndTaxRelief.getOrElse(0.0)),
-      oneOffPensionContributionsPaid = Some(totalOneOffRasPaymentPlusTaxRelief.getOrElse(0.0)),
-      retirementAnnuityPayments = Some(totalRetirementAnnuityContractPayments.getOrElse(0.0)),
-      paymentToEmployersSchemeNoTaxRelief = Some(totalWorkplacePensionPayments.getOrElse(0.0)),
-      overseasPensionSchemeContributions = None // not part of this journey
+      regularPensionContributions = totalRASPaymentsAndTaxRelief,
+      oneOffPensionContributionsPaid = totalOneOffRasPaymentPlusTaxRelief,
+      retirementAnnuityPayments = totalRetirementAnnuityContractPayments,
+      paymentToEmployersSchemeNoTaxRelief = totalWorkplacePensionPayments,
+      overseasPensionSchemeContributions = overseasPensionSchemeContributions // not part of this journey, but if we set None it will be wiped out
     )
 }
 
 object PaymentsIntoPensionsViewModel {
   implicit val format: OFormat[PaymentsIntoPensionsViewModel] = Json.format[PaymentsIntoPensionsViewModel]
+
+  def empty: PaymentsIntoPensionsViewModel =
+    PaymentsIntoPensionsViewModel(None, None, None, None, None, None, None, None, None, None)
+
+  def fromSubmittedReliefs(reliefs: Reliefs): PaymentsIntoPensionsViewModel = {
+    val rasPensionPaymentQuestion: Option[Boolean]             = reliefs.regularPensionContributions.isDefined.some
+    val totalRASPaymentsAndTaxRelief: Option[BigDecimal]       = reliefs.regularPensionContributions
+    val oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = reliefs.oneOffPensionContributionsPaid.isDefined.some
+    val totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = reliefs.oneOffPensionContributionsPaid
+
+    val pensionTaxReliefNotClaimedQuestion: Option[Boolean] =
+      (reliefs.retirementAnnuityPayments.isDefined || reliefs.paymentToEmployersSchemeNoTaxRelief.isDefined).some
+
+    val retirementAnnuityContractPaymentsQuestion: Option[Boolean] =
+      if (pensionTaxReliefNotClaimedQuestion == Option(false)) None else reliefs.retirementAnnuityPayments.isDefined.some
+    val totalRetirementAnnuityContractPayments: Option[BigDecimal] =
+      if (pensionTaxReliefNotClaimedQuestion == Option(false)) None else reliefs.retirementAnnuityPayments
+    val workplacePensionPaymentsQuestion: Option[Boolean] =
+      if (pensionTaxReliefNotClaimedQuestion == Option(false)) None else reliefs.paymentToEmployersSchemeNoTaxRelief.isDefined.some
+    val totalWorkplacePensionPayments: Option[BigDecimal] =
+      if (pensionTaxReliefNotClaimedQuestion == Option(false)) None else reliefs.paymentToEmployersSchemeNoTaxRelief
+
+    PaymentsIntoPensionsViewModel(
+      rasPensionPaymentQuestion = rasPensionPaymentQuestion,
+      totalRASPaymentsAndTaxRelief = totalRASPaymentsAndTaxRelief,
+      oneOffRasPaymentPlusTaxReliefQuestion = oneOffRasPaymentPlusTaxReliefQuestion,
+      totalOneOffRasPaymentPlusTaxRelief = totalOneOffRasPaymentPlusTaxRelief,
+      totalPaymentsIntoRASQuestion = Some(true), // TODO https://jira.tools.tax.service.gov.uk/browse/SASS-7187 - Why it is set to true?
+      pensionTaxReliefNotClaimedQuestion = pensionTaxReliefNotClaimedQuestion,
+      retirementAnnuityContractPaymentsQuestion = retirementAnnuityContractPaymentsQuestion,
+      totalRetirementAnnuityContractPayments = totalRetirementAnnuityContractPayments,
+      workplacePensionPaymentsQuestion = workplacePensionPaymentsQuestion,
+      totalWorkplacePensionPayments = totalWorkplacePensionPayments
+    )
+  }
 }
 
 case class EncryptedPaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Option[EncryptedValue] = None,
