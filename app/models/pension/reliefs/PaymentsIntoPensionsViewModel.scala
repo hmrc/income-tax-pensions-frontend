@@ -112,27 +112,30 @@ object PaymentsIntoPensionsViewModel {
     val pensionTaxReliefNotClaimedQuestion: Option[Boolean] =
       (reliefs.retirementAnnuityPayments.isDefined || reliefs.paymentToEmployersSchemeNoTaxRelief.isDefined).some
 
-    val retirementAnnuityContractPaymentsQuestion: Option[Boolean] =
-      if (pensionTaxReliefNotClaimedQuestion == Option(false)) None else reliefs.retirementAnnuityPayments.isDefined.some
-    val totalRetirementAnnuityContractPayments: Option[BigDecimal] =
-      if (pensionTaxReliefNotClaimedQuestion == Option(false)) None else reliefs.retirementAnnuityPayments
-    val workplacePensionPaymentsQuestion: Option[Boolean] =
-      if (pensionTaxReliefNotClaimedQuestion == Option(false)) None else reliefs.paymentToEmployersSchemeNoTaxRelief.isDefined.some
-    val totalWorkplacePensionPayments: Option[BigDecimal] =
-      if (pensionTaxReliefNotClaimedQuestion == Option(false)) None else reliefs.paymentToEmployersSchemeNoTaxRelief
+    if (pensionTaxReliefNotClaimedQuestion.contains(false)) {
+      PaymentsIntoPensionsViewModel.empty.copy(
+        rasPensionPaymentQuestion = rasPensionPaymentQuestion,
+        totalRASPaymentsAndTaxRelief = totalRASPaymentsAndTaxRelief,
+        oneOffRasPaymentPlusTaxReliefQuestion = oneOffRasPaymentPlusTaxReliefQuestion,
+        totalOneOffRasPaymentPlusTaxRelief = totalOneOffRasPaymentPlusTaxRelief,
+        totalPaymentsIntoRASQuestion = Some(true), // TODO https://jira.tools.tax.service.gov.uk/browse/SASS-7187 - Why it is set to true?
+        pensionTaxReliefNotClaimedQuestion = pensionTaxReliefNotClaimedQuestion
+      )
+    } else {
+      PaymentsIntoPensionsViewModel(
+        rasPensionPaymentQuestion = rasPensionPaymentQuestion,
+        totalRASPaymentsAndTaxRelief = totalRASPaymentsAndTaxRelief,
+        oneOffRasPaymentPlusTaxReliefQuestion = oneOffRasPaymentPlusTaxReliefQuestion,
+        totalOneOffRasPaymentPlusTaxRelief = totalOneOffRasPaymentPlusTaxRelief,
+        totalPaymentsIntoRASQuestion = Some(true), // TODO https://jira.tools.tax.service.gov.uk/browse/SASS-7187 - Why it is set to true?
+        pensionTaxReliefNotClaimedQuestion = pensionTaxReliefNotClaimedQuestion,
+        retirementAnnuityContractPaymentsQuestion = reliefs.retirementAnnuityPayments.isDefined.some,
+        totalRetirementAnnuityContractPayments = reliefs.retirementAnnuityPayments,
+        workplacePensionPaymentsQuestion = reliefs.paymentToEmployersSchemeNoTaxRelief.isDefined.some,
+        totalWorkplacePensionPayments = reliefs.paymentToEmployersSchemeNoTaxRelief
+      )
+    }
 
-    PaymentsIntoPensionsViewModel(
-      rasPensionPaymentQuestion = rasPensionPaymentQuestion,
-      totalRASPaymentsAndTaxRelief = totalRASPaymentsAndTaxRelief,
-      oneOffRasPaymentPlusTaxReliefQuestion = oneOffRasPaymentPlusTaxReliefQuestion,
-      totalOneOffRasPaymentPlusTaxRelief = totalOneOffRasPaymentPlusTaxRelief,
-      totalPaymentsIntoRASQuestion = Some(true), // TODO https://jira.tools.tax.service.gov.uk/browse/SASS-7187 - Why it is set to true?
-      pensionTaxReliefNotClaimedQuestion = pensionTaxReliefNotClaimedQuestion,
-      retirementAnnuityContractPaymentsQuestion = retirementAnnuityContractPaymentsQuestion,
-      totalRetirementAnnuityContractPayments = totalRetirementAnnuityContractPayments,
-      workplacePensionPaymentsQuestion = workplacePensionPaymentsQuestion,
-      totalWorkplacePensionPayments = totalWorkplacePensionPayments
-    )
   }
 }
 

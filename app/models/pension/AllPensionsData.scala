@@ -37,7 +37,7 @@ case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
       .getOrElse(
         PaymentsIntoPensionsViewModel.empty.copy(
           totalPaymentsIntoRASQuestion =
-            Some(true) // TODO https://jira.tools.tax.service.gov.uk/browse/SASS-7187 - There some legacy tests required it to be true
+            Some(true) // TODO https://jira.tools.tax.service.gov.uk/browse/SASS-7187 - There are some legacy tests to check that this is set to true
         ))
 }
 
