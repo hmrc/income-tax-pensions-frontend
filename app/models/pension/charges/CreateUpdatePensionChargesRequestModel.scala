@@ -71,9 +71,6 @@ case class CreateUpdatePensionChargesRequestModel(pensionSavingsTaxCharges: Opti
 
   def createSubModel: CreateUpdatePensionChargesRequestModel = {
     def processModel[T <: PensionChargesSubRequestModel](model: Option[T]): Option[T] = {
-      println()
-      println("model is: " + model)
-      println()
       if (model.exists(_.isEmpty) || model.isEmpty) {
         None
       } else {
@@ -96,7 +93,7 @@ object CreateUpdatePensionChargesRequestModel {
 
   def fromPriorData(prior: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel =
     CreateUpdatePensionChargesRequestModel(
-      PensionSavingsTaxCharges.fromPriorData(prior).some,
+      PensionSavingsTaxCharges.fromPriorData(prior),
       PensionSchemeOverseasTransfers.fromPriorData(prior),
       PensionSchemeUnauthorisedPayments.fromPriorData(prior),
       PensionContributions.fromPriorData(prior),

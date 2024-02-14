@@ -55,7 +55,7 @@ class StatePensionServiceSpec
 
   val allUserDataAfterSubmission: PensionsUserData = allUserData.copy(pensions = sessionDataAfterSubmission)
 
-  "persisting journey answers" should {
+  "saving journey answers" should {
 
     "return Right(Unit) and clear income from pensions cya from DB" when {
 
@@ -66,7 +66,7 @@ class StatePensionServiceSpec
         mockSaveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD, Right(()))
         mockCreateOrUpdate(allUserDataAfterSubmission, Right(()))
 
-        val result = await(service.persistJourneyAnswers(aUser, taxYear))
+        val result = await(service.saveAnswers(aUser, currentTaxYear))
         result shouldBe Right(())
       }
 
@@ -82,7 +82,7 @@ class StatePensionServiceSpec
         mockSaveClaimData(nino, anUpdateStatePensionBenefitsUD, Right(()))
         mockCreateOrUpdate(allUserDataAfterSubmission, Right(()))
 
-        val result = await(service.persistJourneyAnswers(aUser, taxYear))
+        val result = await(service.saveAnswers(aUser, currentTaxYear))
         result shouldBe Right(())
       }
 
@@ -98,7 +98,7 @@ class StatePensionServiceSpec
         mockSaveClaimData(nino, anUpdateStatePensionLumpSumBenefitsUD, Right(()))
         mockCreateOrUpdate(allUserDataAfterSubmission, Right(()))
 
-        val result = await(service.persistJourneyAnswers(aUser, taxYear))
+        val result = await(service.saveAnswers(aUser, currentTaxYear))
         result shouldBe Right(())
       }
     }
@@ -106,7 +106,7 @@ class StatePensionServiceSpec
     "return Left(DataNotFound) when user can not be found in DB" in {
       mockFind(taxYear, aUser, Left(DataNotFound))
 
-      val result = await(service.persistJourneyAnswers(aUser, taxYear))
+      val result = await(service.saveAnswers(aUser, currentTaxYear))
       result shouldBe Left(DataNotFound)
     }
 
@@ -115,7 +115,7 @@ class StatePensionServiceSpec
 
       mockSaveClaimData(nino, aCreateStatePensionBenefitsUD, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
 
-      val result = await(service.persistJourneyAnswers(aUser, taxYear))
+      val result = await(service.saveAnswers(aUser, currentTaxYear))
       result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
     }
 
@@ -126,7 +126,7 @@ class StatePensionServiceSpec
       mockSaveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD, Right(()))
       mockCreateOrUpdate(allUserDataAfterSubmission, Left(DataNotUpdated))
 
-      val result = await(service.persistJourneyAnswers(aUser, taxYear))
+      val result = await(service.saveAnswers(aUser, currentTaxYear))
       result shouldBe Left(DataNotUpdated)
     }
   }

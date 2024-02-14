@@ -19,7 +19,7 @@ package services
 import cats.data.EitherT
 import cats.implicits.catsSyntaxOptionId
 import common.TaxYear
-import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
+import connectors.{IncomeTaxUserDataConnector, PensionChargesConnector}
 import models.mongo.{DatabaseError, PensionsUserData, ServiceError, SessionNotFound}
 import models.pension.charges._
 import models.{APIErrorModel, IncomeTaxUserData, User}
@@ -30,25 +30,24 @@ import utils.EitherTUtils.EitherTOps
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-// Try write this in a tagless final style.
 class AnnualAllowanceService @Inject() (repository: PensionsUserDataRepository,
-                                        pensionsConnector: PensionsConnector,
-                                        submissionsConnector: IncomeTaxUserDataConnector) {
+                                        pensionsConnector: PensionChargesConnector,
+                                        submissionsConnector: IncomeTaxUserDataConnector)(implicit ec: ExecutionContext)
+    extends SaveJourneyService[Future] {
 
-  def saveJourneyAnswers(user: User, taxYear: TaxYear)(implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
-    val hcWithId = hc.withExtraHeaders("mtditid" -> user.mtditid)
-
+  override def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
+    val hcWithMtdItId = hc.addMtdItId(user)
     (for {
-      priorData    <- EitherT(submissionsConnector.getUserData(user.nino, taxYear.endYear)(hcWithId)).leftAs[ServiceError]
+      priorData    <- EitherT(submissionsConnector.getUserData(user.nino, taxYear.endYear)(hcWithMtdItId)).leftAs[ServiceError]
       maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
       session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
       journeyAnswers = session.pensions.pensionsAnnualAllowances
-      _ <- sendDownstream(journeyAnswers, priorData, user, taxYear)(ec, hcWithId).leftAs[ServiceError]
+      _ <- sendDownstream(journeyAnswers, priorData, user, taxYear)(ec, hcWithMtdItId).leftAs[ServiceError]
       _ <- clearJourneyFromSession(session).leftAs[ServiceError]
     } yield ()).value
   }
 
-  def clearJourneyFromSession(session: PensionsUserData): EitherT[Future, DatabaseError, Unit] = {
+  private def clearJourneyFromSession(session: PensionsUserData): EitherT[Future, DatabaseError, Unit] = {
     val clearedJourneyModel =
       session.pensions.copy(
         pensionsAnnualAllowances = PensionAnnualAllowancesViewModel()
@@ -58,16 +57,17 @@ class AnnualAllowanceService @Inject() (repository: PensionsUserDataRepository,
     EitherT(repository.createOrUpdate(updatedSessionModel))
   }
 
-  def sendDownstream(answers: PensionAnnualAllowancesViewModel, priorData: IncomeTaxUserData, user: User, taxYear: TaxYear)(implicit
+  private def sendDownstream(answers: PensionAnnualAllowancesViewModel, priorData: IncomeTaxUserData, user: User, taxYear: TaxYear)(implicit
       ec: ExecutionContext,
       hc: HeaderCarrier): EitherT[Future, APIErrorModel, Unit] =
     answers.reducedAnnualAllowanceQuestion
       .fold(EitherT.pure[Future, APIErrorModel](())) { _ =>
         val model = buildDownstreamUpsertRequestModel(answers, priorData)
-        EitherT(pensionsConnector.savePensionChargesSessionData(user.nino, taxYear.endYear, model))
+        EitherT(pensionsConnector.saveAnswers(model, taxYear, user.nino))
       }
 
-  def buildDownstreamUpsertRequestModel(answers: PensionAnnualAllowancesViewModel, prior: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel =
+  private def buildDownstreamUpsertRequestModel(answers: PensionAnnualAllowancesViewModel,
+                                                prior: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel =
     CreateUpdatePensionChargesRequestModel
       .fromPriorData(prior)
       .copy(pensionContributions = answers.toPensionContributions.some)

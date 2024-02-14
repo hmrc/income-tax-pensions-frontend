@@ -41,7 +41,7 @@ import services.AuthService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.syntax.retrieved.authSyntaxForRetrieved
-import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, SessionKeys}
 import views.html.templates.AgentAuthErrorPageView
 
 import scala.concurrent.duration.Duration
@@ -70,6 +70,8 @@ trait IntegrationTest
   val defaultUser: PensionsUserData = aPensionsUserData
   val xSessionId: (String, String)  = "X-Session-ID" -> defaultUser.sessionId
 
+  val emptyJson = "{}"
+
   implicit val ec: ExecutionContext         = ExecutionContext.Implicits.global
   implicit val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders("mtditid" -> mtditid)
 
@@ -78,6 +80,8 @@ trait IntegrationTest
   implicit val integrationTestClock: IntegrationTestClock.type = IntegrationTestClock
 
   implicit def wsClient: WSClient = app.injector.instanceOf[WSClient]
+
+  val httpClient: HttpClient = app.injector.instanceOf[HttpClient]
 
   val appUrl = s"http://localhost:$port/update-and-submit-income-tax-return/pensions"
 

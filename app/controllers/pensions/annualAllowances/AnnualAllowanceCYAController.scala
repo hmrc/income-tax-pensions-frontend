@@ -30,7 +30,6 @@ import services.redirects.AnnualAllowancesPages.CYAPage
 import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.annualAllowances.AnnualAllowancesCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +40,7 @@ class AnnualAllowanceCYAController @Inject() (auditProvider: AuditActionsProvide
                                               view: AnnualAllowancesCYAView,
                                               service: AnnualAllowanceService,
                                               errorHandler: ErrorHandler,
-                                              cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                              cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
@@ -56,7 +55,7 @@ class AnnualAllowanceCYAController @Inject() (auditProvider: AuditActionsProvide
     val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
-        service.saveJourneyAnswers(request.user, TaxYear(taxYear)).map {
+        service.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
           case Right(_) => Redirect(PensionsSummaryController.show(taxYear))
         }

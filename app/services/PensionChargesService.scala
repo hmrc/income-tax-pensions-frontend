@@ -126,14 +126,8 @@ class PensionChargesService @Inject() (pensionUserDataRepository: PensionsUserDa
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
 
       journeyAnswers = sessionData.map(_.pensions.pensionsAnnualAllowances)
-      _              = println()
-      _              = println("journey answers: " + journeyAnswers)
-      _              = println()
 
       annualAllowanceSubModel = journeyAnswers.map(_.toDownstreamRequestModel(priorData.pensions))
-      _                       = println()
-      _                       = println("annualAllowanceSubModel is: " + annualAllowanceSubModel)
-      _                       = println()
 
       result <-
         FutureEitherOps[ServiceError, Unit](
@@ -166,20 +160,14 @@ object PensionChargesService {
 
   object AnnualAllowance {
     def createAnnualAllowanceChargesModel(journeyAnswers: Option[PensionAnnualAllowancesViewModel],
-                                          priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel = {
-      // TODO: Why do we send all journeys if there is prior data?
-      val model = CreateUpdatePensionChargesRequestModel(
+                                          priorData: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel =
+      CreateUpdatePensionChargesRequestModel(
         pensionSavingsTaxCharges = journeyAnswers.map(_.toPensionSavingsTaxCharges(priorData.pensions)),
         pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
         pensionSchemeUnauthorisedPayments = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)),
         pensionContributions = journeyAnswers.map(_.toPensionContributions),
         overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
       )
-      println()
-      println("annual allowances charges model: " + model)
-      println()
-      model
-    }
 
     def getAnnualAllowanceUserData(userData: Option[PensionsUserData], user: User, taxYear: Int, clock: Clock): PensionsUserData =
       userData match {
