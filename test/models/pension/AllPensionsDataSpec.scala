@@ -133,6 +133,12 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
       val actual = AllPensionsData.generateSessionModelFromPrior(setPensionReliefs(downstreamModel))
       assert(actual.paymentsIntoPension === expectedModel)
     }
+  }
 
+  "getPaymentsIntoPensionsCyaFromPrior" should {
+    "return an empty object with preselected totalPaymentsIntoRASQuestion if no prior data for reliefs" in {
+      val prior = anAllPensionsData.copy(pensionReliefs = None)
+      assert(prior.getPaymentsIntoPensionsCyaFromPrior === PaymentsIntoPensionsViewModel.empty.copy(totalPaymentsIntoRASQuestion = Some(true)))
+    }
   }
 }
