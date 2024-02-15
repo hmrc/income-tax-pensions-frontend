@@ -44,9 +44,9 @@ object BenefitType {
   }
 }
 
-class StatePensionService @Inject() (repository: PensionsUserDataRepository, connector: StateBenefitsConnector)(implicit ec: ExecutionContext) {
+class StatePensionService @Inject() (repository: PensionsUserDataRepository, connector: StateBenefitsConnector) {
 
-  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
     val hcWithMtdItId = hc.addMtdItId(user)
 
     (for {
