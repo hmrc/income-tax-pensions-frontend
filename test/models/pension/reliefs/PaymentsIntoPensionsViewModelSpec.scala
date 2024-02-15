@@ -94,11 +94,13 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropert
 
   "fromSubmittedReliefs" should {
     val emptyReliefs = Reliefs.empty
-    val zero = Zero.some
+    val zero         = Zero.some
 
     val cases = Table(
       ("reliefsPriorData", "expectedModel"),
-      (Reliefs.empty, PaymentsIntoPensionsViewModel(Some(false), zero, Some(false), zero, Some(true), Some(false), Some(false), zero, Some(false), zero)),
+      (
+        Reliefs.empty,
+        PaymentsIntoPensionsViewModel(Some(false), zero, Some(false), zero, Some(true), Some(false), Some(false), zero, Some(false), zero)),
       (
         emptyReliefs.copy(regularPensionContributions = Some(1.0)),
         PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), zero, Some(true), Some(false), Some(false), zero, Some(false), zero)
