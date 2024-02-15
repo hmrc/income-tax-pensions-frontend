@@ -33,11 +33,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDataRepository,
                                        pensionReliefsConnectorHelper: PensionReliefsConnectorHelper) {
 
-  def persistPaymentIntoPensionViewModel(user: User, taxYear: TaxYear, paymentsIntoPensions: PaymentsIntoPensionsViewModel)(implicit
+  def persistPaymentIntoPensionViewModel(user: User,
+                                         taxYear: TaxYear,
+                                         paymentsIntoPensions: PaymentsIntoPensionsViewModel,
+                                         existingOverseasPensionSchemeContributions: Option[BigDecimal])(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext,
       clock: Clock): EitherT[Future, ApiError, Unit] = {
-    val reliefs            = paymentsIntoPensions.toReliefs
+    val reliefs            = paymentsIntoPensions.toReliefs(existingOverseasPensionSchemeContributions)
     val updatedReliefsData = CreateOrUpdatePensionReliefsModel(pensionReliefs = reliefs)
 
     (for {
