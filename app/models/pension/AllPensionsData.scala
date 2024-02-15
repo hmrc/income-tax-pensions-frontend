@@ -40,6 +40,11 @@ case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
 object AllPensionsData {
   implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
 
+  val Zero: BigDecimal = 0.0
+
+  def isNotZero(value: Option[BigDecimal]) =
+    value.exists(_ != Zero)
+
   def generateSessionModelFromPrior(prior: AllPensionsData): PensionsCYAModel =
     PensionsCYAModel(
       paymentsIntoPension = prior.getPaymentsIntoPensionsCyaFromPrior,
