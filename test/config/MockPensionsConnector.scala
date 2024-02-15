@@ -92,5 +92,3 @@ trait MockPensionsConnector extends MockFactory {
       .returns(Future.successful(response))
       .anyNumberOfTimes()
 }
-
-object MockPensionsConnector extends MockPensionsConnector
