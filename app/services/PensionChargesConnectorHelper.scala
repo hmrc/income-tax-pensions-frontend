@@ -31,7 +31,7 @@ class PensionChargesConnectorHelper @Inject() (pensionConnector: PensionsConnect
   override def saveData(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): Future[Either[APIErrorModel, Unit]] =
-    pensionConnector.savePensionChargesSessionData(nino, taxYear, model)
+    pensionConnector.savePensionCharges(nino, taxYear, model)
 
   override def deleteData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]] =
     pensionConnector.deletePensionCharges(nino, taxYear)

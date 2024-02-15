@@ -51,3 +51,5 @@ trait MockIncomeTaxUserDataConnector extends MockFactory {
       .returns(Future.successful(Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))))
       .anyNumberOfTimes()
 }
+
+object MockIncomeTaxUserDataConnector extends MockIncomeTaxUserDataConnector

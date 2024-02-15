@@ -19,7 +19,7 @@ package services
 import cats.data.EitherT
 import cats.implicits.catsSyntaxOptionId
 import common.TaxYear
-import connectors.{IncomeTaxUserDataConnector, PensionChargesConnector}
+import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
 import models.mongo.{DatabaseError, PensionsUserData, ServiceError, SessionNotFound}
 import models.pension.charges._
 import models.{APIErrorModel, IncomeTaxUserData, User}
@@ -27,15 +27,15 @@ import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.EitherTOps
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class AnnualAllowanceService @Inject() (repository: PensionsUserDataRepository,
-                                        pensionsConnector: PensionChargesConnector,
-                                        submissionsConnector: IncomeTaxUserDataConnector)(implicit ec: ExecutionContext)
-    extends SaveJourneyService[Future] {
+                                        pensionsConnector: PensionsConnector,
+                                        submissionsConnector: IncomeTaxUserDataConnector) {
 
-  override def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
     val hcWithMtdItId = hc.addMtdItId(user)
     (for {
       priorData    <- EitherT(submissionsConnector.getUserData(user.nino, taxYear.endYear)(hcWithMtdItId)).leftAs[ServiceError]
@@ -63,7 +63,7 @@ class AnnualAllowanceService @Inject() (repository: PensionsUserDataRepository,
     answers.reducedAnnualAllowanceQuestion
       .fold(EitherT.pure[Future, APIErrorModel](())) { _ =>
         val model = buildDownstreamUpsertRequestModel(answers, priorData)
-        EitherT(pensionsConnector.saveAnswers(model, taxYear, user.nino))
+        EitherT(pensionsConnector.savePensionCharges(user.nino, taxYear.endYear, model))
       }
 
   private def buildDownstreamUpsertRequestModel(answers: PensionAnnualAllowancesViewModel,

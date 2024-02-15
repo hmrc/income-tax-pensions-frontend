@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends Logging {
 
-  def savePensionChargesSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)(implicit
+  def savePensionCharges(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): Future[SavePensionChargesAnswersResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-charges/session-data/nino/$nino/taxYear/${taxYear.toString}"

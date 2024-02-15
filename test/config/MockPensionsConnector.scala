@@ -51,7 +51,7 @@ trait MockPensionsConnector extends MockFactory {
     ExecutionContext,
     Future[SavePensionChargesAnswersResponse]] =
     (mockPensionsConnector
-      .savePensionChargesSessionData(_: String, _: Int, _: CreateUpdatePensionChargesRequestModel)(_: HeaderCarrier, _: ExecutionContext))
+      .savePensionCharges(_: String, _: Int, _: CreateUpdatePensionChargesRequestModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, model, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
@@ -92,3 +92,5 @@ trait MockPensionsConnector extends MockFactory {
       .returns(Future.successful(response))
       .anyNumberOfTimes()
 }
+
+object MockPensionsConnector extends MockPensionsConnector

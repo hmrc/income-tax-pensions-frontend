@@ -54,7 +54,7 @@ class PensionsConnectorISpec extends IntegrationTest {
 
         stubPutWithHeadersCheck(chargesURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
-        val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)
+        val result = Await.result(connector.savePensionCharges(nino, taxYear, chargesRequestModel), Duration.Inf)
         result shouldBe Right(())
       }
 
@@ -67,7 +67,7 @@ class PensionsConnectorISpec extends IntegrationTest {
           "X-Session-ID" -> sessionId,
           "mtditid"      -> mtditid)
 
-        val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)
+        val result = Await.result(connector.savePensionCharges(nino, taxYear, chargesRequestModel), Duration.Inf)
         result shouldBe Right(())
       }
     }
@@ -80,7 +80,7 @@ class PensionsConnectorISpec extends IntegrationTest {
 
         stubPutWithHeadersCheck(chargesURL, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
-        val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel)(hc, ec), Duration.Inf)
+        val result = Await.result(connector.savePensionCharges(nino, taxYear, chargesRequestModel)(hc, ec), Duration.Inf)
 
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
       }
@@ -89,7 +89,7 @@ class PensionsConnectorISpec extends IntegrationTest {
 
         stubPutWithHeadersCheck(chargesURL, INTERNAL_SERVER_ERROR, """{"invalid": true}""", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
-        val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)
+        val result = Await.result(connector.savePensionCharges(nino, taxYear, chargesRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
       }
 
@@ -102,7 +102,7 @@ class PensionsConnectorISpec extends IntegrationTest {
           "X-Session-ID" -> sessionId,
           "mtditid"      -> mtditid)
 
-        val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)
+        val result = Await.result(connector.savePensionCharges(nino, taxYear, chargesRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
       }
 
@@ -115,7 +115,7 @@ class PensionsConnectorISpec extends IntegrationTest {
           "X-Session-ID" -> sessionId,
           "mtditid"      -> mtditid)
 
-        val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)
+        val result = Await.result(connector.savePensionCharges(nino, taxYear, chargesRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))
       }
 
@@ -128,7 +128,7 @@ class PensionsConnectorISpec extends IntegrationTest {
           "X-Session-ID" -> sessionId,
           "mtditid"      -> mtditid)
 
-        val result = Await.result(connector.savePensionChargesSessionData(nino, taxYear, chargesRequestModel), Duration.Inf)
+        val result = Await.result(connector.savePensionCharges(nino, taxYear, chargesRequestModel), Duration.Inf)
         result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
       }
     }

@@ -30,10 +30,9 @@ import utils.EitherTUtils.EitherTOps
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class EmploymentPensionService @Inject() (repository: PensionsUserDataRepository, connector: EmploymentConnector)(implicit ec: ExecutionContext)
-    extends SaveJourneyService[Future] {
+class EmploymentPensionService @Inject() (repository: PensionsUserDataRepository, connector: EmploymentConnector)(implicit ec: ExecutionContext) {
 
-  override def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier): Future[Either[ServiceError, Unit]] = {
     def saveJourneyData(allIncomes: Seq[UkPensionIncomeViewModel]): Future[Either[APIErrorModel, Seq[Unit]]] =
       allIncomes
         .traverse(income => connector.saveEmploymentPensionsData(user.nino, taxYear.endYear, income.toDownstreamRequest)(hc.addMtdItId(user), ec))
