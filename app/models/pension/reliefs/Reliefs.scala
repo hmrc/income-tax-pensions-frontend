@@ -34,6 +34,9 @@ case class Reliefs(regularPensionContributions: Option[BigDecimal],
 }
 object Reliefs {
   implicit val formats: OFormat[Reliefs] = Json.format[Reliefs]
+
+  def empty: Reliefs = Reliefs(None, None, None, None, None)
+
 }
 
 case class EncryptedReliefs(regularPensionContributions: Option[EncryptedValue],

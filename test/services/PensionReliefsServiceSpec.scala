@@ -54,13 +54,14 @@ class PensionReliefsServiceSpec extends AnyWordSpecLike with MockPensionUserData
       mockSavePensionReliefSessionData(nino, currTaxYear.endYear, model, Right(()))
       mockCreateOrUpdate(userWithEmptySavePaymentsIntoPensionCya, Right(()))
 
-      val result = pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, currTaxYear, viewModel).value.futureValue
+      val result = pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, currTaxYear, viewModel, None).value.futureValue
       assert(result === Right(()))
     }
 
     "return Left(DataNotFound) when user can not be found in DB" in {
       mockFind(currTaxYear.endYear, aUser, Left(DataNotFound))
-      val result = pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, currTaxYear, PaymentsIntoPensionsViewModel()).value.futureValue
+      val result =
+        pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, currTaxYear, PaymentsIntoPensionsViewModel(), None).value.futureValue
 
       assert(result === Left(CreateOrUpdateError("DataNotFound")))
     }
@@ -84,7 +85,7 @@ class PensionReliefsServiceSpec extends AnyWordSpecLike with MockPensionUserData
 
       mockSavePensionReliefSessionData(nino, currTaxYear.endYear, model, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
 
-      val result = pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, currTaxYear, viewModel).value.futureValue
+      val result = pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, currTaxYear, viewModel, None).value.futureValue
       assert(result === Left(CreateOrUpdateError("APIErrorModel(400,APIErrorBodyModel(FAILED,failed))")))
     }
 
@@ -108,7 +109,7 @@ class PensionReliefsServiceSpec extends AnyWordSpecLike with MockPensionUserData
       mockSavePensionReliefSessionData(nino, currTaxYear.endYear, model, Right(()))
       mockCreateOrUpdate(userWithEmptySavePaymentsIntoPensionCya, Left(DataNotUpdated))
 
-      val result = pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, currTaxYear, viewModel).value.futureValue
+      val result = pensionReliefsService.persistPaymentIntoPensionViewModel(aUser, currTaxYear, viewModel, None).value.futureValue
       assert(result === Left(CreateOrUpdateError("DataNotUpdated")))
     }
   }

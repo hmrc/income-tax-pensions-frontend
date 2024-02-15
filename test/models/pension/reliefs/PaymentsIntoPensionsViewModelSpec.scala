@@ -17,9 +17,10 @@
 package models.pension.reliefs
 
 import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
+import org.scalatest.prop.TableDrivenPropertyChecks
 import support.UnitTest
 
-class PaymentsIntoPensionsViewModelSpec extends UnitTest {
+class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropertyChecks {
 
   "isEmpty" should {
     "return true when no questions have been answered" in {
@@ -68,7 +69,7 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest {
 
   "toReliefs" should {
     "set BigDecimal values to 0.0 if None" in {
-      assert(aPaymentsIntoPensionsEmptyViewModel.toReliefs === Reliefs(Some(0.0), Some(0.0), Some(0.0), Some(0.0), None))
+      assert(aPaymentsIntoPensionsEmptyViewModel.toReliefs(None) === Reliefs.empty)
     }
 
     "set BigDecimal values if defined" in {
@@ -84,8 +85,79 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest {
           Some(3.0),
           Some(true),
           Some(4.0)
-        ).toReliefs === Reliefs(Some(1.0), Some(2.0), Some(3.0), Some(4.0), None))
+        ).toReliefs(None) === Reliefs(Some(1.0), Some(2.0), Some(3.0), Some(4.0), None))
     }
 
+  }
+
+  "fromSubmittedReliefs" should {
+    val emptyReliefs = Reliefs.empty
+    val cases = Table(
+      ("reliefsPriorData", "expectedModel"),
+      (Reliefs.empty, PaymentsIntoPensionsViewModel(Some(false), None, Some(false), None, Some(true), Some(false), None, None, None, None)),
+      (
+        emptyReliefs.copy(regularPensionContributions = Some(1.0)),
+        PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), None, Some(true), Some(false), None, None, None, None)
+      ),
+      (
+        emptyReliefs.copy(regularPensionContributions = Some(1.0), oneOffPensionContributionsPaid = Some(2.0)),
+        PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(true), Some(2.0), Some(true), Some(false), None, None, None, None)
+      ),
+      (
+        emptyReliefs.copy(regularPensionContributions = Some(1.0), oneOffPensionContributionsPaid = Some(2.0), retirementAnnuityPayments = Some(3.0)),
+        PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(true), Some(2.0), Some(true), Some(true), Some(true), Some(3.0), Some(false), None)
+      ),
+      (
+        emptyReliefs.copy(
+          regularPensionContributions = Some(1.0),
+          oneOffPensionContributionsPaid = Some(2.0),
+          retirementAnnuityPayments = Some(3.0),
+          paymentToEmployersSchemeNoTaxRelief = Some(4.0)
+        ),
+        PaymentsIntoPensionsViewModel(
+          Some(true),
+          Some(1.0),
+          Some(true),
+          Some(2.0),
+          Some(true),
+          Some(true),
+          Some(true),
+          Some(3.0),
+          Some(true),
+          Some(4.0))
+      ),
+      (
+        emptyReliefs.copy(
+          regularPensionContributions = None,
+          oneOffPensionContributionsPaid = Some(2.0),
+          retirementAnnuityPayments = Some(3.0),
+          paymentToEmployersSchemeNoTaxRelief = Some(4.0)
+        ),
+        PaymentsIntoPensionsViewModel(Some(false), None, Some(true), Some(2.0), Some(true), Some(true), Some(true), Some(3.0), Some(true), Some(4.0))
+      ),
+      (
+        emptyReliefs.copy(
+          regularPensionContributions = None,
+          oneOffPensionContributionsPaid = None,
+          retirementAnnuityPayments = Some(3.0),
+          paymentToEmployersSchemeNoTaxRelief = Some(4.0)
+        ),
+        PaymentsIntoPensionsViewModel(Some(false), None, Some(false), None, Some(true), Some(true), Some(true), Some(3.0), Some(true), Some(4.0))
+      ),
+      (
+        emptyReliefs.copy(
+          regularPensionContributions = None,
+          oneOffPensionContributionsPaid = None,
+          retirementAnnuityPayments = None,
+          paymentToEmployersSchemeNoTaxRelief = Some(4.0)
+        ),
+        PaymentsIntoPensionsViewModel(Some(false), None, Some(false), None, Some(true), Some(true), Some(false), None, Some(true), Some(4.0))
+      )
+    )
+
+    "convert Reliefs into ViewModel" in forAll(cases) { case (reliefsPriorData, expectedModel) =>
+      val actualModel = PaymentsIntoPensionsViewModel.fromSubmittedReliefs(reliefsPriorData)
+      assert(actualModel === expectedModel)
+    }
   }
 }
