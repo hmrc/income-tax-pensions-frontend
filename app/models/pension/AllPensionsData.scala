@@ -34,7 +34,7 @@ case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
   def getPaymentsIntoPensionsCyaFromPrior: PaymentsIntoPensionsViewModel =
     pensionReliefs
       .map(pr => PaymentsIntoPensionsViewModel.fromSubmittedReliefs(pr.pensionReliefs))
-      .getOrElse(PaymentsIntoPensionsViewModel.empty)
+      .getOrElse(PaymentsIntoPensionsViewModel.empty.copy(totalPaymentsIntoRASQuestion = Some(true)))
 }
 
 object AllPensionsData {
