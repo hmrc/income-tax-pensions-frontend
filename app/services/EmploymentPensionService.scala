@@ -16,9 +16,9 @@
 
 package services
 
-import cats.Foldable
 import cats.data.EitherT
 import cats.implicits._
+import common.TaxYear
 import connectors.EmploymentConnector
 import models.mongo._
 import models.pension.statebenefits.UkPensionIncomeViewModel
@@ -32,31 +32,32 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class EmploymentPensionService @Inject() (repository: PensionsUserDataRepository, connector: EmploymentConnector) {
 
-  def persistJourneyAnswers(user: User, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
-    val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
-
-    def clearJourneyFromSession(session: PensionsUserData): Future[Either[DatabaseError, Unit]] = {
-      val clearedJourneyModel =
-        session.pensions.incomeFromPensions.copy(
-          uKPensionIncomes = Nil,
-          uKPensionIncomesQuestion = None
-        )
-      val updatedSessionModel =
-        session.copy(pensions = session.pensions.copy(incomeFromPensions = clearedJourneyModel))
-
-      repository.createOrUpdate(updatedSessionModel)
-    }
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
     def saveJourneyData(allIncomes: Seq[UkPensionIncomeViewModel]): Future[Either[APIErrorModel, Seq[Unit]]] =
       allIncomes
-        .traverse(income => connector.saveEmploymentPensionsData(user.nino, taxYear, income.toDownstreamRequest)(hcWithExtras, ec))
+        .traverse(income => connector.saveEmploymentPensionsData(user.nino, taxYear.endYear, income.toDownstreamRequest)(hc.addMtdItId(user), ec))
         .map(sequence)
 
     (for {
-      maybeSession <- EitherT(repository.find(taxYear, user)).leftAs[ServiceError]
+      maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
       session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
       _            <- EitherT(saveJourneyData(session.pensions.incomeFromPensions.uKPensionIncomes)).leftAs[ServiceError]
       _            <- EitherT(clearJourneyFromSession(session)).leftAs[ServiceError]
     } yield ()).value
+
+  }
+
+  private def clearJourneyFromSession(session: PensionsUserData): Future[Either[DatabaseError, Unit]] = {
+    val clearedJourneyModel =
+      session.pensions.incomeFromPensions.copy(
+        uKPensionIncomes = Nil,
+        uKPensionIncomesQuestion = None
+      )
+    val updatedSessionModel =
+      session.copy(pensions = session.pensions.copy(incomeFromPensions = clearedJourneyModel))
+
+    repository.createOrUpdate(updatedSessionModel)
+
   }
 
   private def sequence[A, B](s: Seq[Either[A, B]]): Either[A, Seq[B]] =

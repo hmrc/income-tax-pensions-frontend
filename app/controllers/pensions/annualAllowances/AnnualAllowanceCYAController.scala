@@ -16,6 +16,7 @@
 
 package controllers.pensions.annualAllowances
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
@@ -24,12 +25,11 @@ import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateAnnualAllowanceSessionFromPrior
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionChargesService
+import services.AnnualAllowanceService
 import services.redirects.AnnualAllowancesPages.CYAPage
 import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.annualAllowances.AnnualAllowancesCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -38,9 +38,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AnnualAllowanceCYAController @Inject() (auditProvider: AuditActionsProvider,
                                               view: AnnualAllowancesCYAView,
-                                              pensionChargesService: PensionChargesService,
+                                              service: AnnualAllowanceService,
                                               errorHandler: ErrorHandler,
-                                              cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                              cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
@@ -55,7 +55,7 @@ class AnnualAllowanceCYAController @Inject() (auditProvider: AuditActionsProvide
     val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
-        pensionChargesService.saveAnnualAllowanceViewModel(request.user, taxYear).map {
+        service.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
           case Right(_) => Redirect(PensionsSummaryController.show(taxYear))
         }
@@ -65,9 +65,9 @@ class AnnualAllowanceCYAController @Inject() (auditProvider: AuditActionsProvide
     }
   }
 
-  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
+  private def sessionDataDifferentThanPriorData(sessionData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData match {
       case None        => true
-      case Some(prior) => !cyaData.pensionsAnnualAllowances.equals(generateAnnualAllowanceSessionFromPrior(prior))
+      case Some(prior) => !sessionData.pensionsAnnualAllowances.equals(generateAnnualAllowanceSessionFromPrior(prior))
     }
 }

@@ -20,7 +20,7 @@ import config.AppConfig
 import connectors.httpParsers.DeletePensionChargesHttpParser.{DeletePensionChargesHttpReads, DeletePensionChargesResponse}
 import connectors.httpParsers.DeletePensionIncomeHttpParser.{DeletePensionIncomeHttpReads, DeletePensionIncomeResponse}
 import connectors.httpParsers.DeletePensionReliefsHttpParser.{DeletePensionReliefsHttpReads, DeletePensionReliefsResponse}
-import connectors.httpParsers.PensionChargesSessionHttpParser.{PensionChargesSessionHttpReads, PensionChargesSessionResponse}
+import connectors.httpParsers.PensionChargesSessionHttpParser.{PensionChargesSessionHttpReads, SavePensionChargesAnswersResponse}
 import connectors.httpParsers.PensionIncomeSessionHttpParser.{PensionIncomeSessionHttpReads, PensionIncomeSessionResponse}
 import connectors.httpParsers.PensionReliefsSessionHttpParser.{PensionReliefsSessionHttpReads, PensionReliefsSessionResponse}
 import models.logging.ConnectorRequestInfo
@@ -35,12 +35,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends Logging {
 
-  def savePensionChargesSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)(implicit
+  def savePensionCharges(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)(implicit
       hc: HeaderCarrier,
-      ec: ExecutionContext): Future[PensionChargesSessionResponse] = {
+      ec: ExecutionContext): Future[SavePensionChargesAnswersResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-charges/session-data/nino/$nino/taxYear/${taxYear.toString}"
     ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, model)
-    http.PUT[CreateUpdatePensionChargesRequestModel, PensionChargesSessionResponse](url, model)(
+    http.PUT[CreateUpdatePensionChargesRequestModel, SavePensionChargesAnswersResponse](url, model)(
       CreateUpdatePensionChargesRequestModel.format,
       PensionChargesSessionHttpReads,
       hc,

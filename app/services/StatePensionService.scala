@@ -17,6 +17,7 @@
 package services
 
 import cats.data.EitherT
+import common.TaxYear
 import connectors.StateBenefitsConnector
 import models.User
 import models.mongo._
@@ -45,31 +46,30 @@ object BenefitType {
 
 class StatePensionService @Inject() (repository: PensionsUserDataRepository, connector: StateBenefitsConnector) {
 
-  def persistJourneyAnswers(user: User, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
-    val hcWithExtras = hc.withExtraHeaders("mtditid" -> user.mtditid)
-
-    def clearJourneyFromSession(session: PensionsUserData): Future[Either[DatabaseError, Unit]] = {
-      val clearedJourneyModel =
-        session.pensions.incomeFromPensions.copy(
-          statePension = None,
-          statePensionLumpSum = None
-        )
-      val updatedSessionModel =
-        session.copy(pensions = session.pensions.copy(incomeFromPensions = clearedJourneyModel))
-
-      repository.createOrUpdate(updatedSessionModel)
-    }
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
+    val hcWithMtdItId = hc.addMtdItId(user)
 
     (for {
-      maybeSession <- EitherT(repository.find(taxYear, user)).leftAs[ServiceError]
+      maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
       session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
-      statePensionSubmission        = buildDownstreamRequestModel(session, StatePension, taxYear)
-      statePensionLumpSumSubmission = buildDownstreamRequestModel(session, StatePensionLumpSum, taxYear)
-      _ <- processClaim(statePensionSubmission, hcWithExtras, user)
-      _ <- processClaim(statePensionLumpSumSubmission, hcWithExtras, user)
+      statePensionSubmission        = buildDownstreamRequestModel(session, StatePension, taxYear.endYear)
+      statePensionLumpSumSubmission = buildDownstreamRequestModel(session, StatePensionLumpSum, taxYear.endYear)
+      _ <- processClaim(statePensionSubmission, hcWithMtdItId, user)
+      _ <- processClaim(statePensionLumpSumSubmission, hcWithMtdItId, user)
       _ <- EitherT(clearJourneyFromSession(session)).leftAs[ServiceError]
     } yield ()).value
+  }
 
+  private def clearJourneyFromSession(session: PensionsUserData): Future[Either[DatabaseError, Unit]] = {
+    val clearedJourneyModel =
+      session.pensions.incomeFromPensions.copy(
+        statePension = None,
+        statePensionLumpSum = None
+      )
+    val updatedSessionModel =
+      session.copy(pensions = session.pensions.copy(incomeFromPensions = clearedJourneyModel))
+
+    repository.createOrUpdate(updatedSessionModel)
   }
 
   private def processClaim(answers: StateBenefitsUserData, hc: HeaderCarrier, user: User)(implicit

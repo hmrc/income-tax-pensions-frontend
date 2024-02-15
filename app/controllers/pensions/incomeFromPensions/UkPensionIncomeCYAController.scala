@@ -16,6 +16,7 @@
 
 package controllers.pensions.incomeFromPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
@@ -58,7 +59,7 @@ class UkPensionIncomeCYAController @Inject() (mcc: MessagesControllerComponents,
     val checkRedirect = journeyCheck(CheckUkPensionIncomeCYAPage, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
-        service.persistJourneyAnswers(request.user, taxYear).map {
+        service.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
           case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
         }

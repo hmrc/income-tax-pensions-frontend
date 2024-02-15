@@ -77,7 +77,7 @@ class PensionsChargesServiceSpec
 
   val annualAllowanceRequestModel = {
     val annualAllowanceChargesModel = annualAllowanceSessionUserData.pensions.pensionsAnnualAllowances
-      .toAnnualAllowanceChargesModel(Some(anAllPensionsData))
+      .toDownstreamRequestModel(Some(anAllPensionsData))
     CreateUpdatePensionChargesRequestModel(
       pensionSavingsTaxCharges = annualAllowanceChargesModel.pensionSavingsTaxCharges,
       pensionSchemeOverseasTransfers = priorPensionChargesData.flatMap(_.pensionSchemeOverseasTransfers),

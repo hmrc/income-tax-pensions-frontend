@@ -16,6 +16,9 @@
 
 package models.pension.charges
 
+import cats.implicits.catsSyntaxOptionId
+import models.IncomeTaxUserData
+import models.pension.income.OverseasPensionContribution
 import models.pension.{PensionChargesSubRequestModel, PensionRequestModel, PensionSubRequestModel}
 import play.api.libs.json.{Json, OFormat}
 
@@ -86,4 +89,13 @@ case class CreateUpdatePensionChargesRequestModel(pensionSavingsTaxCharges: Opti
 
 object CreateUpdatePensionChargesRequestModel {
   implicit val format: OFormat[CreateUpdatePensionChargesRequestModel] = Json.format[CreateUpdatePensionChargesRequestModel]
+
+  def fromPriorData(prior: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel =
+    CreateUpdatePensionChargesRequestModel(
+      PensionSavingsTaxCharges.fromPriorData(prior),
+      PensionSchemeOverseasTransfers.fromPriorData(prior),
+      PensionSchemeUnauthorisedPayments.fromPriorData(prior),
+      PensionContributions.fromPriorData(prior),
+      OverseasPensionContribution.fromPriorData(prior)
+    )
 }

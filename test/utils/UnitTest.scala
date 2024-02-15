@@ -160,4 +160,8 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
 
   val emptySessionData: PensionsUserData =
     PensionsUserData(sessionId, "1234567890", nino, taxYear, isPriorSubmission = true, emptyPensionsData, testClock.now())
+
+  implicit class ToFutureOps[A](value: A) {
+    def asFuture: Future[A] = Future.successful(value)
+  }
 }
