@@ -21,8 +21,8 @@ import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataRespo
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalamock.handlers.CallHandler3
 import org.scalamock.scalatest.MockFactory
-import uk.gov.hmrc.http.HeaderCarrier
 import play.api.http.Status.INTERNAL_SERVER_ERROR
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 

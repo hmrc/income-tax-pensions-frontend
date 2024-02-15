@@ -28,7 +28,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
 import models.mongo.PensionsCYAModel
 import play.api.http.Status._
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsValue, Json, Writes}
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel}
 
 trait WireMockHelper {
@@ -83,6 +83,29 @@ trait WireMockHelper {
         .willReturn(
           aResponse().withStatus(status).withBody(body)
         ))
+
+  def stubPutWithBodyAndHeaders[T: Writes](url: String,
+                                           requestBody: T,
+                                           expectedStatus: Int,
+                                           responseBody: JsValue,
+                                           sessionHeader: (String, String),
+                                           mtdidHeader: (String, String)): StubMapping = {
+
+    val stringReqBody = implicitly[Writes[T]]
+      .writes(requestBody)
+      .toString()
+
+    stubFor(
+      put(urlMatching(url))
+        .withHeader(sessionHeader._1, equalTo(sessionHeader._2))
+        .withHeader(mtdidHeader._1, equalTo(mtdidHeader._2))
+        .withRequestBody(equalTo(stringReqBody))
+        .willReturn(
+          aResponse()
+            .withStatus(expectedStatus)
+            .withBody(responseBody.toString())
+            .withHeader("Content-Type", "application/json; charset=utf-8")))
+  }
 
   def stubPost(url: String, status: Int, responseBody: String, requestHeaders: Seq[HttpHeader] = Seq.empty): StubMapping = {
     val mappingWithHeaders: MappingBuilder = requestHeaders.foldLeft(post(urlMatching(url))) { (result, nxt) =>

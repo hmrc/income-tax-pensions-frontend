@@ -19,7 +19,7 @@ package config
 import connectors.PensionsConnector
 import connectors.httpParsers.DeletePensionChargesHttpParser.DeletePensionChargesResponse
 import connectors.httpParsers.DeletePensionReliefsHttpParser.DeletePensionReliefsResponse
-import connectors.httpParsers.PensionChargesSessionHttpParser.PensionChargesSessionResponse
+import connectors.httpParsers.PensionChargesSessionHttpParser.SavePensionChargesAnswersResponse
 import connectors.httpParsers.PensionIncomeSessionHttpParser.PensionIncomeSessionResponse
 import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionResponse
 import models.APIErrorModel
@@ -43,10 +43,15 @@ trait MockPensionsConnector extends MockFactory {
   def mockSavePensionChargesSessionData(nino: String,
                                         taxYear: Int,
                                         model: CreateUpdatePensionChargesRequestModel,
-                                        response: Either[APIErrorModel, Unit])
-      : CallHandler5[String, Int, CreateUpdatePensionChargesRequestModel, HeaderCarrier, ExecutionContext, Future[PensionChargesSessionResponse]] =
+                                        response: Either[APIErrorModel, Unit]): CallHandler5[
+    String,
+    Int,
+    CreateUpdatePensionChargesRequestModel,
+    HeaderCarrier,
+    ExecutionContext,
+    Future[SavePensionChargesAnswersResponse]] =
     (mockPensionsConnector
-      .savePensionChargesSessionData(_: String, _: Int, _: CreateUpdatePensionChargesRequestModel)(_: HeaderCarrier, _: ExecutionContext))
+      .savePensionCharges(_: String, _: Int, _: CreateUpdatePensionChargesRequestModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, model, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()

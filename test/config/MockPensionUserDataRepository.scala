@@ -16,11 +16,11 @@
 
 package config
 
+import models.User
 import models.mongo.{DatabaseError, PensionsUserData}
 import org.scalamock.handlers.{CallHandler1, CallHandler2}
 import org.scalamock.scalatest.MockFactory
 import repositories.PensionsUserDataRepository
-import models.User
 
 import scala.concurrent.Future
 

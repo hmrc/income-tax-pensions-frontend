@@ -16,6 +16,7 @@
 
 package controllers.pensions.incomeFromPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
@@ -60,7 +61,7 @@ class StatePensionCYAController @Inject() (
         Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
       ) { model =>
         if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
-          statePensionService.persistJourneyAnswers(request.user, taxYear) map {
+          statePensionService.saveAnswers(request.user, TaxYear(taxYear)) map {
             case Left(_)  => errorHandler.internalServerError()
             case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
           }

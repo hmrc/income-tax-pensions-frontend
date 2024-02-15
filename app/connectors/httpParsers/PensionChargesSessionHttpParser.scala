@@ -21,13 +21,13 @@ import models.logging.ConnectorResponseInfo
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object PensionChargesSessionHttpParser extends APIParser {
-  type PensionChargesSessionResponse = Either[APIErrorModel, Unit]
+  type SavePensionChargesAnswersResponse = Either[APIErrorModel, Unit]
 
   override val parserName: String = "PensionChargesSessionResponse"
   override val service: String    = "income-tax-pensions"
 
-  implicit object PensionChargesSessionHttpReads extends HttpReads[PensionChargesSessionResponse] {
-    override def read(method: String, url: String, response: HttpResponse): PensionChargesSessionResponse = {
+  implicit object PensionChargesSessionHttpReads extends HttpReads[SavePensionChargesAnswersResponse] {
+    override def read(method: String, url: String, response: HttpResponse): SavePensionChargesAnswersResponse = {
       ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
 
       SessionHttpReads.read(method, url, response)

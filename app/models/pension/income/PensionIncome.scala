@@ -16,6 +16,8 @@
 
 package models.pension.income
 
+import models.IncomeTaxUserData
+import models.pension.charges.OverseasPensionContributions
 import models.pension.{PensionIncomeSubRequestModel, PensionRequestModel, PensionSubRequestModel}
 import play.api.libs.json.{JsValue, Json, OFormat, Writes}
 import utils.EncryptedValue
@@ -63,6 +65,9 @@ case class OverseasPensionContribution(
 
 object OverseasPensionContribution {
   implicit val format: OFormat[OverseasPensionContribution] = Json.format[OverseasPensionContribution]
+
+  def fromPriorData(prior: IncomeTaxUserData): Option[OverseasPensionContributions] =
+    prior.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
 }
 
 case class EncryptedOverseasPensionContribution(

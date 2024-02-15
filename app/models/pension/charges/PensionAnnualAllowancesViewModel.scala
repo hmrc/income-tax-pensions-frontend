@@ -94,7 +94,7 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
         .flatMap(_.benefitInExcessOfLifetimeAllowance)
     )
 
-  def toAnnualAllowanceChargesModel(prior: Option[AllPensionsData]): AnnualAllowancesPensionCharges = {
+  def toDownstreamRequestModel(prior: Option[AllPensionsData]): AnnualAllowancesPensionCharges = {
     val pensionContributionsOpt =
       if (pensionSchemeTaxReferences.getOrElse(Nil) == Nil && aboveAnnualAllowance.isEmpty && taxPaidByPensionProvider.isEmpty) {
         None
