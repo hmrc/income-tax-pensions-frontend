@@ -26,7 +26,7 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
                                          totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
                                          oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,
                                          totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = None,
-                                         totalPaymentsIntoRASQuestion: Option[Boolean] = None,
+                                         totalPaymentsIntoRASQuestion: Option[Boolean] = None,  // This field represents 'Is this correct page'
                                          pensionTaxReliefNotClaimedQuestion: Option[Boolean] = None,
                                          retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
                                          totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
