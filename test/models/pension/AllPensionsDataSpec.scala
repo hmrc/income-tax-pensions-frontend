@@ -165,7 +165,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
       )
 
     val tableCases = Table(
-      ("Prior data journey model", "Expected FE model"),
+      ("Prior data journey model", "Expected result"),
       (priorBaseModel, sessionBaseModel),
       (
         priorBaseModel.copy(surcharge = None),
