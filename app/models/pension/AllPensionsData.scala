@@ -49,7 +49,7 @@ object AllPensionsData {
       paymentsIntoPension = prior.getPaymentsIntoPensionsCyaFromPrior,
       pensionsAnnualAllowances = generateAnnualAllowanceSessionFromPrior(prior),
       incomeFromPensions = generateIncomeFromPensionsModelFromPrior(prior),
-      unauthorisedPayments = generateUnauthorisedPaymentsSessionModelFromPrior(prior),
+      unauthorisedPayments = generateUnauthorisedPaymentsCyaModelFromPrior(prior),
       paymentsIntoOverseasPensions = generatePaymentsIntoOverseasPensionsFromPrior(prior),
       incomeFromOverseasPensions = generateIncomeFromOverseasPensionsCyaFromPrior(prior),
       transfersIntoOverseasPensions = generateTransfersIntoOverseasPensionsCyaFromPrior(prior),
@@ -134,7 +134,7 @@ object AllPensionsData {
     (getUkPensionQuestion(prior), getUkPensionIncome(prior))
   }
 
-  private def generateUnauthorisedPaymentsSessionModelFromPrior(prior: AllPensionsData): UnauthorisedPaymentsViewModel =
+  private def generateUnauthorisedPaymentsCyaModelFromPrior(prior: AllPensionsData): UnauthorisedPaymentsViewModel =
     UnauthorisedPaymentsViewModel(
       surchargeQuestion = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge).map(_ => true)),
       noSurchargeQuestion = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge).map(_ => true)),
