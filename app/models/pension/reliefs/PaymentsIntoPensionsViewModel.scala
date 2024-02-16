@@ -20,6 +20,7 @@ import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 import cats.implicits._
+import models.pension.AllPensionsData.{Zero, isNotZero}
 
 case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boolean] = None,
                                          totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
@@ -83,18 +84,31 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
       case Some(true) =>
         retirementAnnuityContractPaymentsQuestion.exists(x => x) || workplacePensionPaymentsQuestion.exists(x => x)
       case Some(false) =>
-        retirementAnnuityContractPaymentsQuestion.isEmpty && workplacePensionPaymentsQuestion.isEmpty
+        true
       case _ => false
     }
 
   def toReliefs(overseasPensionSchemeContributions: Option[BigDecimal]): Reliefs =
     Reliefs(
-      regularPensionContributions = totalRASPaymentsAndTaxRelief,
-      oneOffPensionContributionsPaid = totalOneOffRasPaymentPlusTaxRelief,
-      retirementAnnuityPayments = totalRetirementAnnuityContractPayments,
-      paymentToEmployersSchemeNoTaxRelief = totalWorkplacePensionPayments,
+      regularPensionContributions = totalRASPaymentsAndTaxRelief.getOrElse(Zero).some,
+      oneOffPensionContributionsPaid = totalOneOffRasPaymentPlusTaxRelief.getOrElse(Zero).some,
+      retirementAnnuityPayments = totalRetirementAnnuityContractPayments.getOrElse(Zero).some,
+      paymentToEmployersSchemeNoTaxRelief = totalWorkplacePensionPayments.getOrElse(Zero).some,
       overseasPensionSchemeContributions = overseasPensionSchemeContributions // not part of this journey, but if we set None it will be wiped out
     )
+
+  def updatePensionTaxReliefNotClaimedQuestion(newValue: Boolean) = {
+    val valueNotChanged = pensionTaxReliefNotClaimedQuestion.contains(newValue)
+
+    copy(
+      pensionTaxReliefNotClaimedQuestion = Some(newValue),
+      retirementAnnuityContractPaymentsQuestion = if (valueNotChanged) retirementAnnuityContractPaymentsQuestion else None,
+      totalRetirementAnnuityContractPayments = if (valueNotChanged) totalRetirementAnnuityContractPayments else None,
+      workplacePensionPaymentsQuestion = if (valueNotChanged) workplacePensionPaymentsQuestion else None,
+      totalWorkplacePensionPayments = if (valueNotChanged) totalWorkplacePensionPayments else None
+    )
+  }
+
 }
 
 object PaymentsIntoPensionsViewModel {
@@ -104,39 +118,42 @@ object PaymentsIntoPensionsViewModel {
     PaymentsIntoPensionsViewModel(None, None, None, None, None, None, None, None, None, None)
 
   def fromSubmittedReliefs(reliefs: Reliefs): PaymentsIntoPensionsViewModel = {
-    val rasPensionPaymentQuestion: Option[Boolean]             = reliefs.regularPensionContributions.isDefined.some
-    val totalRASPaymentsAndTaxRelief: Option[BigDecimal]       = reliefs.regularPensionContributions
-    val oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = reliefs.oneOffPensionContributionsPaid.isDefined.some
-    val totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = reliefs.oneOffPensionContributionsPaid
+    val rasPensionPaymentQuestion: Boolean             = isNotZero(reliefs.regularPensionContributions)
+    val totalRASPaymentsAndTaxRelief: BigDecimal       = reliefs.regularPensionContributions.getOrElse(Zero)
+    val oneOffRasPaymentPlusTaxReliefQuestion: Boolean = isNotZero(reliefs.oneOffPensionContributionsPaid)
+    val totalOneOffRasPaymentPlusTaxRelief: BigDecimal = reliefs.oneOffPensionContributionsPaid.getOrElse(Zero)
 
-    val pensionTaxReliefNotClaimedQuestion: Option[Boolean] =
-      (reliefs.retirementAnnuityPayments.isDefined || reliefs.paymentToEmployersSchemeNoTaxRelief.isDefined).some
+    val pensionTaxReliefNotClaimedQuestion: Boolean =
+      isNotZero(reliefs.retirementAnnuityPayments) || isNotZero(reliefs.paymentToEmployersSchemeNoTaxRelief)
 
-    val model = if (pensionTaxReliefNotClaimedQuestion.contains(false)) {
-      PaymentsIntoPensionsViewModel.empty.copy(
-        rasPensionPaymentQuestion = rasPensionPaymentQuestion,
-        totalRASPaymentsAndTaxRelief = totalRASPaymentsAndTaxRelief,
-        oneOffRasPaymentPlusTaxReliefQuestion = oneOffRasPaymentPlusTaxReliefQuestion,
-        totalOneOffRasPaymentPlusTaxRelief = totalOneOffRasPaymentPlusTaxRelief,
-        pensionTaxReliefNotClaimedQuestion = pensionTaxReliefNotClaimedQuestion
+    if (pensionTaxReliefNotClaimedQuestion) {
+      PaymentsIntoPensionsViewModel(
+        rasPensionPaymentQuestion = rasPensionPaymentQuestion.some,
+        totalRASPaymentsAndTaxRelief = totalRASPaymentsAndTaxRelief.some,
+        oneOffRasPaymentPlusTaxReliefQuestion = oneOffRasPaymentPlusTaxReliefQuestion.some,
+        totalOneOffRasPaymentPlusTaxRelief = totalOneOffRasPaymentPlusTaxRelief.some,
+        totalPaymentsIntoRASQuestion = Some(true), // It must be true for 'Is this correct' when reaching CYA
+        pensionTaxReliefNotClaimedQuestion = pensionTaxReliefNotClaimedQuestion.some,
+        retirementAnnuityContractPaymentsQuestion = isNotZero(reliefs.retirementAnnuityPayments).some,
+        totalRetirementAnnuityContractPayments = reliefs.retirementAnnuityPayments.getOrElse(Zero).some,
+        workplacePensionPaymentsQuestion = isNotZero(reliefs.paymentToEmployersSchemeNoTaxRelief).some,
+        totalWorkplacePensionPayments = reliefs.paymentToEmployersSchemeNoTaxRelief.getOrElse(Zero).some
       )
     } else {
-      PaymentsIntoPensionsViewModel(
-        rasPensionPaymentQuestion = rasPensionPaymentQuestion,
-        totalRASPaymentsAndTaxRelief = totalRASPaymentsAndTaxRelief,
-        oneOffRasPaymentPlusTaxReliefQuestion = oneOffRasPaymentPlusTaxReliefQuestion,
-        totalOneOffRasPaymentPlusTaxRelief = totalOneOffRasPaymentPlusTaxRelief,
-        pensionTaxReliefNotClaimedQuestion = pensionTaxReliefNotClaimedQuestion,
-        retirementAnnuityContractPaymentsQuestion = reliefs.retirementAnnuityPayments.isDefined.some,
-        totalRetirementAnnuityContractPayments = reliefs.retirementAnnuityPayments,
-        workplacePensionPaymentsQuestion = reliefs.paymentToEmployersSchemeNoTaxRelief.isDefined.some,
-        totalWorkplacePensionPayments = reliefs.paymentToEmployersSchemeNoTaxRelief
+      PaymentsIntoPensionsViewModel.empty.copy(
+        rasPensionPaymentQuestion = rasPensionPaymentQuestion.some,
+        totalRASPaymentsAndTaxRelief = totalRASPaymentsAndTaxRelief.some,
+        oneOffRasPaymentPlusTaxReliefQuestion = oneOffRasPaymentPlusTaxReliefQuestion.some,
+        totalOneOffRasPaymentPlusTaxRelief = totalOneOffRasPaymentPlusTaxRelief.some,
+        totalPaymentsIntoRASQuestion = Some(true), // It must be true for 'Is this correct' when reaching CYA
+        pensionTaxReliefNotClaimedQuestion = pensionTaxReliefNotClaimedQuestion.some,
+        retirementAnnuityContractPaymentsQuestion = Some(false),
+        totalRetirementAnnuityContractPayments = Zero.some,
+        workplacePensionPaymentsQuestion = Some(false),
+        totalWorkplacePensionPayments = Zero.some
       )
     }
 
-    model.copy(
-      totalPaymentsIntoRASQuestion = Some(true) // It must be true for 'Is this correct' when reaching CYA
-    )
   }
 }
 
