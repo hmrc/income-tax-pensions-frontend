@@ -18,6 +18,7 @@ package models.pension
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
 import cats.implicits.catsSyntaxOptionId
+import models.pension.AllPensionsData.Zero
 import models.pension.charges.{Charge, PensionSchemeUnauthorisedPayments, UnauthorisedPaymentsViewModel}
 import models.pension.reliefs.{PaymentsIntoPensionsViewModel, Reliefs}
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -26,23 +27,25 @@ import org.scalatest.wordspec.AnyWordSpecLike
 class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks {
 
   val amount: BigDecimal = BigDecimal(123.00)
-  val zero: BigDecimal = BigDecimal(0.00)
+  val zeroAmount: BigDecimal = BigDecimal(0.00)
 
   val priorBase: AllPensionsData = anAllPensionsData
 
   "generatePaymentsIntoPensionsCyaFromPrior" should {
+    val zero = Zero.some
+
     val emptyReliefs = Reliefs(None, None, None, None, None)
     val baseModel = PaymentsIntoPensionsViewModel(
       rasPensionPaymentQuestion = Some(false),
-      totalRASPaymentsAndTaxRelief = None,
+      totalRASPaymentsAndTaxRelief = zero,
       oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
-      totalOneOffRasPaymentPlusTaxRelief = None,
+      totalOneOffRasPaymentPlusTaxRelief = zero,
       totalPaymentsIntoRASQuestion = Some(true),
       pensionTaxReliefNotClaimedQuestion = Some(false),
-      retirementAnnuityContractPaymentsQuestion = None,
-      totalRetirementAnnuityContractPayments = None,
-      workplacePensionPaymentsQuestion = None,
-      totalWorkplacePensionPayments = None
+      retirementAnnuityContractPaymentsQuestion = Some(false),
+      totalRetirementAnnuityContractPayments = zero,
+      workplacePensionPaymentsQuestion = Some(false),
+      totalWorkplacePensionPayments = zero
     )
 
     def setPensionReliefs(newPensionReliefs: Reliefs) =
@@ -52,21 +55,6 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
     val cases = Table(
       ("Downstream Model", "Expected FE Model"),
       (emptyReliefs, baseModel),
-      (
-        emptyReliefs.copy(regularPensionContributions = None),
-        baseModel.copy(rasPensionPaymentQuestion = Some(false))
-      ),
-      (
-        emptyReliefs.copy(
-          regularPensionContributions = None,
-          retirementAnnuityPayments = None,
-          paymentToEmployersSchemeNoTaxRelief = None
-        ),
-        baseModel.copy(
-          rasPensionPaymentQuestion = Some(false),
-          pensionTaxReliefNotClaimedQuestion = Some(false)
-        )
-      ),
       (
         emptyReliefs.copy(
           regularPensionContributions = Some(10.0),
@@ -129,7 +117,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
           retirementAnnuityContractPaymentsQuestion = Some(true),
           totalRetirementAnnuityContractPayments = Some(3.0),
           workplacePensionPaymentsQuestion = Some(false),
-          totalWorkplacePensionPayments = None
+          totalWorkplacePensionPayments = zero
         )
       ),
     )
@@ -139,8 +127,15 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
       val actual = AllPensionsData.generateSessionModelFromPrior(setPensionReliefs(downstreamModel))
       assert(actual.paymentsIntoPension === expectedModel)
     }
-
   }
+
+  "getPaymentsIntoPensionsCyaFromPrior" should {
+    "return an empty object with preselected totalPaymentsIntoRASQuestion if no prior data for reliefs" in {
+      val prior = anAllPensionsData.copy(pensionReliefs = None)
+      assert(prior.getPaymentsIntoPensionsCyaFromPrior === PaymentsIntoPensionsViewModel.empty.copy(totalPaymentsIntoRASQuestion = Some(true)))
+    }
+  }
+
   "generateUnauthorisedPaymentsCyaModelFromPrior" should {
     def setPriorFromUnauthPayments(journeyPrior: PensionSchemeUnauthorisedPayments): AllPensionsData = {
       val updatedCharges = priorBase.pensionCharges.map(_.copy(pensionSchemeUnauthorisedPayments = journeyPrior.some))
@@ -174,23 +169,47 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
       (priorBaseModel, sessionBaseModel),
       (
         priorBaseModel.copy(surcharge = None),
-        sessionBaseModel.copy(surchargeQuestion = None, surchargeAmount = None, surchargeTaxAmountQuestion = None, surchargeTaxAmount = None)
+        sessionBaseModel.copy(
+          surchargeQuestion = None,
+          surchargeAmount = None,
+          surchargeTaxAmountQuestion = None,
+          surchargeTaxAmount = None
+        )
       ),
       (
-        priorBaseModel.copy(surcharge = Charge(zero, zero).some),
-        sessionBaseModel.copy(surchargeQuestion = true.some, surchargeAmount = zero.some, surchargeTaxAmountQuestion = true.some, surchargeTaxAmount = zero.some)
+        priorBaseModel.copy(surcharge = Charge(zeroAmount, zeroAmount).some),
+        sessionBaseModel.copy(
+          surchargeQuestion = true.some,
+          surchargeAmount = zeroAmount.some,
+          surchargeTaxAmountQuestion = true.some,
+          surchargeTaxAmount = zeroAmount.some
+        )
+
       ),
       (
         priorBaseModel.copy(noSurcharge = None),
-        sessionBaseModel.copy(noSurchargeQuestion = None, noSurchargeAmount = None, noSurchargeTaxAmountQuestion = None, noSurchargeTaxAmount = None)
+        sessionBaseModel.copy(
+          noSurchargeQuestion = None,
+          noSurchargeAmount = None,
+          noSurchargeTaxAmountQuestion = None,
+          noSurchargeTaxAmount = None
+        )
       ),
       (
-        priorBaseModel.copy(noSurcharge = Charge(zero, zero).some),
-        sessionBaseModel.copy(noSurchargeQuestion = true.some, noSurchargeAmount = zero.some, noSurchargeTaxAmountQuestion = true.some, noSurchargeTaxAmount = zero.some)
+        priorBaseModel.copy(noSurcharge = Charge(zeroAmount, zeroAmount).some),
+        sessionBaseModel.copy(
+          noSurchargeQuestion = true.some,
+          noSurchargeAmount = zeroAmount.some,
+          noSurchargeTaxAmountQuestion = true.some,
+          noSurchargeTaxAmount = zeroAmount.some
+        )
       ),
       (
         priorBaseModel.copy(pensionSchemeTaxReference = None),
-        sessionBaseModel.copy(ukPensionSchemesQuestion = false.some, pensionSchemeTaxReference = None)
+        sessionBaseModel.copy(
+          ukPensionSchemesQuestion = false.some,
+          pensionSchemeTaxReference = None
+        )
       )
     )
 

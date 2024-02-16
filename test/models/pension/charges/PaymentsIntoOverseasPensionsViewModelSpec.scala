@@ -19,6 +19,7 @@ package models.pension.charges
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.{aPaymentsIntoOverseasPensionsEmptyViewModel, aPaymentsIntoOverseasPensionsViewModel}
 import builders.ReliefBuilder.{aDoubleTaxationRelief, aMigrantMemberRelief, aNoTaxRelief, aTransitionalCorrespondingRelief}
 import models.pension.income.OverseasPensionContribution
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import utils.UnitTest
 
 class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest { // scalastyle:off magic.number
@@ -150,4 +151,69 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest { // scalastyle
     }
   }
 
+  "updatePensionTaxReliefNotClaimedQuestion" should {
+    val model = PaymentsIntoPensionsViewModel(
+      Some(true),
+      Some(1.0),
+      Some(true),
+      Some(2.0),
+      Some(true),
+      Some(true),
+      Some(true),
+      Some(3.0),
+      Some(true),
+      Some(4.0)
+    )
+
+    "update value to Some(false) when previous was Some(true)" in {
+      assert(
+        model.updatePensionTaxReliefNotClaimedQuestion(false) ===
+          model.copy(
+            pensionTaxReliefNotClaimedQuestion = Some(false),
+            retirementAnnuityContractPaymentsQuestion = None,
+            totalRetirementAnnuityContractPayments = None,
+            workplacePensionPaymentsQuestion = None,
+            totalWorkplacePensionPayments = None
+          )
+      )
+    }
+
+    "update value to Some(true) when previous was Some(false)" in {
+      assert(
+        model
+          .copy(pensionTaxReliefNotClaimedQuestion = Some(false))
+          .updatePensionTaxReliefNotClaimedQuestion(true) ===
+          model.copy(
+            pensionTaxReliefNotClaimedQuestion = Some(true),
+            retirementAnnuityContractPaymentsQuestion = None,
+            totalRetirementAnnuityContractPayments = None,
+            workplacePensionPaymentsQuestion = None,
+            totalWorkplacePensionPayments = None
+          )
+      )
+    }
+
+    "do nothing when updating to Some(false) wit previous value Some(false)" in {
+      assert(
+        model
+          .copy(pensionTaxReliefNotClaimedQuestion = Some(false))
+          .updatePensionTaxReliefNotClaimedQuestion(false) ===
+          model.copy(
+            pensionTaxReliefNotClaimedQuestion = Some(false)
+          )
+      )
+    }
+
+    "do nothing when updating to Some(true) wit previous value Some(true)" in {
+      assert(
+        model
+          .copy(pensionTaxReliefNotClaimedQuestion = Some(true))
+          .updatePensionTaxReliefNotClaimedQuestion(true) ===
+          model.copy(
+            pensionTaxReliefNotClaimedQuestion = Some(true)
+          )
+      )
+    }
+
+  }
 }
