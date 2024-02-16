@@ -26,7 +26,7 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
                                          totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
                                          oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,
                                          totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = None,
-                                         totalPaymentsIntoRASQuestion: Option[Boolean] = None, // This field represents 'Is this correct page'
+                                         totalPaymentsIntoRASQuestion: Option[Boolean] = None,
                                          pensionTaxReliefNotClaimedQuestion: Option[Boolean] = None,
                                          retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
                                          totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
@@ -132,12 +132,12 @@ object PaymentsIntoPensionsViewModel {
         totalRASPaymentsAndTaxRelief = totalRASPaymentsAndTaxRelief.some,
         oneOffRasPaymentPlusTaxReliefQuestion = oneOffRasPaymentPlusTaxReliefQuestion.some,
         totalOneOffRasPaymentPlusTaxRelief = totalOneOffRasPaymentPlusTaxRelief.some,
-        totalPaymentsIntoRASQuestion = Some(true), // // It must be true for 'Is this correct' when reaching CYA
+        totalPaymentsIntoRASQuestion = Some(true), // It must be true for 'Is this correct' when reaching CYA
         pensionTaxReliefNotClaimedQuestion = pensionTaxReliefNotClaimedQuestion.some,
-        retirementAnnuityContractPaymentsQuestion = Some(false),
-        totalRetirementAnnuityContractPayments = Zero.some,
-        workplacePensionPaymentsQuestion = Some(false),
-        totalWorkplacePensionPayments = Zero.some
+        retirementAnnuityContractPaymentsQuestion = isNotZero(reliefs.retirementAnnuityPayments).some,
+        totalRetirementAnnuityContractPayments = reliefs.retirementAnnuityPayments.getOrElse(Zero).some,
+        workplacePensionPaymentsQuestion = isNotZero(reliefs.paymentToEmployersSchemeNoTaxRelief).some,
+        totalWorkplacePensionPayments = reliefs.paymentToEmployersSchemeNoTaxRelief.getOrElse(Zero).some
       )
     } else {
       PaymentsIntoPensionsViewModel.empty.copy(
@@ -153,6 +153,7 @@ object PaymentsIntoPensionsViewModel {
         totalWorkplacePensionPayments = Zero.some
       )
     }
+
   }
 }
 
