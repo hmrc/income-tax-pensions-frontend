@@ -68,18 +68,9 @@ class PensionsTaxReliefNotClaimedController @Inject() (authAction: AuthorisedAct
           pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) { optData =>
             val checkRedirect = journeyCheck(TaxReliefNotClaimedPage, _, taxYear)
             redirectBasedOnCurrentAnswers(taxYear, optData, cyaPageCall(taxYear))(checkRedirect) { data =>
-              val pensionsCYAModel: PensionsCYAModel       = data.pensions
-              val viewModel: PaymentsIntoPensionsViewModel = pensionsCYAModel.paymentsIntoPension
-              val updatedCyaModel: PensionsCYAModel =
-                pensionsCYAModel.copy(
-                  paymentsIntoPension = viewModel.copy(
-                    pensionTaxReliefNotClaimedQuestion = Some(yesNo),
-                    retirementAnnuityContractPaymentsQuestion = if (yesNo) viewModel.retirementAnnuityContractPaymentsQuestion else None,
-                    totalRetirementAnnuityContractPayments = if (yesNo) viewModel.totalRetirementAnnuityContractPayments else None,
-                    workplacePensionPaymentsQuestion = if (yesNo) viewModel.workplacePensionPaymentsQuestion else None,
-                    totalWorkplacePensionPayments = if (yesNo) viewModel.totalWorkplacePensionPayments else None
-                  )
-                )
+              val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+                paymentsIntoPension = data.pensions.paymentsIntoPension.updatePensionTaxReliefNotClaimedQuestion(yesNo)
+              )
               val redirectLocation =
                 if (yesNo) RetirementAnnuityController.show(taxYear) else PaymentsIntoPensionsCYAController.show(taxYear)
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(

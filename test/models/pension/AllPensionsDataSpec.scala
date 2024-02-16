@@ -17,26 +17,30 @@
 package models.pension
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
+import models.pension.AllPensionsData.Zero
 import models.pension.reliefs.{PaymentsIntoPensionsViewModel, Reliefs}
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpecLike
+import cats.implicits._
 
 class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks {
 
   "generatePaymentsIntoPensionsCyaFromPrior" should {
+    val zero = Zero.some
+
     val priorBase    = anAllPensionsData
     val emptyReliefs = Reliefs(None, None, None, None, None)
     val baseModel = PaymentsIntoPensionsViewModel(
       rasPensionPaymentQuestion = Some(false),
-      totalRASPaymentsAndTaxRelief = None,
+      totalRASPaymentsAndTaxRelief = zero,
       oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
-      totalOneOffRasPaymentPlusTaxRelief = None,
+      totalOneOffRasPaymentPlusTaxRelief = zero,
       totalPaymentsIntoRASQuestion = Some(true),
       pensionTaxReliefNotClaimedQuestion = Some(false),
-      retirementAnnuityContractPaymentsQuestion = None,
-      totalRetirementAnnuityContractPayments = None,
-      workplacePensionPaymentsQuestion = None,
-      totalWorkplacePensionPayments = None
+      retirementAnnuityContractPaymentsQuestion = Some(false),
+      totalRetirementAnnuityContractPayments = zero,
+      workplacePensionPaymentsQuestion = Some(false),
+      totalWorkplacePensionPayments = zero
     )
 
     def setPensionReliefs(newPensionReliefs: Reliefs) =
@@ -46,21 +50,6 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
     val cases = Table(
       ("Downstream Model", "Expected FE Model"),
       (emptyReliefs, baseModel),
-      (
-        emptyReliefs.copy(regularPensionContributions = None),
-        baseModel.copy(rasPensionPaymentQuestion = Some(false))
-      ),
-      (
-        emptyReliefs.copy(
-          regularPensionContributions = None,
-          retirementAnnuityPayments = None,
-          paymentToEmployersSchemeNoTaxRelief = None
-        ),
-        baseModel.copy(
-          rasPensionPaymentQuestion = Some(false),
-          pensionTaxReliefNotClaimedQuestion = Some(false)
-        )
-      ),
       (
         emptyReliefs.copy(
           regularPensionContributions = Some(10.0),
@@ -123,7 +112,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
           retirementAnnuityContractPaymentsQuestion = Some(true),
           totalRetirementAnnuityContractPayments = Some(3.0),
           workplacePensionPaymentsQuestion = Some(false),
-          totalWorkplacePensionPayments = None
+          totalWorkplacePensionPayments = zero
         )
       ),
     )
@@ -133,6 +122,12 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
       val actual = AllPensionsData.generateSessionModelFromPrior(setPensionReliefs(downstreamModel))
       assert(actual.paymentsIntoPension === expectedModel)
     }
+  }
 
+  "getPaymentsIntoPensionsCyaFromPrior" should {
+    "return an empty object with preselected totalPaymentsIntoRASQuestion if no prior data for reliefs" in {
+      val prior = anAllPensionsData.copy(pensionReliefs = None)
+      assert(prior.getPaymentsIntoPensionsCyaFromPrior === PaymentsIntoPensionsViewModel.empty.copy(totalPaymentsIntoRASQuestion = Some(true)))
+    }
   }
 }

@@ -17,8 +17,10 @@
 package models.pension.reliefs
 
 import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
+import models.pension.AllPensionsData.Zero
 import org.scalatest.prop.TableDrivenPropertyChecks
 import support.UnitTest
+import cats.implicits._
 
 class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropertyChecks {
 
@@ -69,7 +71,7 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropert
 
   "toReliefs" should {
     "set BigDecimal values to 0.0 if None" in {
-      assert(aPaymentsIntoPensionsEmptyViewModel.toReliefs(None) === Reliefs.empty)
+      assert(aPaymentsIntoPensionsEmptyViewModel.toReliefs(None) === Reliefs(Zero.some, Zero.some, Zero.some, Zero.some, None))
     }
 
     "set BigDecimal values if defined" in {
@@ -92,20 +94,24 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropert
 
   "fromSubmittedReliefs" should {
     val emptyReliefs = Reliefs.empty
+    val zero         = Zero.some
+
     val cases = Table(
       ("reliefsPriorData", "expectedModel"),
-      (Reliefs.empty, PaymentsIntoPensionsViewModel(Some(false), None, Some(false), None, Some(true), Some(false), None, None, None, None)),
+      (
+        Reliefs.empty,
+        PaymentsIntoPensionsViewModel(Some(false), zero, Some(false), zero, Some(true), Some(false), Some(false), zero, Some(false), zero)),
       (
         emptyReliefs.copy(regularPensionContributions = Some(1.0)),
-        PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), None, Some(true), Some(false), None, None, None, None)
+        PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), zero, Some(true), Some(false), Some(false), zero, Some(false), zero)
       ),
       (
         emptyReliefs.copy(regularPensionContributions = Some(1.0), oneOffPensionContributionsPaid = Some(2.0)),
-        PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(true), Some(2.0), Some(true), Some(false), None, None, None, None)
+        PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(true), Some(2.0), Some(true), Some(false), Some(false), zero, Some(false), zero)
       ),
       (
         emptyReliefs.copy(regularPensionContributions = Some(1.0), oneOffPensionContributionsPaid = Some(2.0), retirementAnnuityPayments = Some(3.0)),
-        PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(true), Some(2.0), Some(true), Some(true), Some(true), Some(3.0), Some(false), None)
+        PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(true), Some(2.0), Some(true), Some(true), Some(true), Some(3.0), Some(false), zero)
       ),
       (
         emptyReliefs.copy(
@@ -133,7 +139,7 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropert
           retirementAnnuityPayments = Some(3.0),
           paymentToEmployersSchemeNoTaxRelief = Some(4.0)
         ),
-        PaymentsIntoPensionsViewModel(Some(false), None, Some(true), Some(2.0), Some(true), Some(true), Some(true), Some(3.0), Some(true), Some(4.0))
+        PaymentsIntoPensionsViewModel(Some(false), zero, Some(true), Some(2.0), Some(true), Some(true), Some(true), Some(3.0), Some(true), Some(4.0))
       ),
       (
         emptyReliefs.copy(
@@ -142,7 +148,7 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropert
           retirementAnnuityPayments = Some(3.0),
           paymentToEmployersSchemeNoTaxRelief = Some(4.0)
         ),
-        PaymentsIntoPensionsViewModel(Some(false), None, Some(false), None, Some(true), Some(true), Some(true), Some(3.0), Some(true), Some(4.0))
+        PaymentsIntoPensionsViewModel(Some(false), zero, Some(false), zero, Some(true), Some(true), Some(true), Some(3.0), Some(true), Some(4.0))
       ),
       (
         emptyReliefs.copy(
@@ -151,7 +157,7 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropert
           retirementAnnuityPayments = None,
           paymentToEmployersSchemeNoTaxRelief = Some(4.0)
         ),
-        PaymentsIntoPensionsViewModel(Some(false), None, Some(false), None, Some(true), Some(true), Some(false), None, Some(true), Some(4.0))
+        PaymentsIntoPensionsViewModel(Some(false), zero, Some(false), zero, Some(true), Some(true), Some(false), zero, Some(true), Some(4.0))
       )
     )
 

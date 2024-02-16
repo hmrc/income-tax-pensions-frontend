@@ -34,15 +34,16 @@ case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
   def getPaymentsIntoPensionsCyaFromPrior: PaymentsIntoPensionsViewModel =
     pensionReliefs
       .map(pr => PaymentsIntoPensionsViewModel.fromSubmittedReliefs(pr.pensionReliefs))
-      .getOrElse(
-        PaymentsIntoPensionsViewModel.empty.copy(
-          totalPaymentsIntoRASQuestion =
-            Some(true) // TODO https://jira.tools.tax.service.gov.uk/browse/SASS-7187 - There are some legacy tests to check that this is set to true
-        ))
+      .getOrElse(PaymentsIntoPensionsViewModel.empty.copy(totalPaymentsIntoRASQuestion = Some(true)))
 }
 
 object AllPensionsData {
   implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
+
+  val Zero: BigDecimal = 0.0
+
+  def isNotZero(value: Option[BigDecimal]) =
+    value.exists(_ != Zero)
 
   def generateSessionModelFromPrior(prior: AllPensionsData): PensionsCYAModel =
     PensionsCYAModel(
