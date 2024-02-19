@@ -17,6 +17,7 @@
 package models.logging
 
 import models.logging.ConnectorResponseInfo.LevelLogging._
+import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
 import org.scalatest.wordspec.AnyWordSpecLike
 import uk.gov.hmrc.http.HttpResponse
 
@@ -25,17 +26,28 @@ class ConnectorResponseInfoSpec extends AnyWordSpecLike {
 
   "logMessageWarnOn4xx" should {
     "return info on success" in {
-      assert(connectorInfo.logResponseWarnOn4xx === Info("Connector: Response Received for GET /someurl. Response status: 200"))
+      assert(
+        connectorInfo.logResponseWarnOn4xx === Info("Connector [X-CorrelationId=unknown]: Response Received for GET /someurl. Response status: 200"))
+    }
+
+    "return info on success with correlationId" in {
+      assert(
+        connectorInfo.copy(response = HttpResponse(200, "", Map(CorrelationIdHeaderKey -> List("just-for-test")))).logResponseWarnOn4xx === Info(
+          "Connector [X-CorrelationId=just-for-test]: Response Received for GET /someurl. Response status: 200"))
     }
 
     "return warn on 4xx error with body" in {
       val badRequest = connectorInfo.copy(response = HttpResponse(400, "some error"))
-      assert(badRequest.logResponseWarnOn4xx === Warn("Connector: Response Received for GET /someurl. Response status: 400 Body: some error"))
+      assert(
+        badRequest.logResponseWarnOn4xx === Warn(
+          "Connector [X-CorrelationId=unknown]: Response Received for GET /someurl. Response status: 400 Body: some error"))
     }
 
     "return error on 5xx error with body" in {
       val errorRequest = connectorInfo.copy(response = HttpResponse(500, "some error"))
-      assert(errorRequest.logResponseWarnOn4xx === Error("Connector: Response Received for GET /someurl. Response status: 500 Body: some error"))
+      assert(
+        errorRequest.logResponseWarnOn4xx === Error(
+          "Connector [X-CorrelationId=unknown]: Response Received for GET /someurl. Response status: 500 Body: some error"))
     }
   }
 
