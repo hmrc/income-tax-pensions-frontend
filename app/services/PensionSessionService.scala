@@ -73,7 +73,7 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
     }
   }
 
-  def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)(onFail: A)(onSuccess: A)(implicit
+  def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)(onFail: => A)(onSuccess: => A)(implicit
       clock: Clock): Future[A] = {
 
     val userData = PensionsUserData(

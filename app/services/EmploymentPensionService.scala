@@ -29,13 +29,15 @@ import utils.EitherTUtils.EitherTOps
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.logging.HeaderCarrierExtensions._
 
 class EmploymentPensionService @Inject() (repository: PensionsUserDataRepository, connector: EmploymentConnector) {
 
   def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
     def saveJourneyData(allIncomes: Seq[UkPensionIncomeViewModel]): Future[Either[APIErrorModel, Seq[Unit]]] =
       allIncomes
-        .traverse(income => connector.saveEmploymentPensionsData(user.nino, taxYear.endYear, income.toDownstreamRequest)(hc.addMtdItId(user), ec))
+        .traverse(income =>
+          connector.saveEmploymentPensionsData(user.nino, taxYear.endYear, income.toDownstreamRequest)(hc.withMtditId(user.mtditid), ec))
         .map(sequence)
 
     (for {

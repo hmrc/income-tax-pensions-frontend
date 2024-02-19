@@ -28,7 +28,7 @@ class NrsService @Inject() (nrsConnector: NrsConnector) {
 
   def submit[A](nino: String, payload: A, mtditid: String)(implicit hc: HeaderCarrier, writes: Writes[A]): Future[NrsSubmissionResponse] = {
 
-    val extraHeaders = Seq(
+    val extraHeaders = hc.extraHeaders ++ Seq(
       Some("mtditid" -> mtditid),
       hc.trueClientIp.map(ip => "clientIP" -> ip),
       hc.trueClientPort.map(port => "clientPort" -> port)
