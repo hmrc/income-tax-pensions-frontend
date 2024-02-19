@@ -17,18 +17,23 @@
 package models.pension
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
+import cats.implicits.catsSyntaxOptionId
 import models.pension.AllPensionsData.Zero
+import models.pension.charges.{Charge, PensionSchemeUnauthorisedPayments, UnauthorisedPaymentsViewModel}
 import models.pension.reliefs.{PaymentsIntoPensionsViewModel, Reliefs}
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpecLike
-import cats.implicits._
 
 class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks {
+
+  val amount: BigDecimal     = BigDecimal(123.00)
+  val zeroAmount: BigDecimal = BigDecimal(0.00)
+
+  val priorBase: AllPensionsData = anAllPensionsData
 
   "generatePaymentsIntoPensionsCyaFromPrior" should {
     val zero = Zero.some
 
-    val priorBase    = anAllPensionsData
     val emptyReliefs = Reliefs(None, None, None, None, None)
     val baseModel = PaymentsIntoPensionsViewModel(
       rasPensionPaymentQuestion = Some(false),
@@ -128,6 +133,90 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
     "return an empty object with preselected totalPaymentsIntoRASQuestion if no prior data for reliefs" in {
       val prior = anAllPensionsData.copy(pensionReliefs = None)
       assert(prior.getPaymentsIntoPensionsCyaFromPrior === PaymentsIntoPensionsViewModel.empty.copy(totalPaymentsIntoRASQuestion = Some(true)))
+    }
+  }
+
+  "generateUnauthorisedPaymentsCyaModelFromPrior" should {
+    def setPriorFromUnauthPayments(journeyPrior: PensionSchemeUnauthorisedPayments): AllPensionsData = {
+      val updatedCharges = priorBase.pensionCharges.map(_.copy(pensionSchemeUnauthorisedPayments = journeyPrior.some))
+
+      priorBase.copy(pensionCharges = updatedCharges)
+    }
+
+    val sessionBaseModel =
+      UnauthorisedPaymentsViewModel(
+        surchargeQuestion = true.some,
+        noSurchargeQuestion = true.some,
+        surchargeAmount = amount.some,
+        surchargeTaxAmountQuestion = true.some,
+        surchargeTaxAmount = amount.some,
+        noSurchargeAmount = amount.some,
+        noSurchargeTaxAmountQuestion = true.some,
+        noSurchargeTaxAmount = amount.some,
+        ukPensionSchemesQuestion = true.some,
+        pensionSchemeTaxReference = List("12345678RA").some
+      )
+
+    val priorBaseModel =
+      PensionSchemeUnauthorisedPayments(
+        pensionSchemeTaxReference = List("12345678RA").some,
+        surcharge = Charge(amount, amount).some,
+        noSurcharge = Charge(amount, amount).some
+      )
+
+    val tableCases = Table(
+      ("Prior data journey model", "Expected result"),
+      (priorBaseModel, sessionBaseModel),
+      (
+        priorBaseModel.copy(surcharge = None),
+        sessionBaseModel.copy(
+          surchargeQuestion = None,
+          surchargeAmount = None,
+          surchargeTaxAmountQuestion = None,
+          surchargeTaxAmount = None
+        )
+      ),
+      (
+        priorBaseModel.copy(surcharge = Charge(zeroAmount, zeroAmount).some),
+        sessionBaseModel.copy(
+          surchargeQuestion = true.some,
+          surchargeAmount = zeroAmount.some,
+          surchargeTaxAmountQuestion = true.some,
+          surchargeTaxAmount = zeroAmount.some
+        )
+      ),
+      (
+        priorBaseModel.copy(noSurcharge = None),
+        sessionBaseModel.copy(
+          noSurchargeQuestion = None,
+          noSurchargeAmount = None,
+          noSurchargeTaxAmountQuestion = None,
+          noSurchargeTaxAmount = None
+        )
+      ),
+      (
+        priorBaseModel.copy(noSurcharge = Charge(zeroAmount, zeroAmount).some),
+        sessionBaseModel.copy(
+          noSurchargeQuestion = true.some,
+          noSurchargeAmount = zeroAmount.some,
+          noSurchargeTaxAmountQuestion = true.some,
+          noSurchargeTaxAmount = zeroAmount.some
+        )
+      ),
+      (
+        priorBaseModel.copy(pensionSchemeTaxReference = None),
+        sessionBaseModel.copy(
+          ukPensionSchemesQuestion = false.some,
+          pensionSchemeTaxReference = None
+        )
+      )
+    )
+
+    "convert prior data to FE model" in forAll(tableCases) { case (priorJourneyModel, expectedModel) =>
+      val allPriorData = setPriorFromUnauthPayments(priorJourneyModel)
+
+      val result = AllPensionsData.generateSessionModelFromPrior(allPriorData)
+      assert(result.unauthorisedPayments === expectedModel)
     }
   }
 }
