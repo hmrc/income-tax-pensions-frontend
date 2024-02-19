@@ -16,6 +16,7 @@
 
 package models.pension.charges
 
+import cats.implicits.{catsSyntaxOptionId, catsSyntaxTuple3Semigroupal}
 import models.mongo.TextAndKey
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
@@ -59,19 +60,22 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
     ).forall(x => x)
   }
 
-  def toUnauth: PensionSchemeUnauthorisedPayments = PensionSchemeUnauthorisedPayments( // scalastyle:off simplify.boolean.expression
-    pensionSchemeTaxReference = pensionSchemeTaxReference,
-    surcharge = if (surchargeQuestion.contains(true) && surchargeAmount.nonEmpty) {
-      Some(Charge(this.surchargeAmount.get, surchargeTaxAmount.getOrElse(0)))
-    } else {
-      None
-    },
-    noSurcharge = if (noSurchargeQuestion.contains(true) && noSurchargeAmount.nonEmpty) {
-      Some(Charge(this.noSurchargeAmount.get, noSurchargeTaxAmount.getOrElse(0)))
-    } else {
-      None
-    }
-  ) // scalastyle:on simplify.boolean.expression
+  def toDownstreamRequestModel: PensionSchemeUnauthorisedPayments =
+    PensionSchemeUnauthorisedPayments(
+      pensionSchemeTaxReference = pensionSchemeTaxReference,
+      surcharge = determineCharge(surchargeQuestion, surchargeAmount, surchargeTaxAmount),
+      noSurcharge = determineCharge(noSurchargeQuestion, noSurchargeAmount, noSurchargeTaxAmount)
+    )
+
+  private def determineCharge(question: Option[Boolean], amount: Option[BigDecimal], taxAmount: Option[BigDecimal]): Option[Charge] = {
+    val emptyCharge = Charge(0, 0)
+
+    // As all 3 have to co-exist, or not at all
+    (question, amount, taxAmount).tupled
+      .fold(emptyCharge.some) { case (bool, a, ta) =>
+        if (bool) Charge(a, ta).some else emptyCharge.some
+      }
+  }
 
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 

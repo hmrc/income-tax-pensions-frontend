@@ -30,7 +30,7 @@ class EmploymentPensionServiceSpec extends UnitTest with MockPensionUserDataRepo
 
   val employmentPensionService = new EmploymentPensionService(mockPensionUserDataRepository, mockEmploymentConnector)
 
-  ".persistUkPensionIncomeViewModel" should {
+  ".saveAnswers" should {
 
     "return Right(Unit) when model is saved successfully and UK Pensions cya is cleared from DB" in new Setup {
       mockSessionFind()

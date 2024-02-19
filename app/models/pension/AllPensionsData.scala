@@ -16,6 +16,7 @@
 
 package models.pension
 
+import cats.implicits.{catsSyntaxOptionId, none}
 import forms.Countries
 import models.mongo.PensionsCYAModel
 import models.pension.charges._
@@ -135,19 +136,53 @@ object AllPensionsData {
     (getUkPensionQuestion(prior), getUkPensionIncome(prior))
   }
 
-  private def generateUnauthorisedPaymentsCyaModelFromPrior(prior: AllPensionsData): UnauthorisedPaymentsViewModel =
+  // Have some validation helper (?) otherwise this class may become huge.
+  private def generateUnauthorisedPaymentsCyaModelFromPrior(prior: AllPensionsData): UnauthorisedPaymentsViewModel = {
+    val unauthPayments = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)
+
+    sealed trait PaymentResult
+    case object Surcharge   extends PaymentResult
+    case object NoSurcharge extends PaymentResult
+
+    def determineQuestionValue(paymentResult: PaymentResult)(answerIfBlank: Option[Boolean]): Option[Boolean] = {
+      val maybeCharge = paymentResult match {
+        case Surcharge   => unauthPayments.flatMap(_.surcharge)
+        case NoSurcharge => unauthPayments.flatMap(_.noSurcharge)
+      }
+      maybeCharge.fold(ifEmpty = none[Boolean]) { c =>
+        if (c.amount == 0 && c.foreignTaxPaid == 0) answerIfBlank else true.some
+      }
+    }
+
+    def determineAmount(questionValue: Option[Boolean], paymentResult: PaymentResult): Option[BigDecimal] =
+      questionValue.fold(ifEmpty = none[BigDecimal]) { bool =>
+        val amountFromPrior =
+          paymentResult match {
+            case Surcharge   => unauthPayments.flatMap(_.surcharge.map(_.amount))
+            case NoSurcharge => unauthPayments.flatMap(_.noSurcharge.map(_.amount))
+          }
+        if (bool) amountFromPrior else none[BigDecimal]
+      }
+
+    val surchargeAnswer          = determineQuestionValue(Surcharge)(answerIfBlank = false.some)
+    val surchargeTaxAmountAnswer = determineQuestionValue(Surcharge)(answerIfBlank = none[Boolean])
+
+    val noSurchargeAnswer          = determineQuestionValue(NoSurcharge)(answerIfBlank = false.some)
+    val noSurchargeTaxAmountAnswer = determineQuestionValue(NoSurcharge)(answerIfBlank = none[Boolean])
+
     UnauthorisedPaymentsViewModel(
-      surchargeQuestion = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge).map(_ => true)),
-      noSurchargeQuestion = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge).map(_ => true)),
-      surchargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge.map(_.amount))),
-      surchargeTaxAmountQuestion = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge).map(_ => true)),
-      surchargeTaxAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.surcharge.map(_.foreignTaxPaid))),
-      noSurchargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge.map(_.amount))),
-      noSurchargeTaxAmountQuestion = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge).map(_ => true)),
-      noSurchargeTaxAmount = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.noSurcharge.map(_.foreignTaxPaid))),
-      ukPensionSchemesQuestion = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments).map(_.pensionSchemeTaxReference).map(_.nonEmpty),
-      pensionSchemeTaxReference = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments.flatMap(_.pensionSchemeTaxReference))
+      surchargeQuestion = surchargeAnswer,
+      noSurchargeQuestion = noSurchargeAnswer,
+      surchargeAmount = determineAmount(surchargeAnswer, Surcharge),
+      surchargeTaxAmountQuestion = surchargeTaxAmountAnswer,
+      surchargeTaxAmount = determineAmount(surchargeAnswer, Surcharge),
+      noSurchargeAmount = determineAmount(noSurchargeAnswer, NoSurcharge),
+      noSurchargeTaxAmountQuestion = noSurchargeTaxAmountAnswer,
+      noSurchargeTaxAmount = determineAmount(noSurchargeAnswer, NoSurcharge),
+      ukPensionSchemesQuestion = unauthPayments.map(_.pensionSchemeTaxReference).map(_.nonEmpty),
+      pensionSchemeTaxReference = unauthPayments.flatMap(_.pensionSchemeTaxReference)
     )
+  }
 
   private def generatePaymentsIntoOverseasPensionsFromPrior(prior: AllPensionsData): PaymentsIntoOverseasPensionsViewModel = {
     def getTaxReliefQuestion(overseasPensionContribution: OverseasPensionContribution): String =

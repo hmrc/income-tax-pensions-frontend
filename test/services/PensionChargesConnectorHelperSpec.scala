@@ -45,7 +45,7 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
         noSurchargeQuestion = Some(false)
       )
 
-      val unauthModel = noCYA.toUnauth
+      val unauthModel = noCYA.toDownstreamRequestModel
 
       "save" should {
         "when all sub models are non empty and unauthorised model is empty " in {
@@ -108,7 +108,7 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
 
     "if the cya page has been answered" in {
 
-      val unauthModel = anUnauthorisedPaymentsViewModel.toUnauth
+      val unauthModel = anUnauthorisedPaymentsViewModel.toDownstreamRequestModel
 
       val chargesModel = model.copy(
         pensionSavingsTaxCharges = None,
@@ -130,7 +130,7 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
 
     "if the cya is empty and the models are also empty" in {
 
-      val unauthModel = anUnauthorisedPaymentsEmptyViewModel.toUnauth
+      val unauthModel = anUnauthorisedPaymentsEmptyViewModel.toDownstreamRequestModel
 
       val chargesModel = model.copy(
         pensionSavingsTaxCharges = None,
