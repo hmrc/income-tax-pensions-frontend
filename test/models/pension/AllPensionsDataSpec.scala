@@ -27,7 +27,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks with Matchers {
 
-  val amount: BigDecimal = BigDecimal(123.00)
+  val amount: BigDecimal     = BigDecimal(123.00)
   val zeroAmount: BigDecimal = BigDecimal(0.00)
 
   val priorBase: AllPensionsData = anAllPensionsData
