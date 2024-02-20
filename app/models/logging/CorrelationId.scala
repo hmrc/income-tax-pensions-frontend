@@ -18,13 +18,11 @@ package models.logging
 
 import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
 import play.api.mvc.{RequestHeader, Result}
-import uk.gov.hmrc.http.{HeaderNames, HttpResponse}
+import uk.gov.hmrc.http.HttpResponse
 
 import java.util.UUID
 
 object CorrelationId {
-  private val UuidLength: Int = 36
-
   implicit class RequestHeaderOps(val value: RequestHeader) extends AnyVal {
 
     /** Use X-RequestId as CorrelationId (36 length required)
@@ -32,7 +30,6 @@ object CorrelationId {
     def withCorrelationId(): (RequestHeader, String) = {
       val correlationId = value.headers
         .get(CorrelationIdHeaderKey)
-        .orElse(value.headers.get(HeaderNames.xRequestId).map(_.takeRight(UuidLength)))
         .getOrElse(CorrelationId.generate())
 
       val updatedRequest =
