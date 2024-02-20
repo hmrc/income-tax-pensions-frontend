@@ -19,6 +19,9 @@ package models.pension
 import cats.implicits.{catsSyntaxOptionId, none}
 import forms.Countries
 import models.mongo.PensionsCYAModel
+import models.pension.charges.UnauthorisedPaymentsViewModel.AmountType.{Amount, TaxAmount}
+import models.pension.charges.UnauthorisedPaymentsViewModel.PaymentResult.{NoSurcharge, Surcharge}
+import models.pension.charges.UnauthorisedPaymentsViewModel.{AmountType, PaymentResult}
 import models.pension.charges._
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.income.{OverseasPensionContribution, PensionIncome}
@@ -137,32 +140,28 @@ object AllPensionsData {
   }
 
   private def generateUnauthorisedPaymentsCyaModelFromPrior(prior: AllPensionsData): UnauthorisedPaymentsViewModel = {
-    val unauthPayments = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)
-
-    sealed trait PaymentResult
-    case object Surcharge   extends PaymentResult
-    case object NoSurcharge extends PaymentResult
+    val journeyPrior = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)
 
     def determineQuestionValue(paymentResult: PaymentResult)(valueIfBlankSubmission: Option[Boolean]): Option[Boolean] = {
       val maybeCharge = paymentResult match {
-        case Surcharge   => unauthPayments.flatMap(_.surcharge)
-        case NoSurcharge => unauthPayments.flatMap(_.noSurcharge)
+        case Surcharge   => journeyPrior.flatMap(_.surcharge)
+        case NoSurcharge => journeyPrior.flatMap(_.noSurcharge)
       }
       maybeCharge.fold(ifEmpty = none[Boolean]) { c =>
         if (c.amount == 0 && c.foreignTaxPaid == 0) valueIfBlankSubmission else true.some
       }
     }
-
-    def determineAmount(questionValue: Option[Boolean], paymentResult: PaymentResult): Option[BigDecimal] =
+    def determineAmount(questionValue: Option[Boolean], paymentType: PaymentResult, amountType: AmountType): Option[BigDecimal] =
       questionValue.fold(ifEmpty = none[BigDecimal]) { bool =>
         val amountFromPrior =
-          paymentResult match {
-            case Surcharge   => unauthPayments.flatMap(_.surcharge.map(_.amount))
-            case NoSurcharge => unauthPayments.flatMap(_.noSurcharge.map(_.amount))
+          (paymentType, amountType) match {
+            case (Surcharge, Amount)      => journeyPrior.flatMap(_.surcharge.map(_.amount))
+            case (Surcharge, TaxAmount)   => journeyPrior.flatMap(_.surcharge.map(_.foreignTaxPaid))
+            case (NoSurcharge, Amount)    => journeyPrior.flatMap(_.noSurcharge.map(_.amount))
+            case (NoSurcharge, TaxAmount) => journeyPrior.flatMap(_.noSurcharge.map(_.foreignTaxPaid))
           }
         if (bool) amountFromPrior else none[BigDecimal]
       }
-
     val hasSurcharge          = determineQuestionValue(Surcharge)(valueIfBlankSubmission = false.some)
     val hasSurchargeTaxAmount = determineQuestionValue(Surcharge)(valueIfBlankSubmission = none[Boolean])
 
@@ -172,14 +171,14 @@ object AllPensionsData {
     UnauthorisedPaymentsViewModel(
       surchargeQuestion = hasSurcharge,
       noSurchargeQuestion = hasNoSurcharge,
-      surchargeAmount = determineAmount(hasSurcharge, Surcharge),
+      surchargeAmount = determineAmount(hasSurcharge, Surcharge, Amount),
       surchargeTaxAmountQuestion = hasSurchargeTaxAmount,
-      surchargeTaxAmount = determineAmount(hasSurcharge, Surcharge),
-      noSurchargeAmount = determineAmount(hasNoSurcharge, NoSurcharge),
+      surchargeTaxAmount = determineAmount(hasSurcharge, Surcharge, TaxAmount),
+      noSurchargeAmount = determineAmount(hasNoSurcharge, NoSurcharge, Amount),
       noSurchargeTaxAmountQuestion = hasNoSurchargeTaxAmount,
-      noSurchargeTaxAmount = determineAmount(hasNoSurcharge, NoSurcharge),
-      ukPensionSchemesQuestion = unauthPayments.map(_.pensionSchemeTaxReference).map(_.nonEmpty),
-      pensionSchemeTaxReference = unauthPayments.flatMap(_.pensionSchemeTaxReference)
+      noSurchargeTaxAmount = determineAmount(hasNoSurcharge, NoSurcharge, TaxAmount),
+      ukPensionSchemesQuestion = journeyPrior.map(_.pensionSchemeTaxReference).map(_.nonEmpty),
+      pensionSchemeTaxReference = journeyPrior.flatMap(_.pensionSchemeTaxReference)
     )
   }
 

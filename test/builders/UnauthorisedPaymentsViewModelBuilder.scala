@@ -20,7 +20,8 @@ import models.pension.charges.UnauthorisedPaymentsViewModel
 
 object UnauthorisedPaymentsViewModelBuilder {
 
-  val amount: BigDecimal = BigDecimal(123.00)
+  val amount: BigDecimal     = BigDecimal(123.00)
+  val zeroAmount: BigDecimal = BigDecimal(0.00)
 
   val anUnauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel(
     surchargeQuestion = Some(true),
@@ -63,6 +64,20 @@ object UnauthorisedPaymentsViewModelBuilder {
       ukPensionSchemesQuestion = Some(true),
       pensionSchemeTaxReference = Some(List("some_pstr"))
     )
+  val completeViewModel_WithZeroValue: UnauthorisedPaymentsViewModel =
+    UnauthorisedPaymentsViewModel(
+      surchargeQuestion = Some(true),
+      noSurchargeQuestion = Some(true),
+      surchargeAmount = Some(amount),
+      surchargeTaxAmountQuestion = Some(true),
+      surchargeTaxAmount = Some(zeroAmount),
+      noSurchargeAmount = Some(amount),
+      noSurchargeTaxAmountQuestion = Some(true),
+      noSurchargeTaxAmount = Some(amount),
+      ukPensionSchemesQuestion = Some(true),
+      pensionSchemeTaxReference = Some(List("some_pstr"))
+    )
+
   val surchargeOnlyViewModel: UnauthorisedPaymentsViewModel =
     UnauthorisedPaymentsViewModel(
       surchargeQuestion = Some(true),

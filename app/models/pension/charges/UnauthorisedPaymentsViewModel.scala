@@ -16,7 +16,7 @@
 
 package models.pension.charges
 
-import cats.implicits.{catsSyntaxOptionId, catsSyntaxTuple3Semigroupal}
+import cats.implicits.catsSyntaxOptionId
 import models.mongo.TextAndKey
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
@@ -63,18 +63,20 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
   def toDownstreamRequestModel: PensionSchemeUnauthorisedPayments =
     PensionSchemeUnauthorisedPayments(
       pensionSchemeTaxReference = pensionSchemeTaxReference,
-      surcharge = determineCharge(surchargeQuestion, surchargeAmount, surchargeTaxAmount),
-      noSurcharge = determineCharge(noSurchargeQuestion, noSurchargeAmount, noSurchargeTaxAmount)
+      surcharge = determineCharge(surchargeQuestion, surchargeAmount, surchargeTaxAmount).some,
+      noSurcharge = determineCharge(noSurchargeQuestion, noSurchargeAmount, noSurchargeTaxAmount).some
     )
 
-  private def determineCharge(maybeBaseQ: Option[Boolean], maybeAmount: Option[BigDecimal], maybeTaxAmount: Option[BigDecimal]): Option[Charge] = {
+  private def determineCharge(maybeBaseQ: Option[Boolean], maybeAmount: Option[BigDecimal], maybeTaxAmount: Option[BigDecimal]): Charge = {
     val blankSubmission = Charge(0.00, 0.00)
 
-    // As all 3 have to co-exist, or not at all.
-    (maybeBaseQ, maybeAmount, maybeTaxAmount).tupled
-      .fold(blankSubmission.some) { case (bool, a, ta) =>
-        if (bool) Charge(a, ta).some else blankSubmission.some
-      }
+    (maybeBaseQ, maybeAmount, maybeTaxAmount) match {
+      case (Some(_), Some(am), taxAm) =>
+        taxAm.fold(ifEmpty = Charge(am, 0.00)) { t =>
+          Charge(am, t)
+        }
+      case _ => blankSubmission
+    }
   }
 
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
@@ -146,6 +148,18 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
 
 object UnauthorisedPaymentsViewModel {
   implicit val format: OFormat[UnauthorisedPaymentsViewModel] = Json.format[UnauthorisedPaymentsViewModel]
+
+  sealed trait PaymentResult
+  object PaymentResult {
+    case object Surcharge   extends PaymentResult
+    case object NoSurcharge extends PaymentResult
+  }
+
+  sealed trait AmountType
+  object AmountType {
+    case object Amount    extends AmountType
+    case object TaxAmount extends AmountType
+  }
 }
 
 case class EncryptedUnauthorisedPaymentsViewModel(surchargeQuestion: Option[EncryptedValue] = None,
