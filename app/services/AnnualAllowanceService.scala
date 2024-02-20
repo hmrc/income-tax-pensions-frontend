@@ -29,6 +29,7 @@ import utils.EitherTUtils.EitherTOps
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import models.logging.HeaderCarrierExtensions._
 
 @Singleton
 class AnnualAllowanceService @Inject() (repository: PensionsUserDataRepository,
@@ -36,7 +37,7 @@ class AnnualAllowanceService @Inject() (repository: PensionsUserDataRepository,
                                         submissionsConnector: IncomeTaxUserDataConnector) {
 
   def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
-    val hcWithMtdItId = hc.addMtdItId(user)
+    val hcWithMtdItId = hc.withMtditId(user.mtditid)
     (for {
       priorData    <- EitherT(submissionsConnector.getUserData(user.nino, taxYear.endYear)(hcWithMtdItId)).leftAs[ServiceError]
       maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
