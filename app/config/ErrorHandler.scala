@@ -16,6 +16,9 @@
 
 package config
 
+import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
+import org.slf4j.MDC
+import play.api.{Logger, PlayException}
 import play.api.http.Status._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
@@ -34,30 +37,69 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
                               notFoundTemplate: NotFoundTemplate)(implicit appConfig: AppConfig)
     extends FrontendErrorHandler
     with I18nSupport {
+  private val logger = Logger(getClass)
 
   override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
     internalServerErrorTemplate()
 
   override def notFoundTemplate(implicit request: Request[_]): Html = notFoundTemplate()
 
-  def internalServerError()(implicit request: Request[_]): Result =
+  def internalServerError()(implicit request: Request[_]): Result = {
+    val errorLogMessage = s"[$CorrelationIdHeaderKey=$mdcCorrelationId] error occurred: for ${request.method} [${request.uri}]"
+    logger.error(errorLogMessage)
+
     InternalServerError(internalServerErrorTemplate())
+  }
 
   def futureInternalServerError()(implicit request: Request[_]): Future[Result] =
-    Future.successful(InternalServerError(internalServerErrorTemplate()))
+    Future.successful(internalServerError)
 
-  def handleError(status: Int)(implicit request: Request[_]): Result =
+  def handleError(status: Int)(implicit request: Request[_]): Result = {
+    val errorLogMessage = s"[$CorrelationIdHeaderKey=$mdcCorrelationId] for ${request.method} [${request.uri}] - status=$status"
+    logger.error(errorLogMessage)
+
     status match {
       case SERVICE_UNAVAILABLE => ServiceUnavailable(serviceUnavailableTemplate())
       case _                   => InternalServerError(internalServerErrorTemplate())
     }
+  }
 
-  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] =
+  override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
+    val clientErrorLogMessage =
+      s"[$CorrelationIdHeaderKey=$mdcCorrelationId] Client error occurred: $statusCode for ${request.method} [${request.uri}] - $message"
+
     statusCode match {
       case NOT_FOUND =>
+        logger.debug(clientErrorLogMessage) // May be lots of Not found errors (broken links etc. Don't want to clutter logging)
         Future.successful(NotFound(notFoundTemplate(request.withBody(""))))
       case _ =>
+        logger.error(clientErrorLogMessage)
         Future.successful(InternalServerError(internalServerErrorTemplate()(request.withBody(""), request2Messages(request), appConfig)))
     }
+  }
 
+  override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
+    logErrorWithMdcCorrelationId(request, exception)
+    Future.successful(resolveError(request, exception))
+  }
+
+  private def logErrorWithMdcCorrelationId(request: RequestHeader, ex: Throwable): Unit =
+    logger.error(
+      """
+        |
+        |! %sInternal server error, [%s=%s], for (%s) [%s] ->
+        | """.stripMargin.format(
+        ex match {
+          case p: PlayException => "@" + p.id + " - "
+          case _                => ""
+        },
+        CorrelationIdHeaderKey,
+        mdcCorrelationId,
+        request.method,
+        request.uri),
+      ex
+    )
+
+  private def mdcCorrelationId: String =
+    Option(MDC.get(CorrelationIdHeaderKey)).getOrElse("Unknown")
 }

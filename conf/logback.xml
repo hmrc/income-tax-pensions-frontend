@@ -21,6 +21,7 @@
     </appender>
 
     <logger name="connectors" level="DEBUG"/>
+    <logger name="controllers" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
