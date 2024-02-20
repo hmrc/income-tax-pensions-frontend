@@ -136,7 +136,6 @@ object AllPensionsData {
     (getUkPensionQuestion(prior), getUkPensionIncome(prior))
   }
 
-  // Have some validation helper (?) otherwise this class may become huge.
   private def generateUnauthorisedPaymentsCyaModelFromPrior(prior: AllPensionsData): UnauthorisedPaymentsViewModel = {
     val unauthPayments = prior.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)
 
@@ -144,13 +143,13 @@ object AllPensionsData {
     case object Surcharge   extends PaymentResult
     case object NoSurcharge extends PaymentResult
 
-    def determineQuestionValue(paymentResult: PaymentResult)(answerIfBlank: Option[Boolean]): Option[Boolean] = {
+    def determineQuestionValue(paymentResult: PaymentResult)(valueIfBlankSubmission: Option[Boolean]): Option[Boolean] = {
       val maybeCharge = paymentResult match {
         case Surcharge   => unauthPayments.flatMap(_.surcharge)
         case NoSurcharge => unauthPayments.flatMap(_.noSurcharge)
       }
       maybeCharge.fold(ifEmpty = none[Boolean]) { c =>
-        if (c.amount == 0 && c.foreignTaxPaid == 0) answerIfBlank else true.some
+        if (c.amount == 0 && c.foreignTaxPaid == 0) valueIfBlankSubmission else true.some
       }
     }
 
@@ -164,21 +163,21 @@ object AllPensionsData {
         if (bool) amountFromPrior else none[BigDecimal]
       }
 
-    val surchargeAnswer          = determineQuestionValue(Surcharge)(answerIfBlank = false.some)
-    val surchargeTaxAmountAnswer = determineQuestionValue(Surcharge)(answerIfBlank = none[Boolean])
+    val hasSurcharge          = determineQuestionValue(Surcharge)(valueIfBlankSubmission = false.some)
+    val hasSurchargeTaxAmount = determineQuestionValue(Surcharge)(valueIfBlankSubmission = none[Boolean])
 
-    val noSurchargeAnswer          = determineQuestionValue(NoSurcharge)(answerIfBlank = false.some)
-    val noSurchargeTaxAmountAnswer = determineQuestionValue(NoSurcharge)(answerIfBlank = none[Boolean])
+    val hasNoSurcharge          = determineQuestionValue(NoSurcharge)(valueIfBlankSubmission = false.some)
+    val hasNoSurchargeTaxAmount = determineQuestionValue(NoSurcharge)(valueIfBlankSubmission = none[Boolean])
 
     UnauthorisedPaymentsViewModel(
-      surchargeQuestion = surchargeAnswer,
-      noSurchargeQuestion = noSurchargeAnswer,
-      surchargeAmount = determineAmount(surchargeAnswer, Surcharge),
-      surchargeTaxAmountQuestion = surchargeTaxAmountAnswer,
-      surchargeTaxAmount = determineAmount(surchargeAnswer, Surcharge),
-      noSurchargeAmount = determineAmount(noSurchargeAnswer, NoSurcharge),
-      noSurchargeTaxAmountQuestion = noSurchargeTaxAmountAnswer,
-      noSurchargeTaxAmount = determineAmount(noSurchargeAnswer, NoSurcharge),
+      surchargeQuestion = hasSurcharge,
+      noSurchargeQuestion = hasNoSurcharge,
+      surchargeAmount = determineAmount(hasSurcharge, Surcharge),
+      surchargeTaxAmountQuestion = hasSurchargeTaxAmount,
+      surchargeTaxAmount = determineAmount(hasSurcharge, Surcharge),
+      noSurchargeAmount = determineAmount(hasNoSurcharge, NoSurcharge),
+      noSurchargeTaxAmountQuestion = hasNoSurchargeTaxAmount,
+      noSurchargeTaxAmount = determineAmount(hasNoSurcharge, NoSurcharge),
       ukPensionSchemesQuestion = unauthPayments.map(_.pensionSchemeTaxReference).map(_.nonEmpty),
       pensionSchemeTaxReference = unauthPayments.flatMap(_.pensionSchemeTaxReference)
     )

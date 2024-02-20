@@ -67,13 +67,13 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
       noSurcharge = determineCharge(noSurchargeQuestion, noSurchargeAmount, noSurchargeTaxAmount)
     )
 
-  private def determineCharge(question: Option[Boolean], amount: Option[BigDecimal], taxAmount: Option[BigDecimal]): Option[Charge] = {
-    val emptyCharge = Charge(0, 0)
+  private def determineCharge(maybeBaseQ: Option[Boolean], maybeAmount: Option[BigDecimal], maybeTaxAmount: Option[BigDecimal]): Option[Charge] = {
+    val blankSubmission = Charge(0.00, 0.00)
 
-    // As all 3 have to co-exist, or not at all
-    (question, amount, taxAmount).tupled
-      .fold(emptyCharge.some) { case (bool, a, ta) =>
-        if (bool) Charge(a, ta).some else emptyCharge.some
+    // As all 3 have to co-exist, or not at all.
+    (maybeBaseQ, maybeAmount, maybeTaxAmount).tupled
+      .fold(blankSubmission.some) { case (bool, a, ta) =>
+        if (bool) Charge(a, ta).some else blankSubmission.some
       }
   }
 

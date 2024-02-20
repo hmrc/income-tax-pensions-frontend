@@ -30,9 +30,6 @@ import utils.EitherTUtils.EitherTOps
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-// TODO make this generic, as quite a few services now follow this. Some services will need specific logic though,
-//    e.g. custom logic in `sendDownstream` in `AnnualAllowanceService`. At the very least can pull out methods
-//    `clearJourneyFromSession` and `buildDownstreamUpsertRequestModel` to be generic.
 @Singleton
 class UnauthorisedPaymentsService @Inject() (repository: PensionsUserDataRepository,
                                              pensionsConnector: PensionsConnector,

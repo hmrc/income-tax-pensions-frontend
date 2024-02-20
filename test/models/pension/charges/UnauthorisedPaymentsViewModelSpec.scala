@@ -16,33 +16,36 @@
 
 package models.pension.charges
 
-import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
+import builders.UnauthorisedPaymentsViewModelBuilder._
 import cats.implicits.catsSyntaxOptionId
 import support.UnitTest
 
 class UnauthorisedPaymentsViewModelSpec extends UnitTest {
 
+  val amount: BigDecimal     = BigDecimal(123.00)
+  val zeroAmount: BigDecimal = BigDecimal(0.00)
+
   "copyWithQuestionsApplied" should {
     "copy the content of the model without modifying" when {
-      "the questions are set to true" in new Test {
+      "the questions are set to true" in {
         completeViewModel.copyWithQuestionsApplied(Some(true), Some(true)) shouldBe completeViewModel
       }
     }
 
     "copy the model and set the values to None" when {
-      "the 'surcharge' question is false" in new Test {
+      "the 'surcharge' question is false" in {
         val expected = completeViewModel
           .copy(surchargeQuestion = Some(false), surchargeAmount = None, surchargeTaxAmountQuestion = None, surchargeTaxAmount = None)
         completeViewModel.copyWithQuestionsApplied(Some(false), Some(true)) shouldBe expected
       }
 
-      "the 'no surcharge' question is false" in new Test {
+      "the 'no surcharge' question is false" in {
         val expected = completeViewModel
           .copy(noSurchargeQuestion = Some(false), noSurchargeAmount = None, noSurchargeTaxAmountQuestion = None, noSurchargeTaxAmount = None)
         completeViewModel.copyWithQuestionsApplied(Some(true), Some(false)) shouldBe expected
       }
 
-      "both 'surcharge' and 'no surcharge' are false" in new Test {
+      "both 'surcharge' and 'no surcharge' are false" in {
         val expected = completeViewModel
           .copy(
             surchargeQuestion = Some(false),
@@ -63,10 +66,10 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
 
   "isFinished" should {
     "return true" when {
-      "all questions are populated" in new Test {
+      "all questions are populated" in {
         completeViewModel.isFinished
       }
-      "all required questions are answered" in new Test {
+      "all required questions are answered" in {
         completeViewModel
           .copy(
             surchargeQuestion = Some(false),
@@ -92,7 +95,7 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
     }
 
     "return false" when {
-      "not all necessary questions have been populated" in new Test {
+      "not all necessary questions have been populated" in {
         completeViewModel
           .copy(
             surchargeQuestion = Some(true),
@@ -106,12 +109,12 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
   }
 
   "toDownstreamRequestModel" when {
-    "both claims exist" should {
-      "be transformed with the values unchanged" in new Test {
+    "claims exist" should {
+      "create the model with the claim amounts unchanged" in {
         val expectedResult =
           PensionSchemeUnauthorisedPayments(
-            Seq("12345678AB", "12345678AC").some,
-            surcharge = Charge(zeroAmount, zeroAmount).some,
+            List("some_pstr").some,
+            surcharge = Charge(amount, amount).some,
             noSurcharge = Charge(amount, amount).some
           )
 
@@ -119,10 +122,10 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
       }
     }
     "neither claim exists" should {
-      "send 0s downstream for both claims" in new Test {
+      "send 0s downstream for both claims" in {
         val expectedResult =
           PensionSchemeUnauthorisedPayments(
-            Seq("12345678AB", "12345678AC").some,
+            List("some_pstr").some,
             surcharge = Charge(zeroAmount, zeroAmount).some,
             noSurcharge = Charge(zeroAmount, zeroAmount).some
           )
@@ -131,10 +134,10 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
       }
     }
     "only one of the claims exists" should {
-      "treat them independently, not changing claimed values and sending 0s for the unclaimed" in new Test {
+      "treat them independently, not changing claimed values and sending 0s for the unclaimed" in {
         val expectedResult =
           PensionSchemeUnauthorisedPayments(
-            Seq("12345678AB", "12345678AC").some,
+            List("some_pstr").some,
             surcharge = Charge(amount, amount).some,
             noSurcharge = Charge(zeroAmount, zeroAmount).some
           )
@@ -185,49 +188,4 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
       anUnauthorisedPaymentsEmptyViewModel.unauthorisedPaymentQuestion shouldBe None
     }
   }
-}
-trait Test {
-  val amount: BigDecimal     = BigDecimal(123.00)
-  val zeroAmount: BigDecimal = BigDecimal(0.00)
-
-  // i.e. intentionally sending 0s for surcharge.
-  val completeViewModel: UnauthorisedPaymentsViewModel =
-    UnauthorisedPaymentsViewModel(
-      surchargeQuestion = Some(true),
-      noSurchargeQuestion = Some(true),
-      surchargeAmount = Some(zeroAmount),
-      surchargeTaxAmountQuestion = Some(true),
-      surchargeTaxAmount = Some(zeroAmount),
-      noSurchargeAmount = Some(amount),
-      noSurchargeTaxAmountQuestion = Some(true),
-      noSurchargeTaxAmount = Some(amount),
-      ukPensionSchemesQuestion = Some(true),
-      pensionSchemeTaxReference = Some(Seq("12345678AB", "12345678AC"))
-    )
-  val surchargeOnlyViewModel: UnauthorisedPaymentsViewModel =
-    UnauthorisedPaymentsViewModel(
-      surchargeQuestion = Some(true),
-      noSurchargeQuestion = Some(false),
-      surchargeAmount = Some(amount),
-      surchargeTaxAmountQuestion = Some(true),
-      surchargeTaxAmount = Some(amount),
-      noSurchargeAmount = None,
-      noSurchargeTaxAmountQuestion = None,
-      noSurchargeTaxAmount = None,
-      ukPensionSchemesQuestion = Some(true),
-      pensionSchemeTaxReference = Some(Seq("12345678AB", "12345678AC"))
-    )
-  val neitherClaimViewModel: UnauthorisedPaymentsViewModel =
-    UnauthorisedPaymentsViewModel(
-      surchargeQuestion = Some(false),
-      noSurchargeQuestion = Some(false),
-      surchargeAmount = None,
-      surchargeTaxAmountQuestion = None,
-      surchargeTaxAmount = None,
-      noSurchargeAmount = None,
-      noSurchargeTaxAmountQuestion = None,
-      noSurchargeTaxAmount = None,
-      ukPensionSchemesQuestion = None,
-      pensionSchemeTaxReference = Some(Seq("12345678AB", "12345678AC"))
-    )
 }

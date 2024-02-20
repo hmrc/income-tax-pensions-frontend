@@ -17,6 +17,7 @@
 package models.pension
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.UnauthorisedPaymentsViewModelBuilder.{completeViewModel, neitherClaimViewModel, surchargeOnlyViewModel}
 import cats.implicits.catsSyntaxOptionId
 import models.pension.AllPensionsData.{Zero, generateSessionModelFromPrior}
 import models.pension.charges.{Charge, PensionSchemeUnauthorisedPayments, UnauthorisedPaymentsViewModel}
@@ -193,45 +194,5 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
 
     def priorWith(unauth: Option[PensionSchemeUnauthorisedPayments]): AllPensionsData =
       priorBase.copy(pensionCharges = priorBase.pensionCharges.map(_.copy(pensionSchemeUnauthorisedPayments = unauth)))
-
-    val completeViewModel: UnauthorisedPaymentsViewModel =
-      UnauthorisedPaymentsViewModel(
-        surchargeQuestion = Some(true),
-        noSurchargeQuestion = Some(true),
-        surchargeAmount = Some(amount),
-        surchargeTaxAmountQuestion = Some(true),
-        surchargeTaxAmount = Some(amount),
-        noSurchargeAmount = Some(amount),
-        noSurchargeTaxAmountQuestion = Some(true),
-        noSurchargeTaxAmount = Some(amount),
-        ukPensionSchemesQuestion = Some(true),
-        pensionSchemeTaxReference = Some(List("some_pstr"))
-      )
-    val surchargeOnlyViewModel: UnauthorisedPaymentsViewModel =
-      UnauthorisedPaymentsViewModel(
-        surchargeQuestion = Some(true),
-        noSurchargeQuestion = Some(false),
-        surchargeAmount = Some(amount),
-        surchargeTaxAmountQuestion = Some(true),
-        surchargeTaxAmount = Some(amount),
-        noSurchargeAmount = None,
-        noSurchargeTaxAmountQuestion = None,
-        noSurchargeTaxAmount = None,
-        ukPensionSchemesQuestion = Some(true),
-        pensionSchemeTaxReference = Some(List("some_pstr"))
-      )
-    val neitherClaimViewModel: UnauthorisedPaymentsViewModel =
-      UnauthorisedPaymentsViewModel(
-        surchargeQuestion = Some(false),
-        noSurchargeQuestion = Some(false),
-        surchargeAmount = None,
-        surchargeTaxAmountQuestion = None,
-        surchargeTaxAmount = None,
-        noSurchargeAmount = None,
-        noSurchargeTaxAmountQuestion = None,
-        noSurchargeTaxAmount = None,
-        ukPensionSchemesQuestion = Some(true),
-        pensionSchemeTaxReference = Some(List("some_pstr"))
-      )
   }
 }
