@@ -16,9 +16,9 @@
 
 package connectors
 
+import com.github.tomakehurst.wiremock.http.HttpHeader
 import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
-import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
-import org.scalatest.prop.TableDrivenPropertyChecks
+import models._
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.Helpers.OK
@@ -34,6 +34,8 @@ class IncomeTaxUserDataConnectorSpec extends IntegrationTest {
   lazy val externalConnector: IncomeTaxUserDataConnector = appWithFakeExternalCall.injector.instanceOf[IncomeTaxUserDataConnector]
 
   implicit override val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders("mtditid" -> mtditid, "X-Session-ID" -> sessionId)
+
+  val desUrl: String = s"/income-tax-submission-service/income-tax/nino/$nino/sources/session\\?taxYear=$taxYear"
 
   "IncomeTaxUserDataConnector" should {
     "Return a success result" when {
@@ -139,6 +141,62 @@ class IncomeTaxUserDataConnectorSpec extends IntegrationTest {
 
         val result: IncomeTaxUserDataResponse = Await.result(connector.getUserData(nino, taxYear), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
+      }
+    }
+  }
+
+  "refreshStateBenefits" should {
+
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+    val headersSentToDes = Seq(
+      new HttpHeader("mtditid", mtditid)
+    )
+
+    "succeed when correct parameters are passed" in {
+      val jsValue = Json.toJson(RefreshIncomeSourceRequest("pensions"))
+
+      stubPutWithoutResponseBody(desUrl, jsValue.toString(), NO_CONTENT, headersSentToDes)
+
+      await(connector.refreshPensionsResponse(nino, mtditid, taxYear)(hc)) shouldBe Right(())
+    }
+
+    "return a Left error" when {
+
+      Seq(INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE, BAD_REQUEST, UNPROCESSABLE_ENTITY).foreach { errorStatus =>
+        val desResponseBody = Json
+          .obj(
+            "code"   -> "SOME_DES_ERROR_CODE",
+            "reason" -> "SOME_DES_ERROR_REASON"
+          )
+          .toString
+
+        val jsValue = Json.toJson(RefreshIncomeSourceRequest("pensions"))
+
+        s"API returns $errorStatus" in {
+          val expectedResult =
+            APIErrorModel(
+              status = if (errorStatus == UNPROCESSABLE_ENTITY) INTERNAL_SERVER_ERROR else errorStatus,
+              APIErrorBodyModel("SOME_DES_ERROR_CODE", "SOME_DES_ERROR_REASON"))
+
+          stubPutWithResponseBody(desUrl, jsValue.toString(), desResponseBody, errorStatus)
+
+          val result = await(connector.refreshPensionsResponse(nino, mtditid, taxYear)(hc))
+
+          result shouldBe Left(expectedResult)
+        }
+
+        s"API returns $errorStatus response that does not have a parsable error body" in {
+          val expectedResult =
+            APIErrorModel(
+              status = if (errorStatus == UNPROCESSABLE_ENTITY) INTERNAL_SERVER_ERROR else errorStatus,
+              APIErrorBodyModel("PARSING_ERROR", "Error parsing response from API"))
+
+          stubPutWithResponseBody(desUrl, jsValue.toString(), "UNEXPECTED RESPONSE BODY", errorStatus)
+
+          val result = await(connector.refreshPensionsResponse(nino, mtditid, taxYear)(hc))
+
+          result shouldBe Left(expectedResult)
+        }
       }
     }
   }
