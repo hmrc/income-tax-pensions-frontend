@@ -19,7 +19,7 @@ package models.logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 object HeaderCarrierExtensions {
-  val CorrelationIdHeaderKey = "X-CorrelationId" // Notice it is not  X-Correlation-Id - we keep exactly the same format as downstream IF/DES
+  val CorrelationIdHeaderKey = "CorrelationId"
   val MtditIdHeaderKey       = "mtditid"
 
   implicit class HeaderCarrierOps(val headerCarrier: HeaderCarrier) extends AnyVal {
