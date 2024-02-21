@@ -55,7 +55,7 @@ class PensionsChargesServiceSpec
   val unauthorisedPaymentsRequestModel = CreateUpdatePensionChargesRequestModel(
     pensionSavingsTaxCharges = priorPensionChargesData.flatMap(_.pensionSavingsTaxCharges),
     pensionSchemeOverseasTransfers = priorPensionChargesData.flatMap(_.pensionSchemeOverseasTransfers),
-    pensionSchemeUnauthorisedPayments = Some(unauthorisedSessionUserData.pensions.unauthorisedPayments.toUnauth),
+    pensionSchemeUnauthorisedPayments = Some(unauthorisedSessionUserData.pensions.unauthorisedPayments.toDownstreamRequestModel),
     pensionContributions = priorPensionChargesData.flatMap(_.pensionContributions),
     overseasPensionContributions = priorPensionChargesData.flatMap(_.overseasPensionContributions)
   )

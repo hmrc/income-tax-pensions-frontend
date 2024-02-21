@@ -16,6 +16,7 @@
 
 package controllers.pensions.unauthorisedPayments
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
@@ -30,7 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.UnauthorisedPaymentsPages.CYAPage
 import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
-import services.{ExcludeJourneyService, PensionChargesService, PensionSessionService}
+import services.{ExcludeJourneyService, PensionSessionService, UnauthorisedPaymentsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Clock
@@ -44,7 +45,7 @@ class UnauthorisedPaymentsCYAController @Inject() (
     auditProvider: AuditActionsProvider,
     view: UnauthorisedPaymentsCYAView,
     pensionSessionService: PensionSessionService,
-    pensionChargesService: PensionChargesService,
+    service: UnauthorisedPaymentsService,
     errorHandler: ErrorHandler,
     excludeJourneyService: ExcludeJourneyService,
     mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
@@ -91,7 +92,7 @@ class UnauthorisedPaymentsCYAController @Inject() (
       clock: Clock): Future[Result] =
     (cya match {
       case Some(_) =>
-        pensionChargesService.saveUnauthorisedViewModel(user, taxYear) map {
+        service.saveAnswers(user, TaxYear(taxYear)) map {
           case Left(_) =>
             logger.info("[submit] Failed to create or update session")
             Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel(BAD_REQUEST.toString, "Unable to createOrUpdate pension service")))
