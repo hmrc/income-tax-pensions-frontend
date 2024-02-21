@@ -20,6 +20,7 @@ import cats.data.EitherT
 import cats.implicits.catsSyntaxOptionId
 import common.TaxYear
 import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
+import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo.{DatabaseError, PensionsUserData, ServiceError, SessionNotFound}
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, UnauthorisedPaymentsViewModel}
 import models.{APIErrorModel, IncomeTaxUserData, User}
@@ -36,7 +37,8 @@ class UnauthorisedPaymentsService @Inject() (repository: PensionsUserDataReposit
                                              submissionsConnector: IncomeTaxUserDataConnector) {
 
   def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
-    val hcWithMtdItId = hc.addMtdItId(user)
+    val hcWithMtdItId = hc.withMtditId(user.mtditid)
+
     (for {
       priorData    <- EitherT(submissionsConnector.getUserData(user.nino, taxYear.endYear)(hcWithMtdItId)).leftAs[ServiceError]
       maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
