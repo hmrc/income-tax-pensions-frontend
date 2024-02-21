@@ -31,8 +31,8 @@ import play.api.libs.json.{Json, OFormat}
 
 case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
                            pensionCharges: Option[PensionCharges],
-                           stateBenefits: Option[AllStateBenefitsData],
-                           employmentPensions: Option[EmploymentPensions],
+                           stateBenefits: Option[AllStateBenefitsData],    /* Model taken from income-tax-state-benefits */
+                           employmentPensions: Option[EmploymentPensions], /* Model taken from income-tax-employment */
                            pensionIncome: Option[PensionIncome]) {
 
   def getPaymentsIntoPensionsCyaFromPrior: PaymentsIntoPensionsViewModel =
