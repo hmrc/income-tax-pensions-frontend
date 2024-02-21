@@ -26,7 +26,7 @@ import play.api.test.Helpers.OK
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.IntegrationTest
 
-import java.time.{Instant, LocalDate}
+import java.time.LocalDate
 import java.util.UUID
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
