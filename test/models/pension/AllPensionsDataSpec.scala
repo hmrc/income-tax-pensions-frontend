@@ -17,14 +17,16 @@
 package models.pension
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.UnauthorisedPaymentsViewModelBuilder.{completeViewModel_WithZeroValue, neitherClaimViewModel, surchargeOnlyViewModel}
 import cats.implicits.catsSyntaxOptionId
-import models.pension.AllPensionsData.Zero
+import models.pension.AllPensionsData.{Zero, generateSessionModelFromPrior}
 import models.pension.charges.{Charge, PensionSchemeUnauthorisedPayments, UnauthorisedPaymentsViewModel}
 import models.pension.reliefs.{PaymentsIntoPensionsViewModel, Reliefs}
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpecLike
 
-class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks {
+class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks with Matchers {
 
   val amount: BigDecimal     = BigDecimal(123.00)
   val zeroAmount: BigDecimal = BigDecimal(0.00)
@@ -136,87 +138,61 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
     }
   }
 
-  "generateUnauthorisedPaymentsCyaModelFromPrior" should {
-    def setPriorFromUnauthPayments(journeyPrior: PensionSchemeUnauthorisedPayments): AllPensionsData = {
-      val updatedCharges = priorBase.pensionCharges.map(_.copy(pensionSchemeUnauthorisedPayments = journeyPrior.some))
+  "generateUnauthorisedPaymentsCyaModelFromPrior" when {
+    "no prior data exists for unauthorised payments" should {
+      "generate an empty session model" in new UnauthorisedPaymentsTest {
+        val result = generateSessionModelFromPrior(buildPrior(None)).unauthorisedPayments
 
-      priorBase.copy(pensionCharges = updatedCharges)
+        result shouldBe UnauthorisedPaymentsViewModel()
+      }
     }
+    "an claim has one non-zero amount present" should {
+      "populate the session with that claim (i.e. including the 0 value)" in new UnauthorisedPaymentsTest {
+        val priorPayments: PensionSchemeUnauthorisedPayments =
+          paymentsWith(
+            surcharge = Charge(amount, zeroAmount).some,
+            noSurcharge = Charge(amount, amount).some
+          )
+        val result = generateSessionModelFromPrior(buildPrior(priorPayments.some)).unauthorisedPayments
 
-    val sessionBaseModel =
-      UnauthorisedPaymentsViewModel(
-        surchargeQuestion = true.some,
-        noSurchargeQuestion = true.some,
-        surchargeAmount = amount.some,
-        surchargeTaxAmountQuestion = true.some,
-        surchargeTaxAmount = amount.some,
-        noSurchargeAmount = amount.some,
-        noSurchargeTaxAmountQuestion = true.some,
-        noSurchargeTaxAmount = amount.some,
-        ukPensionSchemesQuestion = true.some,
-        pensionSchemeTaxReference = List("12345678RA").some
-      )
+        result shouldBe completeViewModel_WithZeroValue
+      }
+    }
+    "a claim has solely zero amounts" should {
+      "retract that claim" in new UnauthorisedPaymentsTest {
+        val priorPayments: PensionSchemeUnauthorisedPayments =
+          paymentsWith(
+            surcharge = Charge(zeroAmount, zeroAmount).some,
+            noSurcharge = Charge(zeroAmount, zeroAmount).some
+          )
+        val result = generateSessionModelFromPrior(buildPrior(priorPayments.some)).unauthorisedPayments
 
-    val priorBaseModel =
+        result shouldBe neitherClaimViewModel
+      }
+    }
+    "handle both claims independently" in new UnauthorisedPaymentsTest {
+      val priorPayments: PensionSchemeUnauthorisedPayments =
+        paymentsWith(
+          surcharge = Charge(amount, amount).some,
+          noSurcharge = Charge(zeroAmount, zeroAmount).some
+        )
+      val result = generateSessionModelFromPrior(buildPrior(priorPayments.some)).unauthorisedPayments
+
+      result shouldBe surchargeOnlyViewModel
+    }
+  }
+
+  trait UnauthorisedPaymentsTest {
+    val priorBase: AllPensionsData = anAllPensionsData
+
+    def paymentsWith(surcharge: Option[Charge], noSurcharge: Option[Charge]): PensionSchemeUnauthorisedPayments =
       PensionSchemeUnauthorisedPayments(
-        pensionSchemeTaxReference = List("12345678RA").some,
-        surcharge = Charge(amount, amount).some,
-        noSurcharge = Charge(amount, amount).some
+        pensionSchemeTaxReference = List("some_pstr").some,
+        surcharge = surcharge,
+        noSurcharge = noSurcharge
       )
 
-    val tableCases = Table(
-      ("Prior data journey model", "Expected result"),
-      (priorBaseModel, sessionBaseModel),
-      (
-        priorBaseModel.copy(surcharge = None),
-        sessionBaseModel.copy(
-          surchargeQuestion = None,
-          surchargeAmount = None,
-          surchargeTaxAmountQuestion = None,
-          surchargeTaxAmount = None
-        )
-      ),
-      (
-        priorBaseModel.copy(surcharge = Charge(zeroAmount, zeroAmount).some),
-        sessionBaseModel.copy(
-          surchargeQuestion = true.some,
-          surchargeAmount = zeroAmount.some,
-          surchargeTaxAmountQuestion = true.some,
-          surchargeTaxAmount = zeroAmount.some
-        )
-      ),
-      (
-        priorBaseModel.copy(noSurcharge = None),
-        sessionBaseModel.copy(
-          noSurchargeQuestion = None,
-          noSurchargeAmount = None,
-          noSurchargeTaxAmountQuestion = None,
-          noSurchargeTaxAmount = None
-        )
-      ),
-      (
-        priorBaseModel.copy(noSurcharge = Charge(zeroAmount, zeroAmount).some),
-        sessionBaseModel.copy(
-          noSurchargeQuestion = true.some,
-          noSurchargeAmount = zeroAmount.some,
-          noSurchargeTaxAmountQuestion = true.some,
-          noSurchargeTaxAmount = zeroAmount.some
-        )
-      ),
-      (
-        priorBaseModel.copy(pensionSchemeTaxReference = None),
-        sessionBaseModel.copy(
-          ukPensionSchemesQuestion = false.some,
-          pensionSchemeTaxReference = None
-        )
-      )
-    )
-
-    "convert prior data to FE model" in forAll(tableCases) { case (priorJourneyModel, expectedModel) =>
-      val allPriorData = setPriorFromUnauthPayments(priorJourneyModel)
-
-      val result = AllPensionsData.generateSessionModelFromPrior(allPriorData)
-      assert(result.unauthorisedPayments === expectedModel)
-    }
+    def buildPrior(unauth: Option[PensionSchemeUnauthorisedPayments]): AllPensionsData =
+      priorBase.copy(pensionCharges = priorBase.pensionCharges.map(_.copy(pensionSchemeUnauthorisedPayments = unauth)))
   }
 }

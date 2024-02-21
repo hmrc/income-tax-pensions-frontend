@@ -20,6 +20,9 @@ import models.pension.charges.UnauthorisedPaymentsViewModel
 
 object UnauthorisedPaymentsViewModelBuilder {
 
+  val amount: BigDecimal     = BigDecimal(123.00)
+  val zeroAmount: BigDecimal = BigDecimal(0.00)
+
   val anUnauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel(
     surchargeQuestion = Some(true),
     noSurchargeQuestion = Some(true),
@@ -47,5 +50,59 @@ object UnauthorisedPaymentsViewModelBuilder {
   )
 
   val anUnauthorisedPaymentsEmptyViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel()
+
+  val completeViewModel: UnauthorisedPaymentsViewModel =
+    UnauthorisedPaymentsViewModel(
+      surchargeQuestion = Some(true),
+      noSurchargeQuestion = Some(true),
+      surchargeAmount = Some(amount),
+      surchargeTaxAmountQuestion = Some(true),
+      surchargeTaxAmount = Some(amount),
+      noSurchargeAmount = Some(amount),
+      noSurchargeTaxAmountQuestion = Some(true),
+      noSurchargeTaxAmount = Some(amount),
+      ukPensionSchemesQuestion = Some(true),
+      pensionSchemeTaxReference = Some(List("some_pstr"))
+    )
+  val completeViewModel_WithZeroValue: UnauthorisedPaymentsViewModel =
+    UnauthorisedPaymentsViewModel(
+      surchargeQuestion = Some(true),
+      noSurchargeQuestion = Some(true),
+      surchargeAmount = Some(amount),
+      surchargeTaxAmountQuestion = Some(true),
+      surchargeTaxAmount = Some(zeroAmount),
+      noSurchargeAmount = Some(amount),
+      noSurchargeTaxAmountQuestion = Some(true),
+      noSurchargeTaxAmount = Some(amount),
+      ukPensionSchemesQuestion = Some(true),
+      pensionSchemeTaxReference = Some(List("some_pstr"))
+    )
+
+  val surchargeOnlyViewModel: UnauthorisedPaymentsViewModel =
+    UnauthorisedPaymentsViewModel(
+      surchargeQuestion = Some(true),
+      noSurchargeQuestion = Some(false),
+      surchargeAmount = Some(amount),
+      surchargeTaxAmountQuestion = Some(true),
+      surchargeTaxAmount = Some(amount),
+      noSurchargeAmount = None,
+      noSurchargeTaxAmountQuestion = None,
+      noSurchargeTaxAmount = None,
+      ukPensionSchemesQuestion = Some(true),
+      pensionSchemeTaxReference = Some(List("some_pstr"))
+    )
+  val neitherClaimViewModel: UnauthorisedPaymentsViewModel =
+    UnauthorisedPaymentsViewModel(
+      surchargeQuestion = Some(false),
+      noSurchargeQuestion = Some(false),
+      surchargeAmount = None,
+      surchargeTaxAmountQuestion = None,
+      surchargeTaxAmount = None,
+      noSurchargeAmount = None,
+      noSurchargeTaxAmountQuestion = None,
+      noSurchargeTaxAmount = None,
+      ukPensionSchemesQuestion = Some(true),
+      pensionSchemeTaxReference = Some(List("some_pstr"))
+    )
 
 }

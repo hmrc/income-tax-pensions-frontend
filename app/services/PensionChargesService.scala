@@ -49,7 +49,7 @@ class PensionChargesService @Inject() (pensionUserDataRepository: PensionsUserDa
             .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
 
       viewModel: Option[UnauthorisedPaymentsViewModel]       = sessionData.map(_.pensions.unauthorisedPayments)
-      unauthModel: Option[PensionSchemeUnauthorisedPayments] = viewModel.map(_.toUnauth)
+      unauthModel: Option[PensionSchemeUnauthorisedPayments] = viewModel.map(_.toDownstreamRequestModel)
 
       result <-
         FutureEitherOps[ServiceError, Unit](
@@ -213,7 +213,7 @@ object PensionChargesService {
       CreateUpdatePensionChargesRequestModel(
         pensionSavingsTaxCharges = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSavingsTaxCharges)),
         pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
-        pensionSchemeUnauthorisedPayments = viewModel.map(_.toUnauth),
+        pensionSchemeUnauthorisedPayments = viewModel.map(_.toDownstreamRequestModel),
         pensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
         overseasPensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
       )

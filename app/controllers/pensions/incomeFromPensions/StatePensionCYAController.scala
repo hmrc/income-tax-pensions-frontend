@@ -30,20 +30,19 @@ import services.redirects.StatePensionPages.StatePensionsCYAPage
 import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck}
 import services.{PensionSessionService, StatePensionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.StatePensionCYAView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StatePensionCYAController @Inject() (
-    auditProvider: AuditActionsProvider,
-    sessionService: PensionSessionService,
-    statePensionService: StatePensionService,
-    view: StatePensionCYAView,
-    mcc: MessagesControllerComponents,
-    errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, executionContext: ExecutionContext)
+class StatePensionCYAController @Inject() (auditProvider: AuditActionsProvider,
+                                           sessionService: PensionSessionService,
+                                           statePensionService: StatePensionService,
+                                           view: StatePensionCYAView,
+                                           mcc: MessagesControllerComponents,
+                                           errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
