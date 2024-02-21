@@ -17,17 +17,21 @@
 package connectors
 
 import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
+import models.pension.statebenefits.{AllStateBenefitsData, StateBenefit, StateBenefitsData}
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
+import org.scalatest.prop.TableDrivenPropertyChecks
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.Helpers.OK
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.IntegrationTest
 
+import java.time.LocalDate
+import java.util.UUID
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-class IncomeTaxUserDataConnectorSpec extends IntegrationTest {
+class IncomeTaxUserDataConnectorSpec extends IntegrationTest with TableDrivenPropertyChecks {
 
   lazy val connector: IncomeTaxUserDataConnector         = app.injector.instanceOf[IncomeTaxUserDataConnector]
   lazy val externalConnector: IncomeTaxUserDataConnector = appWithFakeExternalCall.injector.instanceOf[IncomeTaxUserDataConnector]
@@ -55,13 +59,51 @@ class IncomeTaxUserDataConnectorSpec extends IntegrationTest {
         stubGetWithHeadersCheck(
           s"/income-tax-submission-service/income-tax/nino/$nino/sources/session\\?taxYear=$taxYear",
           OK,
-          Json.toJson(userData("pensions")).toString(),
+          Json.toJson(userData).toString(),
           "X-Session-ID" -> sessionId,
           "mtditid"      -> mtditid
         )
 
         val result: IncomeTaxUserDataResponse = Await.result(connector.getUserData(nino, taxYear), Duration.Inf)
-        result shouldBe Right(userData("pensions"))
+        result shouldBe Right(userData)
+      }
+
+    }
+
+    "getUserData (override state pension from income-tax-submission)" when {
+      val now                 = LocalDate.now()
+      val stateBenefitDataOld = AllStateBenefitsData(Some(StateBenefitsData(Some(Set(StateBenefit(UUID.randomUUID(), now.minusDays(10)))))))
+      val stateBenefitDataNew = AllStateBenefitsData(Some(StateBenefitsData(Some(Set(StateBenefit(UUID.randomUUID(), now))))))
+
+      val cases = Table(
+        ("pension model", "state benefit model (expected)"),
+        (Some(stateBenefitDataOld), Some(stateBenefitDataNew)),
+        (None, Some(stateBenefitDataNew)),
+        (Some(stateBenefitDataOld), None),
+        (None, None)
+      )
+
+      "update our state benefit model" in forAll(cases) { case (stataBenefitInPensionModel, stateBenefitModel) =>
+        stubGetWithHeadersCheck(
+          s"/income-tax-submission-service/income-tax/nino/$nino/sources/session\\?taxYear=$taxYear",
+          OK,
+          Json
+            .toJson(
+              userData.copy(
+                pensions = userData.pensions.map(_.copy(stateBenefits = stataBenefitInPensionModel)),
+                stateBenefits = stateBenefitModel
+              ))
+            .toString(),
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid
+        )
+
+        val result: IncomeTaxUserDataResponse = Await.result(connector.getUserData(nino, taxYear), Duration.Inf)
+        result shouldBe Right(
+          userData.copy(
+            pensions = userData.pensions.map(_.copy(stateBenefits = stateBenefitModel)),
+            stateBenefits = stateBenefitModel
+          ))
       }
     }
 
@@ -74,7 +116,7 @@ class IncomeTaxUserDataConnectorSpec extends IntegrationTest {
         stubGetWithHeadersCheck(
           s"/income-tax-submission-service/income-tax/nino/$nino/sources/session\\?taxYear=$taxYear",
           OK,
-          Json.toJson(userData("pensions")).toString(),
+          Json.toJson(userData).toString(),
           "X-Session-ID" -> sessionId,
           "mtditid"      -> mtditid
         )
