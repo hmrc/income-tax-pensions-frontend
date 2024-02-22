@@ -18,7 +18,7 @@ package services
 
 import cats.data.EitherT
 import common.TaxYear
-import connectors.StateBenefitsConnector
+import connectors.{IncomeTaxUserDataConnector, StateBenefitsConnector}
 import models.User
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo._
@@ -45,7 +45,9 @@ object BenefitType {
   }
 }
 
-class StatePensionService @Inject() (repository: PensionsUserDataRepository, connector: StateBenefitsConnector) {
+class StatePensionService @Inject() (repository: PensionsUserDataRepository,
+                                     connector: StateBenefitsConnector,
+                                     incomeTaxSubmissionConnector: IncomeTaxUserDataConnector) {
 
   def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
     val hcWithMtdItId = hc.withMtditId(user.mtditid)
@@ -58,6 +60,7 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository, con
       _ <- processClaim(statePensionSubmission, hcWithMtdItId, user)
       _ <- processClaim(statePensionLumpSumSubmission, hcWithMtdItId, user)
       _ <- EitherT(clearJourneyFromSession(session)).leftAs[ServiceError]
+      _ <- EitherT(incomeTaxSubmissionConnector.refreshPensionsResponse(user.nino, user.mtditid, taxYear.endYear)).leftAs[ServiceError]
     } yield ()).value
   }
 

@@ -37,7 +37,7 @@ class StatePensionServiceSpec
     with MockIncomeTaxUserDataConnector
     with ScalaFutures {
 
-  val service = new StatePensionService(mockPensionUserDataRepository, mockStateBenefitsConnector)
+  val service = new StatePensionService(mockPensionUserDataRepository, mockStateBenefitsConnector, mockSubmissionsConnector)
 
   val journeyAnswers: IncomeFromPensionsViewModel = anIncomeFromPensionsViewModel
   val pensionSessionAnswers: PensionsCYAModel     = emptyPensionsData.copy(incomeFromPensions = journeyAnswers)
@@ -65,6 +65,7 @@ class StatePensionServiceSpec
         mockSaveClaimData(nino, aCreateStatePensionBenefitsUD, Right(()))
         mockSaveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD, Right(()))
         mockCreateOrUpdate(allUserDataAfterSubmission, Right(()))
+        mockRefreshPensionsResponse()
 
         val result = await(service.saveAnswers(aUser, currentTaxYear))
         result shouldBe Right(())
@@ -81,6 +82,7 @@ class StatePensionServiceSpec
 
         mockSaveClaimData(nino, anUpdateStatePensionBenefitsUD, Right(()))
         mockCreateOrUpdate(allUserDataAfterSubmission, Right(()))
+        mockRefreshPensionsResponse()
 
         val result = await(service.saveAnswers(aUser, currentTaxYear))
         result shouldBe Right(())
@@ -97,6 +99,7 @@ class StatePensionServiceSpec
 
         mockSaveClaimData(nino, anUpdateStatePensionLumpSumBenefitsUD, Right(()))
         mockCreateOrUpdate(allUserDataAfterSubmission, Right(()))
+        mockRefreshPensionsResponse()
 
         val result = await(service.saveAnswers(aUser, currentTaxYear))
         result shouldBe Right(())
