@@ -17,6 +17,7 @@
 package connectors
 
 import config.AppConfig
+import connectors.Connector.hcWithCorrelationId
 import connectors.httpParsers.EmploymentSessionHttpParser.{EmploymentSessionHttpReads, EmploymentSessionResponse}
 import models.logging.ConnectorRequestInfo
 import models.pension.employmentPensions.CreateUpdateEmploymentRequest
@@ -37,7 +38,7 @@ class EmploymentConnector @Inject() (val http: HttpClient, val config: AppConfig
     http.POST[CreateUpdateEmploymentRequest, EmploymentSessionResponse](url, model)(
       CreateUpdateEmploymentRequest.format,
       EmploymentSessionHttpReads,
-      hc,
+      hcWithCorrelationId,
       ec)
   }
 }
