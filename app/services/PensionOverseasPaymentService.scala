@@ -72,26 +72,12 @@ class PensionOverseasPaymentService @Inject() (pensionUserDataRepository: Pensio
           overseasPensionSchemeContributions = sessionData.flatMap(_.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount)
         )
       )
-      _ = println()
-      _ = println("updated reliefs data: " + updatedReliefsData)
-      _ = println()
 
       journeyAnswers = sessionData.map(_.pensions.paymentsIntoOverseasPensions)
-      _              = println()
-      _              = println("journey in session: " + journeyAnswers)
-      _              = println()
-
-      _ = println()
-      _ = println("toDownstreamReqM" + journeyAnswers.map(_.toDownstreamOverseasPensionContribution))
-      _ = println()
-
       incomeSubModel = journeyAnswers
         .map(_.toDownstreamOverseasPensionContribution)
         .flatMap(seq => if (seq.nonEmpty) Some(seq) else None)
         .map(OverseasPensionContributionContainer)
-      _ = println()
-      _ = println("income sub model: " + incomeSubModel)
-      _ = println()
 
       updatedIncomeData = CreateUpdatePensionIncomeRequestModel(
         foreignPension = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),

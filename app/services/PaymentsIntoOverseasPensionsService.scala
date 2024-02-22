@@ -83,7 +83,6 @@ class PaymentsIntoOverseasPensionsService @Inject() (repository: PensionsUserDat
     EitherT(repository.createOrUpdate(updatedSessionModel))
   }
 
-  // Model builders maybe belong somewhere else?
   private def buildDownstreamIncomeModel(prior: IncomeTaxUserData,
                                          maybeClaim: Option[PaymentsIntoOverseasPensionsViewModel]): CreateUpdatePensionIncomeRequestModel = {
     val modelFromPrior = CreateUpdatePensionIncomeRequestModel.fromPriorData(prior)

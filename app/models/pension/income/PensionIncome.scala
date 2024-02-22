@@ -37,7 +37,6 @@ case class ForeignPension(
 object ForeignPension {
   implicit val format: OFormat[ForeignPension] = Json.format[ForeignPension]
 
-  // Add UTs for these methods?
   def fromPriorData(prior: IncomeTaxUserData): Option[Seq[ForeignPension]] =
     prior.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension))
 }
