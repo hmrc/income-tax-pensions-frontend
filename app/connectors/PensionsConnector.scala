@@ -24,6 +24,7 @@ import connectors.httpParsers.PensionChargesSessionHttpParser.{PensionChargesSes
 import connectors.httpParsers.PensionIncomeSessionHttpParser.{PensionIncomeSessionHttpReads, PensionIncomeSessionResponse}
 import connectors.httpParsers.PensionReliefsSessionHttpParser.{PensionReliefsSessionHttpReads, PensionReliefsSessionResponse}
 import models.logging.ConnectorRequestInfo
+import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeModel
 import models.pension.reliefs.CreateOrUpdatePensionReliefsModel
@@ -79,8 +80,9 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     http.PUT[CreateOrUpdatePensionReliefsModel, PensionReliefsSessionResponse](url, model)(
       CreateOrUpdatePensionReliefsModel.format,
       PensionReliefsSessionHttpReads,
-      hc,
-      ec)
+      hc.withExtraHeaders(hc.otherHeaders.filter(x => x._1 == "mtditid" || x._1 == CorrelationIdHeaderKey): _*),
+      ec
+    )
   }
 
   def deletePensionReliefData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DeletePensionReliefsResponse] = {

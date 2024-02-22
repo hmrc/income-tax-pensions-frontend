@@ -33,15 +33,16 @@ import utils.Clock
 import views.html.pensions.paymentsIntoPensions.PensionsTaxReliefNotClaimedView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PensionsTaxReliefNotClaimedController @Inject() (authAction: AuthorisedAction,
-                                                       pensionSessionService: PensionSessionService,
-                                                       errorHandler: ErrorHandler,
-                                                       view: PensionsTaxReliefNotClaimedView,
-                                                       formProvider: PaymentsIntoPensionFormProvider,
-                                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+class PensionsTaxReliefNotClaimedController @Inject() (
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    view: PensionsTaxReliefNotClaimedView,
+    formProvider: PaymentsIntoPensionFormProvider,
+    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

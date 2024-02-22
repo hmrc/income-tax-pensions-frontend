@@ -34,14 +34,14 @@ import utils.{Clock, SessionHelper}
 import views.html.pensions.annualAllowances.RemoveAnnualAllowancesPstrView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RemoveAnnualAllowancePstrController @Inject() (cc: MessagesControllerComponents,
                                                      authAction: AuthorisedAction,
                                                      view: RemoveAnnualAllowancesPstrView,
                                                      pensionSessionService: PensionSessionService,
-                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock)
+                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {

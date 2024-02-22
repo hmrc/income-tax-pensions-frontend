@@ -33,7 +33,7 @@ import utils.Clock
 import views.html.pensions.paymentsIntoPensions.PayIntoRetirementAnnuityContractView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RetirementAnnuityController @Inject() (authAction: AuthorisedAction,
@@ -41,7 +41,7 @@ class RetirementAnnuityController @Inject() (authAction: AuthorisedAction,
                                              pensionSessionService: PensionSessionService,
                                              errorHandler: ErrorHandler,
                                              formProvider: PaymentsIntoPensionFormProvider,
-                                             mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                             mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

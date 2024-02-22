@@ -33,7 +33,7 @@ import utils.Clock
 import views.html.pensions.paymentsIntoPensions.OneOffRASPaymentsAmountView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class OneOffRASPaymentsAmountController @Inject() (authAction: AuthorisedAction,
@@ -41,7 +41,7 @@ class OneOffRASPaymentsAmountController @Inject() (authAction: AuthorisedAction,
                                                    errorHandler: ErrorHandler,
                                                    view: OneOffRASPaymentsAmountView,
                                                    formProvider: PaymentsIntoPensionFormProvider,
-                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

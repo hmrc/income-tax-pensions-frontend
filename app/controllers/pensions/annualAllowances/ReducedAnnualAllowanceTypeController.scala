@@ -34,14 +34,14 @@ import utils.Clock
 import views.html.pensions.annualAllowances.ReducedAnnualAllowanceTypeView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReducedAnnualAllowanceTypeController @Inject() (cc: MessagesControllerComponents,
                                                       authAction: AuthorisedAction,
                                                       pensionSessionService: PensionSessionService,
                                                       errorHandler: ErrorHandler,
-                                                      view: ReducedAnnualAllowanceTypeView)(implicit appConfig: AppConfig, clock: Clock)
+                                                      view: ReducedAnnualAllowanceTypeView)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

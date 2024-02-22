@@ -19,6 +19,8 @@ package controllers.predicates.actions
 import common.SessionValues._
 import config.AppConfig
 import models.AuthorisationRequest
+import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
+import org.slf4j.MDC
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.Redirect
@@ -29,11 +31,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearAction @Inject() (taxYear: Int, missingTaxYearReset: Boolean)(implicit
     val appConfig: AppConfig,
-    val messagesApi: MessagesApi
+    val messagesApi: MessagesApi,
+    ec: ExecutionContext
 ) extends ActionRefiner[AuthorisationRequest, AuthorisationRequest]
     with I18nSupport {
 
-  implicit val executionContext: ExecutionContext = ExecutionContext.global
+  implicit val executionContext: ExecutionContext = ec
   lazy val logger: Logger                         = Logger.apply(this.getClass)
 
   override def refine[A](request: AuthorisationRequest[A]): Future[Either[Result, AuthorisationRequest[A]]] = {
@@ -67,9 +70,15 @@ class TaxYearAction @Inject() (taxYear: Int, missingTaxYearReset: Boolean)(impli
 }
 
 object TaxYearAction {
-  def taxYearAction(taxYear: Int, missingTaxYearReset: Boolean = true)(implicit appConfig: AppConfig, messages: MessagesApi): TaxYearAction =
+  def taxYearAction(taxYear: Int, missingTaxYearReset: Boolean = true)(implicit
+      appConfig: AppConfig,
+      messages: MessagesApi,
+      ec: ExecutionContext): TaxYearAction =
     new TaxYearAction(taxYear, missingTaxYearReset)
 
-  def apply(taxYear: Int, missingTaxYearReset: Boolean = true)(implicit appConfig: AppConfig, messages: MessagesApi): TaxYearAction =
+  def apply(taxYear: Int, missingTaxYearReset: Boolean = true)(implicit
+      appConfig: AppConfig,
+      messages: MessagesApi,
+      ec: ExecutionContext): TaxYearAction =
     taxYearAction(taxYear, missingTaxYearReset)
 }

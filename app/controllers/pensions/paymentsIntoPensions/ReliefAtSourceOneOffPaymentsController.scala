@@ -32,7 +32,7 @@ import utils.Clock
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourceOneOffPaymentsView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ReliefAtSourceOneOffPaymentsController @Inject() (authAction: AuthorisedAction,
@@ -40,7 +40,7 @@ class ReliefAtSourceOneOffPaymentsController @Inject() (authAction: AuthorisedAc
                                                         errorHandler: ErrorHandler,
                                                         view: ReliefAtSourceOneOffPaymentsView,
                                                         formProvider: PaymentsIntoPensionFormProvider,
-                                                        mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                        mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

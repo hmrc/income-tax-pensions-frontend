@@ -2,28 +2,25 @@
 <configuration>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator>
-                <expression>
-                    // Define a condition to filter out static assets based on the message content
-                    return (
-                    message.contains("/assets/")
-                    );
-                </expression>
-            </evaluator>
-            <OnMismatch>NEUTRAL</OnMismatch>
-            <OnMatch>DENY</OnMatch>
-        </filter>
-
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%date{ISO8601} level=[%level] logger=[%logger] thread=[%thread] rid=[%X{X-Request-ID}] user=[%X{Authorization}] status=[%X{httpStatus}] responseTime=[%X{responseTime}ms] message=[%message] %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
-        </encoder>
+        <encoder class="uk.gov.hmrc.play.logging.JsonEncoder"/>
     </appender>
 
+    <logger name="uk.gov" level="${logger.uk.gov:-WARN}"/>
+
+    <logger name="common" level="DEBUG"/>
+    <logger name="config" level="DEBUG"/>
     <logger name="connectors" level="DEBUG"/>
     <logger name="controllers" level="DEBUG"/>
+    <logger name="filters" level="DEBUG"/>
+    <logger name="forms" level="DEBUG"/>
+    <logger name="models" level="DEBUG"/>
+    <logger name="repositories" level="DEBUG"/>
+    <logger name="services" level="DEBUG"/>
+    <logger name="utils" level="DEBUG"/>
+    <logger name="views" level="DEBUG"/>
+    <logger name="viewsupport" level="DEBUG"/>
 
-    <root level="INFO">
+    <root level="${logger.application:-WARN}">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

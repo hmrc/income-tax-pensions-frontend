@@ -18,6 +18,8 @@ package controllers.predicates.actions
 
 import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
 import config.AppConfig
+import models.logging.CorrelationId
+import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
 import models.{AuthorisationRequest, User}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
