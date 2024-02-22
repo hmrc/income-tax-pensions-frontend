@@ -31,6 +31,9 @@ object PaymentsIntoOverseasPensionsRedirects {
 
   def redirectForSchemeLoop(reliefs: Seq[Relief], taxYear: Int): Call = {
     val filteredReliefs = reliefs.filter(relief => relief.isFinished)
+    println()
+    println("filtered reliefs: " + filteredReliefs)
+    println()
     checkForExistingSchemes(
       nextPage = PensionsCustomerReferenceNumberController.show(taxYear, None),
       summaryPage = ReliefsSchemeSummaryController.show(taxYear),
@@ -117,8 +120,18 @@ object PaymentsIntoOverseasPensionsRedirects {
       2 -> { piopVM: PaymentsIntoOverseasPensionsViewModel =>
         piopVM.paymentsIntoOverseasPensionsQuestions.exists(x => x && piopVM.paymentsIntoOverseasPensionsAmount.isDefined)
       },
-      3  -> { piopVM: PaymentsIntoOverseasPensionsViewModel => piopVM.employerPaymentsQuestion.getOrElse(false) },
-      4  -> { piopVM: PaymentsIntoOverseasPensionsViewModel => !piopVM.taxPaidOnEmployerPaymentsQuestion.getOrElse(true) },     // cust reference
+      3 -> { piopVM: PaymentsIntoOverseasPensionsViewModel =>
+        println()
+        println("Q2: " + piopVM.employerPaymentsQuestion)
+        println()
+        println("value: " + piopVM.employerPaymentsQuestion.getOrElse(false))
+        println()
+        piopVM.employerPaymentsQuestion.getOrElse(false)
+      },
+      4 -> { piopVM: PaymentsIntoOverseasPensionsViewModel =>
+        println("ccc")
+        !piopVM.taxPaidOnEmployerPaymentsQuestion.getOrElse(true)
+      }, // cust reference
       11 -> { piopVM: PaymentsIntoOverseasPensionsViewModel => piopVM.reliefs.isEmpty || piopVM.reliefs.forall(_.isFinished) }, // summary page
       13 -> { piopVM: PaymentsIntoOverseasPensionsViewModel => piopVM.isFinished }
     )
@@ -128,12 +141,28 @@ object PaymentsIntoOverseasPensionsRedirects {
                                    index: Option[Int]): Boolean =
     validateIndex(index, pIPViewModel.reliefs) match {
       case Some(value) if currentPage.hasIndex =>
+        println()
+        println("1")
+        println()
         indexPageValidInJourney.getOrElse(currentPage.journeyNo, { _: Relief => false })(pIPViewModel.reliefs(value))
       case None if !currentPage.hasIndex =>
+        println()
+        println("2")
+        println()
+        println(
+          "result is: " + pageValidInJourneyMap.getOrElse(currentPage.journeyNo, { _: PaymentsIntoOverseasPensionsViewModel => false })(pIPViewModel))
+        println()
         pageValidInJourneyMap.getOrElse(currentPage.journeyNo, { _: PaymentsIntoOverseasPensionsViewModel => false })(pIPViewModel)
       case None if currentPage == PensionsCustomerReferenceNumberPage =>
+        println()
+        println("3")
+        println()
         pageValidInJourneyMap.getOrElse(currentPage.journeyNo, { _: PaymentsIntoOverseasPensionsViewModel => false })(pIPViewModel)
-      case _ => false
+      case _ =>
+        println()
+        println("4")
+        println()
+        false
     }
 
   private def validateIndex(index: Option[Int], pensionSchemesList: Seq[Relief]): Option[Int] =

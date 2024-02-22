@@ -104,6 +104,12 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
       renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
   )(implicit request: Request[_], hc: HeaderCarrier, clock: Clock): Future[Result] =
     loadDataAndHandle(taxYear, user) { (sessionData, priorData) =>
+      println()
+      println("sessionData: " + sessionData)
+      println()
+      println()
+      println("priorData: " + priorData)
+      println()
       createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear, user, renderView)
     }
 
@@ -114,7 +120,10 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
       user: User,
       renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
   )(implicit request: Request[_], clock: Clock) = {
-    val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
+    val updatedSession = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
+    println()
+    println("session from prior: " + updatedSession)
+    println()
     val updatedSessionPensionCYAModel = updatedSession.newPensionsCYAModel
     val summaryView                   = renderView(taxYear, updatedSessionPensionCYAModel, priorData)
 

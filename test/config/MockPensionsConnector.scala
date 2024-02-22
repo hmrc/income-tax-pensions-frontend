@@ -24,8 +24,8 @@ import connectors.httpParsers.PensionIncomeSessionHttpParser.PensionIncomeSessio
 import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionResponse
 import models.APIErrorModel
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
-import models.pension.income.CreateUpdatePensionIncomeModel
-import models.pension.reliefs.CreateOrUpdatePensionReliefsModel
+import models.pension.income.CreateUpdatePensionIncomeRequestModel
+import models.pension.reliefs.CreateUpdatePensionReliefsModel
 import org.scalamock.handlers.{CallHandler4, CallHandler5}
 import org.scalamock.scalatest.MockFactory
 import services.{PensionChargesConnectorHelper, PensionIncomeConnectorHelper, PensionReliefsConnectorHelper}
@@ -66,18 +66,21 @@ trait MockPensionsConnector extends MockFactory {
       .returns(Future.successful(response))
       .anyNumberOfTimes()
 
-  def mockSavePensionIncomeSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionIncomeModel, response: Either[APIErrorModel, Unit])
-      : CallHandler5[String, Int, CreateUpdatePensionIncomeModel, HeaderCarrier, ExecutionContext, Future[PensionIncomeSessionResponse]] =
+  def mockSavePensionIncomeSessionData(nino: String,
+                                       taxYear: Int,
+                                       model: CreateUpdatePensionIncomeRequestModel,
+                                       response: Either[APIErrorModel, Unit])
+      : CallHandler5[String, Int, CreateUpdatePensionIncomeRequestModel, HeaderCarrier, ExecutionContext, Future[PensionIncomeSessionResponse]] =
     (mockPensionsConnector
-      .savePensionIncomeSessionData(_: String, _: Int, _: CreateUpdatePensionIncomeModel)(_: HeaderCarrier, _: ExecutionContext))
+      .savePensionIncome(_: String, _: Int, _: CreateUpdatePensionIncomeRequestModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, model, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
 
-  def mockSavePensionReliefSessionData(nino: String, taxYear: Int, model: CreateOrUpdatePensionReliefsModel, response: Either[APIErrorModel, Unit])
-      : CallHandler5[String, Int, CreateOrUpdatePensionReliefsModel, HeaderCarrier, ExecutionContext, Future[PensionReliefsSessionResponse]] =
+  def mockSavePensionReliefSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionReliefsModel, response: Either[APIErrorModel, Unit])
+      : CallHandler5[String, Int, CreateUpdatePensionReliefsModel, HeaderCarrier, ExecutionContext, Future[PensionReliefsSessionResponse]] =
     (mockPensionsConnector
-      .savePensionReliefSessionData(_: String, _: Int, _: CreateOrUpdatePensionReliefsModel)(_: HeaderCarrier, _: ExecutionContext))
+      .savePensionReliefs(_: String, _: Int, _: CreateUpdatePensionReliefsModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, model, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()

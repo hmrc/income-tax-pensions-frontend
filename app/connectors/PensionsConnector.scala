@@ -25,8 +25,8 @@ import connectors.httpParsers.PensionIncomeSessionHttpParser.{PensionIncomeSessi
 import connectors.httpParsers.PensionReliefsSessionHttpParser.{PensionReliefsSessionHttpReads, PensionReliefsSessionResponse}
 import models.logging.ConnectorRequestInfo
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
-import models.pension.income.CreateUpdatePensionIncomeModel
-import models.pension.reliefs.CreateOrUpdatePensionReliefsModel
+import models.pension.income.CreateUpdatePensionIncomeRequestModel
+import models.pension.reliefs.CreateUpdatePensionReliefsModel
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -53,13 +53,13 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     http.DELETE[DeletePensionChargesResponse](url)(DeletePensionChargesHttpReads, hc, ec)
   }
 
-  def savePensionIncomeSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionIncomeModel)(implicit
+  def savePensionIncome(nino: String, taxYear: Int, model: CreateUpdatePensionIncomeRequestModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): Future[PensionIncomeSessionResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-income/session-data/nino/$nino/taxYear/${taxYear.toString}"
     ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, model)
-    http.PUT[CreateUpdatePensionIncomeModel, PensionIncomeSessionResponse](url, model)(
-      CreateUpdatePensionIncomeModel.writes,
+    http.PUT[CreateUpdatePensionIncomeRequestModel, PensionIncomeSessionResponse](url, model)(
+      CreateUpdatePensionIncomeRequestModel.writes,
       PensionIncomeSessionHttpReads,
       hc,
       ec)
@@ -71,13 +71,13 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     http.DELETE[DeletePensionIncomeResponse](url)(DeletePensionIncomeHttpReads, hc, ec)
   }
 
-  def savePensionReliefSessionData(nino: String, taxYear: Int, model: CreateOrUpdatePensionReliefsModel)(implicit
+  def savePensionReliefs(nino: String, taxYear: Int, model: CreateUpdatePensionReliefsModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): Future[PensionReliefsSessionResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-reliefs/nino/$nino/taxYear/${taxYear.toString}"
     ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, model)
-    http.PUT[CreateOrUpdatePensionReliefsModel, PensionReliefsSessionResponse](url, model)(
-      CreateOrUpdatePensionReliefsModel.format,
+    http.PUT[CreateUpdatePensionReliefsModel, PensionReliefsSessionResponse](url, model)(
+      CreateUpdatePensionReliefsModel.format,
       PensionReliefsSessionHttpReads,
       hc,
       ec)

@@ -28,7 +28,7 @@ class CreateUpdatePensionIncomeRequestModelSpec extends UnitTest {
       aCreateUpdatePensionIncomeModel.overseasPensionContribution
     ).foreach { subModel =>
       s"be false when subModel is non empty ${subModel.get.getClass.getName} and other models are not empty" in {
-        val actualResult = CreateUpdatePensionIncomeModel(
+        val actualResult = CreateUpdatePensionIncomeRequestModel(
           aCreateUpdatePensionIncomeModel.foreignPension,
           aCreateUpdatePensionIncomeModel.overseasPensionContribution
         ).otherSubRequestModelsEmpty(subModel)
@@ -36,7 +36,7 @@ class CreateUpdatePensionIncomeRequestModelSpec extends UnitTest {
       }
 
       s"be true when subModel is non empty ${subModel.get.getClass.getName} and other models are empty" in {
-        val actualResult = CreateUpdatePensionIncomeModel(
+        val actualResult = CreateUpdatePensionIncomeRequestModel(
           None,
           None
         ).otherSubRequestModelsEmpty(subModel)
@@ -44,7 +44,7 @@ class CreateUpdatePensionIncomeRequestModelSpec extends UnitTest {
       }
 
       s"be true when subModel is non empty ${subModel.get.getClass.getName} and other models are empty and foreignPension model contents is empty" in {
-        val actualResult = CreateUpdatePensionIncomeModel(
+        val actualResult = CreateUpdatePensionIncomeRequestModel(
           aCreateUpdatePensionIncomeModel.foreignPension.map(_.copy(Seq.empty)),
           aCreateUpdatePensionIncomeModel.overseasPensionContribution
         ).otherSubRequestModelsEmpty(subModel)
@@ -53,7 +53,7 @@ class CreateUpdatePensionIncomeRequestModelSpec extends UnitTest {
       }
 
       s"be false when subModel is non empty ${subModel.get.getClass.getName} and other models are empty but foreignPension model contents are non empty" in {
-        val actualResult = CreateUpdatePensionIncomeModel(
+        val actualResult = CreateUpdatePensionIncomeRequestModel(
           aCreateUpdatePensionIncomeModel.foreignPension.map(_.copy(aCreateUpdatePensionIncomeModel.foreignPension.get.fp)),
           aCreateUpdatePensionIncomeModel.overseasPensionContribution
         ).otherSubRequestModelsEmpty(subModel)

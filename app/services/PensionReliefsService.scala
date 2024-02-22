@@ -22,7 +22,7 @@ import models.User
 import models.error.ApiError
 import models.error.ApiError.CreateOrUpdateError
 import models.mongo.{PensionsUserData, ServiceError}
-import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
+import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Clock
@@ -41,7 +41,7 @@ class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDa
       ec: ExecutionContext,
       clock: Clock): EitherT[Future, ApiError, Unit] = {
     val reliefs            = paymentsIntoPensions.toReliefs(existingOverseasPensionSchemeContributions)
-    val updatedReliefsData = CreateOrUpdatePensionReliefsModel(pensionReliefs = reliefs)
+    val updatedReliefsData = CreateUpdatePensionReliefsModel(pensionReliefs = reliefs)
 
     (for {
       allSessionData <- EitherT(pensionUserDataRepository.find(taxYear.endYear, user))

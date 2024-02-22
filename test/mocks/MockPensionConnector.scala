@@ -18,6 +18,8 @@ package mocks
 
 import connectors.PensionsConnector
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
+import models.pension.income.CreateUpdatePensionIncomeRequestModel
+import models.pension.reliefs.CreateUpdatePensionReliefsModel
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -32,6 +34,16 @@ trait MockPensionConnector extends MockFactory {
     def savePensionCharges(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel) =
       (mockPensionsConnector
         .savePensionCharges(_: String, _: Int, _: CreateUpdatePensionChargesRequestModel)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(nino, taxYear, model, *, *)
+
+    def savePensionReliefs(nino: String, taxYear: Int, model: CreateUpdatePensionReliefsModel) =
+      (mockPensionsConnector
+        .savePensionReliefs(_: String, _: Int, _: CreateUpdatePensionReliefsModel)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(nino, taxYear, model, *, *)
+
+    def savePensionIncome(nino: String, taxYear: Int, model: CreateUpdatePensionIncomeRequestModel) =
+      (mockPensionsConnector
+        .savePensionIncome(_: String, _: Int, _: CreateUpdatePensionIncomeRequestModel)(_: HeaderCarrier, _: ExecutionContext))
         .expects(nino, taxYear, model, *, *)
   }
 

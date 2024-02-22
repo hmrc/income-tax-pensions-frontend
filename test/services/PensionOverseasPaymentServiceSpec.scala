@@ -22,8 +22,8 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import config.{MockIncomeTaxUserDataConnector, MockPensionUserDataRepository, MockPensionsConnector}
 import models.mongo.{DataNotFound, DataNotUpdated}
-import models.pension.income.{CreateUpdatePensionIncomeModel, ForeignPensionContainer, OverseasPensionContributionContainer}
-import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}
+import models.pension.income.{CreateUpdatePensionIncomeRequestModel, ForeignPensionContainer, OverseasPensionContributionContainer}
+import models.pension.reliefs.{CreateUpdatePensionReliefsModel, Reliefs}
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.BAD_REQUEST
@@ -53,12 +53,12 @@ class PensionOverseasPaymentServiceSpec
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
 
-      val model1 = CreateUpdatePensionIncomeModel(
+      val model1 = CreateUpdatePensionIncomeRequestModel(
         foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
         overseasPensionContribution =
-          Some(OverseasPensionContributionContainer(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions))
+          Some(OverseasPensionContributionContainer(sessionUserData.pensions.paymentsIntoOverseasPensions.toDownstreamOverseasPensionContribution))
       )
-      val model2 = CreateOrUpdatePensionReliefsModel(
+      val model2 = CreateUpdatePensionReliefsModel(
         pensionReliefs = Reliefs(
           regularPensionContributions = sessionUserData.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief,
           oneOffPensionContributionsPaid = sessionUserData.pensions.paymentsIntoPension.totalOneOffRasPaymentPlusTaxRelief,
@@ -92,12 +92,12 @@ class PensionOverseasPaymentServiceSpec
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
 
-      val model1 = CreateUpdatePensionIncomeModel(
+      val model1 = CreateUpdatePensionIncomeRequestModel(
         foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
         overseasPensionContribution =
-          Some(OverseasPensionContributionContainer(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions))
+          Some(OverseasPensionContributionContainer(sessionUserData.pensions.paymentsIntoOverseasPensions.toDownstreamOverseasPensionContribution))
       )
-      val model2 = CreateOrUpdatePensionReliefsModel(
+      val model2 = CreateUpdatePensionReliefsModel(
         pensionReliefs = Reliefs(
           regularPensionContributions = sessionUserData.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief,
           oneOffPensionContributionsPaid = sessionUserData.pensions.paymentsIntoPension.totalOneOffRasPaymentPlusTaxRelief,
@@ -125,12 +125,12 @@ class PensionOverseasPaymentServiceSpec
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
 
-      val model1 = CreateUpdatePensionIncomeModel(
+      val model1 = CreateUpdatePensionIncomeRequestModel(
         foreignPension = priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
         overseasPensionContribution =
-          Some(OverseasPensionContributionContainer(sessionUserData.pensions.paymentsIntoOverseasPensions.toPensionContributions))
+          Some(OverseasPensionContributionContainer(sessionUserData.pensions.paymentsIntoOverseasPensions.toDownstreamOverseasPensionContribution))
       )
-      val model2 = CreateOrUpdatePensionReliefsModel(
+      val model2 = CreateUpdatePensionReliefsModel(
         pensionReliefs = Reliefs(
           regularPensionContributions = sessionUserData.pensions.paymentsIntoPension.totalRASPaymentsAndTaxRelief,
           oneOffPensionContributionsPaid = sessionUserData.pensions.paymentsIntoPension.totalOneOffRasPaymentPlusTaxRelief,

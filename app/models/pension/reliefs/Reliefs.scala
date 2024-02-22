@@ -16,6 +16,7 @@
 
 package models.pension.reliefs
 
+import models.IncomeTaxUserData
 import models.pension.PensionReliefsSubRequestModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
@@ -26,6 +27,7 @@ case class Reliefs(regularPensionContributions: Option[BigDecimal],
                    paymentToEmployersSchemeNoTaxRelief: Option[BigDecimal],
                    overseasPensionSchemeContributions: Option[BigDecimal])
     extends PensionReliefsSubRequestModel {
+
   override def isEmpty: Boolean = regularPensionContributions.isEmpty &&
     oneOffPensionContributionsPaid.isEmpty &&
     retirementAnnuityPayments.isEmpty &&
@@ -37,6 +39,16 @@ object Reliefs {
 
   def empty: Reliefs = Reliefs(None, None, None, None, None)
 
+  def fromPriorData(prior: IncomeTaxUserData): Reliefs = {
+    val reliefs = prior.pensions.flatMap(_.pensionReliefs.map(_.pensionReliefs))
+    Reliefs(
+      regularPensionContributions = reliefs.flatMap(_.regularPensionContributions),
+      oneOffPensionContributionsPaid = reliefs.flatMap(_.oneOffPensionContributionsPaid),
+      retirementAnnuityPayments = reliefs.flatMap(_.retirementAnnuityPayments),
+      paymentToEmployersSchemeNoTaxRelief = reliefs.flatMap(_.paymentToEmployersSchemeNoTaxRelief),
+      overseasPensionSchemeContributions = reliefs.flatMap(_.overseasPensionSchemeContributions)
+    )
+  }
 }
 
 case class EncryptedReliefs(regularPensionContributions: Option[EncryptedValue],

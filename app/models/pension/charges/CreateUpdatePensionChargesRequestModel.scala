@@ -96,6 +96,6 @@ object CreateUpdatePensionChargesRequestModel {
       PensionSchemeOverseasTransfers.fromPriorData(prior),
       PensionSchemeUnauthorisedPayments.fromPriorData(prior),
       PensionContributions.fromPriorData(prior),
-      OverseasPensionContribution.fromPriorData(prior)
+      OverseasPensionContributions.fromPriorData(prior)
     )
 }

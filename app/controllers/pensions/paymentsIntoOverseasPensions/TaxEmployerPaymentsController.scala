@@ -86,7 +86,7 @@ class TaxEmployerPaymentsController @Inject() (authAction: AuthorisedAction,
 
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                 errorHandler.internalServerError()) {
-                isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
+                isFinishedCheck(updatedCyaModel.paymentsIntoOverseasPensions, taxYear, redirectLocation, cyaPageCall)
               }
             case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
           }

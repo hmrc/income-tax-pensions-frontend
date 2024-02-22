@@ -16,6 +16,7 @@
 
 package controllers.pensions.paymentsIntoOverseasPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
@@ -27,7 +28,7 @@ import play.api.mvc._
 import services.redirects.PaymentsIntoOverseasPensionsPages.PaymentsIntoOverseasPensionsCYAPage
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.{NrsService, PensionOverseasPaymentService}
+import services.{NrsService, PaymentsIntoOverseasPensionsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAView
@@ -40,7 +41,7 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (
     auditProvider: AuditActionsProvider,
     view: PaymentsIntoOverseasPensionsCYAView,
     errorHandler: ErrorHandler,
-    pensionOverseasPaymentService: PensionOverseasPaymentService,
+    service: PaymentsIntoOverseasPensionsService,
     nrsService: NrsService,
     mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -60,7 +61,7 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
         val pIOPCopy = sessionData.pensions.paymentsIntoOverseasPensions.copy()
 
-        pensionOverseasPaymentService.savePaymentsFromOverseasPensionsViewModel(request.user, taxYear).map {
+        service.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_) => errorHandler.internalServerError()
           case Right(_) =>
             nrsService.submit(request.user.nino, pIOPCopy, request.user.mtditid)
