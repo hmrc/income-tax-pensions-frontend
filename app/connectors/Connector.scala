@@ -23,6 +23,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 object Connector {
   def hcWithCorrelationId(implicit hc: HeaderCarrier): HeaderCarrier = {
     val explicitHeaders = hc.maybeCorrelationId.map(HeaderCarrierExtensions.CorrelationIdHeaderKey -> _).toList
-    hcWithCorrelationId.withExtraHeaders(explicitHeaders: _*)
+    hc.withExtraHeaders(explicitHeaders: _*)
   }
 }
