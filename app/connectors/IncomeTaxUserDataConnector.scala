@@ -17,14 +17,14 @@
 package connectors
 
 import config.AppConfig
-import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
-import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataHttpReads
+import connectors.httpParsers.IncomeTaxUserDataHttpParser.{IncomeTaxUserDataHttpReads, IncomeTaxUserDataResponse}
+import connectors.httpParsers.RefreshIncomeSourceHttpParser.{RefreshIncomeSourceResponse, _}
+import models.RefreshIncomeSourceRequest
 import models.logging.ConnectorRequestInfo
 import play.api.Logging
-
-import javax.inject.Inject
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeTaxUserDataConnector @Inject() (val http: HttpClient, val config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
@@ -33,6 +33,16 @@ class IncomeTaxUserDataConnector @Inject() (val http: HttpClient, val config: Ap
     val incomeTaxUserDataUrl: String = config.incomeTaxSubmissionBEBaseUrl + s"/income-tax/nino/$nino/sources/session?taxYear=$taxYear"
     ConnectorRequestInfo("GET", incomeTaxUserDataUrl, "income-tax-submission").logRequest(logger)
     http.GET[IncomeTaxUserDataResponse](incomeTaxUserDataUrl)
+  }
+
+  def refreshPensionsResponse(nino: String, mtditid: String, taxYear: Int)(implicit hc: HeaderCarrier): Future[RefreshIncomeSourceResponse] =
+    refreshPensionsResponse(taxYear, nino)(hc.withExtraHeaders(("mtditid", mtditid)))
+
+  private def refreshPensionsResponse(taxYear: Int, nino: String)(implicit hc: HeaderCarrier): Future[RefreshIncomeSourceResponse] = {
+    val url   = config.incomeTaxSubmissionBEBaseUrl + s"/income-tax/nino/$nino/sources/session?taxYear=$taxYear"
+    val model = RefreshIncomeSourceRequest("pensions")
+    ConnectorRequestInfo("PUT", url, "income-tax-submission").logRequestWithBody(logger, model)
+    http.PUT[RefreshIncomeSourceRequest, RefreshIncomeSourceResponse](url, model)
   }
 
 }

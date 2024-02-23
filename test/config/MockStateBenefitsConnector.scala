@@ -16,8 +16,9 @@
 
 package config
 
-import connectors.StateBenefitsConnector
+import connectors.httpParsers.RefreshIncomeSourceHttpParser.RefreshIncomeSourceResponse
 import connectors.httpParsers.StateBenefitsSessionHttpParser.StateBenefitsSessionResponse
+import connectors.{IncomeTaxUserDataConnector, StateBenefitsConnector}
 import models.APIErrorModel
 import models.mongo.StateBenefitsUserData
 import org.scalamock.handlers.CallHandler4
@@ -27,6 +28,15 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockStateBenefitsConnector extends MockFactory {
+
+  val mockSubmissionsConnector: IncomeTaxUserDataConnector = mock[IncomeTaxUserDataConnector]
+
+  def mockRefreshPensionsResponse(): CallHandler4[String, String, Int, HeaderCarrier, Future[RefreshIncomeSourceResponse]] =
+    (mockSubmissionsConnector
+      .refreshPensionsResponse(_: String, _: String, _: Int)(_: HeaderCarrier))
+      .expects(*, *, *, *)
+      .returns(Future.successful(Right(())))
+      .anyNumberOfTimes()
 
   val mockStateBenefitsConnector: StateBenefitsConnector = mock[StateBenefitsConnector]
 

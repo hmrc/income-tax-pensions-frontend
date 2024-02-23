@@ -18,6 +18,7 @@ package utils
 
 import akka.actor.ActorSystem
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.StateBenefitsModelBuilder.aStateBenefitsModel
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.SessionValues
 import config.AppConfig
@@ -290,7 +291,10 @@ trait IntegrationTest
       mtdidHeader = "mtditid"        -> defaultUser.mtdItId
     )
 
-  def userData(allData: String): IncomeTaxUserData = IncomeTaxUserData(Some(PensionDataStubs.fullPensionsModel))
+  def userData: IncomeTaxUserData = IncomeTaxUserData(
+    Some(PensionDataStubs.fullPensionsModel),
+    Some(aStateBenefitsModel)
+  )
 
   def emptyUserDataStub(nino: String = nino, taxYear: Int = taxYear): StubMapping =
     userDataStub(IncomeTaxUserData(None), nino, taxYear)

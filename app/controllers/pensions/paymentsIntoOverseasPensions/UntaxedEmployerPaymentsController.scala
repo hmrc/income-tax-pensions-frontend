@@ -24,7 +24,7 @@ import models.pension.charges.Relief
 import models.pension.pages.UntaxedEmployerPayments
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.PaymentsIntoOverseasPensionsService
+import services.UntaxedEmployerPaymentsService
 import services.redirects.PaymentsIntoOverseasPensionsPages.UntaxedEmployerPaymentsPage
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.{indexCheckThenJourneyCheck, schemeIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UntaxedEmployerPaymentsController @Inject() (actionsProvider: ActionsProvider,
                                                    view: UntaxedEmployerPaymentsView,
-                                                   paymentsIntoOverseasService: PaymentsIntoOverseasPensionsService,
+                                                   service: UntaxedEmployerPaymentsService,
                                                    formsProvider: FormsProvider,
                                                    errorHandler: ErrorHandler,
                                                    cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
@@ -71,7 +71,7 @@ class UntaxedEmployerPaymentsController @Inject() (actionsProvider: ActionsProvi
             formWithErrors =>
               Future.successful(BadRequest(view(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData, formWithErrors)))),
             amount =>
-              paymentsIntoOverseasService.updateUntaxedEmployerPayments(sessionUserData.pensionsUserData, amount, pensionSchemeIndex).map {
+              service.updateUntaxedEmployerPayments(sessionUserData.pensionsUserData, amount, pensionSchemeIndex).map {
                 case Left(_) => errorHandler.internalServerError()
                 case Right(_) =>
                   schemeIsFinishedCheck(

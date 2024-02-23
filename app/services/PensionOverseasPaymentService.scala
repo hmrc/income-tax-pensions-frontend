@@ -20,8 +20,8 @@ import cats.implicits.catsSyntaxEitherId
 import connectors.IncomeTaxUserDataConnector
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
-import models.pension.income.{CreateUpdatePensionIncomeModel, ForeignPensionContainer, OverseasPensionContributionContainer}
-import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, Reliefs}
+import models.pension.income.{CreateUpdatePensionIncomeRequestModel, ForeignPensionContainer, OverseasPensionContributionContainer}
+import models.pension.reliefs.{CreateUpdatePensionReliefsModel, Reliefs}
 import models.{IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
 import repositories.PensionsUserDataRepository
@@ -62,29 +62,30 @@ class PensionOverseasPaymentService @Inject() (pensionUserDataRepository: Pensio
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
       priorData   <- FutureEitherOps[ServiceError, IncomeTaxUserData](incomeTaxUserDataConnector.getUserData(user.nino, taxYear)(hcWithExtras))
 
-      viewModelPayments = sessionData.map(_.pensions.paymentsIntoPension)
-      updatedReliefsData = CreateOrUpdatePensionReliefsModel(
+      paymentsIntoPensionFromSession = sessionData.map(_.pensions.paymentsIntoPension)
+      updatedReliefsData = CreateUpdatePensionReliefsModel(
         pensionReliefs = Reliefs(
-          regularPensionContributions = viewModelPayments.flatMap(_.totalRASPaymentsAndTaxRelief),
-          oneOffPensionContributionsPaid = viewModelPayments.flatMap(_.totalOneOffRasPaymentPlusTaxRelief),
-          retirementAnnuityPayments = viewModelPayments.flatMap(_.totalRetirementAnnuityContractPayments),
-          paymentToEmployersSchemeNoTaxRelief = viewModelPayments.flatMap(_.totalWorkplacePensionPayments),
+          regularPensionContributions = paymentsIntoPensionFromSession.flatMap(_.totalRASPaymentsAndTaxRelief),
+          oneOffPensionContributionsPaid = paymentsIntoPensionFromSession.flatMap(_.totalOneOffRasPaymentPlusTaxRelief),
+          retirementAnnuityPayments = paymentsIntoPensionFromSession.flatMap(_.totalRetirementAnnuityContractPayments),
+          paymentToEmployersSchemeNoTaxRelief = paymentsIntoPensionFromSession.flatMap(_.totalWorkplacePensionPayments),
           overseasPensionSchemeContributions = sessionData.flatMap(_.pensions.paymentsIntoOverseasPensions.paymentsIntoOverseasPensionsAmount)
         )
       )
 
-      viewModelOverseas = sessionData.map(_.pensions.paymentsIntoOverseasPensions)
-      incomeSubModel = viewModelOverseas
-        .map(_.toPensionContributions)
+      journeyAnswers = sessionData.map(_.pensions.paymentsIntoOverseasPensions)
+      incomeSubModel = journeyAnswers
+        .map(_.toDownstreamOverseasPensionContribution)
         .flatMap(seq => if (seq.nonEmpty) Some(seq) else None)
         .map(OverseasPensionContributionContainer)
-      updatedIncomeData = CreateUpdatePensionIncomeModel(
+
+      updatedIncomeData = CreateUpdatePensionIncomeRequestModel(
         foreignPension = priorData.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension)).map(ForeignPensionContainer),
         overseasPensionContribution = incomeSubModel
       )
 
       _ <- FutureEitherOps[ServiceError, Unit](
-        pensionReliefsConnectorHelper.sendDownstream(user.nino, taxYear, None, viewModelPayments, updatedReliefsData)(hcWithExtras, ec))
+        pensionReliefsConnectorHelper.sendDownstream(user.nino, taxYear, None, paymentsIntoPensionFromSession, updatedReliefsData)(hcWithExtras, ec))
 
       _ <-
         if (updatedIncomeData.overseasPensionContribution.isEmpty) {
@@ -92,7 +93,7 @@ class PensionOverseasPaymentService @Inject() (pensionUserDataRepository: Pensio
         } else {
           FutureEitherOps[ServiceError, Unit](
             pensionIncomeConnectorHelper
-              .sendDownstream(user.nino, taxYear, incomeSubModel, viewModelOverseas, updatedIncomeData)(hcWithExtras, ec))
+              .sendDownstream(user.nino, taxYear, incomeSubModel, journeyAnswers, updatedIncomeData)(hcWithExtras, ec))
         }
 
       updatedCYA = getPensionsUserData(sessionData, user, taxYear)

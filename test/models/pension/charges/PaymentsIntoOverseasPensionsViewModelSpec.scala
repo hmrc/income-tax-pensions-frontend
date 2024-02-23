@@ -121,14 +121,14 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest { // scalastyle
         OverseasPensionContribution(Some("noPENSIONINCOME100"), 100, None, None, None, None, None, None)
       )
 
-      aPaymentsIntoOverseasPensionsViewModel.toPensionContributions shouldBe expectedResult
+      aPaymentsIntoOverseasPensionsViewModel.toDownstreamOverseasPensionContribution shouldBe expectedResult
     }
     "be empty when there are no Reliefs" in {
       val viewModel: PaymentsIntoOverseasPensionsViewModel =
         aPaymentsIntoOverseasPensionsEmptyViewModel.copy(paymentsIntoOverseasPensionsQuestions = Some(true))
       val expectedResult: Seq[OverseasPensionContribution] = Seq.empty
 
-      viewModel.toPensionContributions shouldBe expectedResult
+      viewModel.toDownstreamOverseasPensionContribution shouldBe expectedResult
     }
   }
 

@@ -28,11 +28,12 @@ import models.pension.income.{OverseasPensionContribution, PensionIncome}
 import models.pension.reliefs.{PaymentsIntoPensionsViewModel, PensionReliefs}
 import models.pension.statebenefits._
 import play.api.libs.json.{Json, OFormat}
+import utils.Constants.zero
 
 case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
                            pensionCharges: Option[PensionCharges],
-                           stateBenefits: Option[AllStateBenefitsData],
-                           employmentPensions: Option[EmploymentPensions],
+                           stateBenefits: Option[AllStateBenefitsData],    /* Model taken from income-tax-state-benefits */
+                           employmentPensions: Option[EmploymentPensions], /* Model taken from income-tax-employment */
                            pensionIncome: Option[PensionIncome]) {
 
   def getPaymentsIntoPensionsCyaFromPrior: PaymentsIntoPensionsViewModel =
@@ -194,12 +195,12 @@ object AllPensionsData {
         TaxReliefQuestion.NoTaxRelief
       }
     PaymentsIntoOverseasPensionsViewModel(
-      paymentsIntoOverseasPensionsQuestions =
-        prior.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions.map(_ != BigDecimal(0))),
+      paymentsIntoOverseasPensionsQuestions = prior.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions.map(_ != zero)),
       paymentsIntoOverseasPensionsAmount = prior.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions),
-      employerPaymentsQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution).flatMap(_.headOption.map(_.customerReference.isDefined)),
-      taxPaidOnEmployerPaymentsQuestion =
-        prior.pensionIncome.flatMap(_.overseasPensionContribution).flatMap(_.headOption.map(_.customerReference.isEmpty)),
+      // Cannot see a way to gather the right data to make the below Some(true) (i.e. Yes on the UI) if they answer Yes.
+      // Atm, always Some(false) (i.e. `No` on the UI) unless they claim for reliefs (say `No` to the follow up question).
+      employerPaymentsQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution).flatMap(_.headOption.map(!_.isBlankSubmission)),
+      taxPaidOnEmployerPaymentsQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution).map(opcs => opcs.forall(_.isBlankSubmission)),
       reliefs = prior.pensionIncome
         .flatMap(_.overseasPensionContribution.map(_.map(oPC =>
           Relief(
