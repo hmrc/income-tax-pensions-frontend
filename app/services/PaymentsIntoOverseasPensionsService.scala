@@ -50,7 +50,7 @@ class PaymentsIntoOverseasPensionsService @Inject() (repository: PensionsUserDat
 
     def processIncomeClaim(prior: IncomeTaxUserData, journey: PaymentsIntoOverseasPensionsViewModel): EitherT[Future, APIErrorModel, Unit] = {
       val hasPreviousOPCSubmission =
-        prior.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution.map(OPCs => OPCs.forall(!_.isBlankSubmission)))).contains(true)
+        prior.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution.map(OPCs => OPCs.forall(_.isBlankSubmission)))).contains(false)
       val areClaimingOPC      = journey.reliefs.nonEmpty
       val intentIsToDeleteOPC = journey.reliefs.isEmpty && hasPreviousOPCSubmission
 

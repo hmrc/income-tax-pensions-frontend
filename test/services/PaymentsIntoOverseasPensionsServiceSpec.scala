@@ -52,8 +52,8 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
               result shouldBe ().asRight
             }
           }
-          "there is a prior OPC claim" should {
-            "remove that claim by sending a blank OPC submission" in new Test with SuccessfulMocks {
+          "a prior OPC claim exists" should {
+            "save answers to relief and remove the prior OPC claim by sending a blank submission" in new Test with SuccessfulMocks {
               priorReturns(priorOPC)
               sessionReturns(sessionNoOPCWithPayment)
               reliefsExpects(populatedReliefsModel)

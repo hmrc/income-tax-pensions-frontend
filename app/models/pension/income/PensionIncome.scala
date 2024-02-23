@@ -66,6 +66,10 @@ case class OverseasPensionContribution(
 ) extends PensionIncomeSubRequestModel {
 
   val isBlankSubmission: Boolean =
+    // TODO
+    // Maybe we do not not need to check if customer ref is empty to take part in our consideration of an empty submission.
+    // If they submit customer reference, but no values, maybe this is an empty submission? Could also be that it is not.
+    // We need this confirmed.
     if (customerReference.isEmpty &&
       exemptEmployersPensionContribs == zero &&
       migrantMemReliefQopsRefNo.isEmpty &&

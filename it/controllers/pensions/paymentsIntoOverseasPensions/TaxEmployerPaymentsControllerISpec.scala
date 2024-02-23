@@ -300,7 +300,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
+        result.header("location") shouldBe Some(pensionCustomerReferenceNumberUrl(taxYearEOY, None))
       }
 
       "updates taxPaidOnEmployerPaymentsQuestion to Some(false)" in {
