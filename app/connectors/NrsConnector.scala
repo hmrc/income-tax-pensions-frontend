@@ -17,6 +17,7 @@
 package connectors
 
 import config.AppConfig
+import connectors.Connector.hcWithCorrelationId
 import connectors.httpParsers.NrsSubmissionHttpParser.{NrsSubmissionHttpReads, NrsSubmissionResponse}
 import models.logging.ConnectorRequestInfo
 import play.api.Logging
@@ -29,7 +30,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class NrsConnector @Inject() (val http: HttpClient, val config: AppConfig)(implicit ec: ExecutionContext) extends RawResponseReads with Logging {
 
-  def postNrsConnector[A](nino: String, payload: A)(implicit hc: HeaderCarrier, writes: Writes[A]): Future[NrsSubmissionResponse] = {
+  def postNrsConnector[A](nino: String, payload: A)(hc: HeaderCarrier)(implicit writes: Writes[A]): Future[NrsSubmissionResponse] = {
+    implicit val headerCarrier: HeaderCarrier = hcWithCorrelationId(hc)
+
     val url: String = config.nrsProxyBaseUrl + s"/income-tax-nrs-proxy/$nino/itsa-personal-income-submission"
     ConnectorRequestInfo("POST", url, "income-tax-nrs-proxy").logRequestWithBody(logger, payload)
     http.POST[A, NrsSubmissionResponse](url, payload)

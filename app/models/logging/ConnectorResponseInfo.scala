@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.HttpResponse
 final case class ConnectorResponseInfo(method: String, url: String, response: HttpResponse) {
   private def logMessage: String = {
     val nonSuccessBody = if (response.status < 200 || response.status >= 300) s" Body: ${response.body}" else ""
-    s"Connector [$CorrelationIdHeaderKey=${response.correlationId}]: Response Received for $method $url. Response status: ${response.status}" + nonSuccessBody
+    s"Connector [$CorrelationIdHeaderKey=${response.maybeCorrelationId}]: Response Received for $method $url. Response status: ${response.status}" + nonSuccessBody
   }
 
   private[logging] def logResponseWarnOn4xx: ConnectorResponseInfo.LevelLogging = {

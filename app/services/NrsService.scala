@@ -34,7 +34,7 @@ class NrsService @Inject() (nrsConnector: NrsConnector) {
       hc.trueClientPort.map(port => "clientPort" -> port)
     ).flatten
 
-    nrsConnector.postNrsConnector(nino, payload)(hc.withExtraHeaders(extraHeaders: _*), writes)
+    nrsConnector.postNrsConnector(nino, payload)(hc.withExtraHeaders(extraHeaders: _*))(writes)
   }
 
 }

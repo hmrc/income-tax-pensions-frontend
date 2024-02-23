@@ -34,7 +34,7 @@ import views.html.pensions.paymentsIntoPensions.TotalPaymentsIntoRASView
 import java.text.NumberFormat
 import java.util.Locale
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TotalPaymentsIntoRASController @Inject() (authAction: AuthorisedAction,
@@ -42,7 +42,7 @@ class TotalPaymentsIntoRASController @Inject() (authAction: AuthorisedAction,
                                                 errorHandler: ErrorHandler,
                                                 view: TotalPaymentsIntoRASView,
                                                 formProvider: PaymentsIntoPensionFormProvider,
-                                                mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

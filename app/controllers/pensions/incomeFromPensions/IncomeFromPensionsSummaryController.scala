@@ -29,12 +29,14 @@ import utils.Clock
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class IncomeFromPensionsSummaryController @Inject() (mcc: MessagesControllerComponents,
-                                                     authAction: AuthorisedAction,
-                                                     pensionSessionService: PensionSessionService,
-                                                     view: IncomeFromPensionsSummaryView)(implicit appConfig: AppConfig, clock: Clock)
+class IncomeFromPensionsSummaryController @Inject() (
+    mcc: MessagesControllerComponents,
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    view: IncomeFromPensionsSummaryView)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

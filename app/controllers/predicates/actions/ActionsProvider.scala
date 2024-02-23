@@ -34,7 +34,7 @@ class ActionsProvider @Inject() (authAction: AuthorisedAction,
 
   def endOfYear(taxYear: Int): ActionBuilder[AuthorisationRequest, AnyContent] =
     authAction
-      .andThen(TaxYearAction(taxYear)(appConfig, messagesApi))
+      .andThen(TaxYearAction(taxYear)(appConfig, messagesApi, ec))
 
   def userSessionDataFor(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
     endOfYear(taxYear)

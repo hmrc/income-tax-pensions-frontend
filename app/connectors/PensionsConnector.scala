@@ -17,6 +17,7 @@
 package connectors
 
 import config.AppConfig
+import connectors.Connector.hcWithCorrelationId
 import connectors.httpParsers.DeletePensionChargesHttpParser.{DeletePensionChargesHttpReads, DeletePensionChargesResponse}
 import connectors.httpParsers.DeletePensionIncomeHttpParser.{DeletePensionIncomeHttpReads, DeletePensionIncomeResponse}
 import connectors.httpParsers.DeletePensionReliefsHttpParser.{DeletePensionReliefsHttpReads, DeletePensionReliefsResponse}
@@ -24,6 +25,7 @@ import connectors.httpParsers.PensionChargesSessionHttpParser.{PensionChargesSes
 import connectors.httpParsers.PensionIncomeSessionHttpParser.{PensionIncomeSessionHttpReads, PensionIncomeSessionResponse}
 import connectors.httpParsers.PensionReliefsSessionHttpParser.{PensionReliefsSessionHttpReads, PensionReliefsSessionResponse}
 import models.logging.ConnectorRequestInfo
+import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
@@ -43,14 +45,14 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     http.PUT[CreateUpdatePensionChargesRequestModel, SavePensionChargesAnswersResponse](url, model)(
       CreateUpdatePensionChargesRequestModel.format,
       PensionChargesSessionHttpReads,
-      hc,
+      hcWithCorrelationId(hc),
       ec)
   }
 
   def deletePensionCharges(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DeletePensionChargesResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-charges/session-data/nino/$nino/taxYear/${taxYear.toString}"
     ConnectorRequestInfo("DELETE", url, "income-tax-pensions").logRequest(logger)
-    http.DELETE[DeletePensionChargesResponse](url)(DeletePensionChargesHttpReads, hc, ec)
+    http.DELETE[DeletePensionChargesResponse](url)(DeletePensionChargesHttpReads, hcWithCorrelationId(hc), ec)
   }
 
   def savePensionIncome(nino: String, taxYear: Int, model: CreateUpdatePensionIncomeRequestModel)(implicit
@@ -61,7 +63,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     http.PUT[CreateUpdatePensionIncomeRequestModel, PensionIncomeSessionResponse](url, model)(
       CreateUpdatePensionIncomeRequestModel.writes,
       PensionIncomeSessionHttpReads,
-      hc,
+      hcWithCorrelationId(hc),
       ec)
   }
 
@@ -79,13 +81,14 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     http.PUT[CreateUpdatePensionReliefsModel, PensionReliefsSessionResponse](url, model)(
       CreateUpdatePensionReliefsModel.format,
       PensionReliefsSessionHttpReads,
-      hc,
-      ec)
+      hcWithCorrelationId(hc),
+      ec
+    )
   }
 
   def deletePensionReliefData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DeletePensionReliefsResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-reliefs/session-data/nino/$nino/taxYear/${taxYear.toString}"
     ConnectorRequestInfo("DELETE", url, "income-tax-pensions").logRequest(logger)
-    http.DELETE[DeletePensionReliefsResponse](url)(DeletePensionReliefsHttpReads, hc, ec)
+    http.DELETE[DeletePensionReliefsResponse](url)(DeletePensionReliefsHttpReads, hcWithCorrelationId(hc), ec)
   }
 }

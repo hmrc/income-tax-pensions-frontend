@@ -30,8 +30,6 @@ object HeaderCarrierExtensions {
       case (key, value) if key == CorrelationIdHeaderKey => value
     }
 
-    def correlationId: String = maybeCorrelationId.getOrElse("unknown")
-
     def withMtditId(mtditid: String): HeaderCarrier =
       addIfMissing(MtditIdHeaderKey, mtditid)
 

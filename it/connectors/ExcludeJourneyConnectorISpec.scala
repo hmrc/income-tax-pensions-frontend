@@ -34,7 +34,7 @@ class ExcludeJourneyConnectorISpec extends IntegrationTest {
       "the backend returns a response with the status of NO_CONTENT(204)" in {
         val result = {
           stubPost(url, NO_CONTENT, "{}")
-          connector.excludeJourney("interest", taxYear, nino)
+          connector.excludeJourney("interest", taxYear, nino)(headerCarrier)
         }
 
         await(result) shouldBe Right(NO_CONTENT)
@@ -47,7 +47,7 @@ class ExcludeJourneyConnectorISpec extends IntegrationTest {
       "the backend returns a bad request" in {
         val result = {
           stubPost(url, BAD_REQUEST, Json.stringify(Json.obj("code" -> "IT_WRONG", "reason" -> "It bad yoh")))
-          connector.excludeJourney("interest", taxYear, nino)
+          connector.excludeJourney("interest", taxYear, nino)(headerCarrier)
         }
 
         await(result) shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("IT_WRONG", "It bad yoh")))
@@ -59,7 +59,7 @@ class ExcludeJourneyConnectorISpec extends IntegrationTest {
       "the backend returns an internal server error" in {
         val result = {
           stubPost(url, INTERNAL_SERVER_ERROR, Json.stringify(Json.obj("code" -> "WE_GON_GOOFED", "reason" -> "We messed up, my bad.")))
-          connector.excludeJourney("interest", taxYear, nino)
+          connector.excludeJourney("interest", taxYear, nino)(headerCarrier)
         }
 
         await(result) shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("WE_GON_GOOFED", "We messed up, my bad.")))
@@ -68,7 +68,7 @@ class ExcludeJourneyConnectorISpec extends IntegrationTest {
       "the backend returns an unexpected answer" in {
         val result = {
           stubPost(url, IM_A_TEAPOT, Json.stringify(Json.obj("code" -> "TEAPOT", "reason" -> "Imma teapot")))
-          connector.excludeJourney("interest", taxYear, nino)
+          connector.excludeJourney("interest", taxYear, nino)(headerCarrier)
         }
 
         await(result) shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("TEAPOT", "Imma teapot")))

@@ -36,14 +36,14 @@ import utils.Clock
 import views.html.pensions.annualAllowances.PensionSchemeTaxReferenceView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PensionSchemeTaxReferenceController @Inject() (cc: MessagesControllerComponents,
                                                      authAction: AuthorisedAction,
                                                      view: PensionSchemeTaxReferenceView,
                                                      pensionSessionService: PensionSessionService,
-                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock)
+                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
