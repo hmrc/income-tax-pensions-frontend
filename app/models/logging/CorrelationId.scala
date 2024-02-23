@@ -16,12 +16,13 @@
 
 package models.logging
 
+import play.api.Logging
 import play.api.mvc.{AnyContent, Request, RequestHeader, Result}
 import uk.gov.hmrc.http.HttpResponse
 
 import java.util.UUID
 
-object CorrelationId {
+object CorrelationId extends Logging {
   val CorrelationIdHeaderKey = "CorrelationId" // This header is used in IFS/DES. We keep the same naming in our services too for simplicity
 
   private def getOrGenerateCorrelationId(requestHeader: RequestHeader): String = requestHeader.headers
@@ -31,9 +32,8 @@ object CorrelationId {
   implicit class RequestHeaderOps(val value: RequestHeader) extends AnyVal {
 
     def withCorrelationId(): (RequestHeader, String) = {
-      val correlationId = value.headers
-        .get(CorrelationIdHeaderKey)
-        .getOrElse(CorrelationId.generate())
+      val existingCorrelationId = value.headers.get(CorrelationIdHeaderKey)
+      val correlationId         = existingCorrelationId.getOrElse(CorrelationId.generate())
 
       val updatedRequest =
         if (value.headers.hasHeader(CorrelationIdHeaderKey)) value

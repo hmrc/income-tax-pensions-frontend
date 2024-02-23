@@ -16,9 +16,7 @@
 
 package models.pension.charges
 
-import cats.implicits.catsSyntaxOptionId
 import models.IncomeTaxUserData
-import models.pension.income.OverseasPensionContribution
 import models.pension.{PensionChargesSubRequestModel, PensionRequestModel, PensionSubRequestModel}
 import play.api.libs.json.{Json, OFormat}
 

@@ -20,12 +20,10 @@ import com.mongodb.client.model.ReturnDocument
 import com.mongodb.client.model.Updates.set
 import config.AppConfig
 import models.User
-import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
 import models.mongo._
 import org.joda.time.{DateTime, DateTimeZone}
 import org.mongodb.scala.MongoException
 import org.mongodb.scala.model.{FindOneAndReplaceOptions, FindOneAndUpdateOptions}
-import org.slf4j.MDC
 import play.api.Logging
 import services.EncryptionService
 import uk.gov.hmrc.mongo.MongoComponent

@@ -19,7 +19,7 @@ package models.logging
 import models.logging.CorrelationId.RequestOps
 import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
 import org.slf4j.MDC
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.Request
 
 import scala.concurrent.{ExecutionContext, Future}
 
