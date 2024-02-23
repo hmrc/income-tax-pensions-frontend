@@ -26,8 +26,7 @@ class ConnectorResponseInfoSpec extends AnyWordSpecLike {
 
   "logMessageWarnOn4xx" should {
     "return info on success" in {
-      assert(
-        connectorInfo.logResponseWarnOn4xx === Info("Connector [CorrelationId=None]: Response Received for GET /someurl. Response status: 200"))
+      assert(connectorInfo.logResponseWarnOn4xx === Info("Connector [CorrelationId=None]: Response Received for GET /someurl. Response status: 200"))
     }
 
     "return info on success with correlationId" in {
