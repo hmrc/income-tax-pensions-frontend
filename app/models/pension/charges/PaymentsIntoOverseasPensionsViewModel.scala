@@ -145,7 +145,8 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
 
   def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
 
-  def toPensionContributions: Seq[OverseasPensionContribution] =
+  // Prepares a sub-model required for the pensions income downstream request model.
+  def toDownstreamOverseasPensionContribution: Seq[OverseasPensionContribution] =
     reliefs.map { relief =>
       OverseasPensionContribution(
         customerReference = relief.customerReference,
@@ -171,6 +172,8 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
 
 object PaymentsIntoOverseasPensionsViewModel {
   implicit val format: OFormat[PaymentsIntoOverseasPensionsViewModel] = Json.format[PaymentsIntoOverseasPensionsViewModel]
+
+  val empty: PaymentsIntoOverseasPensionsViewModel = PaymentsIntoOverseasPensionsViewModel()
 }
 
 case class EncryptedPaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQuestions: Option[EncryptedValue] = None,

@@ -50,11 +50,7 @@ object SimpleRedirectService extends Logging {
   }
 
   def isFinishedCheck(cya: PensionCYABaseModel, taxYear: Int, continueRedirect: Call, cyaRedirectFn: Int => Call): Result =
-    if (cya.isFinished) {
-      Redirect(cyaRedirectFn(taxYear))
-    } else {
-      Redirect(continueRedirect)
-    }
+    if (cya.isFinished) Redirect(cyaRedirectFn(taxYear)) else Redirect(continueRedirect)
 
   def checkForExistingSchemes[T](nextPage: Call, summaryPage: Call, schemes: Seq[T]): Call =
     if (schemes.isEmpty) nextPage else summaryPage

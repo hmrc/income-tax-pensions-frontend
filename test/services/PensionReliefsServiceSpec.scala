@@ -22,7 +22,7 @@ import builders.UserBuilder.aUser
 import config.{MockPensionUserDataRepository, MockPensionsConnector}
 import models.error.ApiError.CreateOrUpdateError
 import models.mongo.{DataNotFound, DataNotUpdated}
-import models.pension.reliefs.{CreateOrUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel, Reliefs}
+import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel, Reliefs}
 import models.{APIErrorBodyModel, APIErrorModel}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -42,7 +42,7 @@ class PensionReliefsServiceSpec extends AnyWordSpecLike with MockPensionUserData
       mockFind(currTaxYear.endYear, aUser, Right(Option(sessionUserData)))
 
       val viewModel = sessionUserData.pensions.paymentsIntoPension
-      val model = CreateOrUpdatePensionReliefsModel(
+      val model = CreateUpdatePensionReliefsModel(
         pensionReliefs = Reliefs(
           regularPensionContributions = viewModel.totalRASPaymentsAndTaxRelief,
           oneOffPensionContributionsPaid = viewModel.totalOneOffRasPaymentPlusTaxRelief,
@@ -73,7 +73,7 @@ class PensionReliefsServiceSpec extends AnyWordSpecLike with MockPensionUserData
       mockFind(currTaxYear.endYear, aUser, Right(Option(sessionUserData)))
 
       val viewModel = sessionUserData.pensions.paymentsIntoPension
-      val model = CreateOrUpdatePensionReliefsModel(
+      val model = CreateUpdatePensionReliefsModel(
         pensionReliefs = Reliefs(
           regularPensionContributions = viewModel.totalRASPaymentsAndTaxRelief,
           oneOffPensionContributionsPaid = viewModel.totalOneOffRasPaymentPlusTaxRelief,
@@ -97,7 +97,7 @@ class PensionReliefsServiceSpec extends AnyWordSpecLike with MockPensionUserData
       mockFind(currTaxYear.endYear, aUser, Right(Option(sessionUserData)))
 
       val viewModel = sessionUserData.pensions.paymentsIntoPension
-      val model = CreateOrUpdatePensionReliefsModel(
+      val model = CreateUpdatePensionReliefsModel(
         pensionReliefs = Reliefs(
           regularPensionContributions = viewModel.totalRASPaymentsAndTaxRelief,
           oneOffPensionContributionsPaid = viewModel.totalOneOffRasPaymentPlusTaxRelief,

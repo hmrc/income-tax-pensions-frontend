@@ -27,7 +27,7 @@ class CreateUpdatePensionReliefsRequestModelSpec extends UnitTest {
       anPensionReliefs.pensionReliefs
     ).foreach { subModel =>
       s"be false when it is the only sub model in model request" in {
-        val actualResult = CreateOrUpdatePensionReliefsModel(
+        val actualResult = CreateUpdatePensionReliefsModel(
           anPensionReliefs.pensionReliefs
         ).otherSubRequestModelsEmpty(Some(subModel))
         actualResult shouldBe true

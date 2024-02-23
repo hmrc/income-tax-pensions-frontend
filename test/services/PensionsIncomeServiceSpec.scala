@@ -22,7 +22,7 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import config.{MockIncomeTaxUserDataConnector, MockPensionUserDataRepository, MockPensionsConnector}
 import models.mongo.{DataNotFound, DataNotUpdated}
-import models.pension.income.{CreateUpdatePensionIncomeModel, ForeignPensionContainer, OverseasPensionContributionContainer}
+import models.pension.income.{CreateUpdatePensionIncomeRequestModel, ForeignPensionContainer, OverseasPensionContributionContainer}
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.BAD_REQUEST
@@ -47,7 +47,7 @@ class PensionsIncomeServiceSpec
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
 
-      val model = CreateUpdatePensionIncomeModel(
+      val model = CreateUpdatePensionIncomeRequestModel(
         foreignPension = Some(ForeignPensionContainer(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension)),
         overseasPensionContribution =
           priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution)).map(OverseasPensionContributionContainer)
@@ -75,7 +75,7 @@ class PensionsIncomeServiceSpec
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
 
-      val model = CreateUpdatePensionIncomeModel(
+      val model = CreateUpdatePensionIncomeRequestModel(
         foreignPension = Some(ForeignPensionContainer(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension)),
         overseasPensionContribution =
           priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution)).map(OverseasPensionContributionContainer)
@@ -96,7 +96,7 @@ class PensionsIncomeServiceSpec
       mockFind(taxYear, aUser, Right(Option(sessionUserData)))
       mockFind(aUser.nino, taxYear, priorUserData)
 
-      val model = CreateUpdatePensionIncomeModel(
+      val model = CreateUpdatePensionIncomeRequestModel(
         foreignPension = Some(ForeignPensionContainer(sessionUserData.pensions.incomeFromOverseasPensions.toForeignPension)),
         priorUserData.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution)).map(OverseasPensionContributionContainer)
       )

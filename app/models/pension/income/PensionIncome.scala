@@ -16,10 +16,11 @@
 
 package models.pension.income
 
+import cats.implicits.{catsSyntaxOptionId, none}
 import models.IncomeTaxUserData
-import models.pension.charges.OverseasPensionContributions
 import models.pension.{PensionIncomeSubRequestModel, PensionRequestModel, PensionSubRequestModel}
 import play.api.libs.json.{JsValue, Json, OFormat, Writes}
+import utils.Constants.zero
 import utils.EncryptedValue
 
 case class ForeignPension(
@@ -35,6 +36,9 @@ case class ForeignPension(
 
 object ForeignPension {
   implicit val format: OFormat[ForeignPension] = Json.format[ForeignPension]
+
+  def fromPriorData(prior: IncomeTaxUserData): Option[Seq[ForeignPension]] =
+    prior.pensions.flatMap(_.pensionIncome.flatMap(_.foreignPension))
 }
 
 case class EncryptedForeignPension(
@@ -60,14 +64,33 @@ case class OverseasPensionContribution(
     dblTaxationTreaty: Option[String],
     sf74Reference: Option[String]
 ) extends PensionIncomeSubRequestModel {
+
+  val isBlankSubmission: Boolean =
+    // TODO
+    // Maybe we do not not need to check if customer ref is empty to take part in our consideration of an empty submission.
+    // If they submit customer reference, but no values, maybe this is an empty submission? Could also be that it is not.
+    // We need this confirmed.
+    if (customerReference.isEmpty &&
+      exemptEmployersPensionContribs == zero &&
+      migrantMemReliefQopsRefNo.isEmpty &&
+      dblTaxationRelief.isEmpty &&
+      dblTaxationCountry.isEmpty &&
+      dblTaxationArticle.isEmpty &&
+      dblTaxationTreaty.isEmpty &&
+      sf74Reference.isEmpty) true
+    else false
+
   val isEmpty: Boolean = false
 }
 
 object OverseasPensionContribution {
   implicit val format: OFormat[OverseasPensionContribution] = Json.format[OverseasPensionContribution]
 
-  def fromPriorData(prior: IncomeTaxUserData): Option[OverseasPensionContributions] =
-    prior.pensions.flatMap(_.pensionCharges.flatMap(_.overseasPensionContributions))
+  def fromPriorData(prior: IncomeTaxUserData): Option[Seq[OverseasPensionContribution]] =
+    prior.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution))
+
+  def blankSubmission: OverseasPensionContribution =
+    OverseasPensionContribution(None, zero, None, None, None, None, None, None)
 }
 
 case class EncryptedOverseasPensionContribution(
@@ -107,20 +130,22 @@ object EncryptedPensionIncome {
   implicit val format: OFormat[EncryptedPensionIncome] = Json.format[EncryptedPensionIncome]
 }
 
+// TODO: I think we can remove this container. I see no value in it, looks like a hack.
 case class ForeignPensionContainer(fp: Seq[ForeignPension]) extends PensionIncomeSubRequestModel {
   override def isEmpty: Boolean =
     fp.isEmpty
 }
+// TODO: I think we can remove this container. I see no value in it, looks like a hack.
 case class OverseasPensionContributionContainer(opc: Seq[OverseasPensionContribution]) extends PensionIncomeSubRequestModel {
   override def isEmpty: Boolean =
     opc.isEmpty
 }
 
-case class CreateUpdatePensionIncomeModel(foreignPension: Option[ForeignPensionContainer],
-                                          overseasPensionContribution: Option[OverseasPensionContributionContainer])
+case class CreateUpdatePensionIncomeRequestModel(foreignPension: Option[ForeignPensionContainer],
+                                                 overseasPensionContribution: Option[OverseasPensionContributionContainer])
     extends PensionRequestModel {
 
-  def createSubModel: CreateUpdatePensionIncomeModel = {
+  def createSubModel: CreateUpdatePensionIncomeRequestModel = {
     def processModel[T <: PensionIncomeSubRequestModel](model: Option[T]): Option[T] =
       if (model.exists(_.isEmpty) || model.isEmpty) {
         None
@@ -128,7 +153,7 @@ case class CreateUpdatePensionIncomeModel(foreignPension: Option[ForeignPensionC
         model
       }
 
-    CreateUpdatePensionIncomeModel(
+    CreateUpdatePensionIncomeRequestModel(
       foreignPension = processModel(this.foreignPension),
       overseasPensionContribution = processModel(this.overseasPensionContribution)
     )
@@ -141,12 +166,22 @@ case class CreateUpdatePensionIncomeModel(foreignPension: Option[ForeignPensionC
       case _                                             => true
     }
 }
-object CreateUpdatePensionIncomeModel {
-  implicit val writes: Writes[CreateUpdatePensionIncomeModel] = new Writes[CreateUpdatePensionIncomeModel] {
-    override def writes(o: CreateUpdatePensionIncomeModel): JsValue =
+object CreateUpdatePensionIncomeRequestModel {
+  implicit val writes: Writes[CreateUpdatePensionIncomeRequestModel] = new Writes[CreateUpdatePensionIncomeRequestModel] {
+    override def writes(o: CreateUpdatePensionIncomeRequestModel): JsValue =
       Json.obj(
         "foreignPension"              -> o.foreignPension.map(_.fp),
         "overseasPensionContribution" -> o.overseasPensionContribution.map(_.opc)
       )
   }
+
+  def fromPriorData(prior: IncomeTaxUserData): CreateUpdatePensionIncomeRequestModel =
+    CreateUpdatePensionIncomeRequestModel(
+      foreignPension = ForeignPension
+        .fromPriorData(prior)
+        .fold(ifEmpty = none[ForeignPensionContainer])(ForeignPensionContainer(_).some),
+      overseasPensionContribution = OverseasPensionContribution
+        .fromPriorData(prior)
+        .fold(ifEmpty = none[OverseasPensionContributionContainer])(OverseasPensionContributionContainer(_).some)
+    )
 }

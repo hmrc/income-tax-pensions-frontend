@@ -16,14 +16,18 @@
 
 package models.pension.reliefs
 
+import models.IncomeTaxUserData
 import models.pension.{PensionRequestModel, PensionSubRequestModel}
 import play.api.libs.json.{Json, OFormat}
 
-case class CreateOrUpdatePensionReliefsModel(pensionReliefs: Reliefs) extends PensionRequestModel {
+case class CreateUpdatePensionReliefsModel(pensionReliefs: Reliefs) extends PensionRequestModel {
   override def otherSubRequestModelsEmpty[T <: PensionSubRequestModel](subModel: Option[T]): Boolean = true
   override def createSubModel: PensionRequestModel                                                   = this
 }
 
-object CreateOrUpdatePensionReliefsModel {
-  implicit val format: OFormat[CreateOrUpdatePensionReliefsModel] = Json.format[CreateOrUpdatePensionReliefsModel]
+object CreateUpdatePensionReliefsModel {
+  implicit val format: OFormat[CreateUpdatePensionReliefsModel] = Json.format[CreateUpdatePensionReliefsModel]
+
+  def fromPriorData(prior: IncomeTaxUserData): CreateUpdatePensionReliefsModel =
+    CreateUpdatePensionReliefsModel(Reliefs.fromPriorData(prior))
 }

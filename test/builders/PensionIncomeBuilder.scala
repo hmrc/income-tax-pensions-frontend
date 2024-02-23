@@ -17,7 +17,7 @@
 package builders
 
 import builders.PensionIncomeViewModelBuilder.aPensionIncome
-import models.pension.income.{CreateUpdatePensionIncomeModel, ForeignPensionContainer, OverseasPensionContributionContainer}
+import models.pension.income.{CreateUpdatePensionIncomeRequestModel, ForeignPensionContainer, OverseasPensionContributionContainer}
 
 object PensionIncomeBuilder {
 
@@ -27,7 +27,7 @@ object PensionIncomeBuilder {
   val aOverseasPensionContributionContainer: OverseasPensionContributionContainer = OverseasPensionContributionContainer(
     aPensionIncome.overseasPensionContribution.get
   )
-  val aCreateUpdatePensionIncomeModel: CreateUpdatePensionIncomeModel = CreateUpdatePensionIncomeModel(
+  val aCreateUpdatePensionIncomeModel: CreateUpdatePensionIncomeRequestModel = CreateUpdatePensionIncomeRequestModel(
     foreignPension = Some(aForeignPensionContainer),
     overseasPensionContribution = Some(aOverseasPensionContributionContainer)
   )
