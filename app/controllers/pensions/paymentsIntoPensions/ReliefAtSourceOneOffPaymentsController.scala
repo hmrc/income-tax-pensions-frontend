@@ -35,12 +35,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReliefAtSourceOneOffPaymentsController @Inject() (authAction: AuthorisedAction,
-                                                        pensionSessionService: PensionSessionService,
-                                                        errorHandler: ErrorHandler,
-                                                        view: ReliefAtSourceOneOffPaymentsView,
-                                                        formProvider: PaymentsIntoPensionFormProvider,
-                                                        mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class ReliefAtSourceOneOffPaymentsController @Inject() (
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    view: ReliefAtSourceOneOffPaymentsView,
+    formProvider: PaymentsIntoPensionFormProvider,
+    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

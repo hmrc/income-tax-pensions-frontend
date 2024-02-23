@@ -37,11 +37,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReducedAnnualAllowanceTypeController @Inject() (cc: MessagesControllerComponents,
-                                                      authAction: AuthorisedAction,
-                                                      pensionSessionService: PensionSessionService,
-                                                      errorHandler: ErrorHandler,
-                                                      view: ReducedAnnualAllowanceTypeView)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class ReducedAnnualAllowanceTypeController @Inject() (
+    cc: MessagesControllerComponents,
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    errorHandler: ErrorHandler,
+    view: ReducedAnnualAllowanceTypeView)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
