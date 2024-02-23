@@ -43,7 +43,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
           "no prior OPC claim exists" should {
             "successfully save answers to relief only" in new Test with SuccessfulMocks {
               priorReturns(priorNoOPC)
-              sessionReturns(sessionNoOPCWithPayment)
+              sessionHas(sessionNoOPCWithPayment)
               reliefsExpects(populatedReliefsModel)
               sessionRepositoryExpects(sessionNoOPCWithPayment)
 
@@ -55,7 +55,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
           "a prior OPC claim exists" should {
             "save answers to relief and remove the prior OPC claim by sending a blank submission" in new Test with SuccessfulMocks {
               priorReturns(priorOPC)
-              sessionReturns(sessionNoOPCWithPayment)
+              sessionHas(sessionNoOPCWithPayment)
               reliefsExpects(populatedReliefsModel)
               incomeExpects(emptyOPCIncomeModel)
               sessionRepositoryExpects(sessionNoOPCWithPayment)
@@ -69,7 +69,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
         "claiming for OPC" should {
           "successfully save answers to both relief and income" in new Test with SuccessfulMocks {
             priorReturns(priorOPC)
-            sessionReturns(sessionOPC)
+            sessionHas(sessionOPC)
             reliefsExpects(populatedReliefsModel)
             incomeExpects(populatedOPCIncomeModel)
             sessionRepositoryExpects(sessionOPC)
@@ -85,7 +85,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
         "a prior OPC claim exists" should {
           "send blank reliefs submission and delete the prior income claim" in new Test with SuccessfulMocks {
             priorReturns(priorOPC)
-            sessionReturns(sessionNoOPCNoPayment)
+            sessionHas(sessionNoOPCNoPayment)
             reliefsExpects(blankReliefsModel(priorOPC))
             incomeExpects(emptyOPCIncomeModel)
             sessionRepositoryExpects(sessionNoOPCNoPayment)
@@ -99,7 +99,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
         "no prior OPC claim exists" should {
           "send a blank reliefs submission only" in new Test with SuccessfulMocks {
             priorReturns(priorNoOPC)
-            sessionReturns(sessionNoOPCNoPayment)
+            sessionHas(sessionNoOPCNoPayment)
             reliefsExpects(blankReliefsModel(priorNoOPC))
             sessionRepositoryExpects(sessionNoOPCNoPayment)
 
@@ -127,7 +127,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
     "pensions reliefs downstream returns an unsuccessful result" should {
       "return an APIErrorModel" in new Test with SuccessfulMocks {
         priorReturns(priorOPC)
-        sessionReturns(sessionOPC)
+        sessionHas(sessionOPC)
 
         MockPensionConnector
           .savePensionReliefs(nino, taxYear, populatedReliefsModel)
@@ -141,7 +141,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
     "pensions income downstream returns an unsuccessful result" should {
       "return an APIErrorModel" in new Test with SuccessfulMocks {
         priorReturns(priorOPC)
-        sessionReturns(sessionOPC)
+        sessionHas(sessionOPC)
         reliefsExpects(populatedReliefsModel)
 
         MockPensionConnector
@@ -169,7 +169,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
     "session data could not be updated" should {
       "return DataNotUpdated" in new Test with SuccessfulMocks {
         priorReturns(priorOPC)
-        sessionReturns(sessionOPC)
+        sessionHas(sessionOPC)
         reliefsExpects(populatedReliefsModel)
         incomeExpects(populatedOPCIncomeModel)
 
@@ -254,7 +254,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
         .getUserData(nino, taxYear)
         .returns(prior.asRight.asFuture)
 
-    def sessionReturns(session: PensionsUserData) =
+    def sessionHas(session: PensionsUserData) =
       MockSessionRepository
         .find(taxYear, aUser)
         .returns(session.some.asRight.asFuture)
