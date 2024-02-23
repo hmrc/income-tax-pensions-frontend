@@ -47,4 +47,6 @@ object CorrelationIdMdc {
         throw e
     }
   }
+
+  def maybeCorrelationIdFromMdc(): Option[String] = Option(MDC.get(CorrelationIdHeaderKey))
 }

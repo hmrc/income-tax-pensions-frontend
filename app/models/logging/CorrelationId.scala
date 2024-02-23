@@ -56,7 +56,7 @@ object CorrelationId {
   }
 
   implicit class HttpResponseOps(val value: HttpResponse) extends AnyVal {
-    def correlationId: Option[String] = value.header(CorrelationIdHeaderKey)
+    def maybeCorrelationId: Option[String] = value.header(CorrelationIdHeaderKey)
   }
 
   implicit class ResultOps(val value: Result) extends AnyVal {

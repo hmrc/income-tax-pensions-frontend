@@ -25,7 +25,7 @@ final case class ConnectorRequestInfo(method: String, url: String, apiId: String
   private def apiIdStr = s"Request to API#${apiId}"
 
   private def connectorMessage: String =
-    s"Connector [$CorrelationIdHeaderKey=${hc.correlationId}]: $apiIdStr $method $url"
+    s"Connector [$CorrelationIdHeaderKey=${hc.maybeCorrelationId}]: $apiIdStr $method $url"
 
   def logRequestWithBody[A: Writes](logger: Logger, body: A): Unit =
     logger.debug(s"$connectorMessage\nRequest Body: ${implicitly[Writes[A]].writes(body)}")
