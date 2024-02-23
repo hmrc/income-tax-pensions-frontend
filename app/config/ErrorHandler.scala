@@ -19,12 +19,11 @@ package config
 import models.logging.CorrelationIdMdc
 import models.logging.CorrelationIdMdc.maybeCorrelationIdFromMdc
 import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
-import org.slf4j.MDC
-import play.api.{Logger, PlayException}
 import play.api.http.Status._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc.{Request, RequestHeader, Result}
+import play.api.{Logger, PlayException}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
