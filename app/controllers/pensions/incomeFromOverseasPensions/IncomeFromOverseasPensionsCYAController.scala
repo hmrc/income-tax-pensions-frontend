@@ -16,6 +16,7 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus
 import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
@@ -26,24 +27,22 @@ import models.pension.AllPensionsData.generateIncomeFromOverseasPensionsCyaFromP
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionIncomeService
+import services.IncomeFromOverseasPensionsService
 import services.redirects.IncomeFromOverseasPensionsPages.CYAPage
 import services.redirects.IncomeFromOverseasPensionsRedirects.journeyCheck
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeFromOverseasPensionsCYAController @Inject() (
-    auditProvider: AuditActionsProvider,
-    view: IncomeFromOverseasPensionsCYAView,
-    pensionIncomeService: PensionIncomeService,
-    errorHandler: ErrorHandler,
-    cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class IncomeFromOverseasPensionsCYAController @Inject() (auditProvider: AuditActionsProvider,
+                                                         view: IncomeFromOverseasPensionsCYAView,
+                                                         service: IncomeFromOverseasPensionsService,
+                                                         errorHandler: ErrorHandler,
+                                                         cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
@@ -61,16 +60,14 @@ class IncomeFromOverseasPensionsCYAController @Inject() (
     val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) { sessionData =>
       if (shouldSaveAnswers(sessionData.pensions, request.pensions)) {
-        pensionIncomeService.saveIncomeFromOverseasPensionsViewModel(request.user, taxYear).map {
-          case Left(_) =>
-            errorHandler.internalServerError()
+        service.saveAnswers(request.user, TaxYear(taxYear)).map {
+          case Left(_)  => errorHandler.internalServerError()
           case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
         }
-      } else {
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      }
+      } else Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
     }
   }
+
   def shouldSaveAnswers(sessionData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData.fold(ifEmpty = true) { prior =>
       !sessionData.incomeFromOverseasPensions.equals(generateIncomeFromOverseasPensionsCyaFromPrior(prior))

@@ -76,20 +76,19 @@ class UnauthorisedPaymentsCYAController @Inject() (
         // TODO: check conditions for excluding Pensions from submission without gateway
         excludeJourneyService.excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)
       } flatMap {
-        case Right(_) => performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest, clock)
+        case Right(_) => performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest)
         case Left(_)  => errorHandler.futureInternalServerError()
       }
       if (!comparePriorData(cya.pensions, prior)) {
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      } else { performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest, clock) }
+      } else { performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest) }
     }
   }
 
   private def performSubmission(taxYear: Int, cya: Option[PensionsUserData])(implicit
       user: User,
       hc: HeaderCarrier,
-      request: UserPriorAndSessionDataRequest[AnyContent],
-      clock: Clock): Future[Result] =
+      request: UserPriorAndSessionDataRequest[AnyContent]): Future[Result] =
     (cya match {
       case Some(_) =>
         service.saveAnswers(user, TaxYear(taxYear)) map {
@@ -103,7 +102,7 @@ class UnauthorisedPaymentsCYAController @Inject() (
         logger.info("[submit] CYA data or NINO missing from session.")
         Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
     }).flatMap {
-      case Right(_) => // TODO: investigate  the use of the previously used pensionSessionService.clear
+      case Right(_) =>
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       case Left(error) => Future.successful(errorHandler.handleError(error.status))
     }
