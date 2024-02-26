@@ -63,12 +63,10 @@ class IncomeFromOverseasPensionsService @Inject() (repository: PensionsUserDataR
       prior.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution.map(OPCs => OPCs.forall(_.isBlankSubmission)))).contains(false)
 
     answers.paymentsFromOverseasPensionsQuestion.fold(ifEmpty = EitherT.pure[Future, APIErrorModel](())) { bool =>
-      if (bool)
+      if (bool || hasPriorOPC)
         EitherT(pensionsConnector.savePensionIncome(user.nino, taxYear.endYear, buildDownstreamUpsertRequestModel(answers, prior)))
-      else {
-        if (hasPriorOPC) EitherT(pensionsConnector.savePensionIncome(user.nino, taxYear.endYear, buildDownstreamUpsertRequestModel(answers, prior)))
-        else EitherT(pensionsConnector.deletePensionIncome(user.nino, taxYear.endYear))
-      }
+      else
+        EitherT(pensionsConnector.deletePensionIncome(user.nino, taxYear.endYear))
     }
   }
 
