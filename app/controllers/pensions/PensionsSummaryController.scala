@@ -19,6 +19,7 @@ package controllers.pensions
 import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
+import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import play.api.i18n.I18nSupport
@@ -29,12 +30,14 @@ import utils.Clock
 import views.html.pensions.PensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class PensionsSummaryController @Inject() (mcc: MessagesControllerComponents,
-                                           authAction: AuthorisedAction,
-                                           pensionSessionService: PensionSessionService,
-                                           pensionsSummaryView: PensionsSummaryView)(implicit appConfig: AppConfig, clock: Clock)
+class PensionsSummaryController @Inject() (
+    mcc: MessagesControllerComponents,
+    authAction: AuthorisedAction,
+    pensionSessionService: PensionSessionService,
+    pensionsSummaryView: PensionsSummaryView)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>

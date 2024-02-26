@@ -18,6 +18,7 @@ package controllers.predicates.actions
 
 import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
 import config.AppConfig
+import models.logging.CorrelationIdMdc.withEnrichedCorrelationId
 import models.{AuthorisationRequest, User}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -46,23 +47,23 @@ class AuthorisedAction @Inject() (appConfig: AppConfig)(implicit val authService
 
   val minimumConfidenceLevel: Int = ConfidenceLevel.L250.level
 
-  override def invokeBlock[A](request: Request[A], block: AuthorisationRequest[A] => Future[Result]): Future[Result] = {
+  override def invokeBlock[A](original: Request[A], block: AuthorisationRequest[A] => Future[Result]): Future[Result] =
+    withEnrichedCorrelationId(original) { request =>
+      implicit lazy val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    implicit lazy val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-    authService.authorised().retrieve(affinityGroup) {
-      case Some(AffinityGroup.Agent) => agentAuthentication(block)(request, headerCarrier)
-      case Some(affinityGroup)       => individualAuthentication(block, affinityGroup)(request, headerCarrier)
-      case None                      => throw new UnauthorizedException("Unable to retrieve affinityGroup")
-    } recover {
-      case _: NoActiveSession =>
-        logger.info(s"[AuthorisedAction][invokeBlock] - No active session. Redirecting to ${appConfig.signInUrl}")
-        Redirect(appConfig.signInUrl)
-      case _: AuthorisationException =>
-        logger.info(s"[AuthorisedAction][invokeBlock] - User failed to authenticate")
-        Redirect(controllers.errors.routes.UnauthorisedUserErrorController.show)
+      authService.authorised().retrieve(affinityGroup) {
+        case Some(AffinityGroup.Agent) => agentAuthentication(block)(request, headerCarrier)
+        case Some(affinityGroup)       => individualAuthentication(block, affinityGroup)(request, headerCarrier)
+        case None                      => throw new UnauthorizedException("Unable to retrieve affinityGroup")
+      } recover {
+        case _: NoActiveSession =>
+          logger.info(s"[AuthorisedAction][invokeBlock] - No active session. Redirecting to ${appConfig.signInUrl}")
+          Redirect(appConfig.signInUrl)
+        case _: AuthorisationException =>
+          logger.info(s"[AuthorisedAction][invokeBlock] - User failed to authenticate")
+          Redirect(controllers.errors.routes.UnauthorisedUserErrorController.show)
+      }
     }
-  }
 
   def sessionId(implicit request: Request[_], hc: HeaderCarrier): Option[String] = {
     lazy val key = "sessionId"

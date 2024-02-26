@@ -95,7 +95,7 @@ class EmployerPayOverseasPensionController @Inject() (
 
                 pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                   errorHandler.internalServerError()) {
-                  isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)
+                  isFinishedCheck(updatedCyaModel.paymentsIntoOverseasPensions, taxYear, redirectLocation, cyaPageCall)
                 }
               }
             case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))

@@ -16,19 +16,24 @@
 
 package models.logging
 
-import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
-import play.api.mvc.{RequestHeader, Result}
+import play.api.Logging
+import play.api.mvc.{AnyContent, Request, RequestHeader, Result}
 import uk.gov.hmrc.http.HttpResponse
 
 import java.util.UUID
 
-object CorrelationId {
+object CorrelationId extends Logging {
+  val CorrelationIdHeaderKey = "CorrelationId" // This header is used in IFS/DES. We keep the same naming in our services too for simplicity
+
+  private def getOrGenerateCorrelationId(requestHeader: RequestHeader): String = requestHeader.headers
+    .get(CorrelationIdHeaderKey)
+    .getOrElse(CorrelationId.generate())
+
   implicit class RequestHeaderOps(val value: RequestHeader) extends AnyVal {
 
     def withCorrelationId(): (RequestHeader, String) = {
-      val correlationId = value.headers
-        .get(CorrelationIdHeaderKey)
-        .getOrElse(CorrelationId.generate())
+      val existingCorrelationId = value.headers.get(CorrelationIdHeaderKey)
+      val correlationId         = existingCorrelationId.getOrElse(CorrelationId.generate())
 
       val updatedRequest =
         if (value.headers.hasHeader(CorrelationIdHeaderKey)) value
@@ -36,19 +41,28 @@ object CorrelationId {
 
       (updatedRequest, correlationId)
     }
+  }
 
+  object RequestOps {
+    def withCorrelationId[A](value: Request[A]): (Request[A], String) = {
+      val correlationId = getOrGenerateCorrelationId(value)
+
+      val updatedRequest =
+        if (value.headers.hasHeader(CorrelationIdHeaderKey)) value
+        else value.withHeaders(value.headers.add(CorrelationIdHeaderKey -> correlationId))
+
+      (updatedRequest, correlationId)
+    }
+  }
+
+  implicit class HttpResponseOps(val value: HttpResponse) extends AnyVal {
+    def maybeCorrelationId: Option[String] = value.header(CorrelationIdHeaderKey)
   }
 
   implicit class ResultOps(val value: Result) extends AnyVal {
     def withCorrelationId(correlationId: String): Result =
       if (value.header.headers.contains(CorrelationIdHeaderKey)) value
       else value.withHeaders(CorrelationIdHeaderKey -> correlationId)
-  }
-
-  implicit class HttpResponseOps(val value: HttpResponse) extends AnyVal {
-    def correlationId: String =
-      value.header(CorrelationIdHeaderKey).getOrElse("unknown")
-
   }
 
   private def generate(): String = UUID.randomUUID().toString

@@ -42,7 +42,7 @@ class NrsServiceSpec extends UnitTest {
         val headerCarrierWithTrueClientDetails = headerCarrierWithSession.copy(trueClientIp = Some("127.0.0.1"), trueClientPort = Some("80"))
 
         (connector
-          .postNrsConnector(_: String, _: String)(_: HeaderCarrier, _: Writes[String]))
+          .postNrsConnector(_: String, _: String)(_: HeaderCarrier)(_: Writes[String]))
           .expects(
             nino,
             "pensions",
@@ -63,7 +63,7 @@ class NrsServiceSpec extends UnitTest {
         val expectedResult: NrsSubmissionResponse = Right((): Unit)
 
         (connector
-          .postNrsConnector(_: String, _: String)(_: HeaderCarrier, _: Writes[String]))
+          .postNrsConnector(_: String, _: String)(_: HeaderCarrier)(_: Writes[String]))
           .expects(nino, "pensions", headerCarrierWithSession.withExtraHeaders("mtditid" -> mtditid), writesObject)
           .returning(Future.successful(expectedResult))
 

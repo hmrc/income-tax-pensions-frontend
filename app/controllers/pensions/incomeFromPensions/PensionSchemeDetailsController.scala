@@ -35,14 +35,14 @@ import utils.{Clock, SessionHelper}
 import views.html.pensions.incomeFromPensions.PensionSchemeDetailsView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PensionSchemeDetailsController @Inject() (mcc: MessagesControllerComponents,
                                                 authAction: AuthorisedAction,
                                                 view: PensionSchemeDetailsView,
                                                 pensionSessionService: PensionSessionService,
-                                                errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock)
+                                                errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper

@@ -17,6 +17,7 @@
 package connectors
 
 import config.AppConfig
+import connectors.Connector.hcWithCorrelationId
 import connectors.httpParsers.IncomeTaxUserDataHttpParser.{IncomeTaxUserDataHttpReads, IncomeTaxUserDataResponse}
 import connectors.httpParsers.RefreshIncomeSourceHttpParser.{RefreshIncomeSourceResponse, _}
 import models.RefreshIncomeSourceRequest
@@ -29,7 +30,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeTaxUserDataConnector @Inject() (val http: HttpClient, val config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
 
-  def getUserData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] = {
+  def getUserData(nino: String, taxYear: Int)(hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] = {
+    implicit val headerCarrier: HeaderCarrier = hcWithCorrelationId(hc)
+
     val incomeTaxUserDataUrl: String = config.incomeTaxSubmissionBEBaseUrl + s"/income-tax/nino/$nino/sources/session?taxYear=$taxYear"
     ConnectorRequestInfo("GET", incomeTaxUserDataUrl, "income-tax-submission").logRequest(logger)
     http.GET[IncomeTaxUserDataResponse](incomeTaxUserDataUrl)
@@ -38,7 +41,9 @@ class IncomeTaxUserDataConnector @Inject() (val http: HttpClient, val config: Ap
   def refreshPensionsResponse(nino: String, mtditid: String, taxYear: Int)(implicit hc: HeaderCarrier): Future[RefreshIncomeSourceResponse] =
     refreshPensionsResponse(taxYear, nino)(hc.withExtraHeaders(("mtditid", mtditid)))
 
-  private def refreshPensionsResponse(taxYear: Int, nino: String)(implicit hc: HeaderCarrier): Future[RefreshIncomeSourceResponse] = {
+  private def refreshPensionsResponse(taxYear: Int, nino: String)(hc: HeaderCarrier): Future[RefreshIncomeSourceResponse] = {
+    implicit val headerCarrier: HeaderCarrier = hcWithCorrelationId(hc)
+
     val url   = config.incomeTaxSubmissionBEBaseUrl + s"/income-tax/nino/$nino/sources/session?taxYear=$taxYear"
     val model = RefreshIncomeSourceRequest("pensions")
     ConnectorRequestInfo("PUT", url, "income-tax-submission").logRequestWithBody(logger, model)

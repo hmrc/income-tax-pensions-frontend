@@ -16,13 +16,14 @@
 
 package config
 
+import models.logging.CorrelationIdMdc
+import models.logging.CorrelationIdMdc.maybeCorrelationIdFromMdc
 import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
-import org.slf4j.MDC
-import play.api.{Logger, PlayException}
 import play.api.http.Status._
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results._
 import play.api.mvc.{Request, RequestHeader, Result}
+import play.api.{Logger, PlayException}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
@@ -45,7 +46,7 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
   override def notFoundTemplate(implicit request: Request[_]): Html = notFoundTemplate()
 
   def internalServerError()(implicit request: Request[_]): Result = {
-    val errorLogMessage = s"[$CorrelationIdHeaderKey=$mdcCorrelationId] error occurred: for ${request.method} [${request.uri}]"
+    val errorLogMessage = s"[$CorrelationIdHeaderKey=$maybeCorrelationIdFromMdc] error occurred: for ${request.method} [${request.uri}]"
     logger.error(errorLogMessage)
 
     InternalServerError(internalServerErrorTemplate())
@@ -55,7 +56,7 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
     Future.successful(internalServerError)
 
   def handleError(status: Int)(implicit request: Request[_]): Result = {
-    val errorLogMessage = s"[$CorrelationIdHeaderKey=$mdcCorrelationId] for ${request.method} [${request.uri}] - status=$status"
+    val errorLogMessage = s"[$CorrelationIdHeaderKey=$maybeCorrelationIdFromMdc] for ${request.method} [${request.uri}] - status=$status"
     logger.error(errorLogMessage)
 
     status match {
@@ -66,7 +67,7 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     val clientErrorLogMessage =
-      s"[$CorrelationIdHeaderKey=$mdcCorrelationId] Client error occurred: $statusCode for ${request.method} [${request.uri}] - $message"
+      s"[$CorrelationIdHeaderKey=$maybeCorrelationIdFromMdc] Client error occurred: $statusCode for ${request.method} [${request.uri}] - $message"
 
     statusCode match {
       case NOT_FOUND =>
@@ -79,11 +80,11 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
   }
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
-    logErrorWithMdcCorrelationId(request, exception)
+    logErrorWithmaybeCorrelationIdFromMdc(request, exception)
     Future.successful(resolveError(request, exception))
   }
 
-  private def logErrorWithMdcCorrelationId(request: RequestHeader, ex: Throwable): Unit =
+  private def logErrorWithmaybeCorrelationIdFromMdc(request: RequestHeader, ex: Throwable): Unit =
     logger.error(
       """
         |
@@ -94,12 +95,9 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
           case _                => ""
         },
         CorrelationIdHeaderKey,
-        mdcCorrelationId,
+        CorrelationIdMdc.maybeCorrelationIdFromMdc,
         request.method,
         request.uri),
       ex
     )
-
-  private def mdcCorrelationId: String =
-    Option(MDC.get(CorrelationIdHeaderKey)).getOrElse("Unknown")
 }

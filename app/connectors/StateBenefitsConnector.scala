@@ -17,6 +17,7 @@
 package connectors
 
 import config.AppConfig
+import connectors.Connector.hcWithCorrelationId
 import connectors.httpParsers.StateBenefitsSessionHttpParser.{StateBenefitsSessionHttpReads, StateBenefitsSessionResponse}
 import models.logging.ConnectorRequestInfo
 import models.mongo.StateBenefitsUserData
@@ -36,7 +37,7 @@ class StateBenefitsConnector @Inject() (val http: HttpClient, val appConfig: App
     http.PUT[StateBenefitsUserData, StateBenefitsSessionResponse](url, model)(
       StateBenefitsUserData.stateBenefitsUserDataWrites,
       StateBenefitsSessionHttpReads,
-      hc,
+      hcWithCorrelationId(hc),
       ec)
   }
 

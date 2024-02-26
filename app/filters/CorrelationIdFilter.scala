@@ -19,8 +19,8 @@ package filters
 import akka.stream.Materializer
 import models.logging.CorrelationId.{RequestHeaderOps, ResultOps}
 import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
+import org.slf4j.MDC
 import play.api.mvc._
-import uk.gov.hmrc.play.http.logging.Mdc
 
 import javax.inject._
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,14 +29,17 @@ class CorrelationIdFilter @Inject() (implicit val mat: Materializer, ec: Executi
 
   def apply(nextFilter: RequestHeader => Future[Result])(originalRequestHeader: RequestHeader): Future[Result] = {
     val (updatedRequestHeader, correlationId) = originalRequestHeader.withCorrelationId()
+    MDC.put(CorrelationIdHeaderKey, correlationId)
 
-    Mdc
-      .withMdc(
-        block = nextFilter(updatedRequestHeader).map { result =>
-          result.withCorrelationId(correlationId)
-        },
-        mdcData = Map(CorrelationIdHeaderKey -> correlationId)
-      )(ec)
+    val futureResult = nextFilter(updatedRequestHeader).map { result =>
+      result.withCorrelationId(correlationId)
+    }
+
+    futureResult.onComplete { _ =>
+      MDC.remove(CorrelationIdHeaderKey)
+    }
+
+    futureResult
   }
 
 }

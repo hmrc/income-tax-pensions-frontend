@@ -17,6 +17,7 @@
 package connectors
 
 import config.AppConfig
+import connectors.Connector.hcWithCorrelationId
 import connectors.httpParsers.ExcludeJourneyHttpParser._
 import models.logging.ConnectorRequestInfo
 import play.api.Logging
@@ -32,7 +33,9 @@ class ExcludeJourneyConnector @Inject() (
 )(implicit ec: ExecutionContext)
     extends Logging {
 
-  def excludeJourney(journeyKey: String, taxYear: Int, nino: String)(implicit hc: HeaderCarrier): Future[ExcludeJourneyResponse] = {
+  def excludeJourney(journeyKey: String, taxYear: Int, nino: String)(hc: HeaderCarrier): Future[ExcludeJourneyResponse] = {
+    implicit val headerCarrier: HeaderCarrier = hcWithCorrelationId(hc)
+
     val url = s"${appConfig.incomeTaxSubmissionBEBaseUrl}/income-tax/nino/$nino/sources/exclude-journey/$taxYear"
     ConnectorRequestInfo("POST", url, "income-tax-submission").logRequest(logger)
 
