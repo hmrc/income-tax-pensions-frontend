@@ -20,6 +20,7 @@ import cats.implicits.{catsSyntaxOptionId, catsSyntaxTuple3Semigroupal, none, to
 import models.mongo.TextAndKey
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
+import utils.Constants.GBAlpha3Code
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
@@ -83,7 +84,7 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
       } yield OverseasSchemeProvider(
         providerName = name,
         providerAddress = address,
-        providerCountryCode = tps.alphaThreeCountryCode.fold(ifEmpty = "GBR")(identity),
+        providerCountryCode = tps.alphaThreeCountryCode.fold(ifEmpty = GBAlpha3Code)(identity),
         qualifyingRecognisedOverseasPensionScheme = tps.qops.fold(ifEmpty = none[Seq[String]])(qops => Seq(enforceValidQopsFormat(qops)).some),
         pensionSchemeTaxReference = tps.pstr.fold(ifEmpty = none[Seq[String]])(Seq(_).some)
       )
