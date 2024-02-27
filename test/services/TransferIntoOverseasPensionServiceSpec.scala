@@ -26,7 +26,12 @@ import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId, none}
 import common.TaxYear
 import mocks.{MockPensionConnector, MockSessionRepository, MockSubmissionsConnector}
 import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData}
-import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionCharges, PensionSchemeOverseasTransfers, TransfersIntoOverseasPensionsViewModel}
+import models.pension.charges.{
+  CreateUpdatePensionChargesRequestModel,
+  PensionCharges,
+  PensionSchemeOverseasTransfers,
+  TransfersIntoOverseasPensionsViewModel
+}
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import play.api.http.Status.BAD_REQUEST
