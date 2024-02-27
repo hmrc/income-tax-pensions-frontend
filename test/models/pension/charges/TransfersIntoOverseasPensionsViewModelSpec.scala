@@ -16,7 +16,8 @@
 
 package models.pension.charges
 
-import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
+import builders.TransfersIntoOverseasPensionsViewModelBuilder._
+import cats.implicits.{catsSyntaxOptionId, none}
 import support.UnitTest
 
 class TransfersIntoOverseasPensionsViewModelSpec extends UnitTest {
@@ -50,6 +51,40 @@ class TransfersIntoOverseasPensionsViewModelSpec extends UnitTest {
     "return false" when {
       "not all necessary questions have been populated" in {
         !aTransfersIntoOverseasPensionsViewModel.copy(pensionSchemeTransferChargeAmount = None).isFinished
+      }
+    }
+  }
+
+  ".maybeToDownstreamRequestModel" when {
+    "confirming all 3 actions of 1) transferring into a pension 2) getting charged and 3) the scheme paying the charge, occurred" should {
+      "convert the view model to PensionSchemeOverseasTransfers" in {
+        val expectedResult = PensionSchemeOverseasTransfers(
+          overseasSchemeProvider = Seq(
+            OverseasSchemeProvider(
+              providerName = "UK TPS",
+              providerAddress = "Some address 1",
+              providerCountryCode = "GBR",
+              qualifyingRecognisedOverseasPensionScheme = None,
+              pensionSchemeTaxReference = Some(Seq("12345678RA"))
+            ),
+            OverseasSchemeProvider(
+              providerName = "Non-UK TPS",
+              providerAddress = "Some address 2",
+              providerCountryCode = "FRA",
+              qualifyingRecognisedOverseasPensionScheme = Some(Seq("Q123456")),
+              pensionSchemeTaxReference = None
+            )
+          ),
+          transferCharge = 1999.99,
+          transferChargeTaxPaid = 1000.00
+        )
+
+        aTransfersIntoOverseasPensionsViewModel.maybeToDownstreamRequestModel shouldBe expectedResult.some
+      }
+    }
+    "all 3 actions were not confirmed" should {
+      "return None" in {
+        viewModelNoSchemeDetails.maybeToDownstreamRequestModel shouldBe none[PensionSchemeOverseasTransfers]
       }
     }
   }

@@ -16,6 +16,7 @@
 
 package controllers.pensions.transferIntoOverseasPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
@@ -27,7 +28,7 @@ import play.api.mvc._
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.TransfersIntoOverseasPensionsPages.TransferIntoOverseasPensionsCYA
 import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
-import services.{PensionChargesService, PensionSessionService}
+import services.{PensionSessionService, TransferIntoOverseasPensionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{Clock, SessionHelper}
 import views.html.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionsCYAView
@@ -40,7 +41,7 @@ class TransferIntoOverseasPensionsCYAController @Inject() (
     auditProvider: AuditActionsProvider,
     view: TransferIntoOverseasPensionsCYAView,
     pensionSessionService: PensionSessionService,
-    pensionChargesService: PensionChargesService,
+    chargesService: TransferIntoOverseasPensionService,
     errorHandler: ErrorHandler,
     mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -64,7 +65,7 @@ class TransferIntoOverseasPensionsCYAController @Inject() (
     val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
-        pensionChargesService.saveTransfersIntoOverseasPensionsViewModel(request.user, taxYear).map {
+        chargesService.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
           case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
         }

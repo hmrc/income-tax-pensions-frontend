@@ -104,6 +104,11 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
       renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
   )(implicit request: Request[_], hc: HeaderCarrier, clock: Clock): Future[Result] =
     loadDataAndHandle(taxYear, user) { (sessionData, priorData) =>
+      println()
+      println("sessionData: " + sessionData)
+      println()
+      println("priorData: " + priorData)
+      println()
       createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear, user, renderView)
     }
 

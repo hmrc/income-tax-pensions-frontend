@@ -67,7 +67,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
       ec)
   }
 
-  def deletePensionIncomeData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DeletePensionIncomeResponse] = {
+  def deletePensionIncome(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[DeletePensionIncomeResponse] = {
     val url = appConfig.pensionBEBaseUrl + s"/pension-income/session-data/nino/$nino/taxYear/${taxYear.toString}"
     ConnectorRequestInfo("DELETE", url, "income-tax-pensions").logRequest(logger)
     http.DELETE[DeletePensionIncomeResponse](url)(DeletePensionIncomeHttpReads, hc, ec)
