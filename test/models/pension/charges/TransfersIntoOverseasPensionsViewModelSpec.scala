@@ -56,7 +56,7 @@ class TransfersIntoOverseasPensionsViewModelSpec extends UnitTest {
   }
 
   ".maybeToDownstreamRequestModel" when {
-    "confirming all 3 actions of 1) transferring into a pension 2) getting charged and 3) the scheme paying the charge, occurred" should {
+    "all 3 actions of 1) transferring into a pension 2) getting charged and 3) the scheme paying the charge, occurred" should {
       "convert the view model to PensionSchemeOverseasTransfers" in {
         val expectedResult = PensionSchemeOverseasTransfers(
           overseasSchemeProvider = Seq(
@@ -82,7 +82,7 @@ class TransfersIntoOverseasPensionsViewModelSpec extends UnitTest {
         aTransfersIntoOverseasPensionsViewModel.maybeToDownstreamRequestModel shouldBe expectedResult.some
       }
     }
-    "all 3 actions were not confirmed" should {
+    "all 3 actions did not occur together" should {
       "return None" in {
         viewModelNoSchemeDetails.maybeToDownstreamRequestModel shouldBe none[PensionSchemeOverseasTransfers]
       }
