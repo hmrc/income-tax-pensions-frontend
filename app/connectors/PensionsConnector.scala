@@ -25,7 +25,6 @@ import connectors.httpParsers.PensionChargesSessionHttpParser.{PensionChargesSes
 import connectors.httpParsers.PensionIncomeSessionHttpParser.{PensionIncomeSessionHttpReads, PensionIncomeSessionResponse}
 import connectors.httpParsers.PensionReliefsSessionHttpParser.{PensionReliefsSessionHttpReads, PensionReliefsSessionResponse}
 import models.logging.ConnectorRequestInfo
-import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.CreateUpdatePensionReliefsModel

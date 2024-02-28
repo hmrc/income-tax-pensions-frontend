@@ -117,7 +117,7 @@ class ShortServicePensionsSchemeController @Inject() (actionsProvider: ActionsPr
         commonUpdatedScheme.copy(
           qualifyingRecognisedOverseasPensionScheme = Some(scheme.schemeReference),
           alphaTwoCountryCode = scheme.countryId,
-          alphaThreeCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(scheme.countryId)
+          alphaThreeCountryCode = Countries.maybeGet3AlphaCodeFrom2AlphaCode(scheme.countryId)
         )
       }
     }

@@ -30,20 +30,19 @@ import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, jo
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.{NrsService, PaymentsIntoOverseasPensionsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentsIntoOverseasPensionsCYAController @Inject() (
-    auditProvider: AuditActionsProvider,
-    view: PaymentsIntoOverseasPensionsCYAView,
-    errorHandler: ErrorHandler,
-    service: PaymentsIntoOverseasPensionsService,
-    nrsService: NrsService,
-    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditActionsProvider,
+                                                           view: PaymentsIntoOverseasPensionsCYAView,
+                                                           errorHandler: ErrorHandler,
+                                                           service: PaymentsIntoOverseasPensionsService,
+                                                           nrsService: NrsService,
+                                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
