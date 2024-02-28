@@ -34,5 +34,5 @@ class PensionIncomeConnectorHelper @Inject() (pensionConnector: PensionsConnecto
     pensionConnector.savePensionIncome(nino, taxYear, model)
 
   override def deleteData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]] =
-    pensionConnector.deletePensionIncomeData(nino, taxYear)
+    pensionConnector.deletePensionIncome(nino, taxYear)
 }

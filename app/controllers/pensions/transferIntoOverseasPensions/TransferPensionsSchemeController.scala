@@ -120,7 +120,9 @@ class TransferPensionsSchemeController @Inject() (actionsProvider: ActionsProvid
       if (commonUpdatedScheme.ukTransferCharge.contains(true)) {
         commonUpdatedScheme.copy(pstr = Some(scheme.schemeReference))
       } else {
-        commonUpdatedScheme.copy(qops = Some(scheme.schemeReference), alphaThreeCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(scheme.countryId))
+        commonUpdatedScheme.copy(
+          qops = Some(scheme.schemeReference),
+          alphaThreeCountryCode = Countries.maybeGet3AlphaCodeFrom2AlphaCode(scheme.countryId))
       }
     }
     pensionsUserdata.pensions.copy(
