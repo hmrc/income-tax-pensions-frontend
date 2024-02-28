@@ -17,7 +17,7 @@
 package models.logging
 
 import play.api.Logging
-import play.api.mvc.{AnyContent, Request, RequestHeader, Result}
+import play.api.mvc.{Request, RequestHeader, Result}
 import uk.gov.hmrc.http.HttpResponse
 
 import java.util.UUID

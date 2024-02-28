@@ -31,6 +31,8 @@ object IncomeFromOverseasPensionsViewModelBuilder {
     overseasIncomePensionSchemes = Seq(aPensionScheme1)
   )
 
+  val viewModelWithNoPensionSchemes = anIncomeFromOverseasPensionsSingleSchemeViewModel.copy(overseasIncomePensionSchemes = Seq.empty)
+
   val anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(
     paymentsFromOverseasPensionsQuestion = Some(true),
     overseasIncomePensionSchemes = Seq(

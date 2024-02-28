@@ -49,7 +49,12 @@ trait MockPensionConnector extends MockFactory {
     def deletePensionCharges(nino: String, taxYear: Int) =
       (mockPensionsConnector
         .deletePensionCharges(_: String, _: Int)(_: HeaderCarrier, _: ExecutionContext))
+
+    def deletePensionIncome(nino: String, taxYear: Int) =
+      (mockPensionsConnector
+        .deletePensionIncome(_: String, _: Int)(_: HeaderCarrier, _: ExecutionContext))
         .expects(nino, taxYear, *, *)
+    
   }
 
 }

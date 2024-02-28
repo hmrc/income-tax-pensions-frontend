@@ -19,8 +19,6 @@ package controllers.predicates.actions
 import common.SessionValues._
 import config.AppConfig
 import models.AuthorisationRequest
-import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
-import org.slf4j.MDC
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.Redirect
