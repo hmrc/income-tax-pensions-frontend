@@ -57,9 +57,9 @@ class TransferIntoOverseasPensionService @Inject() (repository: PensionsUserData
   private def sendDownstream(answers: TransfersIntoOverseasPensionsViewModel, prior: IncomeTaxUserData, user: User, taxYear: TaxYear)(implicit
       ec: ExecutionContext,
       hc: HeaderCarrier): EitherT[Future, APIErrorModel, Unit] = {
-    val areProvidingSchemeDetails = answers.transferPensionScheme.nonEmpty
+    val isProvidingSchemeDetails = answers.transferPensionScheme.nonEmpty
 
-    if (hasOtherPriorChargesSubmissions(prior) || areProvidingSchemeDetails)
+    if (hasOtherPriorChargesSubmissions(prior) || isProvidingSchemeDetails)
       EitherT(pensionsConnector.savePensionCharges(user.nino, taxYear.endYear, buildDownstreamUpsertRequestModel(answers, prior)))
     else
       EitherT(pensionsConnector.deletePensionCharges(user.nino, taxYear.endYear))
@@ -69,12 +69,11 @@ class TransferIntoOverseasPensionService @Inject() (repository: PensionsUserData
     val priorCharges = prior.pensions.flatMap(_.pensionCharges)
 
     val hasPriorPSTC = priorCharges.flatMap(_.pensionSavingsTaxCharges).isDefined
-    val hasPriorPSOT = priorCharges.flatMap(_.pensionSchemeOverseasTransfers).isDefined
     val hasPriorPSUP = priorCharges.flatMap(_.pensionSchemeUnauthorisedPayments).isDefined
     val hasPriorPC   = priorCharges.flatMap(_.pensionContributions).isDefined
     val hasPriorOPC  = priorCharges.flatMap(_.overseasPensionContributions).isDefined
 
-    if (hasPriorPSTC || hasPriorPSOT || hasPriorPSUP || hasPriorPC || hasPriorOPC) true
+    if (hasPriorPSTC || hasPriorPSUP || hasPriorPC || hasPriorOPC) true
     else false
   }
 
