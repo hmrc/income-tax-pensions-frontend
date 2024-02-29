@@ -39,6 +39,15 @@ object TransfersIntoOverseasPensionsViewModelBuilder {
     transferPensionScheme = Seq(aUkTransferPensionScheme)
   )
 
+  val viewModelNoSchemeDetails = TransfersIntoOverseasPensionsViewModel(
+    transferPensionSavings = Some(false),
+    overseasTransferCharge = None,
+    overseasTransferChargeAmount = None,
+    pensionSchemeTransferCharge = None,
+    pensionSchemeTransferChargeAmount = None,
+    transferPensionScheme = Seq.empty
+  )
+
   val emptyTransfersIntoOverseasPensionsViewModel = TransfersIntoOverseasPensionsViewModel()
 
 }
