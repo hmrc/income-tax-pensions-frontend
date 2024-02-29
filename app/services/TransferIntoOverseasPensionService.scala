@@ -54,6 +54,9 @@ class TransferIntoOverseasPensionService @Inject() (repository: PensionsUserData
     EitherT(repository.createOrUpdate(updatedSessionModel))
   }
 
+  /** When calling `savePensionCharges`, the `CreateUpdatePensionChargesRequestModel` cannot have all fields as `None`, as API 1673/1868 does not
+    * allow an empty JSON payload. As a result, we have to call the delete endpoint.
+    */
   private def sendDownstream(answers: TransfersIntoOverseasPensionsViewModel, prior: IncomeTaxUserData, user: User, taxYear: TaxYear)(implicit
       ec: ExecutionContext,
       hc: HeaderCarrier): EitherT[Future, APIErrorModel, Unit] = {
