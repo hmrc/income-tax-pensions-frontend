@@ -16,69 +16,69 @@
 
 package controllers.pensions.shortServiceRefunds
 
+import cats.implicits.{catsSyntaxApplicativeId, catsSyntaxOptionId}
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.shortServiceRefunds.routes._
 import controllers.predicates.actions.ActionsProvider
-import controllers.validatedIndex
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import controllers.upsertSessionHandler
+import models.mongo.PensionsUserData
 import models.pension.charges.OverseasRefundPensionScheme
-import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.ShortServiceRefundsPages.RemoveRefundSchemePage
-import services.redirects.ShortServiceRefundsRedirects.{cyaPageCall, journeyCheck}
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.redirects.ShortServiceRefundsRedirects.{refundSummaryRedirect, validateFlow, validateIndex}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.shortServiceRefunds.RemoveRefundSchemeView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RemoveRefundSchemeController @Inject() (actionsProvider: ActionsProvider,
-                                              pensionSessionService: PensionSessionService,
+                                              service: PensionSessionService,
                                               view: RemoveRefundSchemeView,
                                               errorHandler: ErrorHandler,
-                                              mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                              mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    val refundChargeScheme = sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
-    validatedIndex(index, refundChargeScheme.size).fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))) { i =>
-      refundChargeScheme(i).name.fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))) { name =>
-        val checkRedirect = journeyCheck(RemoveRefundSchemePage, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
-          Future.successful(Ok(view(taxYear, name, index)))
-        }
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+    val answers = request.pensionsUserData.pensions.shortServiceRefunds
+
+    validateIndex[RemoveRefundSchemePage](index, answers, taxYear) { validIndex =>
+      validateFlow(RemoveRefundSchemePage(), answers, taxYear, validIndex.some) {
+        answers
+          .refundPensionScheme(validIndex)
+          .name
+          .map(schemeName => Ok(view(taxYear, schemeName, validIndex.some)))
+          .getOrElse(errorHandler.internalServerError())
+          .pure[Future]
       }
     }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    val refundChargeScheme = sessionUserData.pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
-    validatedIndex(index, refundChargeScheme.size)
-      .fold(Future.successful(Redirect(RefundSummaryController.show(taxYear)))) { i =>
-        val updatedRefundScheme = refundChargeScheme.patch(i, Nil, 1)
-        val checkRedirect       = journeyCheck(RemoveRefundSchemePage, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-          updateSessionData(data, updatedRefundScheme, taxYear)
-        }
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+    val answers = request.pensionsUserData.pensions.shortServiceRefunds
+
+    validateIndex[RemoveRefundSchemePage](index, answers, taxYear) { validIndex =>
+      validateFlow(RemoveRefundSchemePage(), answers, taxYear, validIndex.some) {
+        val updatedSchemes = answers.refundPensionScheme.patch(validIndex, Nil, 1)
+        val updatedModel   = updateSessionModel(request.pensionsUserData, updatedSchemes)
+
+        upsertSessionHandler(service.createOrUpdateSession(updatedModel))(
+          ifSuccessful = refundSummaryRedirect(taxYear),
+          ifFailed = errorHandler.internalServerError()
+        )
       }
+    }
   }
 
-  private def updateSessionData[T](pensionUserData: PensionsUserData, refundChargeScheme: Seq[OverseasRefundPensionScheme], taxYear: Int)(implicit
-      request: UserSessionDataRequest[T]): Future[Result] = {
-    val updatedCyaModel: PensionsCYAModel =
-      pensionUserData.pensions.copy(shortServiceRefunds = pensionUserData.pensions.shortServiceRefunds.copy(refundPensionScheme = refundChargeScheme))
-
-    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
-      errorHandler.internalServerError()) {
-      Redirect(RefundSummaryController.show(taxYear))
-    }
+  private def updateSessionModel(session: PensionsUserData, updatedSchemes: Seq[OverseasRefundPensionScheme]): PensionsUserData = {
+    val updatedJourney  = session.pensions.shortServiceRefunds.copy(refundPensionScheme = updatedSchemes)
+    val updatedPensions = session.pensions.copy(shortServiceRefunds = updatedJourney)
+    session.copy(pensions = updatedPensions)
   }
 
 }

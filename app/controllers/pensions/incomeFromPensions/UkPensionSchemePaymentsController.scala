@@ -106,6 +106,6 @@ class UkPensionSchemePaymentsController @Inject() (
     val updatedViewModel   = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = filteredSchemes)
     val updatedPensionData = pensionsUserData.pensions.copy(incomeFromPensions = updatedViewModel)
     val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
-    pensionSessionService.createOrUpdateSessionData(updatedUserData).map(_.map(_ => updatedUserData))
+    pensionSessionService.createOrUpdateSession(updatedUserData).map(_.map(_ => updatedUserData))
   }
 }

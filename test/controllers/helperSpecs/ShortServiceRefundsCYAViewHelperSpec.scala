@@ -53,7 +53,7 @@ class ShortServiceRefundsCYAViewHelperSpec extends AnyWordSpec with Matchers {
         assertRowForRefundBoolean(summaryListRows.head, "Yes")
         assertRowForRefundAmount(summaryListRows(1), "£1,999.99")
         assertRowForNonUKBoolean(summaryListRows(2), "No tax paid")
-        assertRowForSchemes(summaryListRows(3), "Scheme Name with UK charge, Scheme Name without UK charge")
+        assertRowForSchemes(summaryListRows(3), "Scheme Name without UK charge")
       }
 
       "we have completed all sections" in {
@@ -64,7 +64,7 @@ class ShortServiceRefundsCYAViewHelperSpec extends AnyWordSpec with Matchers {
         assertRowForRefundAmount(summaryListRows(1), "£1,999.99")
         assertRowForNonUKBoolean(summaryListRows(2), "Yes")
         assertRowForNonUKAmount(summaryListRows(3), "£1,000")
-        assertRowForSchemes(summaryListRows(4), "Scheme Name with UK charge, Scheme Name without UK charge")
+        assertRowForSchemes(summaryListRows(4), "Scheme Name without UK charge")
       }
     }
   }

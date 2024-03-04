@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
+import cats.data.EitherT
+import cats.implicits.{catsSyntaxOptionId, none}
+import models.mongo.DatabaseError
+import play.api.mvc.Result
+
+import scala.concurrent.{ExecutionContext, Future}
+
 package object controllers {
 
   def validatedIndex(index: Option[Int], collectionSize: Int): Option[Int] =
     index.filter(i => i >= 0 && i < collectionSize)
+
+  def validateIndex_old[A](index: Int, collection: Seq[A]): Option[Int] =
+    if (index >= 0 && index < collection.size) index.some
+    else none[Int]
 
   def validatedSchemes[T](index: Option[Int], listItem: Seq[T]): Either[Unit, Option[T]] =
     index match {
@@ -26,10 +37,7 @@ package object controllers {
       case _                                              => Left(())
     }
 
-  def validateOptionalIndex(index: Option[Int], collectionSize: Int): Boolean =
-    index match {
-      case Some(index) if index < 0 => false
-      case Some(index)              => index < collectionSize
-      case _                        => true
-    }
+  def upsertSessionHandler(result: Future[Either[DatabaseError, Unit]])(ifSuccessful: Result, ifFailed: Result)(implicit
+      ec: ExecutionContext): Future[Result] =
+    EitherT(result).bimap(_ => ifFailed, _ => ifSuccessful).merge
 }

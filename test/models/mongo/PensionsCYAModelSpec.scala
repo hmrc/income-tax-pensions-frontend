@@ -22,7 +22,7 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PaymentsIntoPensionVewModelBuilder._
 import builders.PensionAnnualAllowanceViewModelBuilder._
 import builders.PensionsCYAModelBuilder
-import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsNonUkEmptySchemeViewModel
+import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsEmptySchemeViewModel
 import builders.TransfersIntoOverseasPensionsViewModelBuilder._
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsEmptySchemesViewModel
 import cats.implicits.catsSyntaxOptionId
@@ -41,7 +41,7 @@ class PensionsCYAModelSpec extends AnyWordSpecLike with Matchers {
       paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsNoReliefsViewModel,
       incomeFromOverseasPensions = anIncomeFromOverseasPensionsWithFalseFtcrValueViewModel,
       transfersIntoOverseasPensions = aTransfersIntoOverseasPensionsAnotherViewModel,
-      shortServiceRefunds = aShortServiceRefundsNonUkEmptySchemeViewModel
+      shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel
     )
 
   "merge" must {

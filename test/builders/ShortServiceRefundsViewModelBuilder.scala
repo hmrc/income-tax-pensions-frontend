@@ -16,11 +16,8 @@
 
 package builders
 
-import builders.OverseasRefundPensionSchemeBuilder.{
-  anOverseasRefundPensionSchemeWithUkRefundCharge,
-  anOverseasRefundPensionSchemeWithoutUkRefundCharge
-}
-import models.pension.charges.{OverseasRefundPensionScheme, ShortServiceRefundsViewModel}
+import builders.OverseasRefundPensionSchemeBuilder.anOverseasRefundPensionScheme
+import models.pension.charges.ShortServiceRefundsViewModel
 
 object ShortServiceRefundsViewModelBuilder {
 
@@ -29,19 +26,7 @@ object ShortServiceRefundsViewModelBuilder {
     shortServiceRefundCharge = Some(1999.99),
     shortServiceRefundTaxPaid = Some(true),
     shortServiceRefundTaxPaidCharge = Some(1000.00),
-    refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge)
-  )
-
-  val aShortServiceRefundsNonUkEmptySchemeViewModel = ShortServiceRefundsViewModel(
-    shortServiceRefund = Some(true),
-    shortServiceRefundCharge = Some(1999.99),
-    shortServiceRefundTaxPaid = Some(true),
-    shortServiceRefundTaxPaidCharge = Some(1000.00),
-    refundPensionScheme = Seq(
-      OverseasRefundPensionScheme(
-        ukRefundCharge = Some(false)
-      )
-    )
+    refundPensionScheme = Seq(anOverseasRefundPensionScheme)
   )
 
   val aShortServiceRefundsEmptySchemeViewModel = ShortServiceRefundsViewModel(

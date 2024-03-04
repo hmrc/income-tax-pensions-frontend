@@ -16,19 +16,21 @@
 
 package controllers.pensions.shortServiceRefunds
 
+import cats.implicits.catsSyntaxOptionId
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.shortServiceRefunds.routes.{NonUkTaxRefundsController, ShortServiceRefundsCYAController}
 import controllers.predicates.actions.ActionsProvider
+import controllers.upsertSessionHandler
 import forms.FormsProvider
-import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData}
-import models.pension.charges.OverseasRefundPensionScheme
+import models.mongo.PensionsUserData
+import models.pension.charges.ShortServiceRefundsViewModel
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.PensionSessionService
 import services.redirects.ShortServiceRefundsRedirects.cyaPageCall
-import services.{PensionSessionService, ShortServiceRefundsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.shortServiceRefunds.TaxableRefundAmountView
 
 import javax.inject.{Inject, Singleton}
@@ -36,70 +38,57 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxableRefundAmountController @Inject() (actionsProvider: ActionsProvider,
-                                               pensionSessionService: PensionSessionService,
-                                               shortServiceRefundsService: ShortServiceRefundsService,
+                                               service: PensionSessionService,
                                                view: TaxableRefundAmountView,
                                                formsProvider: FormsProvider,
                                                errorHandler: ErrorHandler,
-                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
-    cleanUpSchemes(sessionData.pensionsUserData).map {
-      case Right(_) =>
-        val shortServiceRefundCharge: Option[BigDecimal] = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefundCharge
-        val refundOpt: Option[Boolean]                   = sessionData.pensionsUserData.pensions.shortServiceRefunds.shortServiceRefund
-        (refundOpt, shortServiceRefundCharge) match {
-          case (Some(a), amount) => Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user).fill((a, amount)), taxYear))
-          case _                 => Ok(view(formsProvider.shortServiceTaxableRefundForm(sessionData.user), taxYear))
-        }
-      case Left(_) => errorHandler.handleError(INTERNAL_SERVER_ERROR)
-    }
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit request =>
+    val answers      = request.pensionsUserData.pensions.shortServiceRefunds
+    val formProvider = formsProvider.shortServiceTaxableRefundForm(request.user)
+    val form         = answers.shortServiceRefund.fold(ifEmpty = formProvider)(formProvider.fill(_, answers.shortServiceRefundCharge))
+
+    Ok(view(form, taxYear))
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    formsProvider
-      .shortServiceTaxableRefundForm(sessionUserData.user)
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+    val journey      = request.pensionsUserData.pensions.shortServiceRefunds
+    val formProvider = formsProvider.shortServiceTaxableRefundForm(request.user)
+
+    formProvider
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        yesNoAmount =>
-          (yesNoAmount._1, yesNoAmount._2) match {
-            case (true, amount) => updateSessionData(sessionUserData.pensionsUserData, yesNo = true, amount, taxYear)
-            case (false, _)     => updateSessionData(sessionUserData.pensionsUserData, yesNo = false, None, taxYear)
-          }
+        errors => Future.successful(BadRequest(view(errors, taxYear))),
+        answer => {
+          val model = updateSessionModel(answer._1, answer._2)
+
+          upsertSessionHandler(service.createOrUpdateSession(model))(
+            ifSuccessful = handleSuccess(journey, answer._1, taxYear),
+            ifFailed = errorHandler.internalServerError()
+          )
+        }
       )
   }
 
-  private def updateSessionData[T](pensionUserData: PensionsUserData, yesNo: Boolean, amount: Option[BigDecimal], taxYear: Int)(implicit
-      request: UserSessionDataRequest[T]): Future[Result] = {
+  private def updateSessionModel(bool: Boolean, maybeAmount: Option[BigDecimal])(implicit
+      request: UserSessionDataRequest[AnyContent]): PensionsUserData = {
+    val journey = request.pensionsUserData.pensions.shortServiceRefunds
+    val updatedJourney =
+      if (bool) journey.copy(shortServiceRefund = true.some, shortServiceRefundCharge = maybeAmount)
+      else ShortServiceRefundsViewModel(shortServiceRefund = false.some)
 
-    val updatedCyaModel: PensionsCYAModel = shortServiceRefundsService.updateCyaWithShortServiceRefundGatewayQuestion(pensionUserData, yesNo, amount)
-    val redirectLocation =
-      if (updatedCyaModel.shortServiceRefunds.isFinished) {
-        cyaPageCall(taxYear)
-      } else if (yesNo) {
-        NonUkTaxRefundsController.show(taxYear)
-      } else {
-        ShortServiceRefundsCYAController.show(taxYear)
-      }
+    val updatedSession = request.pensionsUserData.pensions.copy(shortServiceRefunds = updatedJourney)
 
-    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
-      errorHandler.internalServerError()) {
-
-      Redirect(redirectLocation)
-    }
+    request.pensionsUserData.copy(pensions = updatedSession)
   }
 
-  private def cleanUpSchemes(pensionsUserData: PensionsUserData)(implicit
-      ec: ExecutionContext): Future[Either[DatabaseError, Seq[OverseasRefundPensionScheme]]] = {
-    val schemes            = pensionsUserData.pensions.shortServiceRefunds.refundPensionScheme
-    val filteredSchemes    = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
-    val updatedViewModel   = pensionsUserData.pensions.shortServiceRefunds.copy(refundPensionScheme = filteredSchemes)
-    val updatedPensionData = pensionsUserData.pensions.copy(shortServiceRefunds = updatedViewModel)
-    val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
-    pensionSessionService.createOrUpdateSessionData(updatedUserData).map(_.map(_ => filteredSchemes))
-  }
+  private def handleSuccess(journey: ShortServiceRefundsViewModel, bool: Boolean, taxYear: Int): Result =
+    if (journey.isFinished) Redirect(cyaPageCall(taxYear))
+    else if (bool) Redirect(NonUkTaxRefundsController.show(taxYear))
+    else Redirect(ShortServiceRefundsCYAController.show(taxYear))
+
 }

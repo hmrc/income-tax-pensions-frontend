@@ -79,7 +79,7 @@ class OverseasTransferChargePaidController @Inject() (actionsProvider: ActionsPr
     val updatedViewModel   = pensionsUserData.pensions.transfersIntoOverseasPensions.copy(transferPensionScheme = filteredSchemes)
     val updatedPensionData = pensionsUserData.pensions.copy(transfersIntoOverseasPensions = updatedViewModel)
     val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
-    pensionSessionService.createOrUpdateSessionData(updatedUserData).map(_.map(_ => updatedUserData))
+    pensionSessionService.createOrUpdateSession(updatedUserData).map(_.map(_ => updatedUserData))
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] =

@@ -16,11 +16,13 @@
 
 package controllers.pensions.shortServiceRefunds
 
+import cats.implicits.catsSyntaxOptionId
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.shortServiceRefunds.routes.RefundSummaryController
 import controllers.predicates.actions.ActionsProvider
+import controllers.upsertSessionHandler
 import forms.Countries
-import forms.overseas.PensionSchemeForm.{TcSsrPensionsSchemeFormModel, tcSsrPensionSchemeForm}
+import forms.overseas.PensionSchemeForm.OverseasOnlyPensionSchemeFormModel.{emptySchemeModel, fromRefundPensionScheme}
+import forms.overseas.PensionSchemeForm.{OverseasOnlyPensionSchemeFormModel, toOverseasPensionSchemeForm}
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.OverseasRefundPensionScheme
@@ -29,103 +31,85 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.ShortServiceRefundsPages.SchemeDetailsPage
-import services.redirects.ShortServiceRefundsRedirects.indexCheckThenJourneyCheck
+import services.redirects.ShortServiceRefundsRedirects.{refundSummaryRedirect, validateIndex, validateFlow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.shortServiceRefunds.ShortServicePensionsSchemeView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 @Singleton
 class ShortServicePensionsSchemeController @Inject() (actionsProvider: ActionsProvider,
-                                                      pensionSessionService: PensionSessionService,
+                                                      service: PensionSessionService,
                                                       view: ShortServicePensionsSchemeView,
                                                       errorHandler: ErrorHandler,
-                                                      mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                      mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit userSessionDataRequest =>
-      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, index, SchemeDetailsPage, taxYear) { data =>
-        val ssrPensionSchemes = data.pensions.shortServiceRefunds.refundPensionScheme
-        val idx               = index.getOrElse(0)
-        val isUKScheme        = ssrPensionSchemes(idx).ukRefundCharge.contains(true)
-        val form              = rfPensionSchemeForm(userSessionDataRequest.user, isUKScheme).fill(updateFormModel(ssrPensionSchemes(idx)))
-        Future.successful(Ok(view(form, taxYear, isUKScheme, idx)))
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+    val answers = request.pensionsUserData.pensions.shortServiceRefunds
+
+    // Create a context object?
+    validateIndex[SchemeDetailsPage](index, answers, taxYear) { validIndex =>
+      validateFlow(SchemeDetailsPage(), answers, taxYear, validIndex.some) {
+        val schemeModel = Try(answers.refundPensionScheme(validIndex)).fold(_ => emptySchemeModel, fromRefundPensionScheme)
+        val filledForm  = formProvider(request.user).fill(schemeModel)
+
+        Future.successful(Ok(view(filledForm, taxYear, validIndex)))
       }
+    }
+
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit userSessionDataRequest =>
-      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, index, SchemeDetailsPage, taxYear) { data =>
-        val ssrPensionSchemes = data.pensions.shortServiceRefunds.refundPensionScheme
-        val idx               = index.getOrElse(0)
-        val isUKScheme        = ssrPensionSchemes(idx).ukRefundCharge.contains(true)
-        rfPensionSchemeForm(userSessionDataRequest.user, isUKScheme)
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+    val journey = request.pensionsUserData.pensions.shortServiceRefunds
+
+    validateIndex[SchemeDetailsPage](index, journey, taxYear) { validIndex =>
+      validateFlow(SchemeDetailsPage(), journey, taxYear, validIndex.some) {
+        formProvider(request.user)
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, isUKScheme, idx))),
-            ssrPensionScheme => {
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, validIndex))),
+            scheme => {
+              val updatedSession = updateSessionModel(request.pensionsUserData, scheme, validIndex)
+              val userData       = request.pensionsUserData.copy(pensions = updatedSession)
 
-              val updatedCYAModel = updateViewModel(data, ssrPensionScheme, idx)
-              pensionSessionService.createOrUpdateSessionData(
-                userSessionDataRequest.user,
-                updatedCYAModel,
-                taxYear,
-                data.isPriorSubmission
-              )(errorHandler.internalServerError()) {
-                Redirect(RefundSummaryController.show(taxYear))
-              }
+              upsertSessionHandler(service.createOrUpdateSession(userData))(
+                ifSuccessful = refundSummaryRedirect(taxYear),
+                ifFailed = errorHandler.internalServerError()
+              )
             }
           )
       }
+    }
   }
 
-  private def rfPensionSchemeForm(user: User, isUKScheme: Boolean): Form[TcSsrPensionsSchemeFormModel] =
-    tcSsrPensionSchemeForm(
-      agentOrIndividual = if (user.isAgent) "agent" else "individual",
-      isUKScheme
+  private def formProvider(user: User): Form[OverseasOnlyPensionSchemeFormModel] =
+    toOverseasPensionSchemeForm(agentOrIndividual = if (user.isAgent) "agent" else "individual")
+
+  private def updateSessionModel(userData: PensionsUserData, formModel: OverseasOnlyPensionSchemeFormModel, index: Int): PensionsCYAModel = {
+    val schemeAnswers = userData.pensions.shortServiceRefunds.refundPensionScheme
+
+    val updatedSchemeModel = OverseasRefundPensionScheme(
+      name = formModel.providerName.some,
+      providerAddress = formModel.providerAddress.some,
+      qualifyingRecognisedOverseasPensionScheme = formModel.schemeReference.some,
+      alphaTwoCountryCode = formModel.countryId,
+      alphaThreeCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(formModel.countryId)
     )
 
-  private def updateFormModel(scheme: OverseasRefundPensionScheme): TcSsrPensionsSchemeFormModel =
-    TcSsrPensionsSchemeFormModel(
-      providerName = scheme.name.getOrElse(""),
-      schemeReference =
-        (if (scheme.ukRefundCharge.contains(true)) scheme.pensionSchemeTaxReference else scheme.qualifyingRecognisedOverseasPensionScheme)
-          .getOrElse(""),
-      providerAddress = scheme.providerAddress.getOrElse(""),
-      countryId = scheme.alphaTwoCountryCode.fold {
-        Countries.get2AlphaCodeFrom3AlphaCode(scheme.alphaThreeCountryCode)
-      } { alpha2 =>
-        Some(alpha2)
-      }
-    )
-
-  private def updateViewModel(pensionsUserdata: PensionsUserData, scheme: TcSsrPensionsSchemeFormModel, index: Int): PensionsCYAModel = {
-    val viewModel = pensionsUserdata.pensions.shortServiceRefunds
-    val updatedScheme = {
-      val commonUpdatedScheme = viewModel
-        .refundPensionScheme(index)
-        .copy(name = Some(scheme.providerName), providerAddress = Some(scheme.providerAddress))
-
-      if (commonUpdatedScheme.ukRefundCharge.contains(true)) {
-        commonUpdatedScheme.copy(pensionSchemeTaxReference = Some(scheme.schemeReference))
-      } else {
-        commonUpdatedScheme.copy(
-          qualifyingRecognisedOverseasPensionScheme = Some(scheme.schemeReference),
-          alphaTwoCountryCode = scheme.countryId,
-          alphaThreeCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(scheme.countryId)
-        )
-      }
+    val updatedSchemes = Try(schemeAnswers(index)) match {
+      case Success(_) => schemeAnswers.updated(index, updatedSchemeModel)
+      case Failure(_) => schemeAnswers :+ updatedSchemeModel
     }
-    pensionsUserdata.pensions.copy(
-      shortServiceRefunds = viewModel.copy(
-        refundPensionScheme = viewModel.refundPensionScheme.updated(index, updatedScheme)
-      )
-    )
+
+    val updatedJourney = userData.pensions.shortServiceRefunds.copy(refundPensionScheme = updatedSchemes)
+
+    userData.pensions.copy(shortServiceRefunds = updatedJourney)
   }
 
 }

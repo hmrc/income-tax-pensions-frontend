@@ -107,13 +107,13 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
   ".createOrUpdateSessionData" should {
     "return Right(unit) when createOrUpdate succeeds" in {
       mockCreateOrUpdate(emptySessionData, Right(()))
-      val response = await(service.createOrUpdateSessionData(emptySessionData))
+      val response = await(service.createOrUpdateSession(emptySessionData))
       response shouldBe Right(())
     }
 
     "return Left DB Error(400) when createOrUpdate fails" in {
       mockCreateOrUpdate(emptySessionData, Left(DataNotUpdated))
-      val response = await(service.createOrUpdateSessionData(emptySessionData))
+      val response = await(service.createOrUpdateSession(emptySessionData))
       response shouldBe Left(DataNotUpdated)
     }
   }

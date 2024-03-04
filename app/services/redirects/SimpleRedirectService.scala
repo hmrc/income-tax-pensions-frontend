@@ -26,6 +26,7 @@ import scala.concurrent.Future
 
 object SimpleRedirectService extends Logging {
 
+  // TODO: Remove taxYear
   def redirectBasedOnCurrentAnswers(taxYear: Int, data: Option[PensionsUserData], cyaPage: Call)(shouldRedirect: PensionsCYAModel => Option[Result])(
       continue: PensionsUserData => Future[Result]): Future[Result] = {
 

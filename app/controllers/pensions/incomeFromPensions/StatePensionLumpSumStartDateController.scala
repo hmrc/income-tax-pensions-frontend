@@ -86,7 +86,7 @@ class StatePensionLumpSumStartDateController @Inject() (actionsProvider: Actions
               val updatedModel =
                 data.copy(pensions = data.pensions.copy(incomeFromPensions = data.pensions.incomeFromPensions.copy(statePensionLumpSum =
                   Some(sP.copy(startDateQuestion = Some(true), startDate = Some(formWithStartDate.toLocalDate))))))
-              pensionSessionService.createOrUpdateSessionData(updatedModel).map {
+              pensionSessionService.createOrUpdateSession(updatedModel).map {
                 case Right(_) =>
                   statePensionIsFinishedCheck(updatedModel.pensions.incomeFromPensions, taxYear, StatePensionAddToCalculationController.show(taxYear))
                 case _ => errorHandler.internalServerError()

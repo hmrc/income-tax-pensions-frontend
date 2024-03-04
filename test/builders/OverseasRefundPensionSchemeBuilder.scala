@@ -20,22 +20,9 @@ import models.pension.charges.OverseasRefundPensionScheme
 
 object OverseasRefundPensionSchemeBuilder {
 
-  val anOverseasRefundPensionSchemeWithUkRefundCharge: OverseasRefundPensionScheme =
+  val anOverseasRefundPensionScheme: OverseasRefundPensionScheme =
     OverseasRefundPensionScheme(
-      ukRefundCharge = Some(true),
-      name = Some("Scheme Name with UK charge"),
-      pensionSchemeTaxReference = Some("12345678RA"),
-      qualifyingRecognisedOverseasPensionScheme = None,
-      providerAddress = Some("Scheme Address 1"),
-      alphaTwoCountryCode = None,
-      alphaThreeCountryCode = None
-    )
-
-  val anOverseasRefundPensionSchemeWithoutUkRefundCharge: OverseasRefundPensionScheme =
-    OverseasRefundPensionScheme(
-      ukRefundCharge = Some(false),
       name = Some("Scheme Name without UK charge"),
-      pensionSchemeTaxReference = None,
       qualifyingRecognisedOverseasPensionScheme = Some("123456"),
       providerAddress = Some("Scheme Address 2"),
       alphaTwoCountryCode = Some("FR"),

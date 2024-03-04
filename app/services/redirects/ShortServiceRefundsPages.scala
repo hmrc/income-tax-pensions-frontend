@@ -16,38 +16,47 @@
 
 package services.redirects
 
+import models.pension.charges.ShortServiceRefundsViewModel
+
+import scala.util.{Failure, Success, Try}
+
 sealed trait ShortServiceRefundsPages {
-  val journeyNo: Int
+  def isValidInCurrentState(state: ShortServiceRefundsViewModel, maybeIndex: Option[Int] = None): Boolean
 }
 
 object ShortServiceRefundsPages {
 
-  case object TaxableRefundsAmountPage extends ShortServiceRefundsPages {
-    override val journeyNo: Int = 1
+  final case object NonUkTaxRefundsAmountPage extends ShortServiceRefundsPages {
+    override def isValidInCurrentState(state: ShortServiceRefundsViewModel, maybeIndex: Option[Int] = None): Boolean =
+      state.shortServiceRefund.contains(true) && state.shortServiceRefundCharge.isDefined
   }
 
-  case object NonUkTaxRefundsAmountPage extends ShortServiceRefundsPages {
-    override val journeyNo: Int = 2
+  final case class SchemeDetailsPage() extends ShortServiceRefundsPages {
+    override def isValidInCurrentState(state: ShortServiceRefundsViewModel, maybeIndex: Option[Int] = None): Boolean =
+      state.shortServiceRefund.contains(true) && state.shortServiceRefundCharge.isDefined
   }
 
-  case object SchemePaidTaxOnRefundsPage extends ShortServiceRefundsPages {
-    override val journeyNo: Int = 3
+  final case object RefundSchemesSummaryPage extends ShortServiceRefundsPages {
+    override def isValidInCurrentState(state: ShortServiceRefundsViewModel, maybeIndex: Option[Int] = None): Boolean = {
+      val noPartiallyCompletedSchemes = state.refundPensionScheme.forall(_.isFinished) || state.refundPensionScheme.isEmpty
+
+      state.shortServiceRefund.contains(true) && noPartiallyCompletedSchemes
+    }
   }
 
-  case object SchemeDetailsPage extends ShortServiceRefundsPages {
-    override val journeyNo: Int = 4
+  final case class RemoveRefundSchemePage() extends ShortServiceRefundsPages {
+    override def isValidInCurrentState(state: ShortServiceRefundsViewModel, maybeIndex: Option[Int] = None): Boolean =
+      maybeIndex.exists { index =>
+        Try(state.refundPensionScheme(index)) match {
+          case Success(scheme) => scheme.isFinished
+          case Failure(_)      => false
+        }
+      }
   }
 
-  case object RefundSchemesSummaryPage extends ShortServiceRefundsPages {
-    override val journeyNo: Int = 5
-  }
-
-  case object RemoveRefundSchemePage extends ShortServiceRefundsPages {
-    override val journeyNo: Int = 6
-  }
-
-  case object CYAPage extends ShortServiceRefundsPages {
-    override val journeyNo: Int = 7
+  final case object CYAPage extends ShortServiceRefundsPages {
+    override def isValidInCurrentState(state: ShortServiceRefundsViewModel, maybeIndex: Option[Int] = None): Boolean =
+      state.isFinished
   }
 
 }

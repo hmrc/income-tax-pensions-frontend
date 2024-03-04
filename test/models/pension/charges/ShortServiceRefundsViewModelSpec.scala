@@ -16,10 +16,7 @@
 
 package models.pension.charges
 
-import builders.OverseasRefundPensionSchemeBuilder.{
-  anOverseasRefundPensionSchemeWithUkRefundCharge,
-  anOverseasRefundPensionSchemeWithoutUkRefundCharge
-}
+import builders.OverseasRefundPensionSchemeBuilder.anOverseasRefundPensionScheme
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
 import support.UnitTest
 
@@ -47,7 +44,7 @@ class ShortServiceRefundsViewModelSpec extends UnitTest { // scalatest:off magic
             shortServiceRefund = Some(true),
             shortServiceRefundCharge = Some(25),
             shortServiceRefundTaxPaid = Some(false),
-            refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithUkRefundCharge, anOverseasRefundPensionSchemeWithoutUkRefundCharge)
+            refundPensionScheme = Seq(anOverseasRefundPensionScheme)
           )
           .isFinished shouldBe true
       }
@@ -69,18 +66,14 @@ class ShortServiceRefundsViewModelSpec extends UnitTest { // scalatest:off magic
             shortServiceRefundTaxPaid = Some(false),
             refundPensionScheme = Seq(
               OverseasRefundPensionScheme(
-                ukRefundCharge = Some(false),
                 name = Some("Overseas Refund Scheme Name"),
-                pensionSchemeTaxReference = None,
                 qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
                 providerAddress = Some("Scheme Address"),
                 alphaTwoCountryCode = Some("FR"),
                 alphaThreeCountryCode = Some("FRA")
               ),
               OverseasRefundPensionScheme(
-                ukRefundCharge = Some(false),
                 name = Some("Overseas Refund Scheme Name"),
-                pensionSchemeTaxReference = Some("12345678RA"),
                 qualifyingRecognisedOverseasPensionScheme = None,
                 providerAddress = Some("Scheme Address"),
                 alphaTwoCountryCode = None,
@@ -108,13 +101,6 @@ class ShortServiceRefundsViewModelSpec extends UnitTest { // scalatest:off magic
       val result = OverseasPensionContributions(
         overseasSchemeProvider = Seq(
           OverseasSchemeProvider(
-            providerName = "Scheme Name with UK charge",
-            providerAddress = "Scheme Address 1",
-            providerCountryCode = "",
-            qualifyingRecognisedOverseasPensionScheme = None,
-            pensionSchemeTaxReference = Some(Seq("12345678RA"))
-          ),
-          OverseasSchemeProvider(
             providerName = "Scheme Name without UK charge",
             providerAddress = "Scheme Address 2",
             providerCountryCode = "FRA",
@@ -125,7 +111,7 @@ class ShortServiceRefundsViewModelSpec extends UnitTest { // scalatest:off magic
         shortServiceRefund = 1999.99,
         shortServiceRefundTaxPaid = 1000.00
       )
-      aShortServiceRefundsViewModel.toOverseasPensionContributions shouldBe result
+      aShortServiceRefundsViewModel.toDownstreamRequestModel shouldBe result
     }
   }
 }
