@@ -30,7 +30,7 @@ import services.redirects.ShortServiceRefundsPages.CYAPage
 import services.redirects.ShortServiceRefundsRedirects.taskListRedirect
 import services.{PensionChargesService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.EitherTUtils.EitherTOps
+import utils.EitherTUtils.CasterOps
 import utils.{Clock, SessionHelper}
 import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.validateFlow
 import views.html.pensions.shortServiceRefunds.ShortServiceRefundsCYAView

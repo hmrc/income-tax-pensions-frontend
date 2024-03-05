@@ -32,7 +32,7 @@ import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Clock
-import utils.EitherTUtils.EitherTOps
+import utils.EitherTUtils.CasterOps
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

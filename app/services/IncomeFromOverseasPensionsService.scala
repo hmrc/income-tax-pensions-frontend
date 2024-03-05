@@ -27,7 +27,7 @@ import models.pension.income.{CreateUpdatePensionIncomeRequestModel, ForeignPens
 import models.{APIErrorModel, IncomeTaxUserData, User}
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.EitherTUtils.EitherTOps
+import utils.EitherTUtils.CasterOps
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

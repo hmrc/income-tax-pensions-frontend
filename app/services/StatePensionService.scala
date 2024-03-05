@@ -26,7 +26,7 @@ import models.pension.statebenefits.ClaimCYAModel
 import repositories.PensionsUserDataRepository
 import services.BenefitType.{StatePension, StatePensionLumpSum}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.EitherTUtils.EitherTOps
+import utils.EitherTUtils.CasterOps
 
 import java.time.{Instant, LocalDate}
 import javax.inject.Inject

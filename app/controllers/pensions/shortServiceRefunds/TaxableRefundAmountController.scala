@@ -26,9 +26,9 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.ShortServiceRefundsService
-import services.ShortServiceRefundsService.EitherTOps
 import services.redirects.ShortServiceRefundsRedirects.{cyaPageRedirect, nonUkTaxRefundsRedirect}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.EitherTUtils.ResultMergersOps
 import utils.SessionHelper
 import views.html.pensions.shortServiceRefunds.TaxableRefundAmountView
 

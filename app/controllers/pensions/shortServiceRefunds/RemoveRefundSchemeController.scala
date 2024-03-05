@@ -24,10 +24,10 @@ import models.pension.charges.OverseasRefundPensionScheme
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ShortServiceRefundsService
-import services.ShortServiceRefundsService.EitherTOps
 import services.redirects.ShortServiceRefundsPages.RemoveRefundSchemePage
 import services.redirects.ShortServiceRefundsRedirects.refundSummaryRedirect
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.EitherTUtils.ResultMergersOps
 import utils.SessionHelper
 import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.{validateFlow, validateIndex}
 import views.html.pensions.shortServiceRefunds.RemoveRefundSchemeView

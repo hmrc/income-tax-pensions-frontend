@@ -31,9 +31,3 @@ class ShortServiceRefundsService @Inject() (service: PensionSessionService, erro
       .leftMap(_ => errorHandler.internalServerError())
 
 }
-object ShortServiceRefundsService {
-  implicit class EitherTOps(value: EitherT[Future, Result, Unit]) {
-    def onSuccess(result: Result)(implicit ec: ExecutionContext): Future[Result] =
-      value.map(_ => result).merge
-  }
-}

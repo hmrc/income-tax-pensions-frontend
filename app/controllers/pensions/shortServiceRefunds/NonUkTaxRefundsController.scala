@@ -27,10 +27,10 @@ import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.ShortServiceRefundsService
-import services.ShortServiceRefundsService.EitherTOps
 import services.redirects.ShortServiceRefundsPages.NonUkTaxRefundsAmountPage
 import services.redirects.ShortServiceRefundsRedirects.{cyaPageRedirect, refundSchemeRedirect, refundSummaryRedirect}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.EitherTUtils.ResultMergersOps
 import utils.SessionHelper
 import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.validateFlow
 import views.html.pensions.shortServiceRefunds.NonUkTaxRefundsView
