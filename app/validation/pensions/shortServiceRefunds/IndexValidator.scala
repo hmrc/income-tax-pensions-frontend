@@ -37,7 +37,7 @@ object IndexValidator {
       index match {
         case Some(idx) =>
           val isIndexInBounds =
-            if (idx == 0 || idx >= 0 && idx <= schemes.size) true
+            if (idx >= 0 && idx <= schemes.size) true
             else false
 
           if (isIndexInBounds) idx.asRight
