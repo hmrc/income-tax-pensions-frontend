@@ -96,7 +96,7 @@ class ShortServiceRefundsViewModelSpec extends UnitTest { // scalatest:off magic
     }
   }
 
-  ".toOverseasPensionContributions" should {
+  ".toDownstreamRequestModel" should {
     "transform a ShortServiceRefundsViewModel into a OverseasPensionContributions" in {
       val result = OverseasPensionContributions(
         overseasSchemeProvider = Seq(
