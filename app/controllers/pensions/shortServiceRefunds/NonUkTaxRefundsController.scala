@@ -17,10 +17,8 @@
 package controllers.pensions.shortServiceRefunds
 
 import cats.implicits.catsSyntaxOptionId
-import config.{AppConfig, ErrorHandler}
-import controllers.pensions.shortServiceRefunds.routes._
+import config.AppConfig
 import controllers.predicates.actions.ActionsProvider
-import controllers.upsertSessionHandler
 import forms.FormsProvider
 import models.mongo.PensionsUserData
 import models.pension.charges.OverseasRefundPensionScheme.allSchemesFinished
@@ -28,11 +26,13 @@ import models.pension.charges.ShortServiceRefundsViewModel
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.PensionSessionService
+import services.ShortServiceRefundsService
+import services.ShortServiceRefundsService.EitherTOps
 import services.redirects.ShortServiceRefundsPages.NonUkTaxRefundsAmountPage
-import services.redirects.ShortServiceRefundsRedirects.{cyaPageCall, validateFlow}
+import services.redirects.ShortServiceRefundsRedirects.{cyaPageRedirect, refundSchemeRedirect, refundSummaryRedirect}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
+import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.validateFlow
 import views.html.pensions.shortServiceRefunds.NonUkTaxRefundsView
 
 import javax.inject.{Inject, Singleton}
@@ -40,10 +40,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NonUkTaxRefundsController @Inject() (actionsProvider: ActionsProvider,
-                                           service: PensionSessionService,
+                                           service: ShortServiceRefundsService,
                                            view: NonUkTaxRefundsView,
                                            formsProvider: FormsProvider,
-                                           errorHandler: ErrorHandler,
                                            mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
@@ -53,7 +52,7 @@ class NonUkTaxRefundsController @Inject() (actionsProvider: ActionsProvider,
     val answers      = request.pensionsUserData.pensions.shortServiceRefunds
     val formProvider = formsProvider.nonUkTaxRefundsForm(request.user)
 
-    validateFlow(NonUkTaxRefundsAmountPage, answers, taxYear) {
+    validateFlow(answers, NonUkTaxRefundsAmountPage, taxYear) {
       val form = answers.shortServiceRefund.fold(formProvider)(formProvider.fill(_, answers.shortServiceRefundTaxPaidCharge))
 
       Future.successful(Ok(view(form, taxYear)))
@@ -64,27 +63,23 @@ class NonUkTaxRefundsController @Inject() (actionsProvider: ActionsProvider,
     val journey      = request.pensionsUserData.pensions.shortServiceRefunds
     val formProvider = formsProvider.nonUkTaxRefundsForm(request.user)
 
-    validateFlow(NonUkTaxRefundsAmountPage, journey, taxYear) {
+    validateFlow(journey, NonUkTaxRefundsAmountPage, taxYear) {
       formProvider
         .bindFromRequest()
         .fold(
           errors => Future.successful(BadRequest(view(errors, taxYear))),
-          answer => {
-            val model = updateSessionModel(answer._1, answer._2)
-
-            upsertSessionHandler(service.createOrUpdateSession(model))(
-              ifSuccessful = handleSuccess(journey, taxYear),
-              ifFailed = errorHandler.internalServerError()
-            )
-          }
+          answer =>
+            service
+              .upsertSession(updateSessionModel(answer._1, answer._2))
+              .onSuccess(redirectTo(journey, taxYear))
         )
     }
   }
 
-  private def handleSuccess(journey: ShortServiceRefundsViewModel, taxYear: Int): Result =
-    if (journey.isFinished) Redirect(cyaPageCall(taxYear))
-    else if (allSchemesFinished(journey.refundPensionScheme)) Redirect(RefundSummaryController.show(taxYear))
-    else Redirect(ShortServicePensionsSchemeController.show(taxYear, None))
+  private def redirectTo(journey: ShortServiceRefundsViewModel, taxYear: Int): Result =
+    if (journey.isFinished) cyaPageRedirect(taxYear)
+    else if (allSchemesFinished(journey.refundPensionScheme)) refundSummaryRedirect(taxYear)
+    else refundSchemeRedirect(taxYear, None)
 
   private def updateSessionModel(bool: Boolean, maybeAmount: Option[BigDecimal])(implicit
       request: UserSessionDataRequest[AnyContent]): PensionsUserData = {

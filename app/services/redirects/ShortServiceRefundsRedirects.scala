@@ -18,40 +18,18 @@ package services.redirects
 
 import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.pensions.shortServiceRefunds.routes._
-import models.pension.charges.ShortServiceRefundsViewModel
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
-import services.redirects.ShortServiceRefundsPages.RemoveRefundSchemePage
-import validation.pensions.shortServiceRefunds.IndexValidator
-
-import scala.concurrent.Future
 
 object ShortServiceRefundsRedirects {
 
-  def firstPageRedirect(taxYear: Int): Result     = Redirect(TaxableRefundAmountController.show(taxYear))
-  def taskListRedirect(taxYear: Int): Result      = Redirect(OverseasPensionsSummaryController.show(taxYear))
-  def refundSummaryRedirect(taxYear: Int): Result = Redirect(refundSummaryCall(taxYear))
+  def firstPageRedirect(taxYear: Int): Result                             = Redirect(TaxableRefundAmountController.show(taxYear))
+  def taskListRedirect(taxYear: Int): Result                              = Redirect(OverseasPensionsSummaryController.show(taxYear))
+  def refundSummaryRedirect(taxYear: Int): Result                         = Redirect(refundSummaryCall(taxYear))
+  def cyaPageRedirect(taxYear: Int): Result                               = Redirect(cyaPageCall(taxYear))
+  def refundSchemeRedirect(taxYear: Int, maybeIndex: Option[Int]): Result = Redirect(ShortServicePensionsSchemeController.show(taxYear, maybeIndex))
+  def nonUkTaxRefundsRedirect(taxYear: Int): Result                       = Redirect(NonUkTaxRefundsController.show(taxYear))
 
   def refundSummaryCall(taxYear: Int): Call = RefundSummaryController.show(taxYear)
   def cyaPageCall(taxYear: Int): Call       = ShortServiceRefundsCYAController.show(taxYear)
-
-  def validateIndex[A <: ShortServiceRefundsPages: IndexValidator](index: Option[Int], answers: ShortServiceRefundsViewModel, taxYear: Int)(
-      blockIfValid: Int => Future[Result]): Future[Result] = {
-    val validator = implicitly[IndexValidator[A]]
-    validator.validate(index, answers.refundPensionScheme, taxYear) match {
-      case Right(index)   => blockIfValid(index)
-      case Left(redirect) => Future.successful(Redirect(redirect.location))
-    }
-  }
-
-  def validateFlow(page: ShortServiceRefundsPages, answers: ShortServiceRefundsViewModel, taxYear: Int, index: Option[Int] = None)(
-      blockIfValid: => Future[Result]): Future[Result] =
-    if (page.isValidInCurrentState(answers, index)) blockIfValid
-    else {
-      val redirectLocation = page match {
-        case RemoveRefundSchemePage() => refundSummaryRedirect(taxYear)
-        case _                        => firstPageRedirect(taxYear)
-      }
-      Future.successful(redirectLocation)
-    }
 }

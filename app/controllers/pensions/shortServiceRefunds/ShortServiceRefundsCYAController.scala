@@ -27,11 +27,12 @@ import models.requests.UserPriorAndSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.redirects.ShortServiceRefundsPages.CYAPage
-import services.redirects.ShortServiceRefundsRedirects.{validateFlow, taskListRedirect}
+import services.redirects.ShortServiceRefundsRedirects.taskListRedirect
 import services.{PensionChargesService, PensionSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.EitherTUtils.EitherTOps
 import utils.{Clock, SessionHelper}
+import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.validateFlow
 import views.html.pensions.shortServiceRefunds.ShortServiceRefundsCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -52,7 +53,7 @@ class ShortServiceRefundsCYAController @Inject() (
   def show(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsViewAuditing(taxYear) async { implicit request =>
     val answers = request.pensionsUserData.pensions.shortServiceRefunds
 
-    validateFlow(CYAPage, answers, taxYear) {
+    validateFlow(answers, CYAPage, taxYear) {
       Future.successful(Ok(view(taxYear, answers)))
     }
   }
@@ -60,7 +61,7 @@ class ShortServiceRefundsCYAController @Inject() (
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsUpdateAuditing(taxYear) async { implicit request =>
     val answers = request.pensionsUserData.pensions.shortServiceRefunds
 
-    validateFlow(CYAPage, answers, taxYear) {
+    validateFlow(answers, CYAPage, taxYear) {
       val resultOrError: EitherT[Future, ServiceError, Result] =
         for {
           maybeSession <- EitherT(sessionService.loadSession(taxYear, request.user)).leftAs[ServiceError]

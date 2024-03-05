@@ -17,18 +17,17 @@
 package controllers.pensions.shortServiceRefunds
 
 import cats.implicits.catsSyntaxOptionId
-import config.{AppConfig, ErrorHandler}
-import controllers.pensions.shortServiceRefunds.routes.{NonUkTaxRefundsController, ShortServiceRefundsCYAController}
+import config.AppConfig
 import controllers.predicates.actions.ActionsProvider
-import controllers.upsertSessionHandler
 import forms.FormsProvider
 import models.mongo.PensionsUserData
 import models.pension.charges.ShortServiceRefundsViewModel
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.PensionSessionService
-import services.redirects.ShortServiceRefundsRedirects.cyaPageCall
+import services.ShortServiceRefundsService
+import services.ShortServiceRefundsService.EitherTOps
+import services.redirects.ShortServiceRefundsRedirects.{cyaPageRedirect, nonUkTaxRefundsRedirect}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.shortServiceRefunds.TaxableRefundAmountView
@@ -38,10 +37,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxableRefundAmountController @Inject() (actionsProvider: ActionsProvider,
-                                               service: PensionSessionService,
+                                               service: ShortServiceRefundsService,
                                                view: TaxableRefundAmountView,
                                                formsProvider: FormsProvider,
-                                               errorHandler: ErrorHandler,
                                                mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
@@ -63,14 +61,10 @@ class TaxableRefundAmountController @Inject() (actionsProvider: ActionsProvider,
       .bindFromRequest()
       .fold(
         errors => Future.successful(BadRequest(view(errors, taxYear))),
-        answer => {
-          val model = updateSessionModel(answer._1, answer._2)
-
-          upsertSessionHandler(service.createOrUpdateSession(model))(
-            ifSuccessful = handleSuccess(journey, answer._1, taxYear),
-            ifFailed = errorHandler.internalServerError()
-          )
-        }
+        answer =>
+          service
+            .upsertSession(updateSessionModel(answer._1, answer._2))
+            .onSuccess(redirectTo(journey, answer._1, taxYear))
       )
   }
 
@@ -86,9 +80,8 @@ class TaxableRefundAmountController @Inject() (actionsProvider: ActionsProvider,
     request.pensionsUserData.copy(pensions = updatedSession)
   }
 
-  private def handleSuccess(journey: ShortServiceRefundsViewModel, bool: Boolean, taxYear: Int): Result =
-    if (journey.isFinished) Redirect(cyaPageCall(taxYear))
-    else if (bool) Redirect(NonUkTaxRefundsController.show(taxYear))
-    else Redirect(ShortServiceRefundsCYAController.show(taxYear))
+  private def redirectTo(journey: ShortServiceRefundsViewModel, bool: Boolean, taxYear: Int): Result =
+    if (journey.isFinished || !bool) cyaPageRedirect(taxYear)
+    else nonUkTaxRefundsRedirect(taxYear)
 
 }

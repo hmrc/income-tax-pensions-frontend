@@ -32,7 +32,7 @@ object IndexValidator {
   final case class RedirectLocation(location: Call)
   type RedirectOrValidIndex = Either[RedirectLocation, Int]
 
-  implicit val schemeIndexValidator: IndexValidator[SchemeDetailsPage] =
+  implicit val addSchemeIndexValidator: IndexValidator[SchemeDetailsPage] =
     (index: Option[Int], schemes: Seq[OverseasRefundPensionScheme], taxYear: Int) =>
       index match {
         case Some(idx) =>

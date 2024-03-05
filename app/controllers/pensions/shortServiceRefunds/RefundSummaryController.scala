@@ -21,9 +21,9 @@ import controllers.predicates.actions.ActionsProvider
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.redirects.ShortServiceRefundsPages.RefundSchemesSummaryPage
-import services.redirects.ShortServiceRefundsRedirects.validateFlow
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
+import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.validateFlow
 import views.html.pensions.shortServiceRefunds.RefundSummaryView
 
 import javax.inject.{Inject, Singleton}
@@ -39,8 +39,8 @@ class RefundSummaryController @Inject() (actionsProvider: ActionsProvider, view:
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
     val answers = request.pensionsUserData.pensions.shortServiceRefunds
 
-    validateFlow(RefundSchemesSummaryPage, answers, taxYear) {
+    validateFlow(answers, RefundSchemesSummaryPage, taxYear)(
       Future.successful(Ok(view(taxYear, answers.refundPensionScheme)))
-    }
+    )
   }
 }

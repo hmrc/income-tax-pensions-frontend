@@ -16,19 +16,20 @@
 
 package controllers.pensions.shortServiceRefunds
 
-import cats.implicits.{catsSyntaxApplicativeId, catsSyntaxOptionId}
+import cats.implicits.catsSyntaxOptionId
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.ActionsProvider
-import controllers.upsertSessionHandler
 import models.mongo.PensionsUserData
 import models.pension.charges.OverseasRefundPensionScheme
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionSessionService
+import services.ShortServiceRefundsService
+import services.ShortServiceRefundsService.EitherTOps
 import services.redirects.ShortServiceRefundsPages.RemoveRefundSchemePage
-import services.redirects.ShortServiceRefundsRedirects.{refundSummaryRedirect, validateFlow, validateIndex}
+import services.redirects.ShortServiceRefundsRedirects.refundSummaryRedirect
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
+import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.{validateFlow, validateIndex}
 import views.html.pensions.shortServiceRefunds.RemoveRefundSchemeView
 
 import javax.inject.{Inject, Singleton}
@@ -36,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RemoveRefundSchemeController @Inject() (actionsProvider: ActionsProvider,
-                                              service: PensionSessionService,
+                                              service: ShortServiceRefundsService,
                                               view: RemoveRefundSchemeView,
                                               errorHandler: ErrorHandler,
                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
@@ -48,13 +49,14 @@ class RemoveRefundSchemeController @Inject() (actionsProvider: ActionsProvider,
     val answers = request.pensionsUserData.pensions.shortServiceRefunds
 
     validateIndex[RemoveRefundSchemePage](index, answers, taxYear) { validIndex =>
-      validateFlow(RemoveRefundSchemePage(), answers, taxYear, validIndex.some) {
-        answers
+      validateFlow(answers, RemoveRefundSchemePage(), taxYear, validIndex.some) {
+        val result = answers
           .refundPensionScheme(validIndex)
           .name
           .map(schemeName => Ok(view(taxYear, schemeName, validIndex.some)))
           .getOrElse(errorHandler.internalServerError())
-          .pure[Future]
+
+        Future.successful(result)
       }
     }
   }
@@ -63,14 +65,13 @@ class RemoveRefundSchemeController @Inject() (actionsProvider: ActionsProvider,
     val answers = request.pensionsUserData.pensions.shortServiceRefunds
 
     validateIndex[RemoveRefundSchemePage](index, answers, taxYear) { validIndex =>
-      validateFlow(RemoveRefundSchemePage(), answers, taxYear, validIndex.some) {
+      validateFlow(answers, RemoveRefundSchemePage(), taxYear, validIndex.some) {
         val updatedSchemes = answers.refundPensionScheme.patch(validIndex, Nil, 1)
         val updatedModel   = updateSessionModel(request.pensionsUserData, updatedSchemes)
 
-        upsertSessionHandler(service.createOrUpdateSession(updatedModel))(
-          ifSuccessful = refundSummaryRedirect(taxYear),
-          ifFailed = errorHandler.internalServerError()
-        )
+        service
+          .upsertSession(updatedModel)
+          .onSuccess(refundSummaryRedirect(taxYear))
       }
     }
   }

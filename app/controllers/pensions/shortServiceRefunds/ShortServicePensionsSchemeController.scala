@@ -17,9 +17,8 @@
 package controllers.pensions.shortServiceRefunds
 
 import cats.implicits.catsSyntaxOptionId
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.predicates.actions.ActionsProvider
-import controllers.upsertSessionHandler
 import forms.Countries
 import forms.overseas.PensionSchemeForm.OverseasOnlyPensionSchemeFormModel.{emptySchemeModel, fromRefundPensionScheme}
 import forms.overseas.PensionSchemeForm.{OverseasOnlyPensionSchemeFormModel, toOverseasPensionSchemeForm}
@@ -29,11 +28,13 @@ import models.pension.charges.OverseasRefundPensionScheme
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionSessionService
+import services.ShortServiceRefundsService
+import services.ShortServiceRefundsService.EitherTOps
 import services.redirects.ShortServiceRefundsPages.SchemeDetailsPage
-import services.redirects.ShortServiceRefundsRedirects.{refundSummaryRedirect, validateIndex, validateFlow}
+import services.redirects.ShortServiceRefundsRedirects.refundSummaryRedirect
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
+import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.{validateFlow, validateIndex}
 import views.html.pensions.shortServiceRefunds.ShortServicePensionsSchemeView
 
 import javax.inject.{Inject, Singleton}
@@ -42,9 +43,8 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class ShortServicePensionsSchemeController @Inject() (actionsProvider: ActionsProvider,
-                                                      service: PensionSessionService,
+                                                      service: ShortServiceRefundsService,
                                                       view: ShortServicePensionsSchemeView,
-                                                      errorHandler: ErrorHandler,
                                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
@@ -53,9 +53,8 @@ class ShortServicePensionsSchemeController @Inject() (actionsProvider: ActionsPr
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
     val answers = request.pensionsUserData.pensions.shortServiceRefunds
 
-    // Create a context object?
     validateIndex[SchemeDetailsPage](index, answers, taxYear) { validIndex =>
-      validateFlow(SchemeDetailsPage(), answers, taxYear, validIndex.some) {
+      validateFlow(answers, SchemeDetailsPage(), taxYear, validIndex.some) {
         val schemeModel = Try(answers.refundPensionScheme(validIndex)).fold(_ => emptySchemeModel, fromRefundPensionScheme)
         val filledForm  = formProvider(request.user).fill(schemeModel)
 
@@ -69,7 +68,7 @@ class ShortServicePensionsSchemeController @Inject() (actionsProvider: ActionsPr
     val journey = request.pensionsUserData.pensions.shortServiceRefunds
 
     validateIndex[SchemeDetailsPage](index, journey, taxYear) { validIndex =>
-      validateFlow(SchemeDetailsPage(), journey, taxYear, validIndex.some) {
+      validateFlow(journey, SchemeDetailsPage(), taxYear, validIndex.some) {
         formProvider(request.user)
           .bindFromRequest()
           .fold(
@@ -78,10 +77,9 @@ class ShortServicePensionsSchemeController @Inject() (actionsProvider: ActionsPr
               val updatedSession = updateSessionModel(request.pensionsUserData, scheme, validIndex)
               val userData       = request.pensionsUserData.copy(pensions = updatedSession)
 
-              upsertSessionHandler(service.createOrUpdateSession(userData))(
-                ifSuccessful = refundSummaryRedirect(taxYear),
-                ifFailed = errorHandler.internalServerError()
-              )
+              service
+                .upsertSession(userData)
+                .onSuccess(refundSummaryRedirect(taxYear))
             }
           )
       }
