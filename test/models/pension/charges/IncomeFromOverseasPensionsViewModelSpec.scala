@@ -16,7 +16,8 @@
 
 package models.pension.charges
 
-import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsViewModel}
+import builders.IncomeFromOverseasPensionsViewModelBuilder._
+import cats.implicits.catsSyntaxOptionId
 import models.pension.income.ForeignPension
 import support.UnitTest
 
@@ -108,6 +109,38 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
       anIncomeFromOverseasPensionsEmptyViewModel.hasPriorData shouldBe false
       anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(false)).hasPriorData shouldBe false
       anIncomeFromOverseasPensionsViewModel.copy(overseasIncomePensionSchemes = Seq.empty).hasPriorData shouldBe false
+    }
+  }
+
+  "maybeToForeignPension" when {
+    "overseas income schemes are empty" should {
+      "return None" in {
+        viewModelWithNoPensionSchemes.maybeToForeignPension shouldBe None
+      }
+    }
+    "overseas income schemes are populated" should {
+      "transform all view model schemes to downstream model schemes" in {
+        val expectedResult: Seq[ForeignPension] = Seq(
+          ForeignPension(
+            countryCode = "FRA",
+            taxableAmount = 1999.99,
+            amountBeforeTax = Some(1999.99),
+            taxTakenOff = Some(1999.99),
+            specialWithholdingTax = Some(1999.99),
+            foreignTaxCreditRelief = Some(true)
+          ),
+          ForeignPension(
+            countryCode = "DEU",
+            taxableAmount = 2000.00,
+            amountBeforeTax = Some(2000.00),
+            taxTakenOff = Some(400.00),
+            specialWithholdingTax = Some(400.00),
+            foreignTaxCreditRelief = Some(true)
+          )
+        )
+
+        anIncomeFromOverseasPensionsViewModel.maybeToForeignPension shouldBe expectedResult.some
+      }
     }
   }
 

@@ -19,4 +19,5 @@ package utils
 object Constants {
 
   val zero: BigDecimal = BigDecimal(0.00)
+  val GBAlpha3Code     = "GBR"
 }
