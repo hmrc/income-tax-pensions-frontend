@@ -97,7 +97,7 @@ class ShortServicePensionsSchemeController @Inject() (actionsProvider: ActionsPr
       providerAddress = formModel.providerAddress.some,
       qualifyingRecognisedOverseasPensionScheme = formModel.schemeReference.some,
       alphaTwoCountryCode = formModel.countryId,
-      alphaThreeCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(formModel.countryId)
+      alphaThreeCountryCode = Countries.maybeGet3AlphaCodeFrom2AlphaCode(formModel.countryId)
     )
 
     val updatedSchemes = Try(schemeAnswers(index)) match {

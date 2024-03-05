@@ -91,7 +91,7 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
             .reliefs(idx)
             .copy(
               alphaTwoCountryCode = doubleTaxationAgreementFormModel.countryId,
-              alphaThreeCountryCode = Countries.get3AlphaCodeFrom2AlphaCode(doubleTaxationAgreementFormModel.countryId),
+              alphaThreeCountryCode = Countries.maybeGet3AlphaCodeFrom2AlphaCode(doubleTaxationAgreementFormModel.countryId),
               doubleTaxationArticle = doubleTaxationAgreementFormModel.article,
               doubleTaxationTreaty = doubleTaxationAgreementFormModel.treaty,
               doubleTaxationReliefAmount = doubleTaxationAgreementFormModel.reliefAmount

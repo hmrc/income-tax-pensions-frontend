@@ -19,7 +19,6 @@ package controllers.pensions
 import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
-import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import play.api.i18n.I18nSupport

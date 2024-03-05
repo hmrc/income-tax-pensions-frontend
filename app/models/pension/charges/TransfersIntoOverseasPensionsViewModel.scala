@@ -16,9 +16,11 @@
 
 package models.pension.charges
 
+import cats.implicits.{catsSyntaxOptionId, catsSyntaxTuple3Semigroupal, none, toTraverseOps}
 import models.mongo.TextAndKey
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
+import utils.Constants.GBAlpha3Code
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
@@ -58,6 +60,39 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
         true
       })
 
+  def maybeToDownstreamRequestModel: Option[PensionSchemeOverseasTransfers] =
+    (transferPensionSavings, overseasTransferCharge, pensionSchemeTransferCharge)
+      .flatMapN { case (transferred, charged, schemePaidTax) =>
+        if (transferred && charged && schemePaidTax)
+          for {
+            osp           <- fromTransferPensionSchemes(transferPensionScheme)
+            charge        <- overseasTransferChargeAmount
+            chargeTaxPaid <- pensionSchemeTransferChargeAmount
+          } yield PensionSchemeOverseasTransfers(
+            overseasSchemeProvider = osp,
+            transferCharge = charge,
+            transferChargeTaxPaid = chargeTaxPaid
+          )
+        else none[PensionSchemeOverseasTransfers]
+      }
+
+  private def fromTransferPensionSchemes(allTps: Seq[TransferPensionScheme]): Option[Seq[OverseasSchemeProvider]] =
+    allTps.traverse { tps =>
+      for {
+        name    <- tps.name
+        address <- tps.providerAddress
+      } yield OverseasSchemeProvider(
+        providerName = name,
+        providerAddress = address,
+        providerCountryCode = tps.alphaThreeCountryCode.fold(ifEmpty = GBAlpha3Code)(identity),
+        qualifyingRecognisedOverseasPensionScheme = tps.qops.fold(ifEmpty = none[Seq[String]])(qops => Seq(enforceValidQopsFormat(qops)).some),
+        pensionSchemeTaxReference = tps.pstr.fold(ifEmpty = none[Seq[String]])(Seq(_).some)
+      )
+    }
+
+  private def enforceValidQopsFormat(qops: String): String =
+    if (qops.startsWith("Q")) qops else s"Q$qops"
+
   def toTransfersIOP: PensionSchemeOverseasTransfers = PensionSchemeOverseasTransfers(
     overseasSchemeProvider = fromTransferPensionScheme(this.transferPensionScheme),
     transferCharge = this.overseasTransferChargeAmount.getOrElse(0.00),
@@ -92,6 +127,8 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
 
 object TransfersIntoOverseasPensionsViewModel {
   implicit val format: OFormat[TransfersIntoOverseasPensionsViewModel] = Json.format[TransfersIntoOverseasPensionsViewModel]
+
+  val empty: TransfersIntoOverseasPensionsViewModel = TransfersIntoOverseasPensionsViewModel()
 }
 
 case class EncryptedTransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option[EncryptedValue] = None,

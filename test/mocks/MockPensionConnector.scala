@@ -45,6 +45,17 @@ trait MockPensionConnector extends MockFactory {
       (mockPensionsConnector
         .savePensionIncome(_: String, _: Int, _: CreateUpdatePensionIncomeRequestModel)(_: HeaderCarrier, _: ExecutionContext))
         .expects(nino, taxYear, model, *, *)
+
+    def deletePensionCharges(nino: String, taxYear: Int) =
+      (mockPensionsConnector
+        .deletePensionCharges(_: String, _: Int)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(nino, taxYear, *, *)
+
+    def deletePensionIncome(nino: String, taxYear: Int) =
+      (mockPensionsConnector
+        .deletePensionIncome(_: String, _: Int)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(nino, taxYear, *, *)
+
   }
 
 }

@@ -16,6 +16,7 @@
 
 package models.pension.charges
 
+import cats.implicits.{none, toTraverseOps}
 import forms.Countries
 import models.mongo.TextAndKey
 import models.pension.PensionCYABaseModel
@@ -45,11 +46,28 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
 
   def hasPriorData: Boolean = paymentsFromOverseasPensionsQuestion.exists(_ && overseasIncomePensionSchemes.nonEmpty)
 
+  def maybeToForeignPension: Option[Seq[ForeignPension]] =
+    if (overseasIncomePensionSchemes.isEmpty) none[Seq[ForeignPension]]
+    else
+      overseasIncomePensionSchemes.traverse { scheme =>
+        for {
+          countryCode   <- scheme.alphaTwoCode
+          taxableAmount <- scheme.taxableAmount
+        } yield ForeignPension(
+          countryCode = Countries.get3AlphaCodeFrom2AlphaCode(countryCode),
+          taxableAmount = taxableAmount,
+          amountBeforeTax = scheme.pensionPaymentAmount,
+          taxTakenOff = scheme.pensionPaymentTaxPaid,
+          specialWithholdingTax = scheme.specialWithholdingTaxAmount,
+          foreignTaxCreditRelief = scheme.foreignTaxCreditReliefQuestion
+        )
+      }
+
   def toForeignPension: Seq[ForeignPension] =
     overseasIncomePensionSchemes.map { scheme =>
       ForeignPension(
-        countryCode = Countries.get3AlphaCodeFrom2AlphaCode(scheme.alphaTwoCode).get, // TODO validate CYA story to ensure country code present
-        taxableAmount = scheme.taxableAmount.get,                                     // TODO validate CYA story to ensure taxable amount is present
+        countryCode = Countries.maybeGet3AlphaCodeFrom2AlphaCode(scheme.alphaTwoCode).get, // TODO validate CYA story to ensure country code present
+        taxableAmount = scheme.taxableAmount.get, // TODO validate CYA story to ensure taxable amount is present
         amountBeforeTax = scheme.pensionPaymentAmount,
         taxTakenOff = scheme.pensionPaymentTaxPaid,
         specialWithholdingTax = scheme.specialWithholdingTaxAmount,
@@ -66,6 +84,8 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
 
 object IncomeFromOverseasPensionsViewModel {
   implicit val format: OFormat[IncomeFromOverseasPensionsViewModel] = Json.format[IncomeFromOverseasPensionsViewModel]
+
+  val empty: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(None, Nil)
 }
 
 case class EncryptedIncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion: Option[EncryptedValue] = None,
