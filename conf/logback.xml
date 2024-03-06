@@ -20,8 +20,7 @@
     <logger name="views" level="DEBUG"/>
     <logger name="viewsupport" level="DEBUG"/>
 
-<!--    <root level="${logger.application:-WARN}">-->
-    <root level="WARN">
+    <root level="${logger.application:-WARN}">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
