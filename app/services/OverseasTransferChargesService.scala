@@ -48,7 +48,7 @@ class OverseasTransferChargesService @Inject() (pensionSessionService: PensionSe
     val updatedCYA      = originalUserData.pensions.copy(transfersIntoOverseasPensions = updatedModel)
     val updatedUserData = originalUserData.copy(pensions = updatedCYA)
 
-    pensionSessionService.createOrUpdateSessionData(updatedUserData).map {
+    pensionSessionService.createOrUpdateSession(updatedUserData).map {
       case Left(_)  => Left(())
       case Right(_) => Right(updatedUserData)
     }

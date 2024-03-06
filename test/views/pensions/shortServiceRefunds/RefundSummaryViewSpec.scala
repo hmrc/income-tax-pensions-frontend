@@ -16,6 +16,7 @@
 
 package views.pensions.shortServiceRefunds
 
+import controllers.pensions.shortServiceRefunds.routes._
 import models.pension.charges.OverseasRefundPensionScheme
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
@@ -24,7 +25,6 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import views.html.pensions.shortServiceRefunds.RefundSummaryView
-import controllers.pensions.shortServiceRefunds.routes._
 class RefundSummaryViewSpec extends ViewUnitTest {
 
   object Selectors {
@@ -112,8 +112,8 @@ class RefundSummaryViewSpec extends ViewUnitTest {
           implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
           val cyaUrl = ShortServiceRefundsCYAController.show(taxYearEOY).url
-          val taxOnShortServiceRefundUrl = (refundPensionSchemeIndex: Option[Int]) =>
-            TaxOnShortServiceRefundController.show(taxYearEOY, refundPensionSchemeIndex = refundPensionSchemeIndex).url
+          val shortServiceSchemeUrl =
+            (refundPensionSchemeIndex: Option[Int]) => ShortServicePensionsSchemeController.show(taxYearEOY, refundPensionSchemeIndex).url
 
           titleCheck(expectedTitle, userScenario.isWelsh)
           h1Check(expectedHeading)
@@ -122,12 +122,12 @@ class RefundSummaryViewSpec extends ViewUnitTest {
           textOnPageCheck(s"${schemes.last.name.get}", pensionNameSelector(2))
 
           // links need to be updated
-          linkCheck(s"$change $change ${schemes.head.name.get}", changeLinkSelector(1), taxOnShortServiceRefundUrl(Some(0)))
+          linkCheck(s"$change $change ${schemes.head.name.get}", changeLinkSelector(1), shortServiceSchemeUrl(Some(0)))
           linkCheck(s"$remove $remove ${schemes.head.name.get}", removeLinkSelector(1), removeLink(0))
 
-          linkCheck(s"$change $change ${schemes.last.name.get}", changeLinkSelector(2), taxOnShortServiceRefundUrl(Some(1)))
+          linkCheck(s"$change $change ${schemes.last.name.get}", changeLinkSelector(2), shortServiceSchemeUrl(Some(1)))
           linkCheck(s"$remove $remove ${schemes.last.name.get}", removeLinkSelector(2), removeLink(1))
-          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, taxOnShortServiceRefundUrl(None))
+          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, shortServiceSchemeUrl(Some(2)))
 
           buttonCheck(expectedButtonText, continueButtonSelector, Some(cyaUrl))
           welshToggleCheck(userScenario.isWelsh)
@@ -138,8 +138,8 @@ class RefundSummaryViewSpec extends ViewUnitTest {
           val htmlFormat                  = underTest(taxYearEOY, schemes)
           implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-          val taxOnShortServiceRefundUrl = (refundPensionSchemeIndex: Option[Int]) =>
-            TaxOnShortServiceRefundController.show(taxYearEOY, refundPensionSchemeIndex = refundPensionSchemeIndex).url
+          val shortServiceSchemeUrl =
+            (refundPensionSchemeIndex: Option[Int]) => ShortServicePensionsSchemeController.show(taxYearEOY, refundPensionSchemeIndex).url
           val cyaUrl = ShortServiceRefundsCYAController.show(taxYearEOY).url
 
           titleCheck(expectedTitle, userScenario.isWelsh)
@@ -148,9 +148,9 @@ class RefundSummaryViewSpec extends ViewUnitTest {
           textOnPageCheck(s"${schemes.head.name.get}", pensionNameSelector(1))
           elementNotOnPageCheck(pensionNameSelector(2))
 
-          linkCheck(s"$change $change ${schemes.head.name.get}", changeLinkSelector(1), taxOnShortServiceRefundUrl(Some(0)))
+          linkCheck(s"$change $change ${schemes.head.name.get}", changeLinkSelector(1), shortServiceSchemeUrl(Some(0)))
           linkCheck(s"$remove $remove ${schemes.head.name.get}", removeLinkSelector(1), removeLink(0))
-          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, taxOnShortServiceRefundUrl(None))
+          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, shortServiceSchemeUrl(Some(2)))
 
           buttonCheck(expectedButtonText, continueButtonSelector, Some(cyaUrl))
           welshToggleCheck(userScenario.isWelsh)
@@ -178,18 +178,14 @@ class RefundSummaryViewSpec extends ViewUnitTest {
 
   private def getSchemes: Seq[OverseasRefundPensionScheme] = {
     val scheme1 = OverseasRefundPensionScheme(
-      ukRefundCharge = Some(true),
       name = Some("Overseas Refund Scheme Name"),
-      pensionSchemeTaxReference = None,
       qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
       providerAddress = Some("Scheme Address"),
       alphaTwoCountryCode = Some("FR"),
       alphaThreeCountryCode = Some("FRA")
     )
     val scheme2 = OverseasRefundPensionScheme(
-      ukRefundCharge = Some(true),
       name = Some("Pension Scheme 2"),
-      pensionSchemeTaxReference = None,
       qualifyingRecognisedOverseasPensionScheme = Some("QOPS123456"),
       providerAddress = Some("Scheme Address"),
       alphaTwoCountryCode = Some("FR"),

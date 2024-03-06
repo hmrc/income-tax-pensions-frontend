@@ -59,6 +59,6 @@ class CountrySummaryListController @Inject() (actionsProvider: ActionsProvider,
     val updatedViewModel   = pensionsUserData.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = filteredSchemes)
     val updatedPensionData = pensionsUserData.pensions.copy(incomeFromOverseasPensions = updatedViewModel)
     val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
-    pensionSessionService.createOrUpdateSessionData(updatedUserData).map(_.map(_ => updatedUserData))
+    pensionSessionService.createOrUpdateSession(updatedUserData).map(_.map(_ => updatedUserData))
   }
 }

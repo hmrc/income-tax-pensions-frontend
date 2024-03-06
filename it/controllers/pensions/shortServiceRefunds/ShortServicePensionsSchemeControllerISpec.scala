@@ -16,12 +16,13 @@
 
 package controllers.pensions.shortServiceRefunds
 
-import builders.OverseasRefundPensionSchemeBuilder.{
-  anOverseasRefundPensionSchemeWithUkRefundCharge,
-  anOverseasRefundPensionSchemeWithoutUkRefundCharge
-}
+import builders.OverseasRefundPensionSchemeBuilder.anOverseasRefundPensionScheme
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
-import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsEmptySchemeViewModel, minimalShortServiceRefundsViewModel}
+import builders.ShortServiceRefundsViewModelBuilder.{
+  aShortServiceRefundsEmptySchemeViewModel,
+  emptyShortServiceRefundsViewModel,
+  minimalShortServiceRefundsViewModel
+}
 import controllers.ControllerSpec
 import controllers.ControllerSpec.UserConfig
 import models.pension.charges.{OverseasRefundPensionScheme, ShortServiceRefundsViewModel}
@@ -42,26 +43,12 @@ class ShortServicePensionsSchemeControllerISpec
 
     "show the page when the user has relevant session data and valid index" when {
 
-      for (hasPriorData <- Seq(true, false)) {
-        s"the user submits a correct UK pension scheme form with ${if (hasPriorData) "" else "no "}prior pensions scheme data to update and redirects to the relevant page" in {
-          val ukModel =
-            aShortServiceRefundsEmptySchemeViewModel.copy(refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = Some(true))))
-          val ukModelWithScheme =
-            aShortServiceRefundsEmptySchemeViewModel.copy(refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithUkRefundCharge))
-          val viewModel = if (hasPriorData) ukModelWithScheme else ukModel
-          implicit val userConfig: UserConfig =
-            userConfigWhenIrrelevant(Some(pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = viewModel))))
-          implicit val response: WSResponse = getPageWithIndex(0)
-
-          response.status equals OK
-          getShortServicePensionsViewModel mustBe Some(viewModel)
-        }
-
-        s"the user submits a correct non-UK pension scheme form with ${if (hasPriorData) "" else "no "}prior pensions scheme data to update and redirects to the relevant page" in {
+      for (hasPriorData <- Seq(true, false))
+        s"the user submits a correct pension scheme form with ${if (hasPriorData) "" else "no "}prior pensions scheme data to update and redirects to the relevant page" in {
           val nonUkModel =
-            aShortServiceRefundsEmptySchemeViewModel.copy(refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = Some(true))))
+            aShortServiceRefundsEmptySchemeViewModel.copy(refundPensionScheme = Seq(OverseasRefundPensionScheme()))
           val nonUkModelWithScheme =
-            aShortServiceRefundsEmptySchemeViewModel.copy(refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithoutUkRefundCharge))
+            aShortServiceRefundsEmptySchemeViewModel.copy(refundPensionScheme = Seq(anOverseasRefundPensionScheme))
           val viewModel = if (hasPriorData) nonUkModelWithScheme else nonUkModel
           implicit val userConfig: UserConfig =
             userConfigWhenIrrelevant(Some(pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = viewModel))))
@@ -70,7 +57,6 @@ class ShortServicePensionsSchemeControllerISpec
           response.status equals OK
           getShortServicePensionsViewModel mustBe Some(viewModel)
         }
-      }
     }
 
     "redirect to the summary page" when {
@@ -83,9 +69,7 @@ class ShortServicePensionsSchemeControllerISpec
 
     "redirect to the first page in journey" when {
       "previous questions have not been answered" in {
-        val incompleteCYAModel = aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel.copy(
-          refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = None))
-        ))
+        val incompleteCYAModel              = aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)
         val sessionData                     = pensionsUserData(incompleteCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
         implicit val response: WSResponse   = getPageWithIndex(0)
@@ -93,10 +77,7 @@ class ShortServicePensionsSchemeControllerISpec
         assertRedirectionAsExpected(PageRelativeURLs.taxableShortServiceRefunds)
       }
       "page is invalid in journey" in {
-        val invalidCYAModel = aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel.copy(
-          shortServiceRefundTaxPaid = Some(false),
-          shortServiceRefundTaxPaidCharge = None
-        ))
+        val invalidCYAModel                 = aPensionsCYAModel.copy(shortServiceRefunds = minimalShortServiceRefundsViewModel)
         val sessionData                     = pensionsUserData(invalidCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
         implicit val response: WSResponse   = getPageWithIndex(0)
@@ -106,14 +87,11 @@ class ShortServicePensionsSchemeControllerISpec
     }
 
     "redirect to first page of scheme loop when index is invalid and there are no schemes" in {
-      val sessionData = pensionsUserData(
-        aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel.copy(
-          refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = Some(true)))
-        )))
+      val sessionData                     = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel))
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
       implicit val response: WSResponse   = getPageWithIndex(10)
 
-      assertRedirectionAsExpected(PageRelativeURLs.taxOnShortServiceRefunds)
+      assertRedirectionAsExpected(PageRelativeURLs.shortServiceRefundSummary)
     }
 
     "redirect to scheme summary page when submission index is invalid and there are existing schemes" in {
@@ -128,33 +106,16 @@ class ShortServicePensionsSchemeControllerISpec
   "submit" should {
 
     "succeed when the user has relevant session data and valid index" when {
-      "submitting a UK scheme" in {
-        val formData = setFormData("Scheme Name with UK charge", "12345678RA", "Scheme Address 1", Some("GB"))
-        val sessionData = pensionsUserData(
-          aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel.copy(
-            refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = Some(true)))
-          )))
-        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse   = submitForm(formData, Map("index" -> "0"))
-        val expectedViewModel: ShortServiceRefundsViewModel = sessionData.pensions.shortServiceRefunds.copy(
-          refundPensionScheme =
-            sessionData.pensions.shortServiceRefunds.refundPensionScheme.updated(0, anOverseasRefundPensionSchemeWithUkRefundCharge)
-        )
-
-        assertRedirectionAsExpected(PageRelativeURLs.shortServiceRefundSummary)
-        getShortServiceViewModel mustBe Some(expectedViewModel)
-      }
-      "submitting a non-UK scheme" in {
+      "submitting a scheme" in {
         val formData = setFormData("Scheme Name without UK charge", "123456", "Scheme Address 2", Some("FR"))
         val sessionData = pensionsUserData(
           aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel.copy(
-            refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = Some(false)))
+            refundPensionScheme = Seq(OverseasRefundPensionScheme())
           )))
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
         implicit val response: WSResponse   = submitForm(formData, Map("index" -> "0"))
         val expectedViewModel: ShortServiceRefundsViewModel = sessionData.pensions.shortServiceRefunds.copy(
-          refundPensionScheme =
-            sessionData.pensions.shortServiceRefunds.refundPensionScheme.updated(0, anOverseasRefundPensionSchemeWithoutUkRefundCharge)
+          refundPensionScheme = sessionData.pensions.shortServiceRefunds.refundPensionScheme.updated(0, anOverseasRefundPensionScheme)
         )
 
         assertRedirectionAsExpected(PageRelativeURLs.shortServiceRefundSummary)
@@ -172,19 +133,16 @@ class ShortServicePensionsSchemeControllerISpec
 
     "redirect to first page of journey" when {
       "page is invalid" in {
-        val formData                        = setFormData("Scheme Name", "12345678RF", "Scheme Address", Some(""))
+        val formData                        = setFormData("Scheme Name", "123456", "Scheme Address", Some("FR"))
         val sessionData                     = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = minimalShortServiceRefundsViewModel))
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
-        implicit val response: WSResponse   = submitForm(formData, Map("refundPensionSchemeIndex" -> ""))
+        implicit val response: WSResponse   = submitForm(formData, Map("refundPensionSchemeIndex" -> "0"))
 
         assertRedirectionAsExpected(PageRelativeURLs.taxableShortServiceRefunds)
       }
       "previous questions are unanswered" in {
-        val formData = setFormData("Scheme Name", "12345678RF", "Scheme Address", Some(""))
-        val sessionData = pensionsUserData(
-          aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel.copy(
-            refundPensionScheme = Seq(OverseasRefundPensionScheme())
-          )))
+        val formData                        = setFormData("Scheme Name", "123456", "Scheme Address", Some("FR"))
+        val sessionData                     = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel))
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
         implicit val response: WSResponse   = submitForm(formData, Map("refundPensionSchemeIndex" -> "0"))
 
@@ -193,19 +151,16 @@ class ShortServicePensionsSchemeControllerISpec
     }
 
     "redirect to first page of scheme loop when index is invalid and there are no completed schemes" in {
-      val formData = setFormData("Scheme Name", "12345678RF", "Scheme Address", Some(""))
-      val sessionData = pensionsUserData(
-        aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel.copy(
-          refundPensionScheme = Seq(OverseasRefundPensionScheme(ukRefundCharge = Some(true)))
-        )))
+      val formData                        = setFormData("Scheme Name", "123456", "Scheme Address", Some("FR"))
+      val sessionData                     = pensionsUserData(aPensionsCYAModel.copy(shortServiceRefunds = aShortServiceRefundsEmptySchemeViewModel))
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
       implicit val response: WSResponse   = submitForm(formData, Map("refundPensionSchemeIndex" -> "10"))
 
-      assertRedirectionAsExpected(PageRelativeURLs.taxOnShortServiceRefunds)
+      assertRedirectionAsExpected(PageRelativeURLs.shortServiceRefundSummary)
     }
 
     "redirect to scheme summary page when submission index is invalid and there are existing schemes" in {
-      val formData                        = setFormData("Scheme Name", "12345678RF", "Scheme Address", Some(""))
+      val formData                        = setFormData("Scheme Name", "123456", "Scheme Address", Some("FR"))
       val sessionData                     = pensionsUserData(aPensionsCYAModel)
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
       implicit val response: WSResponse   = submitForm(formData, Map("refundPensionSchemeIndex" -> "-1"))
@@ -214,7 +169,7 @@ class ShortServicePensionsSchemeControllerISpec
     }
 
     "redirect to the Pensions Summary page when the user has no stored session data at all" in {
-      val formData                        = setFormData("Scheme Name", "12345678RF", "Scheme Address", Some(""))
+      val formData                        = setFormData("Scheme Name", "123456", "Scheme Address", Some(""))
       implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
       implicit val response: WSResponse   = submitForm(formData, Map("index" -> "0"))
 

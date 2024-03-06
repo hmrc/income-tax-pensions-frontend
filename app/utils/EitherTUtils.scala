@@ -19,12 +19,20 @@ package utils
 import cats.Functor
 import cats.data.EitherT
 import models.mongo.ServiceError
+import play.api.mvc.Result
+
+import scala.concurrent.{ExecutionContext, Future}
 
 object EitherTUtils {
 
-  implicit class EitherTOps[F[_]: Functor, A <: ServiceError, B](value: EitherT[F, A, B]) {
+  implicit class CasterOps[F[_]: Functor, A <: ServiceError, B](value: EitherT[F, A, B]) {
     def leftAs[T <: ServiceError]: EitherT[F, ServiceError, B] =
       value.leftMap(a => a: ServiceError)
+  }
+
+  implicit class ResultMergersOps[A](value: EitherT[Future, Result, A]) {
+    def onSuccess(result: Result)(implicit ec: ExecutionContext): Future[Result] =
+      value.map(_ => result).merge
   }
 
 }

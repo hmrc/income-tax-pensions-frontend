@@ -44,7 +44,7 @@ class UntaxedEmployerPaymentsService @Inject() (pensionSessionService: PensionSe
     val updatedCYA      = originalUserData.pensions.copy(paymentsIntoOverseasPensions = updatedModel)
     val updatedUserData = originalUserData.copy(pensions = updatedCYA)
 
-    pensionSessionService.createOrUpdateSessionData(updatedUserData).map {
+    pensionSessionService.createOrUpdateSession(updatedUserData).map {
       case Left(_)  => Left(())
       case Right(_) => Right(updatedUserData)
     }
