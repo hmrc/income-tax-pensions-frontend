@@ -19,9 +19,9 @@ package services
 import cats.data.EitherT
 import cats.implicits.{catsSyntaxOptionId, none}
 import common.TaxYear
-import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
+import connectors.PensionsConnector
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
-import models.mongo.{DatabaseError, PensionsUserData, ServiceError, SessionNotFound}
+import models.mongo.{DatabaseError, PensionsUserData, ServiceError}
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import models.pension.income.{CreateUpdatePensionIncomeRequestModel, ForeignPensionContainer}
 import models.{APIErrorModel, IncomeTaxUserData, User}
@@ -35,19 +35,16 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class IncomeFromOverseasPensionsService @Inject() (repository: PensionsUserDataRepository,
                                                    pensionsConnector: PensionsConnector,
-                                                   submissionsConnector: IncomeTaxUserDataConnector) {
+                                                   service: PensionSessionService) {
 
-  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
-    val hcWithMtdItId = hc.withMtditId(user.mtditid)
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] =
     (for {
-      priorData    <- EitherT(submissionsConnector.getUserData(user.nino, taxYear.endYear)(hcWithMtdItId)).leftAs[ServiceError]
-      maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
-      session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
-      journeyAnswers = session.pensions.incomeFromOverseasPensions
-      _ <- processClaim(journeyAnswers, priorData, user, taxYear)(ec, hcWithMtdItId).leftAs[ServiceError]
+      data <- service.loadPriorAndSession(user, taxYear)
+      (prior, session) = data
+      journeyAnswers   = session.pensions.incomeFromOverseasPensions
+      _ <- processClaim(journeyAnswers, prior, user, taxYear)(ec, hc.withMtditId(user.mtditid)).leftAs[ServiceError]
       _ <- clearJourneyFromSession(session).leftAs[ServiceError]
     } yield ()).value
-  }
 
   private def clearJourneyFromSession(session: PensionsUserData): EitherT[Future, DatabaseError, Unit] = {
     val clearedJourneyModel = session.pensions.copy(incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel.empty)
@@ -65,8 +62,7 @@ class IncomeFromOverseasPensionsService @Inject() (repository: PensionsUserDataR
     answers.paymentsFromOverseasPensionsQuestion.fold(ifEmpty = EitherT.pure[Future, APIErrorModel](())) { bool =>
       if (bool || hasPriorOPC)
         EitherT(pensionsConnector.savePensionIncome(user.nino, taxYear.endYear, buildDownstreamUpsertRequestModel(answers, prior)))
-      else
-        EitherT(pensionsConnector.deletePensionIncome(user.nino, taxYear.endYear))
+      else EitherT(pensionsConnector.deletePensionIncome(user.nino, taxYear.endYear))
     }
   }
 

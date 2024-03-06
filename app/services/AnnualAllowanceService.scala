@@ -19,8 +19,9 @@ package services
 import cats.data.EitherT
 import cats.implicits.catsSyntaxOptionId
 import common.TaxYear
-import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
-import models.mongo.{DatabaseError, PensionsUserData, ServiceError, SessionNotFound}
+import connectors.PensionsConnector
+import models.logging.HeaderCarrierExtensions._
+import models.mongo.{DatabaseError, PensionsUserData, ServiceError}
 import models.pension.charges._
 import models.{APIErrorModel, IncomeTaxUserData, User}
 import repositories.PensionsUserDataRepository
@@ -29,24 +30,20 @@ import utils.EitherTUtils.CasterOps
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import models.logging.HeaderCarrierExtensions._
 
 @Singleton
 class AnnualAllowanceService @Inject() (repository: PensionsUserDataRepository,
-                                        pensionsConnector: PensionsConnector,
-                                        submissionsConnector: IncomeTaxUserDataConnector) {
+                                        service: PensionSessionService,
+                                        pensionsConnector: PensionsConnector) {
 
-  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
-    val hcWithMtdItId = hc.withMtditId(user.mtditid)
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] =
     (for {
-      priorData    <- EitherT(submissionsConnector.getUserData(user.nino, taxYear.endYear)(hcWithMtdItId)).leftAs[ServiceError]
-      maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
-      session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
-      journeyAnswers = session.pensions.pensionsAnnualAllowances
-      _ <- sendDownstream(journeyAnswers, priorData, user, taxYear)(ec, hcWithMtdItId).leftAs[ServiceError]
+      data <- service.loadPriorAndSession(user, taxYear)
+      (prior, session) = data
+      journeyAnswers   = session.pensions.pensionsAnnualAllowances
+      _ <- sendDownstream(journeyAnswers, prior, user, taxYear)(ec, hc.withMtditId(user.mtditid)).leftAs[ServiceError]
       _ <- clearJourneyFromSession(session).leftAs[ServiceError]
     } yield ()).value
-  }
 
   private def clearJourneyFromSession(session: PensionsUserData): EitherT[Future, DatabaseError, Unit] = {
     val clearedJourneyModel =

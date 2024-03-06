@@ -28,6 +28,8 @@ import scala.concurrent.Future
 
 trait MockIncomeTaxUserDataConnector extends MockFactory {
 
+  val apiError = APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError)
+
   val mockUserDataConnector: IncomeTaxUserDataConnector = mock[IncomeTaxUserDataConnector]
 
   def mockFind(nino: String, taxYear: Int, userData: IncomeTaxUserData): CallHandler3[String, Int, HeaderCarrier, Future[IncomeTaxUserDataResponse]] =
@@ -48,6 +50,6 @@ trait MockIncomeTaxUserDataConnector extends MockFactory {
     (mockUserDataConnector
       .getUserData(_: String, _: Int)(_: HeaderCarrier))
       .expects(nino, taxYear, *)
-      .returns(Future.successful(Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))))
+      .returns(Future.successful(Left(apiError)))
       .anyNumberOfTimes()
 }

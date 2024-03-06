@@ -18,13 +18,15 @@ package services
 
 import cats.data.EitherT
 import cats.implicits.{catsSyntaxApplicativeId, toBifunctorOps}
+import common.TaxYear
 import config.ErrorHandler
 import connectors.IncomeTaxUserDataConnector
 import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
-import models.mongo.{DatabaseError, PensionsCYAModel, PensionsUserData, ServiceError}
+import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
+import models.mongo._
 import models.pension.AllPensionsData
 import models.session.PensionCYAMergedWithPriorData
-import models.{APIErrorModel, User}
+import models.{APIErrorModel, IncomeTaxUserData, User}
 import org.joda.time.DateTimeZone
 import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
@@ -38,23 +40,32 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PensionSessionService @Inject() (sessionRepository: PensionsUserDataRepository,
-                                       incomeTaxConnector: IncomeTaxUserDataConnector,
+class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
+                                       submissionsConnector: IncomeTaxUserDataConnector,
                                        errorHandler: ErrorHandler)(implicit ec: ExecutionContext)
     extends Logging {
 
-  def loadPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] =
-    incomeTaxConnector.getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid))
+  private type SessionData = PensionsUserData
+  private type PriorData   = IncomeTaxUserData
 
-  def loadSession(taxYear: Int, user: User): Future[Either[DatabaseError, Option[PensionsUserData]]] =
-    sessionRepository.find(taxYear, user)
+  def loadPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] =
+    submissionsConnector.getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid))
 
   def loadSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[PensionsUserData]]] =
-    loadSession(taxYear, user).map(_.leftMap(_ => ()))
+    repository.find(taxYear, user).map(_.leftMap(_ => ()))
+
+  def loadPriorAndSession(user: User, taxYear: TaxYear)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): EitherT[Future, ServiceError, (PriorData, SessionData)] =
+    for {
+      prior        <- EitherT(submissionsConnector.getUserData(user.nino, taxYear.endYear)(hc.withMtditId(user.mtditid))).leftAs[ServiceError]
+      maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
+      session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
+    } yield (prior, session)
 
   def getPensionsSessionDataResult(taxYear: Int, user: User)(result: Option[PensionsUserData] => Future[Result])(implicit
       request: Request[_]): Future[Result] =
-    sessionRepository.find(taxYear, user).flatMap {
+    repository.find(taxYear, user).flatMap {
       case Left(_)      => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(value) => result(value)
     }
@@ -63,7 +74,7 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
       request: Request[_],
       hc: HeaderCarrier): Future[Result] = {
     val resultT = for {
-      maybeSession <- EitherT(sessionRepository.find(taxYear, user)).leftAs[ServiceError]
+      maybeSession <- EitherT(repository.find(taxYear, user)).leftAs[ServiceError]
       prior        <- EitherT(loadPriorData(taxYear, user)).leftAs[ServiceError]
     } yield block(maybeSession, prior.pensions)
 
@@ -87,14 +98,14 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
       clock.now(DateTimeZone.UTC)
     )
 
-    sessionRepository.createOrUpdate(userData).map {
+    repository.createOrUpdate(userData).map {
       case Right(_) => onSuccess
       case Left(_)  => onFail
     }
   }
 
   def createOrUpdateSession(pensionsUserData: PensionsUserData): Future[Either[DatabaseError, Unit]] =
-    sessionRepository.createOrUpdate(pensionsUserData).map {
+    repository.createOrUpdate(pensionsUserData).map {
       case Left(error: DatabaseError) => Left(error)
       case Right(_)                   => Right(())
     }

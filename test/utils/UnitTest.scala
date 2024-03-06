@@ -18,6 +18,7 @@ package utils
 
 import akka.actor.ActorSystem
 import builders.PensionsCYAModelBuilder.emptyPensionsData
+import cats.data.EitherT
 import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
 import config.{AppConfig, ErrorHandler, MockAppConfig}
@@ -163,5 +164,8 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
 
   implicit class ToFutureOps[A](value: A) {
     def asFuture: Future[A] = Future.successful(value)
+  }
+  implicit class ToEitherTOps[A, B](value: Either[A, B]) {
+    def toEitherT: EitherT[Future, A, B] = EitherT.fromEither[Future](value)
   }
 }

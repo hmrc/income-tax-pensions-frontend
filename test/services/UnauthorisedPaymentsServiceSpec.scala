@@ -23,25 +23,27 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId}
 import common.TaxYear
-import mocks.{MockPensionConnector, MockSessionRepository, MockSubmissionsConnector}
-import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData}
+import mocks.{MockPensionConnector, MockSessionRepository, MockSessionService, MockSubmissionsConnector}
+import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData, ServiceError}
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, UnauthorisedPaymentsViewModel}
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import play.api.http.Status.BAD_REQUEST
+import utils.EitherTUtils.CasterOps
 import utils.UnitTest
 
-class UnauthorisedPaymentsServiceSpec extends UnitTest with MockPensionConnector with MockSessionRepository with MockSubmissionsConnector {
+class UnauthorisedPaymentsServiceSpec
+    extends UnitTest
+    with MockPensionConnector
+    with MockSessionRepository
+    with MockSubmissionsConnector
+    with MockSessionService {
 
   "saving journey answers" should {
     "return Unit when saving is successful" in new Test {
-      MockSubmissionsConnector
-        .getUserData(nino, taxYear)
-        .returns(priorData.asRight.asFuture)
-
-      MockSessionRepository
-        .find(taxYear, aUser)
-        .returns(sessionData.some.asRight.asFuture)
+      MockSessionService
+        .loadPriorAndSession(aUser, TaxYear(taxYear))
+        .returns((priorData, sessionData).asRight.toEitherT)
 
       MockPensionConnector
         .savePensionCharges(nino, taxYear, chargesDownstreamRequestModel)
@@ -57,13 +59,9 @@ class UnauthorisedPaymentsServiceSpec extends UnitTest with MockPensionConnector
     }
 
     "return SessionNotFound when no user session is found in the database" in new Test {
-      MockSubmissionsConnector
-        .getUserData(nino, taxYear)
-        .returns(IncomeTaxUserData(None).asRight.asFuture)
-
-      MockSessionRepository
-        .find(taxYear, aUser)
-        .returns(DataNotFound.asLeft.asFuture)
+      MockSessionService
+        .loadPriorAndSession(aUser, TaxYear(taxYear))
+        .returns(dataNotFoundResponse)
 
       val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
 
@@ -71,13 +69,9 @@ class UnauthorisedPaymentsServiceSpec extends UnitTest with MockPensionConnector
     }
 
     "return an APIErrorModel when the pensions downstream returns an unsuccessful result" in new Test {
-      MockSubmissionsConnector
-        .getUserData(nino, taxYear)
-        .returns(priorData.asRight.asFuture)
-
-      MockSessionRepository
-        .find(taxYear, aUser)
-        .returns(sessionData.some.asRight.asFuture)
+      MockSessionService
+        .loadPriorAndSession(aUser, TaxYear(taxYear))
+        .returns((priorData, sessionData).asRight.toEitherT)
 
       MockPensionConnector
         .savePensionCharges(nino, taxYear, chargesDownstreamRequestModel)
@@ -89,9 +83,9 @@ class UnauthorisedPaymentsServiceSpec extends UnitTest with MockPensionConnector
     }
 
     "return an APIErrorModel when the submissions downstream returns an unsuccessful result" in new Test {
-      MockSubmissionsConnector
-        .getUserData(nino, taxYear)
-        .returns(apiError.asLeft.asFuture)
+      MockSessionService
+        .loadPriorAndSession(aUser, TaxYear(taxYear))
+        .returns(apiErrorResponse)
 
       val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
 
@@ -99,13 +93,9 @@ class UnauthorisedPaymentsServiceSpec extends UnitTest with MockPensionConnector
     }
 
     "return DataNotUpdated when session data could not be updated" in new Test {
-      MockSubmissionsConnector
-        .getUserData(nino, taxYear)
-        .returns(priorData.asRight.asFuture)
-
-      MockSessionRepository
-        .find(taxYear, aUser)
-        .returns(sessionData.some.asRight.asFuture)
+      MockSessionService
+        .loadPriorAndSession(aUser, TaxYear(taxYear))
+        .returns((priorData, sessionData).asRight.toEitherT)
 
       MockPensionConnector
         .savePensionCharges(nino, taxYear, chargesDownstreamRequestModel)
@@ -122,6 +112,8 @@ class UnauthorisedPaymentsServiceSpec extends UnitTest with MockPensionConnector
   }
 
   trait Test {
+    type PriorAndSession = (IncomeTaxUserData, PensionsUserData)
+
     val priorData: IncomeTaxUserData =
       IncomeTaxUserData(anAllPensionsData.some)
 
@@ -154,7 +146,10 @@ class UnauthorisedPaymentsServiceSpec extends UnitTest with MockPensionConnector
     val apiError: APIErrorModel =
       APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))
 
-    val service = new UnauthorisedPaymentsService(mockSessionRepository, mockPensionsConnector, mockSubmissionsConnector)
+    val dataNotFoundResponse = DataNotFound.asLeft[PriorAndSession].toEitherT.leftAs[ServiceError]
+    val apiErrorResponse     = apiError.asLeft[PriorAndSession].toEitherT.leftAs[ServiceError]
+
+    val service = new UnauthorisedPaymentsService(mockSessionRepository, mockPensionsConnector, mockSessionService)
   }
 
 }

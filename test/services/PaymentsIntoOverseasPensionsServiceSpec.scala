@@ -23,8 +23,8 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId}
 import common.TaxYear
-import mocks.{MockPensionConnector, MockSessionRepository, MockSubmissionsConnector}
-import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData}
+import mocks.{MockPensionConnector, MockSessionRepository, MockSessionService, MockSubmissionsConnector}
+import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData, ServiceError}
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import models.pension.income.{CreateUpdatePensionIncomeRequestModel, OverseasPensionContribution, OverseasPensionContributionContainer}
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
@@ -32,9 +32,15 @@ import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import play.api.http.Status.BAD_REQUEST
 import utils.Constants.zero
+import utils.EitherTUtils.CasterOps
 import utils.UnitTest
 
-class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionConnector with MockSessionRepository with MockSubmissionsConnector {
+class PaymentsIntoOverseasPensionsServiceSpec
+    extends UnitTest
+    with MockPensionConnector
+    with MockSessionRepository
+    with MockSubmissionsConnector
+    with MockSessionService {
 
   "saving journey answers" when {
     "all external calls are successful" when {
@@ -42,8 +48,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
         "not claiming for overseas pension contributions (OPC)" when {
           "no prior OPC claim exists" should {
             "successfully save answers to relief only" in new Test with SuccessfulMocks {
-              priorReturns(priorNoOPC)
-              sessionHas(sessionNoOPCWithPayment)
+              sessionReturns(priorNoOPC, sessionNoOPCWithPayment)
               reliefsExpects(populatedReliefsModel)
               sessionRepositoryExpects(sessionNoOPCWithPayment)
 
@@ -54,8 +59,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
           }
           "a prior OPC claim exists" should {
             "save answers to relief and remove the prior OPC claim by sending a blank submission" in new Test with SuccessfulMocks {
-              priorReturns(priorOPC)
-              sessionHas(sessionNoOPCWithPayment)
+              sessionReturns(priorOPC, sessionNoOPCWithPayment)
               reliefsExpects(populatedReliefsModel)
               incomeExpects(emptyOPCIncomeModel)
               sessionRepositoryExpects(sessionNoOPCWithPayment)
@@ -68,8 +72,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
         }
         "claiming for OPC" should {
           "successfully save answers to both relief and income" in new Test with SuccessfulMocks {
-            priorReturns(priorOPC)
-            sessionHas(sessionOPC)
+            sessionReturns(priorOPC, sessionOPC)
             reliefsExpects(populatedReliefsModel)
             incomeExpects(populatedOPCIncomeModel)
             sessionRepositoryExpects(sessionOPC)
@@ -84,8 +87,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
       "no amount is claimed into an overseas pension" when {
         "a prior OPC claim exists" should {
           "send blank reliefs submission and delete the prior income claim" in new Test with SuccessfulMocks {
-            priorReturns(priorOPC)
-            sessionHas(sessionNoOPCNoPayment)
+            sessionReturns(priorOPC, sessionNoOPCNoPayment)
             reliefsExpects(blankReliefsModel(priorOPC))
             incomeExpects(emptyOPCIncomeModel)
             sessionRepositoryExpects(sessionNoOPCNoPayment)
@@ -98,8 +100,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
         }
         "no prior OPC claim exists" should {
           "send a blank reliefs submission only" in new Test with SuccessfulMocks {
-            priorReturns(priorNoOPC)
-            sessionHas(sessionNoOPCNoPayment)
+            sessionReturns(priorNoOPC, sessionNoOPCNoPayment)
             reliefsExpects(blankReliefsModel(priorNoOPC))
             sessionRepositoryExpects(sessionNoOPCNoPayment)
 
@@ -112,11 +113,9 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
     }
     "no user session is found in the database" should {
       "return SessionNotFound" in new Test with SuccessfulMocks {
-        priorReturns(IncomeTaxUserData(None))
-
-        MockSessionRepository
-          .find(taxYear, aUser)
-          .returns(DataNotFound.asLeft.asFuture)
+        MockSessionService
+          .loadPriorAndSession(aUser, TaxYear(taxYear))
+          .returns(dataNotFoundResponse)
 
         val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
 
@@ -126,8 +125,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
 
     "pensions reliefs downstream returns an unsuccessful result" should {
       "return an APIErrorModel" in new Test with SuccessfulMocks {
-        priorReturns(priorOPC)
-        sessionHas(sessionOPC)
+        sessionReturns(priorOPC, sessionOPC)
 
         MockPensionConnector
           .savePensionReliefs(nino, taxYear, populatedReliefsModel)
@@ -140,8 +138,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
     }
     "pensions income downstream returns an unsuccessful result" should {
       "return an APIErrorModel" in new Test with SuccessfulMocks {
-        priorReturns(priorOPC)
-        sessionHas(sessionOPC)
+        sessionReturns(priorOPC, sessionOPC)
         reliefsExpects(populatedReliefsModel)
 
         MockPensionConnector
@@ -156,9 +153,9 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
 
     "submissions downstream returns an unsuccessful result" should {
       "return an APIErrorModel" in new Test with SuccessfulMocks {
-        MockSubmissionsConnector
-          .getUserData(nino, taxYear)
-          .returns(apiError.asLeft.asFuture)
+        MockSessionService
+          .loadPriorAndSession(aUser, TaxYear(taxYear))
+          .returns(apiErrorResponse)
 
         val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
 
@@ -168,8 +165,7 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
 
     "session data could not be updated" should {
       "return DataNotUpdated" in new Test with SuccessfulMocks {
-        priorReturns(priorOPC)
-        sessionHas(sessionOPC)
+        sessionReturns(priorOPC, sessionOPC)
         reliefsExpects(populatedReliefsModel)
         incomeExpects(populatedOPCIncomeModel)
 
@@ -185,6 +181,8 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
   }
 
   trait Test {
+
+    type PriorAndSession = (IncomeTaxUserData, PensionsUserData)
 
     val opc = Seq(
       OverseasPensionContribution(
@@ -244,10 +242,18 @@ class PaymentsIntoOverseasPensionsServiceSpec extends UnitTest with MockPensionC
 
     val apiError: APIErrorModel = APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))
 
-    val service = new PaymentsIntoOverseasPensionsService(mockSessionRepository, mockSubmissionsConnector, mockPensionsConnector)
+    val dataNotFoundResponse = DataNotFound.asLeft[PriorAndSession].toEitherT.leftAs[ServiceError]
+    val apiErrorResponse     = apiError.asLeft[PriorAndSession].toEitherT.leftAs[ServiceError]
+
+    val service = new PaymentsIntoOverseasPensionsService(mockSessionRepository, mockSessionService, mockPensionsConnector)
   }
 
   trait SuccessfulMocks {
+
+    def sessionReturns(prior: IncomeTaxUserData, session: PensionsUserData) =
+      MockSessionService
+        .loadPriorAndSession(aUser, TaxYear(taxYear))
+        .returns((prior, session).asRight.toEitherT)
 
     def priorReturns(prior: IncomeTaxUserData) =
       MockSubmissionsConnector
