@@ -130,7 +130,6 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
           userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
           pensionReliefsSessionStub("", nino, taxYearEOY)
           pensionIncomeSessionStub("", nino, taxYearEOY)
-          nrsSubmissionStub("", nino)
 
           urlPost(
             fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)),
@@ -153,7 +152,6 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
           userDataStub(anIncomeTaxUserData, nino, taxYearEOY)
           pensionReliefsSessionStub("", nino, taxYearEOY)
           pensionIncomeSessionStub("", nino, taxYearEOY)
-          nrsSubmissionStub("", nino)
 
           urlPost(
             fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)),

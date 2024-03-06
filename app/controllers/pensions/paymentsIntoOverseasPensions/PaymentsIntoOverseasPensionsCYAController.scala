@@ -28,7 +28,7 @@ import play.api.mvc._
 import services.redirects.PaymentsIntoOverseasPensionsPages.PaymentsIntoOverseasPensionsCYAPage
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.{NrsService, PaymentsIntoOverseasPensionsService}
+import services.PaymentsIntoOverseasPensionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAView
@@ -41,7 +41,6 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
                                                            view: PaymentsIntoOverseasPensionsCYAView,
                                                            errorHandler: ErrorHandler,
                                                            service: PaymentsIntoOverseasPensionsService,
-                                                           nrsService: NrsService,
                                                            mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
@@ -62,9 +61,7 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
 
         service.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_) => errorHandler.internalServerError()
-          case Right(_) =>
-            nrsService.submit(request.user.nino, pIOPCopy, request.user.mtditid)
-            Redirect(OverseasPensionsSummaryController.show(taxYear))
+          case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
         }
       } else {
         Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
