@@ -59,7 +59,7 @@ trait MockPensionSessionService extends MockFactory {
 
   def mockCreateOrUpdateSessionData(userData: PensionsUserData, result: Either[DatabaseError, Unit] = Right(())): Unit =
     (mockPensionSessionService
-      .createOrUpdateSessionData(_: PensionsUserData))
+      .createOrUpdateSession(_: PensionsUserData))
       .expects(userData)
       .returns(Future.successful(result))
       .anyNumberOfTimes()

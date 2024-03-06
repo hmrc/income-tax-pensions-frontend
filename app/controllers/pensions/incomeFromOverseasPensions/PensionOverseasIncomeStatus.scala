@@ -113,6 +113,6 @@ class PensionOverseasIncomeStatus @Inject() (authAction: AuthorisedAction,
     val updatedViewModel   = pensionsUserData.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = filteredSchemes)
     val updatedPensionData = pensionsUserData.pensions.copy(incomeFromOverseasPensions = updatedViewModel)
     val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
-    service.createOrUpdateSessionData(updatedUserData).map(_.map(_ => filteredSchemes))
+    service.createOrUpdateSession(updatedUserData).map(_.map(_ => filteredSchemes))
   }
 }

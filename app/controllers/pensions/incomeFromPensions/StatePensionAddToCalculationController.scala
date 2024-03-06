@@ -90,7 +90,7 @@ class StatePensionAddToCalculationController @Inject() (actionsProvider: Actions
     val updatedUserData = pensionsUserData.copy(pensions = pensionsUserData.pensions.copy(incomeFromPensions =
       viewModel.copy(statePension = Some(updatedViewModels(0)), statePensionLumpSum = Some(updatedViewModels(1)))))
 
-    pensionSessionService.createOrUpdateSessionData(updatedUserData).map {
+    pensionSessionService.createOrUpdateSession(updatedUserData).map {
       case Right(_) => Redirect(StatePensionCYAController.show(taxYear))
       case _        => errorHandler.internalServerError()
     }

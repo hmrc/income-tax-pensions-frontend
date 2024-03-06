@@ -267,9 +267,7 @@ object AllPensionsData {
       refundPensionScheme = prior.pensionCharges
         .flatMap(_.overseasPensionContributions.map(_.overseasSchemeProvider.map(osp =>
           OverseasRefundPensionScheme(
-            ukRefundCharge = Some(osp.providerCountryCode == "GBR"),
             name = Some(osp.providerName),
-            pensionSchemeTaxReference = osp.pensionSchemeTaxReference.map(_.head),
             qualifyingRecognisedOverseasPensionScheme = osp.qualifyingRecognisedOverseasPensionScheme.map(_.head).map(_.replace("Q", "")),
             providerAddress = Some(osp.providerAddress),
             alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(Some(osp.providerCountryCode)),

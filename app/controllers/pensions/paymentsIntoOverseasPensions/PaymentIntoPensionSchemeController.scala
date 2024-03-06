@@ -95,7 +95,7 @@ class PaymentIntoPensionSchemeController @Inject() (cc: MessagesControllerCompon
     val updatedViewModel   = pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = filteredReliefs)
     val updatedPensionData = pensionsUserData.pensions.copy(paymentsIntoOverseasPensions = updatedViewModel)
     val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
-    pensionSessionService.createOrUpdateSessionData(updatedUserData)
+    pensionSessionService.createOrUpdateSession(updatedUserData)
     updatedUserData
   }
 }

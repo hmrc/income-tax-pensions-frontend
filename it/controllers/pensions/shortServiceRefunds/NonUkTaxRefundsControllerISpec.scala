@@ -26,7 +26,7 @@ import models.pension.charges.ShortServiceRefundsViewModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.ShortServiceRefunds.{nonUkTaxRefundsUrl, shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl, taxOnShortServiceRefund}
+import utils.PageUrls.ShortServiceRefunds.{nonUkTaxRefundsUrl, refundSummaryUrl, shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl}
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -126,7 +126,7 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers wi
             body = formData)
         }
         result.status shouldBe SEE_OTHER
-        result.headers("location").head shouldBe taxOnShortServiceRefund(taxYearEOY)
+        result.headers("location").head shouldBe refundSummaryUrl(taxYearEOY)
       }
     }
 
@@ -154,8 +154,9 @@ class NonUkTaxRefundsControllerISpec extends IntegrationTest with ViewHelpers wi
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual(aUser.isAgent)
-          val shortServiceRefundViewModel = aShortServiceRefundsViewModel.copy(shortServiceRefundCharge = None, shortServiceRefund = Some(true))
-          val form                        = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "jhvgfxk")
+          val shortServiceRefundViewModel =
+            aShortServiceRefundsViewModel.copy(shortServiceRefundCharge = Some(123.00), shortServiceRefund = Some(true))
+          val form = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "jhvgfxk")
           insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = shortServiceRefundViewModel)))
           urlPost(
             fullUrl(nonUkTaxRefundsUrl(taxYearEOY)),

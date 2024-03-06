@@ -60,7 +60,7 @@ class UkPensionIncomeSummaryController @Inject() (cc: MessagesControllerComponen
     val updatedViewModel   = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = filteredSchemes)
     val updatedPensionData = pensionsUserData.pensions.copy(incomeFromPensions = updatedViewModel)
     val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
-    pensionSessionService.createOrUpdateSessionData(updatedUserData)
+    pensionSessionService.createOrUpdateSession(updatedUserData)
     updatedUserData
   }
 }

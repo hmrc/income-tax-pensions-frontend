@@ -16,7 +16,6 @@
 
 package controllers.pensions.shortServiceRefunds
 
-import builders.OverseasRefundPensionSchemeBuilder.anOverseasRefundPensionSchemeWithoutUkRefundCharge
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsEmptySchemeViewModel, aShortServiceRefundsViewModel}
 import controllers.ControllerSpec
@@ -62,8 +61,7 @@ class RemoveRefundSchemeControllerISpec extends ControllerSpec("/overseas-pensio
         val sessionData                     = pensionsUserData(aPensionsCYAModel)
         implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
         implicit val response: WSResponse   = submitForm(Map("" -> ""), Map("index" -> "0"))
-        val expectedViewModel =
-          sessionData.pensions.shortServiceRefunds.copy(refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithoutUkRefundCharge))
+        val expectedViewModel               = sessionData.pensions.shortServiceRefunds.copy(refundPensionScheme = Seq.empty)
 
         assertRedirectionAsExpected(PageRelativeURLs.shortServiceRefundSummary)
         getShortServicePensionsViewModel mustBe Some(expectedViewModel)

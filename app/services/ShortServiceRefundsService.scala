@@ -16,81 +16,18 @@
 
 package services
 
-import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.{OverseasRefundPensionScheme, ShortServiceRefundsViewModel}
+import cats.data.EitherT
+import config.ErrorHandler
+import models.mongo.PensionsUserData
+import play.api.mvc.{Request, Result}
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class ShortServiceRefundsService @Inject() (pensionSessionService: PensionSessionService)(implicit ec: ExecutionContext) {
+class ShortServiceRefundsService @Inject() (service: PensionSessionService, errorHandler: ErrorHandler) {
 
-  def createOrUpdateShortServiceRefundQuestion(userData: PensionsUserData,
-                                               question: Boolean,
-                                               pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
-    val refundPensionScheme = pensionIndex match {
-      case Some(index) => userData.pensions.shortServiceRefunds.refundPensionScheme(index)
-      case None        => OverseasRefundPensionScheme()
-    }
-    val model = userData.pensions.shortServiceRefunds
-    val updatedModel: ShortServiceRefundsViewModel =
-      pensionIndex match {
-        case Some(index) =>
-          updateOverseasRefundPensionScheme(index, userData, model, refundPensionScheme, question)
-        case None =>
-          if (model.refundPensionScheme.isEmpty) {
-            model.copy(refundPensionScheme = Seq(refundPensionScheme.copy(ukRefundCharge = Some(question))))
-          } else {
-            model.refundPensionScheme.last.name match {
-              case Some(_) =>
-                model.copy(refundPensionScheme = model.refundPensionScheme ++ Seq(refundPensionScheme.copy(ukRefundCharge = Some(question))))
-              case None =>
-                model.copy(
-                  refundPensionScheme =
-                    model.refundPensionScheme.updated(model.refundPensionScheme.size - 1, refundPensionScheme.copy(ukRefundCharge = Some(question))))
-            }
-          }
-      }
-    createOrUpdateModel(userData, updatedModel)
-  }
+  def upsertSession(session: PensionsUserData)(implicit ec: ExecutionContext, request: Request[_]): EitherT[Future, Result, Unit] =
+    EitherT(service.createOrUpdateSession(session))
+      .leftMap(_ => errorHandler.internalServerError())
 
-  def updateCyaWithShortServiceRefundGatewayQuestion(pensionUserData: PensionsUserData,
-                                                     yesNo: Boolean,
-                                                     amount: Option[BigDecimal]): PensionsCYAModel =
-    if (yesNo) {
-      pensionUserData.pensions.copy(
-        shortServiceRefunds = pensionUserData.pensions.shortServiceRefunds.copy(shortServiceRefund = Some(yesNo), shortServiceRefundCharge = amount))
-    } else {
-      clearShortServiceRefunds(pensionUserData)
-    }
-
-  private def clearShortServiceRefunds(pensionsUserData: PensionsUserData): PensionsCYAModel =
-    pensionsUserData.pensions.copy(
-      shortServiceRefunds = ShortServiceRefundsViewModel(shortServiceRefund = Option(false))
-    )
-
-  private def createOrUpdateModel(originalUserData: PensionsUserData,
-                                  updatedModel: ShortServiceRefundsViewModel): Future[Either[Unit, PensionsUserData]] = {
-
-    val updatedCYA      = originalUserData.pensions.copy(shortServiceRefunds = updatedModel)
-    val updatedUserData = originalUserData.copy(pensions = updatedCYA)
-
-    pensionSessionService.createOrUpdateSessionData(updatedUserData).map {
-      case Left(_)  => Left(())
-      case Right(_) => Right(updatedUserData)
-    }
-  }
-
-  private def updateOverseasRefundPensionScheme(index: Int,
-                                                userData: PensionsUserData,
-                                                model: ShortServiceRefundsViewModel,
-                                                refundPensionScheme: OverseasRefundPensionScheme,
-                                                question: Boolean) = {
-    val previousUkRefundCharge = userData.pensions.shortServiceRefunds.refundPensionScheme(index).ukRefundCharge.getOrElse(false)
-    if (previousUkRefundCharge == question) {
-      model.copy(refundPensionScheme = model.refundPensionScheme.updated(index, refundPensionScheme.copy(ukRefundCharge = Some(question))))
-    } else {
-      model.copy(refundPensionScheme = model.refundPensionScheme.updated(index, OverseasRefundPensionScheme(ukRefundCharge = Some(question))))
-    }
-  }
 }

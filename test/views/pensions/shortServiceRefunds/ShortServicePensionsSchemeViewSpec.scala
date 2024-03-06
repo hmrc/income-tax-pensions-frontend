@@ -16,7 +16,7 @@
 
 package views.pensions.shortServiceRefunds
 
-import forms.overseas.PensionSchemeForm.{TcSsrPensionsSchemeFormModel, tcSsrPensionSchemeForm}
+import forms.overseas.PensionSchemeForm.{OverseasOnlyPensionSchemeFormModel, toOverseasPensionSchemeForm}
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -152,167 +152,162 @@ class ShortServicePensionsSchemeViewSpec extends ViewUnitTest {
 
   private lazy val underTest = inject[ShortServicePensionsSchemeView]
 
-  for (isUKCountry <- Seq(true, false)) { // scalastyle:off magic.number line.size.limit
+  userScenarios.foreach { userScenario =>
+    import Selectors._
+    import userScenario.commonExpectedResults._
 
-    userScenarios.foreach { userScenario =>
-      import Selectors._
-      import userScenario.commonExpectedResults._
+    val agentOrIndividual = agentTest(userScenario.isAgent)
 
-      val agentOrIndividual = agentTest(userScenario.isAgent)
+    val providerNameIF    = "providerName"
+    val schemeRefIF       = "schemeReference"
+    val providerAddressIF = "providerAddress"
+    val countryIF         = "countryId"
 
-      val providerNameIF    = "providerName"
-      val schemeRefIF       = "schemeReference"
-      val providerAddressIF = "providerAddress"
-      val countryIF         = "countryId"
+    implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
+    implicit val messages: Messages                                         = getMessages(userScenario.isWelsh)
 
-      implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
-      implicit val messages: Messages                                         = getMessages(userScenario.isWelsh)
+    "on show" should {
 
-      "on show" should {
+      s"Overseas Pensions Scheme, language is ${welshTest(userScenario.isWelsh)} and request is from an $agentOrIndividual" should {
 
-        s"${if (isUKCountry) "UK" else "Overseas"} Pensions Scheme, language is ${welshTest(userScenario.isWelsh)} and request is from an $agentOrIndividual" should {
+        "render Pension scheme page with no prefilling" which {
+          val htmlFormat                  = underTest(toOverseasPensionSchemeForm(agentOrIndividual), taxYearEOY, 0)
+          implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-          "render Pension scheme page with no prefilling" which {
-            val htmlFormat                  = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry), taxYearEOY, isUKCountry, 0)
-            implicit val document: Document = Jsoup.parse(htmlFormat.body)
+          titleCheck(expectedTitle, userScenario.isWelsh)
+          checkCommonElements
+          checkInputElements("", "", "", "")
+        }
 
-            titleCheck(expectedTitle, userScenario.isWelsh)
-            checkCommonElements
-            checkInputElements("", "", "", "")
-          }
+        "render Pension scheme page with prefilling" which {
+          val (country, ref) = (Some("FR"), "654321")
+          val formWithData =
+            toOverseasPensionSchemeForm(agentOrIndividual)
+              .fill(
+                OverseasOnlyPensionSchemeFormModel(
+                  providerName = "Scheme Name",
+                  schemeReference = ref,
+                  providerAddress = "Scheme Address",
+                  countryId = country))
+          val htmlFormat                  = underTest(formWithData, taxYearEOY, 0)
+          implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-          "render Pension scheme page with prefilling" which {
-            val (country, ref) = if (isUKCountry) (None, "12345678RF") else (Some("FR"), "654321")
-            val formWithData =
-              tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry)
-                .fill(
-                  TcSsrPensionsSchemeFormModel(
-                    providerName = "Scheme Name",
-                    schemeReference = ref,
-                    providerAddress = "Scheme Address",
-                    countryId = country))
-            val htmlFormat                  = underTest(formWithData, taxYearEOY, isUKCountry, 0)
-            implicit val document: Document = Jsoup.parse(htmlFormat.body)
-
-            titleCheck(expectedTitle, userScenario.isWelsh)
-            checkCommonElements
-            checkInputElements("Scheme Name", ref, "Scheme Address", country.getOrElse(""))
-          }
+          titleCheck(expectedTitle, userScenario.isWelsh)
+          checkCommonElements
+          checkInputElements("Scheme Name", ref, "Scheme Address", country.getOrElse(""))
         }
       }
+    }
 
-      "on submit" should {
+    "on submit" should {
 
-        s"${if (isUKCountry) "UK" else "Overseas"} Pensions Scheme, language is ${welshTest(userScenario.isWelsh)} and request is from an $agentOrIndividual" should {
-          import userScenario.{specificExpectedResults => SER}
-
-          "form is correctly submitted with correct fields values" which {
-            val schemeRef  = if (isUKCountry) "12345678RT" else "654321"
-            val formMap    = setFormData("Scheme Name", schemeRef, "Scheme Address", "FR")
-            val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
-            implicit val document: Document = Jsoup.parse(htmlFormat.body)
-
-            titleCheck(expectedTitle, userScenario.isWelsh)
-            checkCommonElements
-            checkInputElements("Scheme Name", schemeRef, "Scheme Address", "FR")
-          }
-
-          "page is returned with errors when form is submitted with all fields empty" which {
-            val formMap    = setFormData("", "", "", "")
-            val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
-            implicit val document: Document = Jsoup.parse(htmlFormat.body)
-            val referenceError              = if (isUKCountry) refEmptyErrorText else qopsEmptyErrorText
-
-            titleCheck(expectedErrorTitle, userScenario.isWelsh)
-            checkCommonElements
-            checkInputElements("", "", "", "")
-
-            val multiErrorList = List(
-              (providerNameEmptyErrorText, providerNameErrorHref),
-              (referenceError, refErrorHref),
-              (providerAddressEmptyErrorText, providerAddressErrorHref)) ++
-              (if (!isUKCountry) List((SER.get.countryIdEmptyErrorText, countryIdErrorHref)) else List[(String, String)]())
-
-            multipleErrorCheck(multiErrorList, userScenario.isWelsh)
-
-            errorAboveElementCheck(providerNameEmptyErrorText, Some(providerNameIF))
-            errorAboveElementCheck(referenceError, Some(schemeRefIF))
-            errorAboveElementCheck(providerAddressEmptyErrorText, Some(providerAddressIF))
-            if (!isUKCountry) errorAboveElementCheck(SER.get.countryIdEmptyErrorText, Some(countryIF))
-          }
-
-          "page is returned with errors when form is submitted with fields with incorrect format" which {
-            val formMap    = setFormData("d#", "#d", "some-address", "FR")
-            val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
-            implicit val document: Document = Jsoup.parse(htmlFormat.body)
-
-            titleCheck(expectedErrorTitle, userScenario.isWelsh)
-            checkCommonElements
-            checkInputElements("d#", "#d", "some-address", "FR")
-
-            val multiErrorList = List(
-              (providerNameInvalidFormatErrorText, providerNameErrorHref),
-              if (!isUKCountry) (SER.get.nonUKRefInvalidFormatErrorText, refErrorHref) else (SER.get.ukRefInvalidFormatErrorText, refErrorHref)
-            )
-
-            multipleErrorCheck(multiErrorList, userScenario.isWelsh)
-            errorAboveElementCheck(providerNameInvalidFormatErrorText, Some(providerNameIF))
-            errorAboveElementCheck(
-              if (!isUKCountry) SER.get.nonUKRefInvalidFormatErrorText else SER.get.ukRefInvalidFormatErrorText,
-              Some(schemeRefIF))
-          }
-
-          "page is returned with errors when form is submitted with fields that are too long" which {
-            val (pName, pAddress) = (createLongString(106), createLongString(251))
-            val schemeRef         = if (isUKCountry) "12345678RT" else "654321"
-            val formMap           = setFormData(pName, schemeRef, pAddress, "FR")
-
-            val htmlFormat = underTest(tcSsrPensionSchemeForm(agentOrIndividual, isUKCountry).bind(formMap), taxYearEOY, isUKCountry, 0)
-            implicit val document: Document = Jsoup.parse(htmlFormat.body)
-
-            titleCheck(expectedErrorTitle, userScenario.isWelsh)
-            checkCommonElements
-            checkInputElements(pName, schemeRef, pAddress, "FR")
-
-            val multiErrorList =
-              List((providerNameOverCharLimitErrorText, providerNameErrorHref), (providerAddressOverCharLimitErrorText, providerAddressErrorHref))
-
-            multipleErrorCheck(multiErrorList, userScenario.isWelsh)
-            errorAboveElementCheck(providerNameOverCharLimitErrorText, Some(providerNameIF))
-            errorAboveElementCheck(providerAddressOverCharLimitErrorText, Some(providerAddressIF))
-          }
-        }
-      }
-
-      def checkCommonElements(implicit document: Document): Unit = {
+      s"Overseas Pensions Scheme, language is ${welshTest(userScenario.isWelsh)} and request is from an $agentOrIndividual" should {
         import userScenario.{specificExpectedResults => SER}
 
-        val referenceLabel = if (isUKCountry) SER.get.ukReferenceLabel else SER.get.nonUkReferenceLabel
-        val refHintText    = if (isUKCountry) SER.get.uKRefHintText else SER.get.nonUKRefHintText
+        "form is correctly submitted with correct fields values" which {
+          val schemeRef                   = "654321"
+          val formMap                     = setFormData("Scheme Name", schemeRef, "Scheme Address", "FR")
+          val htmlFormat                  = underTest(toOverseasPensionSchemeForm(agentOrIndividual).bind(formMap), taxYearEOY, 0)
+          implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-        h1Check(expectedTitle)
-        captionCheck(expectedCaption(taxYearEOY), captionSelector)
-        textOnPageCheck(expectedIfYouGetParagraph, paragraphSelector(1))
-        textOnPageCheck(providerNameLabel, labelSelector(1))
-        textOnPageCheck(referenceLabel, labelSelector(2))
-        textOnPageCheck(providerAddressLabel, labelSelector(3))
-        if (isUKCountry) elementNotOnPageCheck(labelSelector(4)) else textOnPageCheck(SER.get.countryIdLabel, labelSelector(4, "> div"))
-        textOnPageCheck(refHintText, refHintSelector)
-        buttonCheck(buttonText, continueButtonSelector)
-        welshToggleCheck(userScenario.isWelsh)
+          titleCheck(expectedTitle, userScenario.isWelsh)
+          checkCommonElements
+          checkInputElements("Scheme Name", schemeRef, "Scheme Address", "FR")
+        }
+
+        "page is returned with errors when form is submitted with all fields empty" which {
+          val formMap                     = setFormData("", "", "", "")
+          val htmlFormat                  = underTest(toOverseasPensionSchemeForm(agentOrIndividual).bind(formMap), taxYearEOY, 0)
+          implicit val document: Document = Jsoup.parse(htmlFormat.body)
+          val referenceError              = qopsEmptyErrorText
+
+          titleCheck(expectedErrorTitle, userScenario.isWelsh)
+          checkCommonElements
+          checkInputElements("", "", "", "")
+
+          val multiErrorList = List(
+            (providerNameEmptyErrorText, providerNameErrorHref),
+            (referenceError, refErrorHref),
+            (providerAddressEmptyErrorText, providerAddressErrorHref)) ++
+            List((SER.get.countryIdEmptyErrorText, countryIdErrorHref))
+
+          multipleErrorCheck(multiErrorList, userScenario.isWelsh)
+
+          errorAboveElementCheck(providerNameEmptyErrorText, Some(providerNameIF))
+          errorAboveElementCheck(referenceError, Some(schemeRefIF))
+          errorAboveElementCheck(providerAddressEmptyErrorText, Some(providerAddressIF))
+          errorAboveElementCheck(SER.get.countryIdEmptyErrorText, Some(countryIF))
+        }
+
+        "page is returned with errors when form is submitted with fields with incorrect format" which {
+          val formMap                     = setFormData("d#", "#d", "some-address", "FR")
+          val htmlFormat                  = underTest(toOverseasPensionSchemeForm(agentOrIndividual).bind(formMap), taxYearEOY, 0)
+          implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+          titleCheck(expectedErrorTitle, userScenario.isWelsh)
+          checkCommonElements
+          checkInputElements("d#", "#d", "some-address", "FR")
+
+          val multiErrorList = List(
+            (providerNameInvalidFormatErrorText, providerNameErrorHref),
+            (SER.get.nonUKRefInvalidFormatErrorText, refErrorHref)
+          )
+
+          multipleErrorCheck(multiErrorList, userScenario.isWelsh)
+          errorAboveElementCheck(providerNameInvalidFormatErrorText, Some(providerNameIF))
+          errorAboveElementCheck(SER.get.nonUKRefInvalidFormatErrorText, Some(schemeRefIF))
+        }
+
+        "page is returned with errors when form is submitted with fields that are too long" which {
+          val (pName, pAddress) = (createLongString(106), createLongString(251))
+          val schemeRef         = "654321"
+          val formMap           = setFormData(pName, schemeRef, pAddress, "FR")
+
+          val htmlFormat                  = underTest(toOverseasPensionSchemeForm(agentOrIndividual).bind(formMap), taxYearEOY, 0)
+          implicit val document: Document = Jsoup.parse(htmlFormat.body)
+
+          titleCheck(expectedErrorTitle, userScenario.isWelsh)
+          checkCommonElements
+          checkInputElements(pName, schemeRef, pAddress, "FR")
+
+          val multiErrorList =
+            List((providerNameOverCharLimitErrorText, providerNameErrorHref), (providerAddressOverCharLimitErrorText, providerAddressErrorHref))
+
+          multipleErrorCheck(multiErrorList, userScenario.isWelsh)
+          errorAboveElementCheck(providerNameOverCharLimitErrorText, Some(providerNameIF))
+          errorAboveElementCheck(providerAddressOverCharLimitErrorText, Some(providerAddressIF))
+        }
       }
-
-      def checkInputElements(pName: String, tRef: String, pAddress: String, cc: String)(implicit document: Document): Unit = {
-        inputFieldValueCheck(providerNameIF, providerNameInputSelector, pName)
-        inputFieldValueCheck(schemeRefIF, refInputSelector, tRef)
-        textareaFieldValueCheck(providerAddressIF, providerAddressInputSelector, pAddress)
-        if (!isUKCountry) selectFieldValueCheck(countryIF, countryIdOptionSelector, cc)
-      }
-
-      def setFormData(pName: String, tRef: String, pAddress: String, country: String): Map[String, String] =
-        Map(providerNameIF -> pName, schemeRefIF -> tRef, providerAddressIF -> pAddress) ++
-          (if (isUKCountry) Map[String, String]() else Map(countryIF -> country))
     }
+
+    def checkCommonElements(implicit document: Document): Unit = {
+      import userScenario.{specificExpectedResults => SER}
+
+      val referenceLabel = SER.get.nonUkReferenceLabel
+      val refHintText    = SER.get.nonUKRefHintText
+
+      h1Check(expectedTitle)
+      captionCheck(expectedCaption(taxYearEOY), captionSelector)
+      textOnPageCheck(expectedIfYouGetParagraph, paragraphSelector(1))
+      textOnPageCheck(providerNameLabel, labelSelector(1))
+      textOnPageCheck(referenceLabel, labelSelector(2))
+      textOnPageCheck(providerAddressLabel, labelSelector(3))
+      textOnPageCheck(SER.get.countryIdLabel, labelSelector(4, "> div"))
+      textOnPageCheck(refHintText, refHintSelector)
+      buttonCheck(buttonText, continueButtonSelector)
+      welshToggleCheck(userScenario.isWelsh)
+    }
+
+    def checkInputElements(pName: String, tRef: String, pAddress: String, cc: String)(implicit document: Document): Unit = {
+      inputFieldValueCheck(providerNameIF, providerNameInputSelector, pName)
+      inputFieldValueCheck(schemeRefIF, refInputSelector, tRef)
+      textareaFieldValueCheck(providerAddressIF, providerAddressInputSelector, pAddress)
+      selectFieldValueCheck(countryIF, countryIdOptionSelector, cc)
+    }
+
+    def setFormData(pName: String, tRef: String, pAddress: String, country: String): Map[String, String] =
+      Map(providerNameIF -> pName, schemeRefIF -> tRef, providerAddressIF -> pAddress) ++
+        Map(countryIF -> country)
   }
 
 }

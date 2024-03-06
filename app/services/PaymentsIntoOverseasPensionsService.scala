@@ -29,7 +29,7 @@ import models.{APIErrorModel, IncomeTaxUserData, User}
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Constants.zero
-import utils.EitherTUtils.EitherTOps
+import utils.EitherTUtils.CasterOps
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
