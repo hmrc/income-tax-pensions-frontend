@@ -57,7 +57,6 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
     val checkRedirect = journeyCheck(PaymentsIntoOverseasPensionsCYAPage, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
-        val pIOPCopy = sessionData.pensions.paymentsIntoOverseasPensions.copy()
 
         service.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_) => errorHandler.internalServerError()
