@@ -16,7 +16,7 @@
 
 @import controllers.pensions.shortServiceRefunds.routes.ShortServicePensionsSchemeController
 @import forms.Countries
-@import forms.overseas.PensionSchemeForm.TcSsrPensionsSchemeFormModel
+@import forms.overseas.PensionSchemeForm.OverseasOnlyPensionSchemeFormModel
 @import models.requests.UserSessionDataRequest
 @import views.html.helper.CSPNonce
 @import views.html.templates.Layout
@@ -39,20 +39,18 @@
         errorSummary: ErrorSummary
 )
 
-@(form: Form[TcSsrPensionsSchemeFormModel], taxYear: Int, isUKScheme:Boolean, index: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[OverseasOnlyPensionSchemeFormModel], taxYear: Int, index: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleText = @{
     messages("shortServiceRefunds.PensionScheme.title")
 }
 
 @schemeRefHint = @{
-   if (isUKScheme) messages("common.pensionSchemeTaxReference.forExample")
-   else messages("overseasPension.QOPSReference.hint")
+    messages("overseasPension.QOPSReference.hint")
 }
 
 @schemeRefLabel = @{
-   if (isUKScheme) messages("common.pensionSchemeTaxReference")
-   else messages("common.overseasPensions.pensionScheme.qopsr.subheading")
+   messages("common.overseasPensions.pensionScheme.qopsr.subheading")
 }
 
 @hasFormErrors = @{form.hasErrors}
@@ -88,30 +86,17 @@
             classes = Some("govuk-input--width-20")
         )
 
-        @if(isUKScheme) {
-          @inputText(
-              form,
-              id = "schemeReference",
-              name = "schemeReference",
-              hint = Some(schemeRefHint),
-              label = schemeRefLabel,
-              isSubheading = true,
-              labelHidden = false,
-              classes = Some("govuk-input--width-10")
-          )
-        } else {
-          @inputText(
-              form,
-              id = "schemeReference",
-              name = "schemeReference",
-              hint = Some(schemeRefHint),
-              label = schemeRefLabel,
-              isSubheading = true,
-              labelHidden = true,
-              classes = Some("govuk-input--width-5"),
-              prefix = "QOPS"
-          )
-        }
+        @inputText(
+          form,
+          id = "schemeReference",
+          name = "schemeReference",
+          hint = Some(schemeRefHint),
+          label = schemeRefLabel,
+          isSubheading = true,
+          labelHidden = true,
+          classes = Some("govuk-input--width-5"),
+          prefix = "QOPS"
+        )
 
         @inputTextarea(
             form,
@@ -122,11 +107,8 @@
             classes = Some("govuk-textarea")
         )
 
-        @if(!isUKScheme) {
-        <div style="width: 300px;">
-          @countryPartial(form, Countries.overseasCountries)
-        </div>    
-        }
+        <div style="width: 300px;">@countryPartial(form, Countries.overseasCountries)</div>
+
         @button()
     }
 }

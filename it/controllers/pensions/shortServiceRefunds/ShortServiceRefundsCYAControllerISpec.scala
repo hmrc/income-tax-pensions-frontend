@@ -76,9 +76,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
       val incompleteViewModel = aShortServiceRefundsViewModel.copy(
         refundPensionScheme = Seq(
           OverseasRefundPensionScheme(
-            ukRefundCharge = Some(true),
             name = Some("Scheme Name with UK charge"),
-            pensionSchemeTaxReference = None,
             qualifyingRecognisedOverseasPensionScheme = None,
             providerAddress = Some("Scheme Address 1"),
             alphaTwoCountryCode = None,
@@ -159,9 +157,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
       val incompleteViewModel = aShortServiceRefundsViewModel.copy(
         refundPensionScheme = Seq(
           OverseasRefundPensionScheme(
-            ukRefundCharge = Some(true),
             name = Some("Scheme Name with UK charge"),
-            pensionSchemeTaxReference = None,
             qualifyingRecognisedOverseasPensionScheme = None,
             providerAddress = Some("Scheme Address 1"),
             alphaTwoCountryCode = None,

@@ -16,10 +16,7 @@
 
 package controllers.pensions.shortServiceRefunds
 
-import builders.OverseasRefundPensionSchemeBuilder.{
-  anOverseasRefundPensionSchemeWithUkRefundCharge,
-  anOverseasRefundPensionSchemeWithoutUkRefundCharge
-}
+import builders.OverseasRefundPensionSchemeBuilder.anOverseasRefundPensionScheme
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.ShortServiceRefundsViewModelBuilder.{
@@ -47,8 +44,7 @@ class TaxableRefundAmountControllerISpec extends IntegrationTest with ViewHelper
   ".show" should {
     "show page when EOY" which {
       val incompleteViewModel = aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(
-        anOverseasRefundPensionSchemeWithUkRefundCharge,
-        anOverseasRefundPensionSchemeWithoutUkRefundCharge.copy(providerAddress = None)
+        anOverseasRefundPensionScheme.copy(providerAddress = None)
       ))
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -63,12 +59,6 @@ class TaxableRefundAmountControllerISpec extends IntegrationTest with ViewHelper
       }
       "returns an Ok status" in {
         result.status shouldBe OK
-      }
-      "filters out any incomplete schemes and updates the session data" in {
-        val filteredSchemes = incompleteViewModel.copy(refundPensionScheme = Seq(anOverseasRefundPensionSchemeWithUkRefundCharge))
-        lazy val cyaModel   = findCyaData(taxYearEOY, aUserRequest).get
-
-        cyaModel.pensions.shortServiceRefunds shouldBe filteredSchemes
       }
     }
   }

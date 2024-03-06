@@ -72,7 +72,7 @@ class PensionsChargesServiceSpec
     pensionSchemeOverseasTransfers = priorPensionChargesData.flatMap(_.pensionSchemeOverseasTransfers),
     pensionSchemeUnauthorisedPayments = priorPensionChargesData.flatMap(_.pensionSchemeUnauthorisedPayments),
     pensionContributions = priorPensionChargesData.flatMap(_.pensionContributions),
-    overseasPensionContributions = Some(shortServiceRefundsSessionUserData.pensions.shortServiceRefunds.toOverseasPensionContributions)
+    overseasPensionContributions = Some(shortServiceRefundsSessionUserData.pensions.shortServiceRefunds.toDownstreamRequestModel)
   )
 
   val annualAllowanceRequestModel = {

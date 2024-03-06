@@ -32,7 +32,7 @@ import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Clock
-import utils.EitherTUtils.EitherTOps
+import utils.EitherTUtils.CasterOps
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,10 +46,11 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
   def loadPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] =
     incomeTaxConnector.getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid))
 
+  def loadSession(taxYear: Int, user: User): Future[Either[DatabaseError, Option[PensionsUserData]]] =
+    sessionRepository.find(taxYear, user)
+
   def loadSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[PensionsUserData]]] =
-    sessionRepository
-      .find(taxYear, user)
-      .map(_.leftMap(_ => ()))
+    loadSession(taxYear, user).map(_.leftMap(_ => ()))
 
   def getPensionsSessionDataResult(taxYear: Int, user: User)(result: Option[PensionsUserData] => Future[Result])(implicit
       request: Request[_]): Future[Result] =
@@ -92,7 +93,7 @@ class PensionSessionService @Inject() (sessionRepository: PensionsUserDataReposi
     }
   }
 
-  def createOrUpdateSessionData(pensionsUserData: PensionsUserData): Future[Either[DatabaseError, Unit]] =
+  def createOrUpdateSession(pensionsUserData: PensionsUserData): Future[Either[DatabaseError, Unit]] =
     sessionRepository.createOrUpdate(pensionsUserData).map {
       case Left(error: DatabaseError) => Left(error)
       case Right(_)                   => Right(())

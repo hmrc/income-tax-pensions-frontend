@@ -120,7 +120,7 @@ class ShortServiceRefundsCYAViewSpec extends ViewUnitTest { // scalastyle:off ma
         cyaRowCheck(refundAmount, "£1,999.99", ChangeLinks.changeRefund, hiddenRefundAmount, 2)
         cyaRowCheck(nonUKBoolean, yesText, ChangeLinks.changeNonUkRefund, hiddenNonUKBoolean, 3)
         cyaRowCheck(nonUKAmount, "£1,000", ChangeLinks.changeNonUkRefund, hiddenNonUKAmount, 4)
-        cyaRowCheck(schemes, "Scheme Name with UK charge, Scheme Name without UK charge", ChangeLinks.changeScheme, hiddenSchemes, 5)
+        cyaRowCheck(schemes, "Scheme Name without UK charge", ChangeLinks.changeScheme, hiddenSchemes, 5)
         buttonCheck(buttonText)
       }
 

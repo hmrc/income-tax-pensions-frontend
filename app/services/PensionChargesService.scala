@@ -100,7 +100,7 @@ class PensionChargesService @Inject() (pensionUserDataRepository: PensionsUserDa
           .getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid)))
       sessionData <- FutureEitherOps[ServiceError, Option[PensionsUserData]](pensionUserDataRepository.find(taxYear, user))
       viewModel                                      = sessionData.map(_.pensions.shortServiceRefunds)
-      subModel: Option[OverseasPensionContributions] = viewModel.map(_.toOverseasPensionContributions)
+      subModel: Option[OverseasPensionContributions] = viewModel.map(_.toDownstreamRequestModel)
 
       result <-
         FutureEitherOps[ServiceError, Unit](
@@ -257,7 +257,7 @@ object PensionChargesService {
         pensionSchemeOverseasTransfers = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers)),
         pensionSchemeUnauthorisedPayments = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionSchemeUnauthorisedPayments)),
         pensionContributions = priorData.pensions.flatMap(_.pensionCharges.flatMap(_.pensionContributions)),
-        overseasPensionContributions = viewModel.map(_.toOverseasPensionContributions)
+        overseasPensionContributions = viewModel.map(_.toDownstreamRequestModel)
       )
 
     def getShortServiceRefundsUserData(userData: Option[PensionsUserData], user: User, taxYear: Int, clock: Clock): PensionsUserData =

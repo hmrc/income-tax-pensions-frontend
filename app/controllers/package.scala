@@ -25,11 +25,4 @@ package object controllers {
       case None                                           => Right(None)
       case _                                              => Left(())
     }
-
-  def validateOptionalIndex(index: Option[Int], collectionSize: Int): Boolean =
-    index match {
-      case Some(index) if index < 0 => false
-      case Some(index)              => index < collectionSize
-      case _                        => true
-    }
 }

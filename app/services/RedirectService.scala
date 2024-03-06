@@ -25,13 +25,9 @@ import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
 import services.redirects.PaymentsIntoPensionPages
-import PaymentsIntoPensionPages._
+import services.redirects.PaymentsIntoPensionPages._
 
 import scala.concurrent.Future
-
-case class ConditionalRedirect2(cond: Boolean, condFalse: Result)
-
-case class RedirectsForPath(foo: Map[String, Seq[ConditionalRedirect2]])
 
 object RedirectService extends Logging {
 
