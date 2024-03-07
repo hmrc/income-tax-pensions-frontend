@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
+import cats.data.EitherT
 import models.APIErrorModel
+
+import scala.concurrent.Future
 
 package object connectors {
   type DownstreamErrorOr[A] = Either[APIErrorModel, A]
+
+  type DownstreamOutcome[A]  = Future[Either[APIErrorModel, A]]
+  type DownstreamOutcomeT[A] = EitherT[Future, APIErrorModel, A]
+
 }

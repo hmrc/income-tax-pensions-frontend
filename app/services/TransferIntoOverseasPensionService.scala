@@ -18,7 +18,7 @@ package services
 
 import cats.data.EitherT
 import common.TaxYear
-import connectors.PensionsConnector
+import connectors.{DownstreamOutcomeT, PensionsConnector}
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo.{DatabaseError, PensionsUserData, ServiceError}
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, TransfersIntoOverseasPensionsViewModel}

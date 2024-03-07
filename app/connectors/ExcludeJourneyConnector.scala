@@ -22,7 +22,6 @@ import connectors.httpParsers.ExcludeJourneyHttpParser._
 import models.logging.ConnectorRequestInfo
 import play.api.Logging
 import play.api.libs.json.{JsObject, Json}
-import services.DownstreamOutcome
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject

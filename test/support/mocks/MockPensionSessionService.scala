@@ -16,13 +16,13 @@
 
 package support.mocks
 
-import connectors.DownstreamErrorOr
+import connectors.{DownstreamErrorOr, DownstreamOutcome}
 import models._
 import models.mongo.{DatabaseError, PensionsUserData}
 import org.scalamock.handlers._
 import org.scalamock.scalatest.MockFactory
 import play.api.mvc.{Request, Result}
-import services.{DownstreamOutcome, PensionSessionService}
+import services.PensionSessionService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future

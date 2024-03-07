@@ -16,14 +16,14 @@
 
 package config
 
-import connectors.PensionsConnector
+import connectors.{DownstreamOutcome, PensionsConnector}
 import models.APIErrorModel
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
 import org.scalamock.handlers.{CallHandler4, CallHandler5}
 import org.scalamock.scalatest.MockFactory
-import services.{DownstreamOutcome, PensionChargesConnectorHelper, PensionIncomeConnectorHelper, PensionReliefsConnectorHelper}
+import services.{PensionChargesConnectorHelper, PensionIncomeConnectorHelper, PensionReliefsConnectorHelper}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}

@@ -22,7 +22,6 @@ import connectors.httpParsers.StateBenefitsSessionHttpParser.StateBenefitsSessio
 import models.logging.ConnectorRequestInfo
 import models.mongo.StateBenefitsUserData
 import play.api.Logging
-import services.DownstreamOutcome
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject

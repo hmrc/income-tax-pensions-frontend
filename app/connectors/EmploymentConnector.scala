@@ -22,7 +22,6 @@ import connectors.httpParsers.EmploymentSessionHttpParser.EmploymentSessionHttpR
 import models.logging.ConnectorRequestInfo
 import models.pension.employmentPensions.CreateUpdateEmploymentRequest
 import play.api.Logging
-import services.DownstreamOutcome
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject

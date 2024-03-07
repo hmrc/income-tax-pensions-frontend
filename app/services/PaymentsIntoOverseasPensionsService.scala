@@ -19,7 +19,7 @@ package services
 import cats.data.EitherT
 import cats.implicits.catsSyntaxOptionId
 import common.TaxYear
-import connectors.PensionsConnector
+import connectors.{DownstreamOutcomeT, PensionsConnector}
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo.{DatabaseError, PensionsUserData, ServiceError}
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel

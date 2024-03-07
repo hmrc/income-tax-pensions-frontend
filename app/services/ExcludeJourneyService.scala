@@ -16,7 +16,7 @@
 
 package services
 
-import connectors.ExcludeJourneyConnector
+import connectors.{DownstreamOutcome, ExcludeJourneyConnector}
 import models.User
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import uk.gov.hmrc.http.HeaderCarrier

@@ -16,11 +16,10 @@
 
 package mocks
 
-import connectors.IncomeTaxUserDataConnector
+import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector}
 import models.IncomeTaxUserData
 import org.scalamock.handlers.CallHandler3
 import org.scalamock.scalatest.MockFactory
-import services.DownstreamOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 
 trait MockSubmissionsConnector extends MockFactory {

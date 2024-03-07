@@ -20,7 +20,7 @@ import cats.data.EitherT
 import cats.implicits.{catsSyntaxApplicativeId, toBifunctorOps}
 import common.TaxYear
 import config.ErrorHandler
-import connectors.IncomeTaxUserDataConnector
+import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector}
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo._
 import models.pension.AllPensionsData

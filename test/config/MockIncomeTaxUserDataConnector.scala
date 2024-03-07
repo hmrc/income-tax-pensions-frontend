@@ -16,12 +16,11 @@
 
 package config
 
-import connectors.IncomeTaxUserDataConnector
+import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector}
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalamock.handlers.CallHandler3
 import org.scalamock.scalatest.MockFactory
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import services.DownstreamOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future

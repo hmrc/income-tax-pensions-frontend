@@ -21,9 +21,6 @@ import models.mongo.ServiceError
 import scala.concurrent.Future
 
 package object services {
-  type DownstreamOutcome[A]  = Future[Either[APIErrorModel, A]]
-  type DownstreamOutcomeT[A] = EitherT[Future, APIErrorModel, A]
-
   type ServiceOutcome[A]  = Future[Either[ServiceError, A]]
   type ServiceOutcomeT[A] = EitherT[Future, ServiceError, A]
 

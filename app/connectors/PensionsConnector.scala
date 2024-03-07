@@ -29,7 +29,6 @@ import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
 import play.api.Logging
-import services.DownstreamOutcome
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject

@@ -16,12 +16,11 @@
 
 package config
 
-import connectors.{IncomeTaxUserDataConnector, StateBenefitsConnector}
+import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector, StateBenefitsConnector}
 import models.APIErrorModel
 import models.mongo.StateBenefitsUserData
 import org.scalamock.handlers.CallHandler4
 import org.scalamock.scalatest.MockFactory
-import services.DownstreamOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}

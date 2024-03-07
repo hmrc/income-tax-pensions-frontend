@@ -23,7 +23,6 @@ import connectors.httpParsers.RefreshIncomeSourceHttpParser._
 import models.logging.ConnectorRequestInfo
 import models.{IncomeTaxUserData, RefreshIncomeSourceRequest}
 import play.api.Logging
-import services.DownstreamOutcome
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
