@@ -21,23 +21,36 @@ import models.pension.charges.ShortServiceRefundsViewModel
 
 object ShortServiceRefundsViewModelBuilder {
 
-  val aShortServiceRefundsViewModel = ShortServiceRefundsViewModel(
-    shortServiceRefund = Some(true),
-    shortServiceRefundCharge = Some(1999.99),
-    shortServiceRefundTaxPaid = Some(true),
-    shortServiceRefundTaxPaidCharge = Some(1000.00),
-    refundPensionScheme = Seq(anOverseasRefundPensionScheme)
-  )
+  val refundCharge        = 1999.99
+  val refundTaxPaidCharge = 1000.00
 
-  val aShortServiceRefundsEmptySchemeViewModel = ShortServiceRefundsViewModel(
-    shortServiceRefund = Some(true),
-    shortServiceRefundCharge = Some(1999.99),
-    shortServiceRefundTaxPaid = Some(true),
-    shortServiceRefundTaxPaidCharge = Some(1000.00),
-    refundPensionScheme = Seq.empty
-  )
+  val aShortServiceRefundsViewModel: ShortServiceRefundsViewModel =
+    ShortServiceRefundsViewModel(
+      shortServiceRefund = Some(true),
+      shortServiceRefundCharge = Some(refundCharge),
+      shortServiceRefundTaxPaid = Some(true),
+      shortServiceRefundTaxPaidCharge = Some(refundTaxPaidCharge),
+      refundPensionScheme = Seq(anOverseasRefundPensionScheme)
+    )
 
-  val emptyShortServiceRefundsViewModel = ShortServiceRefundsViewModel()
+  val viewModelMissingMandatorySchemeFields: ShortServiceRefundsViewModel = {
+    val schemeWithMissingFields = anOverseasRefundPensionScheme.copy(name = None)
 
-  val minimalShortServiceRefundsViewModel = ShortServiceRefundsViewModel(shortServiceRefund = Some(false))
+    aShortServiceRefundsViewModel.copy(refundPensionScheme = Seq(schemeWithMissingFields))
+  }
+
+  val aShortServiceRefundsEmptySchemeViewModel: ShortServiceRefundsViewModel =
+    ShortServiceRefundsViewModel(
+      shortServiceRefund = Some(true),
+      shortServiceRefundCharge = Some(refundCharge),
+      shortServiceRefundTaxPaid = Some(true),
+      shortServiceRefundTaxPaidCharge = Some(refundTaxPaidCharge),
+      refundPensionScheme = Seq.empty
+    )
+
+  val emptyShortServiceRefundsViewModel: ShortServiceRefundsViewModel =
+    ShortServiceRefundsViewModel()
+
+  val minimalShortServiceRefundsViewModel: ShortServiceRefundsViewModel =
+    ShortServiceRefundsViewModel(shortServiceRefund = Some(false))
 }

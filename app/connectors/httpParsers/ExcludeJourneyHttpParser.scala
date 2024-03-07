@@ -16,20 +16,17 @@
 
 package connectors.httpParsers
 
-import models.APIErrorModel
+import connectors.DownstreamErrorOr
 import models.logging.ConnectorResponseInfo
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object ExcludeJourneyHttpParser extends APIParser {
-
-  type ExcludeJourneyResponse = Either[APIErrorModel, Int]
-
   override val parserName: String = "ExcludeJourneyHttpParser"
   override val service: String    = "income-tax-submission"
 
-  implicit object ExcludeJourneyResponseReads extends HttpReads[ExcludeJourneyResponse] {
-    override def read(method: String, url: String, response: HttpResponse): ExcludeJourneyResponse = {
+  implicit object ExcludeJourneyResponseReads extends HttpReads[DownstreamErrorOr[Int]] {
+    override def read(method: String, url: String, response: HttpResponse): DownstreamErrorOr[Int] = {
       ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
 
       response.status match {

@@ -16,9 +16,11 @@
 
 package models.pension.charges
 
+import cats.implicits.{catsSyntaxList, catsSyntaxOptionId, catsSyntaxTuple2Semigroupal, catsSyntaxTuple4Semigroupal, none}
 import models.mongo.TextAndKey
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
+import utils.Constants.zero
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
@@ -66,6 +68,37 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
     overseasSchemeProvider = fromTransferPensionScheme(refundPensionScheme)
   )
 
+  def maybeToDownstreamModel: Option[OverseasPensionContributions] =
+    (maybeFromORPS(refundPensionScheme), shortServiceRefundCharge).mapN { (schemes, refund) =>
+      OverseasPensionContributions(
+        overseasSchemeProvider = schemes,
+        shortServiceRefund = refund,
+        shortServiceRefundTaxPaid = shortServiceRefundTaxPaidCharge.getOrElse(zero)
+      )
+    }
+
+  private def maybeFromORPS(schemes: Seq[OverseasRefundPensionScheme]): Option[Seq[OverseasSchemeProvider]] =
+    schemes.toList.toNel
+      .flatMap {
+        _.traverse { s =>
+          (
+            s.name,
+            s.providerAddress,
+            s.qualifyingRecognisedOverseasPensionScheme,
+            s.alphaThreeCountryCode
+          ).mapN { (name, address, qops, countryCode) =>
+            OverseasSchemeProvider(
+              providerName = name,
+              providerAddress = address,
+              providerCountryCode = countryCode,
+              qualifyingRecognisedOverseasPensionScheme = Seq(enforceValidQopsPrefix(qops)).some,
+              pensionSchemeTaxReference = none[Seq[String]] // Not a valid field for this journey
+            )
+          }
+        }
+      }
+      .map(_.toList.toSeq)
+
   private def fromTransferPensionScheme(scheme: Seq[OverseasRefundPensionScheme]): Seq[OverseasSchemeProvider] =
     scheme.map(x =>
       OverseasSchemeProvider(
@@ -85,6 +118,8 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
 
 object ShortServiceRefundsViewModel {
   implicit val format: OFormat[ShortServiceRefundsViewModel] = Json.format[ShortServiceRefundsViewModel]
+
+  val empty: ShortServiceRefundsViewModel = ShortServiceRefundsViewModel()
 }
 
 case class EncryptedShortServiceRefundsViewModel(

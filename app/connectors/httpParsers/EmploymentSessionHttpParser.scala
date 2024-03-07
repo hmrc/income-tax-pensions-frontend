@@ -16,24 +16,22 @@
 
 package connectors.httpParsers
 
-import models.APIErrorModel
+import connectors.DownstreamErrorOr
 import models.logging.ConnectorResponseInfo
 import models.pension.employmentPensions.CreateUpdateEmploymentRequest.CreatedEmployment
 import play.api.http.Status.CREATED
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object EmploymentSessionHttpParser extends APIParser {
-  type EmploymentSessionResponse = Either[APIErrorModel, Unit]
-
   override val parserName: String = "EmploymentSessionResponse"
   override val service: String    = "income-tax-employment"
 
-  implicit object EmploymentSessionHttpReads extends HttpReads[EmploymentSessionResponse] {
-    override def read(method: String, url: String, response: HttpResponse): EmploymentSessionResponse = {
+  implicit object EmploymentSessionHttpReads extends HttpReads[DownstreamErrorOr[Unit]] {
+    override def read(method: String, url: String, response: HttpResponse): DownstreamErrorOr[Unit] = {
       ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
 
       response.status match {
-        case CREATED => response.json.validate[CreatedEmployment].fold[EmploymentSessionResponse](_ => badSuccessJsonFromAPI, _ => Right(()))
+        case CREATED => response.json.validate[CreatedEmployment].fold[DownstreamErrorOr[Unit]](_ => badSuccessJsonFromAPI, _ => Right(()))
         case _ =>
           SessionHttpReads.read(method, url, response)
       }

@@ -17,27 +17,29 @@
 package services
 
 import cats.data.EitherT
-import cats.implicits._
+import cats.implicits.toTraverseOps
 import common.TaxYear
-import connectors.EmploymentConnector
+import connectors.{DownstreamErrorOr, DownstreamOutcome, EmploymentConnector}
+import models.User
+import models.logging.HeaderCarrierExtensions._
 import models.mongo._
 import models.pension.statebenefits.UkPensionIncomeViewModel
-import models.{APIErrorModel, User}
 import repositories.PensionsUserDataRepository
+import repositories.PensionsUserDataRepository.QueryResult
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.logging.HeaderCarrierExtensions._
 
 class EmploymentPensionService @Inject() (repository: PensionsUserDataRepository, connector: EmploymentConnector) {
 
-  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
-    def saveJourneyData(allIncomes: Seq[UkPensionIncomeViewModel]): Future[Either[APIErrorModel, Seq[Unit]]] =
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] = {
+    def saveJourneyData(allIncomes: Seq[UkPensionIncomeViewModel]): DownstreamOutcome[Seq[Unit]] =
       allIncomes
-        .traverse(income =>
-          connector.saveEmploymentPensionsData(user.nino, taxYear.endYear, income.toDownstreamRequest)(hc.withMtditId(user.mtditid), ec))
+        .traverse[Future, DownstreamErrorOr[Unit]] { income =>
+          connector.saveEmploymentPensionsData(user.nino, taxYear.endYear, income.toDownstreamRequest)(hc.withMtditId(user.mtditid), ec)
+        }
         .map(sequence)
 
     (for {
@@ -49,7 +51,7 @@ class EmploymentPensionService @Inject() (repository: PensionsUserDataRepository
 
   }
 
-  private def clearJourneyFromSession(session: PensionsUserData): Future[Either[DatabaseError, Unit]] = {
+  private def clearJourneyFromSession(session: PensionsUserData): QueryResult[Unit] = {
     val clearedJourneyModel =
       session.pensions.incomeFromPensions.copy(
         uKPensionIncomes = Nil,

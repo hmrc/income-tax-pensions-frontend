@@ -16,8 +16,9 @@
 
 package connectors.httpParsers
 
+import connectors.DownstreamErrorOr
+import models.IncomeTaxUserData
 import models.logging.ConnectorResponseInfo
-import models.{APIErrorModel, IncomeTaxUserData}
 import play.api.Logging
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NO_CONTENT, OK, SERVICE_UNAVAILABLE}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -25,20 +26,18 @@ import utils.PagerDutyHelper.PagerDutyKeys.{INTERNAL_SERVER_ERROR_FROM_API, SERV
 import utils.PagerDutyHelper.pagerDutyLog
 
 object IncomeTaxUserDataHttpParser extends APIParser with Logging {
-  type IncomeTaxUserDataResponse = Either[APIErrorModel, IncomeTaxUserData]
-
   override val parserName: String = "IncomeTaxUserDataHttpParser"
   override val service: String    = "income-tax-submission"
 
-  implicit object IncomeTaxUserDataHttpReads extends HttpReads[IncomeTaxUserDataResponse] {
-    override def read(method: String, url: String, response: HttpResponse): IncomeTaxUserDataResponse = {
+  implicit object IncomeTaxUserDataHttpReads extends HttpReads[DownstreamErrorOr[IncomeTaxUserData]] {
+    override def read(method: String, url: String, response: HttpResponse): DownstreamErrorOr[IncomeTaxUserData] = {
       ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
 
       response.status match {
         case OK =>
           response.json
             .validate[IncomeTaxUserData]
-            .fold[IncomeTaxUserDataResponse](
+            .fold[DownstreamErrorOr[IncomeTaxUserData]](
               _ => badSuccessJsonFromAPI,
               parsedModel => Right(parsedModel)
             )

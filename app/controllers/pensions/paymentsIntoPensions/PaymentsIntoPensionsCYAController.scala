@@ -86,7 +86,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
           x) && !paymentsIntoPensionFromSession.pensionTaxReliefNotClaimedQuestion
           .exists(x => x)) {
         // TODO: check conditions for excluding Pensions from submission without gateway
-        excludeJourneyService.excludeJourney("pensions", taxYear.endYear, user.nino)(user, hc).void
+        excludeJourneyService.excludeJourney("pensions", taxYear.endYear, user.nino)(user, hc).map(_ => ())
       } else {
         Future.successful(())
       }
