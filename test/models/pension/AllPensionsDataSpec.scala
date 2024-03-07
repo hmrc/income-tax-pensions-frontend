@@ -28,7 +28,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks with Matchers {
 
-  val amount: BigDecimal = BigDecimal(123.00)
+  val amount: BigDecimal     = BigDecimal(123.00)
   val zeroAmount: BigDecimal = BigDecimal(0.00)
 
   val priorBase: AllPensionsData = anAllPensionsData
@@ -152,7 +152,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
           PensionSchemeUnauthorisedPayments(
             pensionSchemeTaxReference = List("some_pstr").some,
             surcharge = Charge(amount, zeroAmount).some,
-            noSurcharge = Charge(amount, amount).some,
+            noSurcharge = Charge(amount, amount).some
           )
 
         val result = generateSessionModelFromPrior(buildPrior(priorPayments.some)).unauthorisedPayments
@@ -166,7 +166,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
           PensionSchemeUnauthorisedPayments(
             pensionSchemeTaxReference = none[List[String]],
             surcharge = Charge(zeroAmount, zeroAmount).some,
-            noSurcharge = Charge(zeroAmount, zeroAmount).some,
+            noSurcharge = Charge(zeroAmount, zeroAmount).some
           )
 
         val result = generateSessionModelFromPrior(buildPrior(priorPayments.some)).unauthorisedPayments
@@ -179,7 +179,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
         PensionSchemeUnauthorisedPayments(
           pensionSchemeTaxReference = List("some_pstr").some,
           surcharge = Charge(amount, amount).some,
-          noSurcharge = Charge(zeroAmount, zeroAmount).some,
+          noSurcharge = Charge(zeroAmount, zeroAmount).some
         )
 
       val result = generateSessionModelFromPrior(buildPrior(priorPayments.some)).unauthorisedPayments
