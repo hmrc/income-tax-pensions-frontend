@@ -126,23 +126,4 @@ class ShortServiceRefundsViewModelSpec extends UnitTest { // scalatest:off magic
       emptyShortServiceRefundsViewModel.copy(shortServiceRefund = Some(true)).journeyIsNo shouldBe false
     }
   }
-
-  ".toDownstreamRequestModel" should {
-    "transform a ShortServiceRefundsViewModel into a OverseasPensionContributions" in {
-      val result = OverseasPensionContributions(
-        overseasSchemeProvider = Seq(
-          OverseasSchemeProvider(
-            providerName = "Scheme Name without UK charge",
-            providerAddress = "Scheme Address 2",
-            providerCountryCode = "FRA",
-            qualifyingRecognisedOverseasPensionScheme = Some(Seq("Q123456")),
-            pensionSchemeTaxReference = None
-          )
-        ),
-        shortServiceRefund = refundCharge,
-        shortServiceRefundTaxPaid = refundTaxPaidCharge
-      )
-      aShortServiceRefundsViewModel.toDownstreamRequestModel shouldBe result
-    }
-  }
 }

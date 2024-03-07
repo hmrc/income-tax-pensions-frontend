@@ -18,7 +18,6 @@ package utils
 
 import play.api.Logging
 
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 object DateTimeUtil extends Logging {
@@ -26,6 +25,4 @@ object DateTimeUtil extends Logging {
   val localDateTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
   val dateToStringFormat: DateTimeFormatter  = DateTimeFormatter.ofPattern("dd MMMM yyyy")
 
-  def formatDate(date: LocalDate): String =
-    date.format(dateToStringFormat)
 }
