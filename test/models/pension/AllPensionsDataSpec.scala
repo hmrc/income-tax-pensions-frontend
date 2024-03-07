@@ -17,8 +17,8 @@
 package models.pension
 
 import builders.AllPensionsDataBuilder.anAllPensionsData
-import builders.UnauthorisedPaymentsViewModelBuilder.{completeViewModel_WithZeroValue, neitherClaimViewModel, surchargeOnlyViewModel}
-import cats.implicits.catsSyntaxOptionId
+import builders.UnauthorisedPaymentsViewModelBuilder.{completeViewModel_WithZeroValue, neitherClaimViewModelNoPSTR, surchargeOnlyViewModel}
+import cats.implicits.{catsSyntaxOptionId, none}
 import models.pension.AllPensionsData.{Zero, generateSessionModelFromPrior}
 import models.pension.charges.{Charge, PensionSchemeUnauthorisedPayments, UnauthorisedPaymentsViewModel}
 import models.pension.reliefs.{PaymentsIntoPensionsViewModel, Reliefs}
@@ -28,7 +28,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks with Matchers {
 
-  val amount: BigDecimal     = BigDecimal(123.00)
+  val amount: BigDecimal = BigDecimal(123.00)
   val zeroAmount: BigDecimal = BigDecimal(0.00)
 
   val priorBase: AllPensionsData = anAllPensionsData
@@ -149,10 +149,12 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
     "an claim has one non-zero amount present" should {
       "populate the session with that claim (i.e. including the 0 value)" in new UnauthorisedPaymentsTest {
         val priorPayments: PensionSchemeUnauthorisedPayments =
-          paymentsWith(
+          PensionSchemeUnauthorisedPayments(
+            pensionSchemeTaxReference = List("some_pstr").some,
             surcharge = Charge(amount, zeroAmount).some,
-            noSurcharge = Charge(amount, amount).some
+            noSurcharge = Charge(amount, amount).some,
           )
+
         val result = generateSessionModelFromPrior(buildPrior(priorPayments.some)).unauthorisedPayments
 
         result shouldBe completeViewModel_WithZeroValue
@@ -161,21 +163,25 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
     "a claim has solely zero amounts" should {
       "retract that claim" in new UnauthorisedPaymentsTest {
         val priorPayments: PensionSchemeUnauthorisedPayments =
-          paymentsWith(
+          PensionSchemeUnauthorisedPayments(
+            pensionSchemeTaxReference = none[List[String]],
             surcharge = Charge(zeroAmount, zeroAmount).some,
-            noSurcharge = Charge(zeroAmount, zeroAmount).some
+            noSurcharge = Charge(zeroAmount, zeroAmount).some,
           )
+
         val result = generateSessionModelFromPrior(buildPrior(priorPayments.some)).unauthorisedPayments
 
-        result shouldBe neitherClaimViewModel
+        result shouldBe neitherClaimViewModelNoPSTR
       }
     }
     "handle both claims independently" in new UnauthorisedPaymentsTest {
       val priorPayments: PensionSchemeUnauthorisedPayments =
-        paymentsWith(
+        PensionSchemeUnauthorisedPayments(
+          pensionSchemeTaxReference = List("some_pstr").some,
           surcharge = Charge(amount, amount).some,
-          noSurcharge = Charge(zeroAmount, zeroAmount).some
+          noSurcharge = Charge(zeroAmount, zeroAmount).some,
         )
+
       val result = generateSessionModelFromPrior(buildPrior(priorPayments.some)).unauthorisedPayments
 
       result shouldBe surchargeOnlyViewModel
@@ -183,15 +189,6 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
   }
 
   trait UnauthorisedPaymentsTest {
-    val priorBase: AllPensionsData = anAllPensionsData
-
-    def paymentsWith(surcharge: Option[Charge], noSurcharge: Option[Charge]): PensionSchemeUnauthorisedPayments =
-      PensionSchemeUnauthorisedPayments(
-        pensionSchemeTaxReference = List("some_pstr").some,
-        surcharge = surcharge,
-        noSurcharge = noSurcharge
-      )
-
     def buildPrior(unauth: Option[PensionSchemeUnauthorisedPayments]): AllPensionsData =
       priorBase.copy(pensionCharges = priorBase.pensionCharges.map(_.copy(pensionSchemeUnauthorisedPayments = unauth)))
   }

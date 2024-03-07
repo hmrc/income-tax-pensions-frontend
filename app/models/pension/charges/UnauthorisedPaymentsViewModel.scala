@@ -38,16 +38,9 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
                                          pensionSchemeTaxReference: Option[Seq[String]] = None)
     extends PensionCYABaseModel {
 
-  private def isTaxQuestionComplete(maybeBool: Option[Boolean], amountField: Option[BigDecimal]): Boolean =
-    maybeBool.exists { bool =>
-      if (bool) amountField.nonEmpty
-      else true
-    }
-  private def yesNoAndAmountPopulated(boolField: Option[Boolean], amountField: Option[BigDecimal]): Boolean =
-    boolField.exists(value => !value || (value && amountField.nonEmpty))
-
   def isFinished: Boolean = {
-    // If `surchargeQuestion` or `noSurchargeQuestion` are not answered, they'll hold a value of `Some(false)`
+    // `surchargeQuestion` and `noSurchargeQuestion` represent (optional) checkboxes in the UI. If they are not checked,
+    //    their corresponding optional boolean values here will be `Some(false)`
     val isSurchargeComplete = surchargeQuestion.exists { bool =>
       if (bool) surchargeAmount.isDefined && isTaxQuestionComplete(surchargeTaxAmountQuestion, surchargeTaxAmount)
       else true
@@ -66,6 +59,12 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
 
     isSurchargeComplete && isNoSurchargeComplete && arePstrQuestionsComplete
   }
+
+  private def isTaxQuestionComplete(maybeBool: Option[Boolean], amountField: Option[BigDecimal]): Boolean =
+    maybeBool.exists { bool =>
+      if (bool) amountField.nonEmpty
+      else true
+    }
 
   def toDownstreamRequestModel: PensionSchemeUnauthorisedPayments =
     PensionSchemeUnauthorisedPayments(
