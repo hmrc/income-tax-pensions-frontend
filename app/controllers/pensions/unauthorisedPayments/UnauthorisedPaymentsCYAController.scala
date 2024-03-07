@@ -76,15 +76,15 @@ class UnauthorisedPaymentsCYAController @Inject() (
   private def maybeExcludePension(unauthorisedPaymentModel: UnauthorisedPaymentsViewModel,
                                   taxYear: Int,
                                   priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent])(implicit
-                                                                                                      request: Request[_]): EitherT[Future, Result, Unit] =
+      request: Request[_]): EitherT[Future, Result, Unit] =
     (if (!unauthorisedPaymentModel.surchargeQuestion.exists(x => x) && !unauthorisedPaymentModel.noSurchargeQuestion.exists(x => x)) {
-      EitherT(excludeJourneyService.excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)).void
-    } else {
-      EitherT.rightT[Future, APIErrorModel](())
-    }).leftSemiflatMap(_ => errorHandler.futureInternalServerError())
+       EitherT(excludeJourneyService.excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)).void
+     } else {
+       EitherT.rightT[Future, APIErrorModel](())
+     }).leftSemiflatMap(_ => errorHandler.futureInternalServerError())
 
   private def maybeUpdateAnswers(cya: PensionsUserData, prior: Option[AllPensionsData], taxYear: Int)(implicit
-                                                                                                      priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] =
+      priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] =
     if (isEqual(cya.pensions, prior)) {
       EitherT.rightT[Future, Result](toSummaryRedirect(taxYear))
     } else {
