@@ -21,10 +21,11 @@ import cats.implicits.catsSyntaxOptionId
 import common.TaxYear
 import connectors.PensionsConnector
 import models.logging.HeaderCarrierExtensions._
-import models.mongo.{DatabaseError, PensionsUserData, ServiceError}
+import models.mongo.{PensionsUserData, ServiceError}
 import models.pension.charges._
 import models.{APIErrorModel, IncomeTaxUserData, User}
 import repositories.PensionsUserDataRepository
+import repositories.PensionsUserDataRepository.QueryResultT
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
 
@@ -36,7 +37,7 @@ class AnnualAllowanceService @Inject() (repository: PensionsUserDataRepository,
                                         service: PensionSessionService,
                                         pensionsConnector: PensionsConnector) {
 
-  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] =
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] =
     (for {
       data <- service.loadPriorAndSession(user, taxYear)
       (prior, session) = data
@@ -45,7 +46,7 @@ class AnnualAllowanceService @Inject() (repository: PensionsUserDataRepository,
       _ <- clearJourneyFromSession(session).leftAs[ServiceError]
     } yield ()).value
 
-  private def clearJourneyFromSession(session: PensionsUserData): EitherT[Future, DatabaseError, Unit] = {
+  private def clearJourneyFromSession(session: PensionsUserData): QueryResultT[Unit] = {
     val clearedJourneyModel =
       session.pensions.copy(
         pensionsAnnualAllowances = PensionAnnualAllowancesViewModel()
@@ -57,7 +58,7 @@ class AnnualAllowanceService @Inject() (repository: PensionsUserDataRepository,
 
   private def sendDownstream(answers: PensionAnnualAllowancesViewModel, priorData: IncomeTaxUserData, user: User, taxYear: TaxYear)(implicit
       ec: ExecutionContext,
-      hc: HeaderCarrier): EitherT[Future, APIErrorModel, Unit] =
+      hc: HeaderCarrier): DownstreamOutcomeT[Unit] =
     answers.reducedAnnualAllowanceQuestion
       .fold(EitherT.pure[Future, APIErrorModel](())) { _ =>
         val model = buildDownstreamUpsertRequestModel(answers, priorData)

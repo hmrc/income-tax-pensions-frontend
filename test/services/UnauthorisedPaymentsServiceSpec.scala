@@ -24,12 +24,10 @@ import builders.UserBuilder.aUser
 import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId}
 import common.TaxYear
 import mocks.{MockPensionConnector, MockSessionRepository, MockSessionService, MockSubmissionsConnector}
-import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData, ServiceError}
+import models.IncomeTaxUserData
+import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData}
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, UnauthorisedPaymentsViewModel}
-import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
-import play.api.http.Status.BAD_REQUEST
-import utils.EitherTUtils.CasterOps
 import utils.UnitTest
 
 class UnauthorisedPaymentsServiceSpec
@@ -37,7 +35,8 @@ class UnauthorisedPaymentsServiceSpec
     with MockPensionConnector
     with MockSessionRepository
     with MockSubmissionsConnector
-    with MockSessionService {
+    with MockSessionService
+    with BaseServiceSpec {
 
   "saving journey answers" should {
     "return Unit when saving is successful" in new Test {
@@ -61,7 +60,7 @@ class UnauthorisedPaymentsServiceSpec
     "return SessionNotFound when no user session is found in the database" in new Test {
       MockSessionService
         .loadPriorAndSession(aUser, TaxYear(taxYear))
-        .returns(dataNotFoundResponse)
+        .returns(notFoundResponse)
 
       val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
 
@@ -112,8 +111,6 @@ class UnauthorisedPaymentsServiceSpec
   }
 
   trait Test {
-    type PriorAndSession = (IncomeTaxUserData, PensionsUserData)
-
     val priorData: IncomeTaxUserData =
       IncomeTaxUserData(anAllPensionsData.some)
 
@@ -142,12 +139,6 @@ class UnauthorisedPaymentsServiceSpec
         overseasPensionContributions = priorPensionChargesData.flatMap(_.overseasPensionContributions)
       )
     }
-
-    val apiError: APIErrorModel =
-      APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))
-
-    val dataNotFoundResponse = DataNotFound.asLeft[PriorAndSession].toEitherT.leftAs[ServiceError]
-    val apiErrorResponse     = apiError.asLeft[PriorAndSession].toEitherT.leftAs[ServiceError]
 
     val service = new UnauthorisedPaymentsService(mockSessionRepository, mockPensionsConnector, mockSessionService)
   }

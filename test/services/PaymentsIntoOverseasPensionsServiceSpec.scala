@@ -24,15 +24,13 @@ import builders.UserBuilder.aUser
 import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId}
 import common.TaxYear
 import mocks.{MockPensionConnector, MockSessionRepository, MockSessionService, MockSubmissionsConnector}
-import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData, ServiceError}
+import models.IncomeTaxUserData
+import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData}
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import models.pension.income.{CreateUpdatePensionIncomeRequestModel, OverseasPensionContribution, OverseasPensionContributionContainer}
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
-import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
-import play.api.http.Status.BAD_REQUEST
 import utils.Constants.zero
-import utils.EitherTUtils.CasterOps
 import utils.UnitTest
 
 class PaymentsIntoOverseasPensionsServiceSpec
@@ -40,7 +38,8 @@ class PaymentsIntoOverseasPensionsServiceSpec
     with MockPensionConnector
     with MockSessionRepository
     with MockSubmissionsConnector
-    with MockSessionService {
+    with MockSessionService
+    with BaseServiceSpec {
 
   "saving journey answers" when {
     "all external calls are successful" when {
@@ -115,7 +114,7 @@ class PaymentsIntoOverseasPensionsServiceSpec
       "return SessionNotFound" in new Test with SuccessfulMocks {
         MockSessionService
           .loadPriorAndSession(aUser, TaxYear(taxYear))
-          .returns(dataNotFoundResponse)
+          .returns(notFoundResponse)
 
         val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
 
@@ -181,9 +180,6 @@ class PaymentsIntoOverseasPensionsServiceSpec
   }
 
   trait Test {
-
-    type PriorAndSession = (IncomeTaxUserData, PensionsUserData)
-
     val opc = Seq(
       OverseasPensionContribution(
         customerReference = Some("PENSIONINCOME245"),
@@ -239,11 +235,6 @@ class PaymentsIntoOverseasPensionsServiceSpec
 
     val populatedOPCIncomeModel = incomeModelWithOPC(answersOPC.toDownstreamOverseasPensionContribution)
     val emptyOPCIncomeModel     = incomeModelWithOPC(Seq(OverseasPensionContribution.blankSubmission))
-
-    val apiError: APIErrorModel = APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))
-
-    val dataNotFoundResponse = DataNotFound.asLeft[PriorAndSession].toEitherT.leftAs[ServiceError]
-    val apiErrorResponse     = apiError.asLeft[PriorAndSession].toEitherT.leftAs[ServiceError]
 
     val service = new PaymentsIntoOverseasPensionsService(mockSessionRepository, mockSessionService, mockPensionsConnector)
   }

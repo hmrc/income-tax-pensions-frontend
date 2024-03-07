@@ -17,12 +17,11 @@
 package mocks
 
 import connectors.IncomeTaxUserDataConnector
-import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
+import models.IncomeTaxUserData
 import org.scalamock.handlers.CallHandler3
 import org.scalamock.scalatest.MockFactory
+import services.DownstreamOutcome
 import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.Future
 
 trait MockSubmissionsConnector extends MockFactory {
 
@@ -30,7 +29,7 @@ trait MockSubmissionsConnector extends MockFactory {
 
   object MockSubmissionsConnector {
 
-    def getUserData(nino: String, taxYear: Int): CallHandler3[String, Int, HeaderCarrier, Future[IncomeTaxUserDataResponse]] =
+    def getUserData(nino: String, taxYear: Int): CallHandler3[String, Int, HeaderCarrier, DownstreamOutcome[IncomeTaxUserData]] =
       (mockSubmissionsConnector
         .getUserData(_: String, _: Int)(_: HeaderCarrier))
         .expects(nino, taxYear, *)

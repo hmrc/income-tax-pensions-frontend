@@ -24,6 +24,7 @@ import models.mongo.{DatabaseError, PensionsUserData, ServiceError}
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, TransfersIntoOverseasPensionsViewModel}
 import models.{APIErrorModel, IncomeTaxUserData, User}
 import repositories.PensionsUserDataRepository
+import repositories.PensionsUserDataRepository.QueryResultT
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
 
@@ -35,7 +36,7 @@ class TransferIntoOverseasPensionService @Inject() (repository: PensionsUserData
                                                     pensionsConnector: PensionsConnector,
                                                     service: PensionSessionService) {
 
-  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] =
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] =
     (for {
       data <- service.loadPriorAndSession(user, taxYear)
       (prior, session) = data
@@ -44,7 +45,7 @@ class TransferIntoOverseasPensionService @Inject() (repository: PensionsUserData
       _ <- clearJourneyFromSession(session).leftAs[ServiceError]
     } yield ()).value
 
-  private def clearJourneyFromSession(session: PensionsUserData): EitherT[Future, DatabaseError, Unit] = {
+  private def clearJourneyFromSession(session: PensionsUserData): QueryResultT[Unit] = {
     val clearedJourneyModel = session.pensions.copy(transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel.empty)
     val updatedSessionModel = session.copy(pensions = clearedJourneyModel)
 
@@ -56,7 +57,7 @@ class TransferIntoOverseasPensionService @Inject() (repository: PensionsUserData
     */
   private def sendDownstream(answers: TransfersIntoOverseasPensionsViewModel, prior: IncomeTaxUserData, user: User, taxYear: TaxYear)(implicit
       ec: ExecutionContext,
-      hc: HeaderCarrier): EitherT[Future, APIErrorModel, Unit] = {
+      hc: HeaderCarrier): DownstreamOutcomeT[Unit] = {
     val isProvidingSchemeDetails = answers.transferPensionScheme.nonEmpty
 
     if (hasOtherPriorChargesSubmissions(prior) || isProvidingSchemeDetails)

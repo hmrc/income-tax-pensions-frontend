@@ -25,12 +25,10 @@ import builders.UserBuilder.aUser
 import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId, none}
 import common.TaxYear
 import mocks.{MockPensionConnector, MockSessionRepository, MockSessionService, MockSubmissionsConnector}
-import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData, ServiceError}
+import models.IncomeTaxUserData
+import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData}
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, OverseasPensionContributions, PensionCharges, ShortServiceRefundsViewModel}
-import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
-import play.api.http.Status.BAD_REQUEST
-import utils.EitherTUtils.CasterOps
 import utils.UnitTest
 
 class ShortServiceRefundsServiceSpec
@@ -38,9 +36,10 @@ class ShortServiceRefundsServiceSpec
     with MockPensionConnector
     with MockSessionRepository
     with MockSubmissionsConnector
-    with MockSessionService {
+    with MockSessionService
+    with BaseServiceSpec {
 
-  // TODO: Make a base spec. These tests are almost identical to TransferIntoOverseasPensionServiceSpec.
+  // TODO: Make a base spec for the services.
   "saving journey answers" when {
     "all external calls are successful" when {
       "providing scheme details" should {
@@ -107,7 +106,7 @@ class ShortServiceRefundsServiceSpec
       "return SessionNotFound" in new Test {
         MockSessionService
           .loadPriorAndSession(aUser, TaxYear(taxYear))
-          .returns(dataNotFoundResponse)
+          .returns(notFoundResponse)
 
         val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
 
@@ -181,8 +180,6 @@ class ShortServiceRefundsServiceSpec
   }
 
   trait Test {
-    type PriorAndSession = (IncomeTaxUserData, PensionsUserData)
-
     def priorWith(charges: Option[PensionCharges]): IncomeTaxUserData =
       IncomeTaxUserData(anAllPensionsData.copy(pensionCharges = charges).some)
 
@@ -216,12 +213,6 @@ class ShortServiceRefundsServiceSpec
 
     val chargesModelWithJourneyObjectOmitted =
       chargesRequestModel(priorCharges, none[OverseasPensionContributions])
-
-    val apiError: APIErrorModel =
-      APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))
-
-    val dataNotFoundResponse = DataNotFound.asLeft[PriorAndSession].toEitherT.leftAs[ServiceError]
-    val apiErrorResponse     = apiError.asLeft[PriorAndSession].toEitherT.leftAs[ServiceError]
 
     val service =
       new ShortServiceRefundsService(mockSessionService, mockSessionRepository, mockPensionsConnector, mockErrorHandler)

@@ -21,7 +21,6 @@ import cats.implicits.{catsSyntaxApplicativeId, toBifunctorOps}
 import common.TaxYear
 import config.ErrorHandler
 import connectors.IncomeTaxUserDataConnector
-import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo._
 import models.pension.AllPensionsData
@@ -32,6 +31,7 @@ import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
+import repositories.PensionsUserDataRepository.QueryResult
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Clock
 import utils.EitherTUtils.CasterOps
@@ -45,20 +45,17 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
                                        errorHandler: ErrorHandler)(implicit ec: ExecutionContext)
     extends Logging {
 
-  private type SessionData = PensionsUserData
-  private type PriorData   = IncomeTaxUserData
-
-  def loadPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): Future[IncomeTaxUserDataResponse] =
-    submissionsConnector.getUserData(user.nino, taxYear)(hc.withExtraHeaders("mtditid" -> user.mtditid))
+  def loadPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): DownstreamOutcome[IncomeTaxUserData] =
+    submissionsConnector.getUserData(user.nino, taxYear)(hc.withMtditId(user.mtditid))
 
   def loadSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[PensionsUserData]]] =
     repository.find(taxYear, user).map(_.leftMap(_ => ()))
 
   def loadPriorAndSession(user: User, taxYear: TaxYear)(implicit
       hc: HeaderCarrier,
-      ec: ExecutionContext): EitherT[Future, ServiceError, (PriorData, SessionData)] =
+      ec: ExecutionContext): ServiceOutcomeT[(IncomeTaxUserData, PensionsUserData)] =
     for {
-      prior        <- EitherT(submissionsConnector.getUserData(user.nino, taxYear.endYear)(hc.withMtditId(user.mtditid))).leftAs[ServiceError]
+      prior        <- EitherT(loadPriorData(taxYear.endYear, user)).leftAs[ServiceError]
       maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
       session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
     } yield (prior, session)
@@ -104,7 +101,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
     }
   }
 
-  def createOrUpdateSession(pensionsUserData: PensionsUserData): Future[Either[DatabaseError, Unit]] =
+  def createOrUpdateSession(pensionsUserData: PensionsUserData): QueryResult[Unit] =
     repository.createOrUpdate(pensionsUserData).map {
       case Left(error: DatabaseError) => Left(error)
       case Right(_)                   => Right(())
@@ -125,7 +122,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       taxYear: Int,
       user: User,
       renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
-  )(implicit request: Request[_], clock: Clock) = {
+  )(implicit request: Request[_], clock: Clock): Future[Result] = {
     val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
     val updatedSessionPensionCYAModel = updatedSession.newPensionsCYAModel
     val summaryView                   = renderView(taxYear, updatedSessionPensionCYAModel, priorData)

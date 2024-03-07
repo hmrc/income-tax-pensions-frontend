@@ -18,24 +18,25 @@ package connectors
 
 import config.AppConfig
 import connectors.Connector.hcWithCorrelationId
-import connectors.httpParsers.EmploymentSessionHttpParser.{EmploymentSessionHttpReads, EmploymentSessionResponse}
+import connectors.httpParsers.EmploymentSessionHttpParser.EmploymentSessionHttpReads
 import models.logging.ConnectorRequestInfo
 import models.pension.employmentPensions.CreateUpdateEmploymentRequest
 import play.api.Logging
+import services.DownstreamOutcome
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class EmploymentConnector @Inject() (val http: HttpClient, val config: AppConfig) extends Logging {
   def saveEmploymentPensionsData(nino: String, taxYear: Int, model: CreateUpdateEmploymentRequest)(implicit
       hc: HeaderCarrier,
-      ec: ExecutionContext): Future[EmploymentSessionResponse] = {
+      ec: ExecutionContext): DownstreamOutcome[Unit] = {
 
     val url = s"${config.employmentBEBaseUrl}/income-tax/nino/$nino/sources?taxYear=$taxYear"
     ConnectorRequestInfo("POST", url, "income-tax-employment").logRequestWithBody(logger, model)
 
-    http.POST[CreateUpdateEmploymentRequest, EmploymentSessionResponse](url, model)(
+    http.POST[CreateUpdateEmploymentRequest, DownstreamErrorOr[Unit]](url, model)(
       CreateUpdateEmploymentRequest.format,
       EmploymentSessionHttpReads,
       hcWithCorrelationId,

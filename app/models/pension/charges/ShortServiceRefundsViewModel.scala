@@ -69,14 +69,13 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
   )
 
   def maybeToDownstreamModel: Option[OverseasPensionContributions] =
-    (maybeFromORPS(refundPensionScheme), shortServiceRefundCharge).tupled
-      .map { case (schemes, refund) =>
-        OverseasPensionContributions(
-          overseasSchemeProvider = schemes,
-          shortServiceRefund = refund,
-          shortServiceRefundTaxPaid = shortServiceRefundTaxPaidCharge.getOrElse(zero)
-        )
-      }
+    (maybeFromORPS(refundPensionScheme), shortServiceRefundCharge).mapN { (schemes, refund) =>
+      OverseasPensionContributions(
+        overseasSchemeProvider = schemes,
+        shortServiceRefund = refund,
+        shortServiceRefundTaxPaid = shortServiceRefundTaxPaidCharge.getOrElse(zero)
+      )
+    }
 
   private def maybeFromORPS(schemes: Seq[OverseasRefundPensionScheme]): Option[Seq[OverseasSchemeProvider]] =
     schemes.toList.toNel
@@ -87,7 +86,7 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
             s.providerAddress,
             s.qualifyingRecognisedOverseasPensionScheme,
             s.alphaThreeCountryCode
-          ).mapN { case (name, address, qops, countryCode) =>
+          ).mapN { (name, address, qops, countryCode) =>
             OverseasSchemeProvider(
               providerName = name,
               providerAddress = address,

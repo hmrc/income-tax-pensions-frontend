@@ -16,19 +16,17 @@
 
 package connectors.httpParsers
 
-import models.APIErrorModel
+import connectors.DownstreamErrorOr
 import models.logging.ConnectorResponseInfo
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object DeletePensionChargesHttpParser extends APIParser {
-  type DeletePensionChargesResponse = Either[APIErrorModel, Unit]
-
   override val parserName: String = "DeletePensionChargesHttpParser"
   override val service: String    = "income-tax-pensions-frontend"
 
-  implicit object DeletePensionChargesHttpReads extends HttpReads[DeletePensionChargesResponse] {
+  implicit object DeletePensionChargesHttpReads extends HttpReads[DownstreamErrorOr[Unit]] {
 
-    override def read(method: String, url: String, response: HttpResponse): DeletePensionChargesResponse = {
+    override def read(method: String, url: String, response: HttpResponse): DownstreamErrorOr[Unit] = {
       ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
 
       SessionHttpReads.read(method, url, response)

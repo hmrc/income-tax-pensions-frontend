@@ -16,13 +16,12 @@
 
 package config
 
-import connectors.httpParsers.RefreshIncomeSourceHttpParser.RefreshIncomeSourceResponse
-import connectors.httpParsers.StateBenefitsSessionHttpParser.StateBenefitsSessionResponse
 import connectors.{IncomeTaxUserDataConnector, StateBenefitsConnector}
 import models.APIErrorModel
 import models.mongo.StateBenefitsUserData
 import org.scalamock.handlers.CallHandler4
 import org.scalamock.scalatest.MockFactory
+import services.DownstreamOutcome
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,7 +30,7 @@ trait MockStateBenefitsConnector extends MockFactory {
 
   val mockSubmissionsConnector: IncomeTaxUserDataConnector = mock[IncomeTaxUserDataConnector]
 
-  def mockRefreshPensionsResponse(): CallHandler4[String, String, Int, HeaderCarrier, Future[RefreshIncomeSourceResponse]] =
+  def mockRefreshPensionsResponse(): CallHandler4[String, String, Int, HeaderCarrier, DownstreamOutcome[Unit]] =
     (mockSubmissionsConnector
       .refreshPensionsResponse(_: String, _: String, _: Int)(_: HeaderCarrier))
       .expects(*, *, *, *)
@@ -40,8 +39,10 @@ trait MockStateBenefitsConnector extends MockFactory {
 
   val mockStateBenefitsConnector: StateBenefitsConnector = mock[StateBenefitsConnector]
 
-  def mockSaveClaimData(nino: String, model: StateBenefitsUserData, response: Either[APIErrorModel, Unit])
-      : CallHandler4[String, StateBenefitsUserData, HeaderCarrier, ExecutionContext, Future[StateBenefitsSessionResponse]] =
+  def mockSaveClaimData(
+      nino: String,
+      model: StateBenefitsUserData,
+      response: Either[APIErrorModel, Unit]): CallHandler4[String, StateBenefitsUserData, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
     (mockStateBenefitsConnector
       .saveClaimData(_: String, _: StateBenefitsUserData)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, model, *, *)

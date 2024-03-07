@@ -21,11 +21,12 @@ import common.TaxYear
 import config.ErrorHandler
 import connectors.PensionsConnector
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
-import models.mongo.{DatabaseError, PensionsUserData, ServiceError}
+import models.mongo.{PensionsUserData, ServiceError}
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, ShortServiceRefundsViewModel}
-import models.{APIErrorModel, IncomeTaxUserData, User}
+import models.{IncomeTaxUserData, User}
 import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
+import repositories.PensionsUserDataRepository.QueryResultT
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
 
@@ -38,10 +39,9 @@ class ShortServiceRefundsService @Inject() (sessionService: PensionSessionServic
                                             errorHandler: ErrorHandler) {
 
   def upsertSession(session: PensionsUserData)(implicit ec: ExecutionContext, request: Request[_]): EitherT[Future, Result, Unit] =
-    EitherT(sessionService.createOrUpdateSession(session))
-      .leftMap(_ => errorHandler.internalServerError())
+    EitherT(sessionService.createOrUpdateSession(session)).leftMap(_ => errorHandler.internalServerError())
 
-  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] =
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] =
     (for {
       data <- sessionService.loadPriorAndSession(user, taxYear)
       (prior, session) = data
@@ -55,7 +55,7 @@ class ShortServiceRefundsService @Inject() (sessionService: PensionSessionServic
     */
   private def sendDownstream(answers: ShortServiceRefundsViewModel, prior: IncomeTaxUserData, user: User, taxYear: TaxYear)(implicit
       ec: ExecutionContext,
-      hc: HeaderCarrier): EitherT[Future, APIErrorModel, Unit] = {
+      hc: HeaderCarrier): DownstreamOutcomeT[Unit] = {
     val isProvidingSchemeDetails = answers.refundPensionScheme.nonEmpty
 
     if (hasOtherPriorChargesSubmissions(prior) || isProvidingSchemeDetails)
@@ -75,7 +75,7 @@ class ShortServiceRefundsService @Inject() (sessionService: PensionSessionServic
     else false
   }
 
-  private def clearJourneyFromSession(session: PensionsUserData): EitherT[Future, DatabaseError, Unit] = {
+  private def clearJourneyFromSession(session: PensionsUserData): QueryResultT[Unit] = {
     val clearedJourneyModel = session.pensions.copy(shortServiceRefunds = ShortServiceRefundsViewModel.empty)
     val updatedSessionModel = session.copy(pensions = clearedJourneyModel)
 

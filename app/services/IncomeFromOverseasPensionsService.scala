@@ -21,11 +21,12 @@ import cats.implicits.{catsSyntaxOptionId, none}
 import common.TaxYear
 import connectors.PensionsConnector
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
-import models.mongo.{DatabaseError, PensionsUserData, ServiceError}
+import models.mongo.{PensionsUserData, ServiceError}
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import models.pension.income.{CreateUpdatePensionIncomeRequestModel, ForeignPensionContainer}
 import models.{APIErrorModel, IncomeTaxUserData, User}
 import repositories.PensionsUserDataRepository
+import repositories.PensionsUserDataRepository.QueryResultT
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
 
@@ -37,7 +38,7 @@ class IncomeFromOverseasPensionsService @Inject() (repository: PensionsUserDataR
                                                    pensionsConnector: PensionsConnector,
                                                    service: PensionSessionService) {
 
-  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] =
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] =
     (for {
       data <- service.loadPriorAndSession(user, taxYear)
       (prior, session) = data
@@ -46,7 +47,7 @@ class IncomeFromOverseasPensionsService @Inject() (repository: PensionsUserDataR
       _ <- clearJourneyFromSession(session).leftAs[ServiceError]
     } yield ()).value
 
-  private def clearJourneyFromSession(session: PensionsUserData): EitherT[Future, DatabaseError, Unit] = {
+  private def clearJourneyFromSession(session: PensionsUserData): QueryResultT[Unit] = {
     val clearedJourneyModel = session.pensions.copy(incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel.empty)
     val updatedSessionModel = session.copy(pensions = clearedJourneyModel)
 
@@ -55,7 +56,7 @@ class IncomeFromOverseasPensionsService @Inject() (repository: PensionsUserDataR
 
   private def processClaim(answers: IncomeFromOverseasPensionsViewModel, prior: IncomeTaxUserData, user: User, taxYear: TaxYear)(implicit
       ec: ExecutionContext,
-      hc: HeaderCarrier): EitherT[Future, APIErrorModel, Unit] = {
+      hc: HeaderCarrier): DownstreamOutcomeT[Unit] = {
     val hasPriorOPC =
       prior.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution.map(OPCs => OPCs.forall(_.isBlankSubmission)))).contains(false)
 

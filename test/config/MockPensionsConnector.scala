@@ -17,18 +17,13 @@
 package config
 
 import connectors.PensionsConnector
-import connectors.httpParsers.DeletePensionChargesHttpParser.DeletePensionChargesResponse
-import connectors.httpParsers.DeletePensionReliefsHttpParser.DeletePensionReliefsResponse
-import connectors.httpParsers.PensionChargesSessionHttpParser.SavePensionChargesAnswersResponse
-import connectors.httpParsers.PensionIncomeSessionHttpParser.PensionIncomeSessionResponse
-import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionResponse
 import models.APIErrorModel
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
 import org.scalamock.handlers.{CallHandler4, CallHandler5}
 import org.scalamock.scalatest.MockFactory
-import services.{PensionChargesConnectorHelper, PensionIncomeConnectorHelper, PensionReliefsConnectorHelper}
+import services.{DownstreamOutcome, PensionChargesConnectorHelper, PensionIncomeConnectorHelper, PensionReliefsConnectorHelper}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,13 +38,8 @@ trait MockPensionsConnector extends MockFactory {
   def mockSavePensionChargesSessionData(nino: String,
                                         taxYear: Int,
                                         model: CreateUpdatePensionChargesRequestModel,
-                                        response: Either[APIErrorModel, Unit]): CallHandler5[
-    String,
-    Int,
-    CreateUpdatePensionChargesRequestModel,
-    HeaderCarrier,
-    ExecutionContext,
-    Future[SavePensionChargesAnswersResponse]] =
+                                        response: Either[APIErrorModel, Unit])
+      : CallHandler5[String, Int, CreateUpdatePensionChargesRequestModel, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
     (mockPensionsConnector
       .savePensionCharges(_: String, _: Int, _: CreateUpdatePensionChargesRequestModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, model, *, *)
@@ -59,7 +49,7 @@ trait MockPensionsConnector extends MockFactory {
   def mockDeletePensionChargesSessionData(
       nino: String,
       taxYear: Int,
-      response: Either[APIErrorModel, Unit]): CallHandler4[String, Int, HeaderCarrier, ExecutionContext, Future[DeletePensionChargesResponse]] =
+      response: Either[APIErrorModel, Unit]): CallHandler4[String, Int, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
     (mockPensionsConnector
       .deletePensionCharges(_: String, _: Int)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, *, *)
@@ -70,7 +60,7 @@ trait MockPensionsConnector extends MockFactory {
                                        taxYear: Int,
                                        model: CreateUpdatePensionIncomeRequestModel,
                                        response: Either[APIErrorModel, Unit])
-      : CallHandler5[String, Int, CreateUpdatePensionIncomeRequestModel, HeaderCarrier, ExecutionContext, Future[PensionIncomeSessionResponse]] =
+      : CallHandler5[String, Int, CreateUpdatePensionIncomeRequestModel, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
     (mockPensionsConnector
       .savePensionIncome(_: String, _: Int, _: CreateUpdatePensionIncomeRequestModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, model, *, *)
@@ -78,7 +68,7 @@ trait MockPensionsConnector extends MockFactory {
       .anyNumberOfTimes()
 
   def mockSavePensionReliefSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionReliefsModel, response: Either[APIErrorModel, Unit])
-      : CallHandler5[String, Int, CreateUpdatePensionReliefsModel, HeaderCarrier, ExecutionContext, Future[PensionReliefsSessionResponse]] =
+      : CallHandler5[String, Int, CreateUpdatePensionReliefsModel, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
     (mockPensionsConnector
       .savePensionReliefs(_: String, _: Int, _: CreateUpdatePensionReliefsModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, model, *, *)
@@ -88,7 +78,7 @@ trait MockPensionsConnector extends MockFactory {
   def mockDeletePensionReliefSessionData(
       nino: String,
       taxYear: Int,
-      response: Either[APIErrorModel, Unit]): CallHandler4[String, Int, HeaderCarrier, ExecutionContext, Future[DeletePensionReliefsResponse]] =
+      response: Either[APIErrorModel, Unit]): CallHandler4[String, Int, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
     (mockPensionsConnector
       .deletePensionReliefData(_: String, _: Int)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, *, *)
