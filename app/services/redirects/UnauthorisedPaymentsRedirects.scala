@@ -16,12 +16,7 @@
 
 package services.redirects
 
-import controllers.pensions.unauthorisedPayments.routes.{
-  UkPensionSchemeDetailsController,
-  UnauthorisedPaymentsCYAController,
-  UnauthorisedPaymentsController,
-  UnauthorisedPensionSchemeTaxReferenceController
-}
+import controllers.pensions.unauthorisedPayments.routes.{UkPensionSchemeDetailsController, UnauthorisedPaymentsCYAController, UnauthorisedPaymentsController, UnauthorisedPensionSchemeTaxReferenceController}
 import models.mongo.PensionsCYAModel
 import models.pension.charges.UnauthorisedPaymentsViewModel
 import play.api.mvc.Results.Redirect

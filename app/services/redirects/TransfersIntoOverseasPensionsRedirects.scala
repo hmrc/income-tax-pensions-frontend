@@ -16,16 +16,11 @@
 
 package services.redirects
 
-import controllers.pensions.transferIntoOverseasPensions.routes.{
-  OverseasTransferChargePaidController,
-  TransferChargeSummaryController,
-  TransferIntoOverseasPensionsCYAController,
-  TransferPensionSavingsController
-}
+import controllers.pensions.transferIntoOverseasPensions.routes.{OverseasTransferChargePaidController, TransferChargeSummaryController, TransferIntoOverseasPensionsCYAController, TransferPensionSavingsController}
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
-import play.api.mvc.{Call, Result}
 import play.api.mvc.Results.Redirect
+import play.api.mvc.{Call, Result}
 import services.redirects.SimpleRedirectService.{checkForExistingSchemes, redirectBasedOnCurrentAnswers}
 
 import scala.concurrent.Future

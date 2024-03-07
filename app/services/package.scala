@@ -15,7 +15,6 @@
  */
 
 import cats.data.EitherT
-import models.APIErrorModel
 import models.mongo.ServiceError
 
 import scala.concurrent.Future

@@ -18,10 +18,10 @@ package services
 
 import connectors.NrsConnector
 import connectors.httpParsers.NrsSubmissionHttpParser.NrsSubmissionResponse
-import javax.inject.Inject
 import play.api.libs.json.Writes
 import uk.gov.hmrc.http.HeaderCarrier
 
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class NrsService @Inject() (nrsConnector: NrsConnector) {

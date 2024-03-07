@@ -20,16 +20,16 @@ import cats.data.EitherT
 import common.TaxYear
 import connectors.{DownstreamOutcomeT, PensionsConnector}
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
-import models.mongo.{DatabaseError, PensionsUserData, ServiceError}
+import models.mongo.{PensionsUserData, ServiceError}
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, TransfersIntoOverseasPensionsViewModel}
-import models.{APIErrorModel, IncomeTaxUserData, User}
+import models.{IncomeTaxUserData, User}
 import repositories.PensionsUserDataRepository
 import repositories.PensionsUserDataRepository.QueryResultT
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class TransferIntoOverseasPensionService @Inject() (repository: PensionsUserDataRepository,
