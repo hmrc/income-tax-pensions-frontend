@@ -16,9 +16,10 @@
 
 package controllers.pensions.unauthorisedPayments
 
+import cats.data.EitherT
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.routes
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
@@ -27,7 +28,7 @@ import models.requests.UserPriorAndSessionDataRequest
 import models.{APIErrorBodyModel, APIErrorModel, User}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, RequestHeader, Result}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.UnauthorisedPaymentsPages.CYAPage
 import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
@@ -39,6 +40,8 @@ import views.html.pensions.unauthorisedPayments.UnauthorisedPaymentsCYAView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import cats.implicits._
+import models.pension.charges.UnauthorisedPaymentsViewModel
 
 @Singleton
 class UnauthorisedPaymentsCYAController @Inject() (
@@ -67,21 +70,36 @@ class UnauthorisedPaymentsCYAController @Inject() (
     }
   }
 
+  private def toSummaryRedirect(taxYear: Int) = Redirect(routes.PensionsSummaryController.show(taxYear))
+
+  // TODO: check conditions for excluding Pensions from submission without gateway
+  private def maybeExcludePension(unauthorisedPaymentModel: UnauthorisedPaymentsViewModel,
+                                  taxYear: Int,
+                                  priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent])(implicit
+      request: Request[_]): EitherT[Future, Result, Unit] =
+    (if (!unauthorisedPaymentModel.surchargeQuestion.exists(x => x) && !unauthorisedPaymentModel.noSurchargeQuestion.exists(x => x)) {
+       EitherT(excludeJourneyService.excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)).void
+     } else {
+       EitherT.rightT[Future, APIErrorModel](())
+     }).leftSemiflatMap(_ => errorHandler.futureInternalServerError())
+
+  private def maybeUpdateAnswers(cya: PensionsUserData, prior: Option[AllPensionsData], taxYear: Int)(implicit
+      priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] =
+    if (isEqual(cya.pensions, prior)) {
+      EitherT.rightT[Future, Result](toSummaryRedirect(taxYear))
+    } else {
+      EitherT.right[Result](performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest))
+    }
+
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.unauthorisedPaymentsUpdateAuditing(taxYear) async { implicit priorAndSessionRequest =>
     val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(priorAndSessionRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-      val (cya, prior, unauthP) = (data, priorAndSessionRequest.pensions, data.pensions.unauthorisedPayments)
+      val (sessionData, priorData, unauthorisedPaymentModel) = (data, priorAndSessionRequest.pensions, data.pensions.unauthorisedPayments)
 
-      if (!unauthP.surchargeQuestion.exists(x => x) && !unauthP.noSurchargeQuestion.exists(x => x)) {
-        // TODO: check conditions for excluding Pensions from submission without gateway
-        excludeJourneyService.excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)
-      } flatMap {
-        case Right(_) => performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest)
-        case Left(_)  => errorHandler.futureInternalServerError()
-      }
-      if (!comparePriorData(cya.pensions, prior)) {
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      } else { performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest) }
+      (for {
+        _      <- maybeExcludePension(unauthorisedPaymentModel, taxYear, priorAndSessionRequest).map(_ => toSummaryRedirect(taxYear))
+        result <- maybeUpdateAnswers(sessionData, priorData, taxYear)
+      } yield result).merge
     }
   }
 
@@ -103,14 +121,14 @@ class UnauthorisedPaymentsCYAController @Inject() (
         Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
     }).flatMap {
       case Right(_) =>
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(routes.PensionsSummaryController.show(taxYear)))
       case Left(error) => Future.successful(errorHandler.handleError(error.status))
     }
 
-  private def comparePriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
+  private def isEqual(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData match {
-      case None        => true
-      case Some(prior) => !cyaData.equals(generateSessionModelFromPrior(prior))
+      case None        => false
+      case Some(prior) => cyaData.equals(generateSessionModelFromPrior(prior))
     }
 
 }
