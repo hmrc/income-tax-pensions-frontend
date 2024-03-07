@@ -15,7 +15,7 @@
  *@
 
 @import controllers.pensions.shortServiceRefunds.routes.ShortServicePensionsSchemeController
-@import forms.Countries
+@import viewsupport.pensions.paymentsIntoOverseasPensions.DoubleTaxationAgreementCountries
 @import forms.overseas.PensionSchemeForm.OverseasOnlyPensionSchemeFormModel
 @import models.requests.UserSessionDataRequest
 @import views.html.helper.CSPNonce
@@ -107,7 +107,9 @@
             classes = Some("govuk-textarea")
         )
 
-        <div style="width: 300px;">@countryPartial(form, Countries.overseasCountries)</div>
+        <div style="width: 300px;">
+            @countryPartial(form, DoubleTaxationAgreementCountries.countries)
+        </div>
 
         @button()
     }
