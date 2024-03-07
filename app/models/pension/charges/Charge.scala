@@ -18,8 +18,15 @@ package models.pension.charges
 
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
+import utils.Constants.zero
 
-case class Charge(amount: BigDecimal, foreignTaxPaid: BigDecimal)
+case class Charge(amount: BigDecimal, foreignTaxPaid: BigDecimal) {
+
+  def isBlankSubmission: Boolean = {
+    if (amount == zero && foreignTaxPaid == zero) true
+    else false
+  }
+}
 
 object Charge {
   implicit val format: OFormat[Charge] = Json.format[Charge]

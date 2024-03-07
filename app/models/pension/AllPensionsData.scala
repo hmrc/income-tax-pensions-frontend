@@ -178,7 +178,10 @@ object AllPensionsData {
       noSurchargeAmount = determineAmount(hasNoSurcharge, NoSurcharge, Amount),
       noSurchargeTaxAmountQuestion = hasNoSurchargeTaxAmount,
       noSurchargeTaxAmount = determineAmount(hasNoSurcharge, NoSurcharge, TaxAmount),
-      ukPensionSchemesQuestion = journeyPrior.map(_.pensionSchemeTaxReference).map(_.nonEmpty),
+      ukPensionSchemesQuestion =
+        if (journeyPrior.flatMap(_.surcharge).exists(_.isBlankSubmission) && journeyPrior.flatMap(_.noSurcharge).exists(_.isBlankSubmission))
+          none[Boolean]
+        else journeyPrior.map(_.pensionSchemeTaxReference).map(_.nonEmpty),
       pensionSchemeTaxReference = journeyPrior.flatMap(_.pensionSchemeTaxReference)
     )
   }
