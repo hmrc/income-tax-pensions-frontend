@@ -85,13 +85,10 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
         providerName = name,
         providerAddress = address,
         providerCountryCode = tps.alphaThreeCountryCode.fold(ifEmpty = GBAlpha3Code)(identity),
-        qualifyingRecognisedOverseasPensionScheme = tps.qops.fold(ifEmpty = none[Seq[String]])(qops => Seq(enforceValidQopsFormat(qops)).some),
+        qualifyingRecognisedOverseasPensionScheme = tps.qops.fold(ifEmpty = none[Seq[String]])(qops => Seq(enforceValidQopsPrefix(qops)).some),
         pensionSchemeTaxReference = tps.pstr.fold(ifEmpty = none[Seq[String]])(Seq(_).some)
       )
     }
-
-  private def enforceValidQopsFormat(qops: String): String =
-    if (qops.startsWith("Q")) qops else s"Q$qops"
 
   def toTransfersIOP: PensionSchemeOverseasTransfers = PensionSchemeOverseasTransfers(
     overseasSchemeProvider = fromTransferPensionScheme(this.transferPensionScheme),

@@ -19,36 +19,34 @@ package services
 import cats.data.EitherT
 import cats.implicits.catsSyntaxOptionId
 import common.TaxYear
-import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
+import connectors.{DownstreamOutcomeT, PensionsConnector}
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
-import models.mongo.{DatabaseError, PensionsUserData, ServiceError, SessionNotFound}
+import models.mongo.{PensionsUserData, ServiceError}
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, UnauthorisedPaymentsViewModel}
-import models.{APIErrorModel, IncomeTaxUserData, User}
+import models.{IncomeTaxUserData, User}
 import repositories.PensionsUserDataRepository
+import repositories.PensionsUserDataRepository.QueryResultT
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class UnauthorisedPaymentsService @Inject() (repository: PensionsUserDataRepository,
                                              pensionsConnector: PensionsConnector,
-                                             submissionsConnector: IncomeTaxUserDataConnector) {
+                                             service: PensionSessionService) {
 
-  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
-    val hcWithMtdItId = hc.withMtditId(user.mtditid)
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] =
     (for {
-      priorData    <- EitherT(submissionsConnector.getUserData(user.nino, taxYear.endYear)(hcWithMtdItId)).leftAs[ServiceError]
-      maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
-      session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
-      journeyAnswers = session.pensions.unauthorisedPayments
-      _ <- sendDownstream(journeyAnswers, priorData, user, taxYear)(ec, hcWithMtdItId).leftAs[ServiceError]
+      data <- service.loadPriorAndSession(user, taxYear)
+      (prior, session) = data
+      journeyAnswers   = session.pensions.unauthorisedPayments
+      _ <- sendDownstream(journeyAnswers, prior, user, taxYear)(ec, hc.withMtditId(user.mtditid)).leftAs[ServiceError]
       _ <- clearJourneyFromSession(session).leftAs[ServiceError]
     } yield ()).value
-  }
 
-  private def clearJourneyFromSession(session: PensionsUserData): EitherT[Future, DatabaseError, Unit] = {
+  private def clearJourneyFromSession(session: PensionsUserData): QueryResultT[Unit] = {
     val clearedJourneyModel = session.pensions.copy(unauthorisedPayments = UnauthorisedPaymentsViewModel())
     val updatedSessionModel = session.copy(pensions = clearedJourneyModel)
 
@@ -57,7 +55,7 @@ class UnauthorisedPaymentsService @Inject() (repository: PensionsUserDataReposit
 
   private def sendDownstream(answers: UnauthorisedPaymentsViewModel, priorData: IncomeTaxUserData, user: User, taxYear: TaxYear)(implicit
       ec: ExecutionContext,
-      hc: HeaderCarrier): EitherT[Future, APIErrorModel, Unit] = {
+      hc: HeaderCarrier): DownstreamOutcomeT[Unit] = {
     val model = buildDownstreamUpsertRequestModel(answers, priorData)
     EitherT(pensionsConnector.savePensionCharges(user.nino, taxYear.endYear, model))
   }

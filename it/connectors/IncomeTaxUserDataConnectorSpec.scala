@@ -17,7 +17,6 @@
 package connectors
 
 import com.github.tomakehurst.wiremock.http.HttpHeader
-import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
 import models._
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -49,7 +48,7 @@ class IncomeTaxUserDataConnectorSpec extends IntegrationTest {
           "mtditid"      -> mtditid
         )
 
-        val result: IncomeTaxUserDataResponse = Await.result(connector.getUserData(nino, taxYear)(headerCarrier), Duration.Inf)
+        val result: DownstreamErrorOr[IncomeTaxUserData] = Await.result(connector.getUserData(nino, taxYear)(headerCarrier), Duration.Inf)
         result shouldBe Right(IncomeTaxUserData())
       }
 
@@ -63,7 +62,7 @@ class IncomeTaxUserDataConnectorSpec extends IntegrationTest {
           "mtditid"      -> mtditid
         )
 
-        val result: IncomeTaxUserDataResponse = Await.result(connector.getUserData(nino, taxYear)(headerCarrier), Duration.Inf)
+        val result: DownstreamErrorOr[IncomeTaxUserData] = Await.result(connector.getUserData(nino, taxYear)(headerCarrier), Duration.Inf)
         result shouldBe Right(userData)
       }
 
@@ -83,7 +82,7 @@ class IncomeTaxUserDataConnectorSpec extends IntegrationTest {
           "mtditid"      -> mtditid
         )
 
-        val result: IncomeTaxUserDataResponse = Await.result(externalConnector.getUserData(nino, taxYear)(hc), Duration.Inf)
+        val result: DownstreamErrorOr[IncomeTaxUserData] = Await.result(externalConnector.getUserData(nino, taxYear)(hc), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
       }
 
@@ -97,7 +96,7 @@ class IncomeTaxUserDataConnectorSpec extends IntegrationTest {
           "mtditid"      -> mtditid
         )
 
-        val result: IncomeTaxUserDataResponse = Await.result(connector.getUserData(nino, taxYear)(headerCarrier), Duration.Inf)
+        val result: DownstreamErrorOr[IncomeTaxUserData] = Await.result(connector.getUserData(nino, taxYear)(headerCarrier), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
       }
 
@@ -111,7 +110,7 @@ class IncomeTaxUserDataConnectorSpec extends IntegrationTest {
           "mtditid"      -> mtditid
         )
 
-        val result: IncomeTaxUserDataResponse = Await.result(connector.getUserData(nino, taxYear)(headerCarrier), Duration.Inf)
+        val result: DownstreamErrorOr[IncomeTaxUserData] = Await.result(connector.getUserData(nino, taxYear)(headerCarrier), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
       }
 
@@ -125,7 +124,7 @@ class IncomeTaxUserDataConnectorSpec extends IntegrationTest {
           "mtditid"      -> mtditid
         )
 
-        val result: IncomeTaxUserDataResponse = Await.result(connector.getUserData(nino, taxYear)(headerCarrier), Duration.Inf)
+        val result: DownstreamErrorOr[IncomeTaxUserData] = Await.result(connector.getUserData(nino, taxYear)(headerCarrier), Duration.Inf)
         result shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))
       }
 
@@ -139,7 +138,7 @@ class IncomeTaxUserDataConnectorSpec extends IntegrationTest {
           "mtditid"      -> mtditid
         )
 
-        val result: IncomeTaxUserDataResponse = Await.result(connector.getUserData(nino, taxYear)(headerCarrier), Duration.Inf)
+        val result: DownstreamErrorOr[IncomeTaxUserData] = Await.result(connector.getUserData(nino, taxYear)(headerCarrier), Duration.Inf)
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
       }
     }

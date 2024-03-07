@@ -20,18 +20,18 @@ import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.PensionChargesBuilder
 import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, viewModelNoSchemeDetails}
+import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsEmptySchemeViewModel, aShortServiceRefundsViewModel}
 import builders.UserBuilder.aUser
 import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId, none}
 import common.TaxYear
 import mocks.{MockPensionConnector, MockSessionRepository, MockSessionService, MockSubmissionsConnector}
 import models.IncomeTaxUserData
 import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData}
-import models.pension.charges._
+import models.pension.charges.{CreateUpdatePensionChargesRequestModel, OverseasPensionContributions, PensionCharges, ShortServiceRefundsViewModel}
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import utils.UnitTest
 
-class TransferIntoOverseasPensionServiceSpec
+class ShortServiceRefundsServiceSpec
     extends UnitTest
     with MockPensionConnector
     with MockSessionRepository
@@ -39,6 +39,7 @@ class TransferIntoOverseasPensionServiceSpec
     with MockSessionService
     with BaseServiceSpec {
 
+  // TODO: Make a base spec for the services.
   "saving journey answers" when {
     "all external calls are successful" when {
       "providing scheme details" should {
@@ -62,7 +63,7 @@ class TransferIntoOverseasPensionServiceSpec
       }
       "no scheme details are provided" when {
         "prior charges submissions exists" should {
-          "send all prior charges data but omit the 'pensionSchemeOverseasTransfers' json object" in new Test { // so to delete the resource
+          "send all prior charges data but omit the 'overseasPensionContributions' json object" in new Test { // so to delete the resource
             MockSessionService
               .loadPriorAndSession(aUser, TaxYear(taxYear))
               .returns((priorCharges, sessionNoSchemeDetails).asRight.toEitherT)
@@ -185,36 +186,36 @@ class TransferIntoOverseasPensionServiceSpec
     val noPriorCharges = priorWith(none[PensionCharges])
     val priorCharges   = priorWith(PensionChargesBuilder.anPensionCharges.some)
 
-    private def sessionWith(journeyAnswers: TransfersIntoOverseasPensionsViewModel): PensionsUserData =
+    private def sessionWith(journeyAnswers: ShortServiceRefundsViewModel): PensionsUserData =
       aPensionsUserData.copy(
         pensions = emptyPensionsData.copy(
-          transfersIntoOverseasPensions = journeyAnswers
+          shortServiceRefunds = journeyAnswers
         ))
 
-    val sessionSchemeDetails   = sessionWith(aTransfersIntoOverseasPensionsViewModel)
-    val sessionNoSchemeDetails = sessionWith(viewModelNoSchemeDetails)
-
-    def chargesRequestModel(prior: IncomeTaxUserData, expected: Option[PensionSchemeOverseasTransfers]): CreateUpdatePensionChargesRequestModel =
-      CreateUpdatePensionChargesRequestModel
-        .fromPriorData(prior)
-        .copy(pensionSchemeOverseasTransfers = expected)
-
-    val chargesModelWithSchemeDetails =
-      chargesRequestModel(priorCharges, sessionSchemeDetails.pensions.transfersIntoOverseasPensions.maybeToDownstreamRequestModel)
-
-    val chargesModelWithJourneyObjectOmitted =
-      chargesRequestModel(priorCharges, none[PensionSchemeOverseasTransfers])
+    val sessionSchemeDetails   = sessionWith(aShortServiceRefundsViewModel)
+    val sessionNoSchemeDetails = sessionWith(aShortServiceRefundsEmptySchemeViewModel)
 
     def clearedJourneyFromSession(session: PensionsUserData): PensionsUserData = {
       val clearedJourneyModel =
         session.pensions.copy(
-          transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel.empty
+          shortServiceRefunds = ShortServiceRefundsViewModel.empty
         )
       session.copy(pensions = clearedJourneyModel)
     }
 
-    val service = new TransferIntoOverseasPensionService(mockSessionRepository, mockPensionsConnector, mockSessionService)
+    def chargesRequestModel(prior: IncomeTaxUserData, expected: Option[OverseasPensionContributions]): CreateUpdatePensionChargesRequestModel =
+      CreateUpdatePensionChargesRequestModel
+        .fromPriorData(prior)
+        .copy(overseasPensionContributions = expected)
+
+    val chargesModelWithSchemeDetails =
+      chargesRequestModel(priorCharges, sessionSchemeDetails.pensions.shortServiceRefunds.maybeToDownstreamModel)
+
+    val chargesModelWithJourneyObjectOmitted =
+      chargesRequestModel(priorCharges, none[OverseasPensionContributions])
+
+    val service =
+      new ShortServiceRefundsService(mockSessionService, mockSessionRepository, mockPensionsConnector, mockErrorHandler)
 
   }
-
 }

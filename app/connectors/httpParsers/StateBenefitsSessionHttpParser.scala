@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.APIErrorModel
+import connectors.DownstreamErrorOr
 import models.logging.ConnectorResponseInfo
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -24,14 +24,12 @@ import utils.PagerDutyHelper.PagerDutyKeys.FAILED_TO_FIND_PENSIONS_DATA
 import utils.PagerDutyHelper.pagerDutyLog
 
 object StateBenefitsSessionHttpParser extends APIParser {
-  type StateBenefitsSessionResponse = Either[APIErrorModel, Unit]
-
   override val parserName: String = "StateBenefitsSessionHttpParser"
   override val service: String    = "income-tax-state-benefits"
 
-  implicit object StateBenefitsSessionHttpReads extends HttpReads[StateBenefitsSessionResponse] {
+  implicit object StateBenefitsSessionHttpReads extends HttpReads[DownstreamErrorOr[Unit]] {
 
-    override def read(method: String, url: String, response: HttpResponse): StateBenefitsSessionResponse = {
+    override def read(method: String, url: String, response: HttpResponse): DownstreamErrorOr[Unit] = {
       ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
 
       response.status match {

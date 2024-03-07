@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package services
+package models.pension
 
-import connectors.{DownstreamOutcome, ExcludeJourneyConnector}
-import models.User
-import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
-import uk.gov.hmrc.http.HeaderCarrier
-
-import javax.inject.Inject
-
-class ExcludeJourneyService @Inject() (connector: ExcludeJourneyConnector) {
-
-  def excludeJourney(journeyKey: String, taxYear: Int, nino: String)(implicit user: User, hc: HeaderCarrier): DownstreamOutcome[Int] =
-    connector.excludeJourney(journeyKey, taxYear, nino)(hc.withMtditId(user.mtditid))
-
+package object charges {
+  // This method should only be called when converting view models to downstream models, given that the user-supplied
+  // qops would have already had its format validated against the required regex.
+  private[charges] def enforceValidQopsPrefix(qops: String): String =
+    if (qops.startsWith("Q")) qops else s"Q$qops"
 }

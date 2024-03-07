@@ -18,23 +18,21 @@ package connectors
 
 import config.AppConfig
 import connectors.Connector.hcWithCorrelationId
-import connectors.httpParsers.StateBenefitsSessionHttpParser.{StateBenefitsSessionHttpReads, StateBenefitsSessionResponse}
+import connectors.httpParsers.StateBenefitsSessionHttpParser.StateBenefitsSessionHttpReads
 import models.logging.ConnectorRequestInfo
 import models.mongo.StateBenefitsUserData
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class StateBenefitsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends Logging {
 
-  def saveClaimData(nino: String, model: StateBenefitsUserData)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext): Future[StateBenefitsSessionResponse] = {
+  def saveClaimData(nino: String, model: StateBenefitsUserData)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
     val url = appConfig.statePensionBEBaseUrl + s"/income-tax-state-benefits/claim-data/nino/$nino"
     ConnectorRequestInfo("PUT", url, "income-tax-state-benefits").logRequestWithBody(logger, model)
-    http.PUT[StateBenefitsUserData, StateBenefitsSessionResponse](url, model)(
+    http.PUT[StateBenefitsUserData, DownstreamErrorOr[Unit]](url, model)(
       StateBenefitsUserData.stateBenefitsUserDataWrites,
       StateBenefitsSessionHttpReads,
       hcWithCorrelationId(hc),

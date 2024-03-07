@@ -16,6 +16,7 @@
 
 package repositories
 
+import cats.data.EitherT
 import com.mongodb.client.model.ReturnDocument
 import com.mongodb.client.model.Updates.set
 import config.AppConfig
@@ -25,6 +26,7 @@ import org.joda.time.{DateTime, DateTimeZone}
 import org.mongodb.scala.MongoException
 import org.mongodb.scala.model.{FindOneAndReplaceOptions, FindOneAndUpdateOptions}
 import play.api.Logging
+import repositories.PensionsUserDataRepository.QueryResult
 import services.EncryptionService
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.Codecs.toBson
@@ -127,9 +129,12 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
 }
 
 trait PensionsUserDataRepository {
-  type QueryResult[A] = Future[Either[DatabaseError, A]]
-
   def createOrUpdate(userData: PensionsUserData): QueryResult[Unit]
   def find(taxYear: Int, user: User): QueryResult[Option[PensionsUserData]]
   def clear(taxYear: Int, user: User): Future[Boolean]
+}
+
+object PensionsUserDataRepository {
+  type QueryResult[A]  = Future[Either[DatabaseError, A]]
+  type QueryResultT[A] = EitherT[Future, DatabaseError, A]
 }

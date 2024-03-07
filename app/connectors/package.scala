@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package services
+import cats.data.EitherT
+import models.APIErrorModel
 
-import connectors.{DownstreamOutcome, ExcludeJourneyConnector}
-import models.User
-import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
-import uk.gov.hmrc.http.HeaderCarrier
+import scala.concurrent.Future
 
-import javax.inject.Inject
+package object connectors {
+  type DownstreamErrorOr[A] = Either[APIErrorModel, A]
 
-class ExcludeJourneyService @Inject() (connector: ExcludeJourneyConnector) {
-
-  def excludeJourney(journeyKey: String, taxYear: Int, nino: String)(implicit user: User, hc: HeaderCarrier): DownstreamOutcome[Int] =
-    connector.excludeJourney(journeyKey, taxYear, nino)(hc.withMtditId(user.mtditid))
+  type DownstreamOutcome[A]  = Future[Either[APIErrorModel, A]]
+  type DownstreamOutcomeT[A] = EitherT[Future, APIErrorModel, A]
 
 }

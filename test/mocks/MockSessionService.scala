@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-package services
+package mocks
 
-import connectors.{DownstreamOutcome, ExcludeJourneyConnector}
+import common.TaxYear
 import models.User
-import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
+import org.scalamock.scalatest.MockFactory
+import services.PensionSessionService
 import uk.gov.hmrc.http.HeaderCarrier
 
-import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
-class ExcludeJourneyService @Inject() (connector: ExcludeJourneyConnector) {
+trait MockSessionService extends MockFactory {
 
-  def excludeJourney(journeyKey: String, taxYear: Int, nino: String)(implicit user: User, hc: HeaderCarrier): DownstreamOutcome[Int] =
-    connector.excludeJourney(journeyKey, taxYear, nino)(hc.withMtditId(user.mtditid))
+  val mockSessionService: PensionSessionService = mock[PensionSessionService]
 
+  object MockSessionService {
+
+    def loadPriorAndSession(user: User, taxYear: TaxYear) =
+      (mockSessionService
+        .loadPriorAndSession(_: User, _: TaxYear)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(user, taxYear, *, *)
+  }
 }

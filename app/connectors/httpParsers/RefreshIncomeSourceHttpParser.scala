@@ -16,19 +16,17 @@
 
 package connectors.httpParsers
 
-import models.APIErrorModel
+import connectors.DownstreamErrorOr
 import models.logging.ConnectorResponseInfo
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object RefreshIncomeSourceHttpParser extends APIParser {
-  type RefreshIncomeSourceResponse = Either[APIErrorModel, Unit]
-
   override val parserName: String = "RefreshIncomeSourceHttpParser"
   override val service: String    = "income-tax-submission"
 
-  implicit object RefreshIncomeSourceHttpReads extends HttpReads[RefreshIncomeSourceResponse] {
-    override def read(method: String, url: String, response: HttpResponse): RefreshIncomeSourceResponse = {
+  implicit object RefreshIncomeSourceHttpReads extends HttpReads[DownstreamErrorOr[Unit]] {
+    override def read(method: String, url: String, response: HttpResponse): DownstreamErrorOr[Unit] = {
       ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
 
       response.status match {
