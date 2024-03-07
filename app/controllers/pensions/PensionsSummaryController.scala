@@ -25,9 +25,9 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.PensionsSummaryView
 
+import java.time.Clock
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 

@@ -19,7 +19,8 @@ package config
 import com.google.inject.AbstractModule
 import common.UUID
 import repositories.{PensionsUserDataRepository, PensionsUserDataRepositoryImpl}
-import utils.Clock
+
+import java.time.Clock
 
 class Modules extends AbstractModule {
 

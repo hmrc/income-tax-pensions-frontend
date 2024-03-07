@@ -16,7 +16,10 @@
 
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 
-val appName = "income-tax-pensions-frontend"
+lazy val appName = "income-tax-pensions-frontend"
+
+ThisBuild / majorVersion := 0
+ThisBuild / scalaVersion := "2.13.12"
 
 lazy val coverageSettings: Seq[Setting[_]] = {
   import scoverage.ScoverageKeys
@@ -59,13 +62,10 @@ lazy val twirlImports: Seq[String] = Seq(
 )
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
-  .disablePlugins(sbt.plugins.JUnitXmlReportPlugin)
+  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(PlayKeys.playDefaultPort := 9321)
   .settings(
-    majorVersion := 0,
-    scalaVersion := "2.13.10",
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     TwirlKeys.templateImports ++= twirlImports,
     libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,

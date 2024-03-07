@@ -18,10 +18,11 @@ package models.mongo
 
 import common.TaxYear
 import models.User
-import org.joda.time.{DateTime, DateTimeZone}
+import models.mongo.PensionsUserData.localDateFormat
 import play.api.libs.json.{Format, Json}
-import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
-import utils.Clock
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+
+import java.time.{Clock, LocalDate, LocalDateTime, ZoneOffset, ZonedDateTime}
 
 case class PensionsUserData(sessionId: String,
                             mtdItId: String,
@@ -29,15 +30,15 @@ case class PensionsUserData(sessionId: String,
                             taxYear: Int,
                             isPriorSubmission: Boolean,
                             pensions: PensionsCYAModel,
-                            lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
+                            lastUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC))
 
-object PensionsUserData extends MongoJodaFormats {
+object PensionsUserData extends MongoJavatimeFormats {
 
-  implicit val mongoJodaDateTimeFormats: Format[DateTime] = dateTimeFormat
+  implicit val mongoJodaDateTimeFormats: Format[LocalDate] = localDateFormat
 
   implicit val formats: Format[PensionsUserData] = Json.format[PensionsUserData]
 
-  def empty(user: User, taxYear: TaxYear)(implicit clock: Clock): PensionsUserData =
+  def empty(user: User, taxYear: TaxYear): PensionsUserData =
     PensionsUserData(
       user.sessionId,
       user.mtditid,
@@ -45,7 +46,7 @@ object PensionsUserData extends MongoJodaFormats {
       taxYear.endYear,
       isPriorSubmission = false,
       PensionsCYAModel.emptyModels,
-      clock.now(DateTimeZone.UTC)
+      Clock.systemUTC().instant().atZone(ZoneOffset.UTC)
     )
 
 }
@@ -56,11 +57,11 @@ case class EncryptedPensionsUserData(sessionId: String,
                                      taxYear: Int,
                                      isPriorSubmission: Boolean,
                                      pensions: EncryptedPensionCYAModel,
-                                     lastUpdated: DateTime = DateTime.now(DateTimeZone.UTC))
+                                     lastUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC))
 
-object EncryptedPensionsUserData extends MongoJodaFormats {
+object EncryptedPensionsUserData extends MongoJavatimeFormats {
 
-  implicit val mongoJodaDateTimeFormats: Format[DateTime] = dateTimeFormat
+  implicit val mongoJodaDateTimeFormats: Format[LocalDate] = localDateFormat
 
   implicit val formats: Format[EncryptedPensionsUserData] = Json.format[EncryptedPensionsUserData]
 }
