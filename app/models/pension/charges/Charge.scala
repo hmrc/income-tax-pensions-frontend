@@ -23,8 +23,7 @@ import utils.EncryptedValue
 case class Charge(amount: BigDecimal, foreignTaxPaid: BigDecimal) {
 
   def isBlankSubmission: Boolean =
-    if (amount == zero && foreignTaxPaid == zero) true
-    else false
+    amount == zero && foreignTaxPaid == zero
 }
 
 object Charge {
