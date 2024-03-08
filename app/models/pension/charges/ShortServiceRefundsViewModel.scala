@@ -49,7 +49,7 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
         shortServiceRefundCharge.isDefined &&
         shortServiceRefundTaxPaid.exists(bool => if (bool) shortServiceRefundTaxPaidCharge.isDefined else true) &&
         refundPensionScheme.nonEmpty &&
-        refundPensionScheme.forall(rps => rps.isFinished)
+        refundPensionScheme.forall(_.isFinished)
       else true
     }
 
