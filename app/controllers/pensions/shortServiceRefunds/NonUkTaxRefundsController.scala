@@ -73,13 +73,13 @@ class NonUkTaxRefundsController @Inject() (actionsProvider: ActionsProvider,
             val updatedJourney      = journey.copy(shortServiceRefundTaxPaid = bool.some, shortServiceRefundTaxPaidCharge = maybeAmount)
             service
               .upsertSession(updateSessionModel(updatedJourney))
-              .onSuccess(redirectTo(updatedJourney, taxYear))
+              .onSuccess(determineRedirectFrom(updatedJourney, taxYear))
           }
         )
     }
   }
 
-  private def redirectTo(journey: ShortServiceRefundsViewModel, taxYear: Int): Result =
+  private def determineRedirectFrom(journey: ShortServiceRefundsViewModel, taxYear: Int): Result =
     if (journey.isFinished) cyaPageRedirect(taxYear)
     else if (allSchemesFinished(journey.refundPensionScheme)) refundSummaryRedirect(taxYear)
     else refundSchemeRedirect(taxYear, None)
