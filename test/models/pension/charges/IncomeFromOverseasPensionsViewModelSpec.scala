@@ -144,36 +144,4 @@ class IncomeFromOverseasPensionsViewModelSpec extends UnitTest {
     }
   }
 
-  "toForeignPension" should {
-    "transform an IncomeFromOverseasPensionsViewModel into Seq[ForeignPension]" in {
-      val expectedResult: Seq[ForeignPension] = Seq(
-        ForeignPension(
-          countryCode = "FRA",
-          taxableAmount = 1999.99,
-          amountBeforeTax = Some(1999.99),
-          taxTakenOff = Some(1999.99),
-          specialWithholdingTax = Some(1999.99),
-          foreignTaxCreditRelief = Some(true)
-        ),
-        ForeignPension(
-          countryCode = "DEU",
-          taxableAmount = 2000.00,
-          amountBeforeTax = Some(2000.00),
-          taxTakenOff = Some(400.00),
-          specialWithholdingTax = Some(400.00),
-          foreignTaxCreditRelief = Some(true)
-        )
-      )
-
-      anIncomeFromOverseasPensionsViewModel.toForeignPension shouldBe expectedResult
-    }
-    "be empty when there are no OverseasIncomePensionSchemes" in {
-      val viewModel: IncomeFromOverseasPensionsViewModel =
-        anIncomeFromOverseasPensionsEmptyViewModel.copy(paymentsFromOverseasPensionsQuestion = Some(true))
-      val expectedResult: Seq[ForeignPension] = Seq.empty
-
-      viewModel.toForeignPension shouldBe expectedResult
-    }
-  }
-
 }
