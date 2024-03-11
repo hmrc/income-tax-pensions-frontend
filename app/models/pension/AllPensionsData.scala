@@ -110,6 +110,7 @@ object AllPensionsData {
             ))
         case _ => None
       }
+
     (
       getStatePensionModel(prior.stateBenefits.flatMap(_.stateBenefitsData.flatMap(_.statePension))),
       getStatePensionModel(prior.stateBenefits.flatMap(_.stateBenefitsData.flatMap(_.statePensionLumpSum)))
@@ -134,6 +135,7 @@ object AllPensionsData {
             ))
         case _ => Seq()
       }
+
     def getUkPensionQuestion(prior: AllPensionsData) =
       if (getUkPensionIncome(prior).nonEmpty) Some(true) else None
 
@@ -152,6 +154,7 @@ object AllPensionsData {
         if (c.amount == 0 && c.foreignTaxPaid == 0) valueIfBlankSubmission else true.some
       }
     }
+
     def determineAmount(questionValue: Option[Boolean], paymentType: PaymentResult, amountType: AmountType): Option[BigDecimal] =
       questionValue.fold(ifEmpty = none[BigDecimal]) { bool =>
         val amountFromPrior =
@@ -163,6 +166,7 @@ object AllPensionsData {
           }
         if (bool) amountFromPrior else none[BigDecimal]
       }
+
     val hasSurcharge          = determineQuestionValue(Surcharge)(valueIfBlankSubmission = false.some)
     val hasSurchargeTaxAmount = determineQuestionValue(Surcharge)(valueIfBlankSubmission = none[Boolean])
 
@@ -178,7 +182,10 @@ object AllPensionsData {
       noSurchargeAmount = determineAmount(hasNoSurcharge, NoSurcharge, Amount),
       noSurchargeTaxAmountQuestion = hasNoSurchargeTaxAmount,
       noSurchargeTaxAmount = determineAmount(hasNoSurcharge, NoSurcharge, TaxAmount),
-      ukPensionSchemesQuestion = journeyPrior.map(_.pensionSchemeTaxReference).map(_.nonEmpty),
+      ukPensionSchemesQuestion =
+        if (journeyPrior.flatMap(_.surcharge).exists(_.isBlankSubmission) && journeyPrior.flatMap(_.noSurcharge).exists(_.isBlankSubmission))
+          none[Boolean]
+        else journeyPrior.map(_.pensionSchemeTaxReference).map(_.nonEmpty),
       pensionSchemeTaxReference = journeyPrior.flatMap(_.pensionSchemeTaxReference)
     )
   }
@@ -194,6 +201,7 @@ object AllPensionsData {
       } else {
         TaxReliefQuestion.NoTaxRelief
       }
+
     PaymentsIntoOverseasPensionsViewModel(
       paymentsIntoOverseasPensionsQuestions = prior.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions.map(_ != zero)),
       paymentsIntoOverseasPensionsAmount = prior.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions),
@@ -258,12 +266,18 @@ object AllPensionsData {
         .getOrElse(Nil)
     )
 
-  private def generateShortServiceRefundCyaFromPrior(prior: AllPensionsData): ShortServiceRefundsViewModel =
+  private def generateShortServiceRefundCyaFromPrior(prior: AllPensionsData): ShortServiceRefundsViewModel = {
+    val priorTaxPaidAmount = prior.pensionCharges.flatMap(_.overseasPensionContributions.map(_.shortServiceRefundTaxPaid))
     ShortServiceRefundsViewModel(
       shortServiceRefund = prior.pensionCharges.map(_.overseasPensionContributions.map(_.shortServiceRefund).isDefined),
       shortServiceRefundCharge = prior.pensionCharges.flatMap(_.overseasPensionContributions.map(_.shortServiceRefund)),
-      shortServiceRefundTaxPaid = prior.pensionCharges.map(_.overseasPensionContributions.map(_.shortServiceRefundTaxPaid).isDefined),
-      shortServiceRefundTaxPaidCharge = prior.pensionCharges.flatMap(_.overseasPensionContributions.map(_.shortServiceRefundTaxPaid)),
+      shortServiceRefundTaxPaid =
+        if (priorTaxPaidAmount.contains(zero)) false.some
+        else if (priorTaxPaidAmount.isEmpty) none[Boolean]
+        else true.some,
+      shortServiceRefundTaxPaidCharge =
+        if (priorTaxPaidAmount.contains(zero)) none[BigDecimal]
+        else priorTaxPaidAmount,
       refundPensionScheme = prior.pensionCharges
         .flatMap(_.overseasPensionContributions.map(_.overseasSchemeProvider.map(osp =>
           OverseasRefundPensionScheme(
@@ -275,4 +289,5 @@ object AllPensionsData {
           ))))
         .getOrElse(Nil)
     )
+  }
 }

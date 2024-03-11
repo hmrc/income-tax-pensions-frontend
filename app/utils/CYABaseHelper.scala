@@ -50,10 +50,6 @@ trait CYABaseHelper {
   def summaryListRowWithString(labelMessageKey: String, valueOpt: Option[String], changeLink: Call)(implicit messages: Messages): SummaryListRow =
     summaryListRowWithStrings(labelMessageKey, valueOpt.map(Seq(_)), changeLink)
 
-  def summaryListRowWithAmountAndTaxValue(labelMessageKey: String, amount: Option[BigDecimal], taxPaid: Option[BigDecimal], changeLink: Call)(implicit
-      messages: Messages): SummaryListRow =
-    summaryListRow(labelMessageKey, displayedValueForAmountAndTax(amount, taxPaid), changeLink)
-
   def displayedValueForOptionalAmount(valueOpt: Option[BigDecimal], noneValue: String = ""): String =
     valueOpt.map(displayedValue).getOrElse(noneValue)
 
@@ -76,9 +72,6 @@ trait CYABaseHelper {
           messages("common.no")
         })
       .getOrElse("")
-
-  private def displayedValueForAmountAndTax(amount: Option[BigDecimal], taxPaid: Option[BigDecimal]): String =
-    s"""Amount: ${displayedValueForOptionalAmount(amount)} <br> Tax paid: ${displayedValueForOptionalAmount(taxPaid)}"""
 
   private def displayedValueForOptionalStrings(valueOpt: Option[Seq[String]]): String = valueOpt.map(_.mkString(", ")).getOrElse("")
 

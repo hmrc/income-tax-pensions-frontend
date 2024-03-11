@@ -28,8 +28,6 @@ import scala.util.Try
 
 object ViewUtils {
 
-  case class EmploymentDataForView(fieldHeadings: String, fieldValues: Option[String], changeLink: Call, hiddenText: String)
-
   def convertBoolToYesOrNo(employmentField: Option[Boolean])(implicit messages: Messages): Option[String] =
     employmentField.map {
       case true  => messages("common.yes")
@@ -48,9 +46,6 @@ object ViewUtils {
 
   def dateFormatter(date: LocalDate): String =
     date.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK))
-
-  def getAgentDynamicContent(msgKey: String, isAgent: Boolean): String =
-    s"$msgKey.${if (isAgent) "agent" else "individual"}"
 
   def summaryListRow(key: HtmlContent,
                      value: HtmlContent,

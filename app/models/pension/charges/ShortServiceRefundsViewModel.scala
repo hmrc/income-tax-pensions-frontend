@@ -49,7 +49,7 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
         shortServiceRefundCharge.isDefined &&
         shortServiceRefundTaxPaid.exists(bool => if (bool) shortServiceRefundTaxPaidCharge.isDefined else true) &&
         refundPensionScheme.nonEmpty &&
-        refundPensionScheme.forall(rps => rps.isFinished)
+        refundPensionScheme.forall(_.isFinished)
       else true
     }
 
@@ -61,12 +61,6 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
       shortServiceRefundTaxPaidCharge = shortServiceRefundTaxPaidCharge.map(_.encrypted),
       refundPensionScheme = refundPensionScheme.map(_.encrypted())
     )
-
-  def toDownstreamRequestModel: OverseasPensionContributions = OverseasPensionContributions(
-    shortServiceRefund = shortServiceRefundCharge.getOrElse(0.00),
-    shortServiceRefundTaxPaid = shortServiceRefundTaxPaidCharge.getOrElse(0.00),
-    overseasSchemeProvider = fromTransferPensionScheme(refundPensionScheme)
-  )
 
   def maybeToDownstreamModel: Option[OverseasPensionContributions] =
     (maybeFromORPS(refundPensionScheme), shortServiceRefundCharge).mapN { (schemes, refund) =>
@@ -98,17 +92,6 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
         }
       }
       .map(_.toList.toSeq)
-
-  private def fromTransferPensionScheme(scheme: Seq[OverseasRefundPensionScheme]): Seq[OverseasSchemeProvider] =
-    scheme.map(x =>
-      OverseasSchemeProvider(
-        providerName = x.name.getOrElse(""),
-        qualifyingRecognisedOverseasPensionScheme =
-          if (x.qualifyingRecognisedOverseasPensionScheme.nonEmpty) Some(Seq(s"Q${x.qualifyingRecognisedOverseasPensionScheme.get}")) else None,
-        pensionSchemeTaxReference = None,
-        providerAddress = x.providerAddress.getOrElse(""),
-        providerCountryCode = x.alphaThreeCountryCode.getOrElse("")
-      ))
 
   override def journeyIsNo: Boolean = this.shortServiceRefund.contains(false)
 

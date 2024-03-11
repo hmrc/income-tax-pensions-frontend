@@ -90,23 +90,6 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
       )
     }
 
-  def toTransfersIOP: PensionSchemeOverseasTransfers = PensionSchemeOverseasTransfers(
-    overseasSchemeProvider = fromTransferPensionScheme(this.transferPensionScheme),
-    transferCharge = this.overseasTransferChargeAmount.getOrElse(0.00),
-    transferChargeTaxPaid = this.pensionSchemeTransferChargeAmount.getOrElse(0.00)
-  )
-
-  private def fromTransferPensionScheme(tps: Seq[TransferPensionScheme]): Seq[OverseasSchemeProvider] =
-    tps.map(x =>
-      OverseasSchemeProvider(
-        providerName = x.name.getOrElse(""),
-        providerAddress = x.providerAddress.getOrElse(""),
-        providerCountryCode = x.alphaThreeCountryCode.getOrElse(""),
-        qualifyingRecognisedOverseasPensionScheme = if (x.qops.nonEmpty) Some(Seq(s"Q${x.qops.get}")) else None,
-        pensionSchemeTaxReference = if (x.pstr.nonEmpty && x.alphaThreeCountryCode.isEmpty) Some(Seq(x.pstr.get)) else None
-        // TODO: remove above alpha check when field get cleared out when changing between PSTR and QOPS
-      ))
-
   def journeyIsNo: Boolean = this.transferPensionSavings.contains(false)
 
   def journeyIsUnanswered: Boolean = this.isEmpty

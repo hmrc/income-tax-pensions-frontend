@@ -65,44 +65,41 @@
 
     @layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = hasFormErrors, isAgent = request.user.isAgent) {
 
-    @errorSummary(form.errors.distinct)
+        @errorSummary(form.errors.distinct)
 
-    @heading(titleForUse, Some(messages("common.shortServiceRefunds.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
+        @heading(titleForUse, Some(messages("common.shortServiceRefunds.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-2")
 
-    <p class="govuk-body">@messages(s"shortServiceRefunds.taxableRefundAmount.p1.${if(request.user.isAgent) "agent" else "individual"}")</p>
-    <p class="govuk-body">@messages(s"shortServiceRefunds.taxableRefundAmount.p2.${if(request.user.isAgent) "agent" else "individual"}")</p>
+        <p class="govuk-body">@messages(s"shortServiceRefunds.taxableRefundAmount.p1.${if(request.user.isAgent) "agent" else "individual"}")</p>
+        <p class="govuk-body">@messages(s"shortServiceRefunds.taxableRefundAmount.p2.${if(request.user.isAgent) "agent" else "individual"}")</p>
 
-    @details("shortServiceRefunds.taxableRefundAmount.details.title", detailsHtml)
+        @details("shortServiceRefunds.taxableRefundAmount.details.title", detailsHtml)
 
-    <h2 class="govuk-heading-m">@messages(s"shortServiceRefunds.taxableRefundAmount.h2.${if(request.user.isAgent) "agent" else "individual"}")</h2>
+        <h2 class="govuk-heading-m">@messages(s"shortServiceRefunds.taxableRefundAmount.h2.${if(request.user.isAgent) "agent" else "individual"}")</h2>
 
-    @formWithCsrf(action = controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController.submit(taxYear)) {
-        @inputRadio(
-            form = form,
-            legendHeading = Some(Html(titleForUse)),
-            legendHidden = true,
-            inline = false,
-            items = Seq(
-            RadioItem(id = Some("value"),
-            value = Some("true"),
-            content = Text(messages("common.yes")),
-            checked = form("value").value.contains("true"),
-            conditionalHtml = Some(AmountInput)
-        ),
-        RadioItem(
-            id = Some("value-no"),
-            value = Some("false"),
-            content = Text(messages("common.no")),
-            checked = form("value").value.contains("false")
-        )
-    )
-)
+        @formWithCsrf(action = controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController.submit(taxYear)) {
+            @inputRadio(
+                form = form,
+                legendHeading = Some(Html(titleForUse)),
+                legendHidden = true,
+                inline = false,
+                items = Seq(
+                    RadioItem(
+                        id = Some("value"),
+                        value = Some("true"),
+                        content = Text(messages("common.yes")),
+                        checked = form("value").value.contains("true"),
+                        conditionalHtml = Some(AmountInput)
+                    ),
+                    RadioItem(
+                        id = Some("value-no"),
+                        value = Some("false"),
+                        content = Text(messages("common.no")),
+                        checked = form("value").value.contains("false")
+                    )
+                )
+            )
 
-    @button()
-}
+        @button()
+    }
 
-}
-
-@{
-// $COVERAGE-OFF$
 }

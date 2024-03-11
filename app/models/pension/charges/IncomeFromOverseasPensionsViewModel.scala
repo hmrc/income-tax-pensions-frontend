@@ -63,18 +63,6 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
         )
       }
 
-  def toForeignPension: Seq[ForeignPension] =
-    overseasIncomePensionSchemes.map { scheme =>
-      ForeignPension(
-        countryCode = Countries.maybeGet3AlphaCodeFrom2AlphaCode(scheme.alphaTwoCode).get, // TODO validate CYA story to ensure country code present
-        taxableAmount = scheme.taxableAmount.get, // TODO validate CYA story to ensure taxable amount is present
-        amountBeforeTax = scheme.pensionPaymentAmount,
-        taxTakenOff = scheme.pensionPaymentTaxPaid,
-        specialWithholdingTax = scheme.specialWithholdingTaxAmount,
-        foreignTaxCreditRelief = scheme.foreignTaxCreditReliefQuestion
-      )
-    }
-
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromOverseasPensionsViewModel =
     EncryptedIncomeFromOverseasPensionsViewModel(
       paymentsFromOverseasPensionsQuestion = paymentsFromOverseasPensionsQuestion.map(_.encrypted),

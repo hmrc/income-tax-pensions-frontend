@@ -61,26 +61,30 @@ class TaxableRefundAmountController @Inject() (actionsProvider: ActionsProvider,
       .bindFromRequest()
       .fold(
         errors => Future.successful(BadRequest(view(errors, taxYear))),
-        answer =>
+        answer => {
+          val (bool, maybeAmount) = answer
+          val updatedJourney      = updateJourneyModel(journey, bool, maybeAmount)
           service
-            .upsertSession(updateSessionModel(answer._1, answer._2))
-            .onSuccess(redirectTo(journey, answer._1, taxYear))
+            .upsertSession(updateSessionModel(updatedJourney))
+            .onSuccess(determineRedirectFrom(updatedJourney, bool, taxYear))
+        }
       )
   }
 
-  private def updateSessionModel(bool: Boolean, maybeAmount: Option[BigDecimal])(implicit
-      request: UserSessionDataRequest[AnyContent]): PensionsUserData = {
-    val journey = request.pensionsUserData.pensions.shortServiceRefunds
-    val updatedJourney =
-      if (bool) journey.copy(shortServiceRefund = true.some, shortServiceRefundCharge = maybeAmount)
-      else ShortServiceRefundsViewModel(shortServiceRefund = false.some)
+  private def updateJourneyModel(journey: ShortServiceRefundsViewModel,
+                                 bool: Boolean,
+                                 maybeAmount: Option[BigDecimal]): ShortServiceRefundsViewModel =
+    if (bool) journey.copy(shortServiceRefund = true.some, shortServiceRefundCharge = maybeAmount)
+    else ShortServiceRefundsViewModel(shortServiceRefund = false.some)
 
+  private def updateSessionModel(updatedJourney: ShortServiceRefundsViewModel)(implicit
+      request: UserSessionDataRequest[AnyContent]): PensionsUserData = {
     val updatedSession = request.pensionsUserData.pensions.copy(shortServiceRefunds = updatedJourney)
 
     request.pensionsUserData.copy(pensions = updatedSession)
   }
 
-  private def redirectTo(journey: ShortServiceRefundsViewModel, bool: Boolean, taxYear: Int): Result =
+  private def determineRedirectFrom(journey: ShortServiceRefundsViewModel, bool: Boolean, taxYear: Int): Result =
     if (journey.isFinished || !bool) cyaPageRedirect(taxYear)
     else nonUkTaxRefundsRedirect(taxYear)
 
