@@ -46,7 +46,7 @@ class FormsProvider {
     )
   }
 
-  def shortServiceTaxableRefundForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
+  def shortServiceTaxableRefundForm(user: User): Form[(Boolean, Option[BigDecimal])] = {
     val agentOrIndividual = userType(user.isAgent)
     RadioButtonAmountForm.radioButtonAndAmountForm(
       missingInputError = s"shortServiceRefunds.taxableRefundAmount.error.noEntry.$agentOrIndividual",

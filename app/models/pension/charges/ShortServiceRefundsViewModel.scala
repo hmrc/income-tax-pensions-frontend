@@ -16,9 +16,11 @@
 
 package models.pension.charges
 
+import cats.implicits.{catsSyntaxList, catsSyntaxOptionId, catsSyntaxTuple2Semigroupal, catsSyntaxTuple4Semigroupal, none}
 import models.mongo.TextAndKey
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
+import utils.Constants.zero
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
@@ -47,7 +49,7 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
         shortServiceRefundCharge.isDefined &&
         shortServiceRefundTaxPaid.exists(bool => if (bool) shortServiceRefundTaxPaidCharge.isDefined else true) &&
         refundPensionScheme.nonEmpty &&
-        refundPensionScheme.forall(rps => rps.isFinished)
+        refundPensionScheme.forall(_.isFinished)
       else true
     }
 
@@ -60,22 +62,36 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
       refundPensionScheme = refundPensionScheme.map(_.encrypted())
     )
 
-  def toDownstreamRequestModel: OverseasPensionContributions = OverseasPensionContributions(
-    shortServiceRefund = shortServiceRefundCharge.getOrElse(0.00),
-    shortServiceRefundTaxPaid = shortServiceRefundTaxPaidCharge.getOrElse(0.00),
-    overseasSchemeProvider = fromTransferPensionScheme(refundPensionScheme)
-  )
+  def maybeToDownstreamModel: Option[OverseasPensionContributions] =
+    (maybeFromORPS(refundPensionScheme), shortServiceRefundCharge).mapN { (schemes, refund) =>
+      OverseasPensionContributions(
+        overseasSchemeProvider = schemes,
+        shortServiceRefund = refund,
+        shortServiceRefundTaxPaid = shortServiceRefundTaxPaidCharge.getOrElse(zero)
+      )
+    }
 
-  private def fromTransferPensionScheme(scheme: Seq[OverseasRefundPensionScheme]): Seq[OverseasSchemeProvider] =
-    scheme.map(x =>
-      OverseasSchemeProvider(
-        providerName = x.name.getOrElse(""),
-        qualifyingRecognisedOverseasPensionScheme =
-          if (x.qualifyingRecognisedOverseasPensionScheme.nonEmpty) Some(Seq(s"Q${x.qualifyingRecognisedOverseasPensionScheme.get}")) else None,
-        pensionSchemeTaxReference = None,
-        providerAddress = x.providerAddress.getOrElse(""),
-        providerCountryCode = x.alphaThreeCountryCode.getOrElse("")
-      ))
+  private def maybeFromORPS(schemes: Seq[OverseasRefundPensionScheme]): Option[Seq[OverseasSchemeProvider]] =
+    schemes.toList.toNel
+      .flatMap {
+        _.traverse { s =>
+          (
+            s.name,
+            s.providerAddress,
+            s.qualifyingRecognisedOverseasPensionScheme,
+            s.alphaThreeCountryCode
+          ).mapN { (name, address, qops, countryCode) =>
+            OverseasSchemeProvider(
+              providerName = name,
+              providerAddress = address,
+              providerCountryCode = countryCode,
+              qualifyingRecognisedOverseasPensionScheme = Seq(enforceValidQopsPrefix(qops)).some,
+              pensionSchemeTaxReference = none[Seq[String]] // Not a valid field for this journey
+            )
+          }
+        }
+      }
+      .map(_.toList.toSeq)
 
   override def journeyIsNo: Boolean = this.shortServiceRefund.contains(false)
 
@@ -85,6 +101,8 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
 
 object ShortServiceRefundsViewModel {
   implicit val format: OFormat[ShortServiceRefundsViewModel] = Json.format[ShortServiceRefundsViewModel]
+
+  val empty: ShortServiceRefundsViewModel = ShortServiceRefundsViewModel()
 }
 
 case class EncryptedShortServiceRefundsViewModel(

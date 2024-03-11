@@ -18,7 +18,6 @@ package connectors
 
 import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
-import connectors.httpParsers.EmploymentSessionHttpParser.EmploymentSessionResponse
 import models.{APIErrorBodyModel, APIErrorModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -56,7 +55,7 @@ class EmploymentConnectorISpec extends IntegrationTest {
       val successSaveResponse     = Right(())
       lazy val failedSaveResponse = Left(APIErrorModel(httpStatus, APIErrorBodyModel("PARSING_ERROR", "Error parsing response from API")))
 
-      def saveData(): EmploymentSessionResponse = {
+      def saveData(): DownstreamErrorOr[Unit] = {
         implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(sessionId)))
           .withExtraHeaders("mtditid" -> mtditid)
 

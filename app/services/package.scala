@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package utils
+import cats.data.EitherT
+import models.mongo.ServiceError
 
-import play.api.Logging
+import scala.concurrent.Future
 
-import java.time.format.DateTimeFormatter
-
-object DateTimeUtil extends Logging {
-
-  val localDateTimeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-  val dateToStringFormat: DateTimeFormatter  = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+package object services {
+  type ServiceOutcome[A]  = Future[Either[ServiceError, A]]
+  type ServiceOutcomeT[A] = EitherT[Future, ServiceError, A]
 
 }

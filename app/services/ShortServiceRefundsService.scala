@@ -17,17 +17,75 @@
 package services
 
 import cats.data.EitherT
+import common.TaxYear
 import config.ErrorHandler
-import models.mongo.PensionsUserData
+import connectors.{DownstreamOutcomeT, PensionsConnector}
+import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
+import models.mongo.{PensionsUserData, ServiceError}
+import models.pension.charges.{CreateUpdatePensionChargesRequestModel, ShortServiceRefundsViewModel}
+import models.{IncomeTaxUserData, User}
 import play.api.mvc.{Request, Result}
+import repositories.PensionsUserDataRepository
+import repositories.PensionsUserDataRepository.QueryResultT
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.EitherTUtils.CasterOps
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ShortServiceRefundsService @Inject() (service: PensionSessionService, errorHandler: ErrorHandler) {
+class ShortServiceRefundsService @Inject() (sessionService: PensionSessionService,
+                                            repository: PensionsUserDataRepository,
+                                            pensionsConnector: PensionsConnector,
+                                            errorHandler: ErrorHandler) {
 
   def upsertSession(session: PensionsUserData)(implicit ec: ExecutionContext, request: Request[_]): EitherT[Future, Result, Unit] =
-    EitherT(service.createOrUpdateSession(session))
-      .leftMap(_ => errorHandler.internalServerError())
+    EitherT(sessionService.createOrUpdateSession(session)).leftMap(_ => errorHandler.internalServerError())
+
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] =
+    (for {
+      data <- sessionService.loadPriorAndSession(user, taxYear)
+      (prior, session) = data
+      journeyAnswers   = session.pensions.shortServiceRefunds
+      _ <- sendDownstream(journeyAnswers, prior, user, taxYear)(ec, hc.withMtditId(user.mtditid)).leftAs[ServiceError]
+      _ <- clearJourneyFromSession(session).leftAs[ServiceError]
+    } yield ()).value
+
+  /** When calling `savePensionCharges`, the `CreateUpdatePensionChargesRequestModel` cannot have all fields as `None`, as API 1673/1868 does not
+    * allow an empty JSON payload. As a result, we have to call the delete endpoint.
+    */
+  private def sendDownstream(answers: ShortServiceRefundsViewModel, prior: IncomeTaxUserData, user: User, taxYear: TaxYear)(implicit
+      ec: ExecutionContext,
+      hc: HeaderCarrier): DownstreamOutcomeT[Unit] = {
+    val isProvidingSchemeDetails = answers.refundPensionScheme.nonEmpty
+
+    if (hasOtherPriorChargesSubmissions(prior) || isProvidingSchemeDetails)
+      EitherT(pensionsConnector.savePensionCharges(user.nino, taxYear.endYear, buildDownstreamUpsertRequestModel(answers, prior)))
+    else EitherT(pensionsConnector.deletePensionCharges(user.nino, taxYear.endYear))
+  }
+
+  private def hasOtherPriorChargesSubmissions(prior: IncomeTaxUserData): Boolean = {
+    val priorCharges = prior.pensions.flatMap(_.pensionCharges)
+
+    val hasPriorPSTC = priorCharges.flatMap(_.pensionSavingsTaxCharges).isDefined
+    val hasPriorPSUP = priorCharges.flatMap(_.pensionSchemeUnauthorisedPayments).isDefined
+    val hasPriorPC   = priorCharges.flatMap(_.pensionContributions).isDefined
+    val hasPriorPSOT = priorCharges.flatMap(_.pensionSchemeOverseasTransfers).isDefined
+
+    if (hasPriorPSTC || hasPriorPSUP || hasPriorPC || hasPriorPSOT) true
+    else false
+  }
+
+  private def clearJourneyFromSession(session: PensionsUserData): QueryResultT[Unit] = {
+    val clearedJourneyModel = session.pensions.copy(shortServiceRefunds = ShortServiceRefundsViewModel.empty)
+    val updatedSessionModel = session.copy(pensions = clearedJourneyModel)
+
+    EitherT(repository.createOrUpdate(updatedSessionModel))
+  }
+
+  private def buildDownstreamUpsertRequestModel(answers: ShortServiceRefundsViewModel,
+                                                prior: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel =
+    CreateUpdatePensionChargesRequestModel
+      .fromPriorData(prior)
+      .copy(overseasPensionContributions = answers.maybeToDownstreamModel)
 
 }

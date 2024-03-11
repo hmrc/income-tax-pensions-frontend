@@ -16,7 +16,7 @@
 
 package support.mocks
 
-import connectors.httpParsers.IncomeTaxUserDataHttpParser.IncomeTaxUserDataResponse
+import connectors.{DownstreamErrorOr, DownstreamOutcome}
 import models._
 import models.mongo.{DatabaseError, PensionsUserData}
 import org.scalamock.handlers._
@@ -33,7 +33,7 @@ trait MockPensionSessionService extends MockFactory {
 
   def mockGetPriorData(taxYear: Int,
                        user: User,
-                       result: IncomeTaxUserDataResponse): CallHandler3[Int, User, HeaderCarrier, Future[IncomeTaxUserDataResponse]] =
+                       result: DownstreamErrorOr[IncomeTaxUserData]): CallHandler3[Int, User, HeaderCarrier, DownstreamOutcome[IncomeTaxUserData]] =
     (mockPensionSessionService
       .loadPriorData(_: Int, _: User)(_: HeaderCarrier))
       .expects(taxYear, user, *)

@@ -38,27 +38,33 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
                                          pensionSchemeTaxReference: Option[Seq[String]] = None)
     extends PensionCYABaseModel {
 
-  private def yesNoAndAmountPopulated(boolField: Option[Boolean], amountField: Option[BigDecimal]): Boolean =
-    boolField.exists(value => !value || (value && amountField.nonEmpty))
-
   def isFinished: Boolean = {
-    val isDone_surchargeQuestions = surchargeQuestion.exists(q =>
-      !q ||
-        surchargeAmount.isDefined && yesNoAndAmountPopulated(surchargeTaxAmountQuestion, surchargeTaxAmount))
-    val isDone_noSurchargeQuestions = noSurchargeQuestion.exists(q =>
-      !q ||
-        noSurchargeAmount.isDefined && yesNoAndAmountPopulated(noSurchargeTaxAmountQuestion, noSurchargeTaxAmount))
-    val isDone_pstrQuestions =
-      if (isDone_surchargeQuestions || isDone_noSurchargeQuestions) {
-        ukPensionSchemesQuestion.exists(q => !q || pensionSchemeTaxReference.nonEmpty)
-      } else { true }
+    // `surchargeQuestion` and `noSurchargeQuestion` represent (optional) checkboxes in the UI. If they are not checked,
+    //    their corresponding optional boolean values here will be `Some(false)`
+    val isSurchargeComplete = surchargeQuestion.exists { bool =>
+      if (bool) surchargeAmount.isDefined && isTaxQuestionComplete(surchargeTaxAmountQuestion, surchargeTaxAmount)
+      else true
+    }
+    val isNoSurchargeComplete = noSurchargeQuestion.exists { bool =>
+      if (bool) noSurchargeAmount.isDefined && isTaxQuestionComplete(noSurchargeTaxAmountQuestion, noSurchargeTaxAmount)
+      else true
+    }
+    val arePstrQuestionsComplete =
+      if (isSurchargeComplete || isNoSurchargeComplete)
+        ukPensionSchemesQuestion.exists { bool =>
+          if (bool) pensionSchemeTaxReference.nonEmpty
+          else true
+        }
+      else true
 
-    Seq(
-      isDone_surchargeQuestions,
-      isDone_noSurchargeQuestions,
-      isDone_pstrQuestions
-    ).forall(x => x)
+    isSurchargeComplete && isNoSurchargeComplete && arePstrQuestionsComplete
   }
+
+  private def isTaxQuestionComplete(maybeBool: Option[Boolean], amountField: Option[BigDecimal]): Boolean =
+    maybeBool.exists { bool =>
+      if (bool) amountField.nonEmpty
+      else true
+    }
 
   def toDownstreamRequestModel: PensionSchemeUnauthorisedPayments =
     PensionSchemeUnauthorisedPayments(

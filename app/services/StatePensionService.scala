@@ -24,6 +24,7 @@ import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo._
 import models.pension.statebenefits.ClaimCYAModel
 import repositories.PensionsUserDataRepository
+import repositories.PensionsUserDataRepository.QueryResult
 import services.BenefitType.{StatePension, StatePensionLumpSum}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
@@ -49,7 +50,7 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
                                      connector: StateBenefitsConnector,
                                      incomeTaxSubmissionConnector: IncomeTaxUserDataConnector) {
 
-  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] = {
     val hcWithMtdItId = hc.withMtditId(user.mtditid)
 
     (for {
@@ -64,7 +65,7 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
     } yield ()).value
   }
 
-  private def clearJourneyFromSession(session: PensionsUserData): Future[Either[DatabaseError, Unit]] = {
+  private def clearJourneyFromSession(session: PensionsUserData): QueryResult[Unit] = {
     val clearedJourneyModel =
       session.pensions.incomeFromPensions.copy(
         statePension = None,
@@ -76,13 +77,9 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
     repository.createOrUpdate(updatedSessionModel)
   }
 
-  private def processClaim(answers: StateBenefitsUserData, hc: HeaderCarrier, user: User)(implicit
-      ec: ExecutionContext): EitherT[Future, ServiceError, Unit] =
-    if (answers.claim.exists(_.amount.nonEmpty)) {
-      EitherT(connector.saveClaimData(user.nino, answers)(hc, ec)).leftAs[ServiceError]
-    } else {
-      EitherT.pure[Future, ServiceError](())
-    }
+  private def processClaim(answers: StateBenefitsUserData, hc: HeaderCarrier, user: User)(implicit ec: ExecutionContext): ServiceOutcomeT[Unit] =
+    if (answers.claim.exists(_.amount.nonEmpty)) EitherT(connector.saveClaimData(user.nino, answers)(hc, ec)).leftAs[ServiceError]
+    else EitherT.pure[Future, ServiceError](())
 
   private def buildDownstreamRequestModel(sessionData: PensionsUserData, benefitType: BenefitType, taxYear: Int): StateBenefitsUserData = {
     val stateBenefit = benefitType match {

@@ -53,7 +53,7 @@ class NonUkTaxRefundsController @Inject() (actionsProvider: ActionsProvider,
     val formProvider = formsProvider.nonUkTaxRefundsForm(request.user)
 
     validateFlow(answers, NonUkTaxRefundsAmountPage, taxYear) {
-      val form = answers.shortServiceRefund.fold(formProvider)(formProvider.fill(_, answers.shortServiceRefundTaxPaidCharge))
+      val form = answers.shortServiceRefundTaxPaid.fold(formProvider)(formProvider.fill(_, answers.shortServiceRefundTaxPaidCharge))
 
       Future.successful(Ok(view(form, taxYear)))
     }
@@ -68,23 +68,24 @@ class NonUkTaxRefundsController @Inject() (actionsProvider: ActionsProvider,
         .bindFromRequest()
         .fold(
           errors => Future.successful(BadRequest(view(errors, taxYear))),
-          answer =>
+          answer => {
+            val (bool, maybeAmount) = answer
+            val updatedJourney      = journey.copy(shortServiceRefundTaxPaid = bool.some, shortServiceRefundTaxPaidCharge = maybeAmount)
             service
-              .upsertSession(updateSessionModel(answer._1, answer._2))
-              .onSuccess(redirectTo(journey, taxYear))
+              .upsertSession(updateSessionModel(updatedJourney))
+              .onSuccess(determineRedirectFrom(updatedJourney, taxYear))
+          }
         )
     }
   }
 
-  private def redirectTo(journey: ShortServiceRefundsViewModel, taxYear: Int): Result =
+  private def determineRedirectFrom(journey: ShortServiceRefundsViewModel, taxYear: Int): Result =
     if (journey.isFinished) cyaPageRedirect(taxYear)
     else if (allSchemesFinished(journey.refundPensionScheme)) refundSummaryRedirect(taxYear)
     else refundSchemeRedirect(taxYear, None)
 
-  private def updateSessionModel(bool: Boolean, maybeAmount: Option[BigDecimal])(implicit
+  private def updateSessionModel(updatedJourney: ShortServiceRefundsViewModel)(implicit
       request: UserSessionDataRequest[AnyContent]): PensionsUserData = {
-    val journey        = request.pensionsUserData.pensions.shortServiceRefunds
-    val updatedJourney = journey.copy(shortServiceRefundTaxPaid = bool.some, shortServiceRefundTaxPaidCharge = maybeAmount)
     val updatedSession = request.pensionsUserData.pensions.copy(shortServiceRefunds = updatedJourney)
 
     request.pensionsUserData.copy(pensions = updatedSession)

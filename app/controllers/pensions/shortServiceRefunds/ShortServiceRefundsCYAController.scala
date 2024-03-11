@@ -17,10 +17,11 @@
 package controllers.pensions.shortServiceRefunds
 
 import cats.data.EitherT
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.IncomeTaxUserData
-import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError, SessionNotFound}
+import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
 import models.requests.UserPriorAndSessionDataRequest
@@ -28,9 +29,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.redirects.ShortServiceRefundsPages.CYAPage
 import services.redirects.ShortServiceRefundsRedirects.taskListRedirect
-import services.{PensionChargesService, PensionSessionService}
+import services.{PensionSessionService, ShortServiceRefundsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.EitherTUtils.CasterOps
 import utils.{Clock, SessionHelper}
 import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.validateFlow
 import views.html.pensions.shortServiceRefunds.ShortServiceRefundsCYAView
@@ -43,7 +43,7 @@ class ShortServiceRefundsCYAController @Inject() (
     auditProvider: AuditActionsProvider,
     view: ShortServiceRefundsCYAView,
     sessionService: PensionSessionService,
-    chargesService: PensionChargesService,
+    service: ShortServiceRefundsService,
     errorHandler: ErrorHandler,
     mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
     extends FrontendController(mcc)
@@ -64,10 +64,9 @@ class ShortServiceRefundsCYAController @Inject() (
     validateFlow(answers, CYAPage, taxYear) {
       val resultOrError: EitherT[Future, ServiceError, Result] =
         for {
-          maybeSession <- EitherT(sessionService.loadSession(taxYear, request.user)).leftAs[ServiceError]
-          session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
-          prior        <- EitherT(sessionService.loadPriorData(taxYear, request.user)).leftAs[ServiceError]
-          _            <- processSubmission(session, prior, taxYear)
+          data <- sessionService.loadPriorAndSession(request.user, TaxYear(taxYear))
+          (prior, session) = data
+          _ <- processSubmission(session, prior, taxYear)
         } yield taskListRedirect(taxYear)
 
       resultOrError
@@ -79,7 +78,7 @@ class ShortServiceRefundsCYAController @Inject() (
   private def processSubmission(session: PensionsUserData, prior: IncomeTaxUserData, taxYear: Int)(implicit
       request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, ServiceError, Unit] =
     if (sessionDeviatesFromPrior(session.pensions, prior.pensions))
-      EitherT(chargesService.saveShortServiceRefundsViewModel(request.user, taxYear))
+      EitherT(service.saveAnswers(request.user, TaxYear(taxYear)))
     else EitherT.pure[Future, ServiceError](())
 
   private def sessionDeviatesFromPrior(session: PensionsCYAModel, maybePrior: Option[AllPensionsData]): Boolean =

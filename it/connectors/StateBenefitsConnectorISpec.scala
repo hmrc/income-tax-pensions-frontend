@@ -17,7 +17,6 @@
 package connectors
 
 import builders.StateBenefitsUserDataBuilder.{aCreateStatePensionBenefitsUD, aCreateStatePensionLumpSumBenefitsUD}
-import connectors.httpParsers.StateBenefitsSessionHttpParser.StateBenefitsSessionResponse
 import models.{APIErrorBodyModel, APIErrorModel}
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -44,8 +43,8 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
 
         stubPutWithHeadersCheck(url, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
-        val resultSP: StateBenefitsSessionResponse   = Await.result(connector.saveClaimData(nino, aCreateStatePensionBenefitsUD), Duration.Inf)
-        val resultSPLS: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD), Duration.Inf)
+        val resultSP: DownstreamErrorOr[Unit]   = Await.result(connector.saveClaimData(nino, aCreateStatePensionBenefitsUD), Duration.Inf)
+        val resultSPLS: DownstreamErrorOr[Unit] = Await.result(connector.saveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD), Duration.Inf)
 
         resultSP shouldBe Right(())
         resultSPLS shouldBe Right(())
@@ -66,8 +65,8 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
           "X-Session-ID" -> sessionId,
           "mtditid"      -> mtditid)
 
-        val resultSP: StateBenefitsSessionResponse   = Await.result(connector.saveClaimData(nino, aCreateStatePensionBenefitsUD), Duration.Inf)
-        val resultSPLS: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD), Duration.Inf)
+        val resultSP: DownstreamErrorOr[Unit]   = Await.result(connector.saveClaimData(nino, aCreateStatePensionBenefitsUD), Duration.Inf)
+        val resultSPLS: DownstreamErrorOr[Unit] = Await.result(connector.saveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD), Duration.Inf)
 
         resultSP shouldBe Right(())
         resultSPLS shouldBe Right(())
@@ -82,9 +81,9 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
 
         stubPutWithHeadersCheck(url, NOT_FOUND, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
-        val resultSP: StateBenefitsSessionResponse =
+        val resultSP: DownstreamErrorOr[Unit] =
           Await.result(externalConnector.saveClaimData(nino, aCreateStatePensionBenefitsUD)(hc, ec), Duration.Inf)
-        val resultSPLS: StateBenefitsSessionResponse =
+        val resultSPLS: DownstreamErrorOr[Unit] =
           Await.result(externalConnector.saveClaimData(nino, aCreateStatePensionBenefitsUD)(hc, ec), Duration.Inf)
 
         resultSP shouldBe Left(APIErrorModel(NOT_FOUND, APIErrorBodyModel.parsingError))
@@ -95,8 +94,8 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
 
         stubPutWithHeadersCheck(url, OK, Json.toJson("""{"invalid": true}""").toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
-        val resultSP: StateBenefitsSessionResponse   = Await.result(connector.saveClaimData(nino, aCreateStatePensionBenefitsUD), Duration.Inf)
-        val resultSPLS: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD), Duration.Inf)
+        val resultSP: DownstreamErrorOr[Unit]   = Await.result(connector.saveClaimData(nino, aCreateStatePensionBenefitsUD), Duration.Inf)
+        val resultSPLS: DownstreamErrorOr[Unit] = Await.result(connector.saveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD), Duration.Inf)
 
         resultSP shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
         resultSPLS shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
@@ -111,8 +110,8 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
           "X-Session-ID" -> sessionId,
           "mtditid"      -> mtditid)
 
-        val resultSP: StateBenefitsSessionResponse   = Await.result(connector.saveClaimData(nino, aCreateStatePensionBenefitsUD), Duration.Inf)
-        val resultSPLS: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD), Duration.Inf)
+        val resultSP: DownstreamErrorOr[Unit]   = Await.result(connector.saveClaimData(nino, aCreateStatePensionBenefitsUD), Duration.Inf)
+        val resultSPLS: DownstreamErrorOr[Unit] = Await.result(connector.saveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD), Duration.Inf)
 
         resultSP shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
         resultSPLS shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
@@ -127,8 +126,8 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
           "X-Session-ID" -> sessionId,
           "mtditid"      -> mtditid)
 
-        val resultSP: StateBenefitsSessionResponse   = Await.result(connector.saveClaimData(nino, aCreateStatePensionBenefitsUD), Duration.Inf)
-        val resultSPLS: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD), Duration.Inf)
+        val resultSP: DownstreamErrorOr[Unit]   = Await.result(connector.saveClaimData(nino, aCreateStatePensionBenefitsUD), Duration.Inf)
+        val resultSPLS: DownstreamErrorOr[Unit] = Await.result(connector.saveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD), Duration.Inf)
 
         resultSP shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))
         resultSPLS shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))
@@ -138,8 +137,8 @@ class StateBenefitsConnectorISpec extends IntegrationTest {
 
         stubPutWithHeadersCheck(url, BAD_REQUEST, """{"code": "FAILED", "reason": "failed"}""", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
-        val resultSP: StateBenefitsSessionResponse   = Await.result(connector.saveClaimData(nino, aCreateStatePensionBenefitsUD), Duration.Inf)
-        val resultSPLS: StateBenefitsSessionResponse = Await.result(connector.saveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD), Duration.Inf)
+        val resultSP: DownstreamErrorOr[Unit]   = Await.result(connector.saveClaimData(nino, aCreateStatePensionBenefitsUD), Duration.Inf)
+        val resultSPLS: DownstreamErrorOr[Unit] = Await.result(connector.saveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD), Duration.Inf)
 
         resultSP shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
         resultSPLS shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))

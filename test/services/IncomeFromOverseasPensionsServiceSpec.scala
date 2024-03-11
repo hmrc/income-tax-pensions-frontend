@@ -23,7 +23,8 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
 import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId, none}
 import common.TaxYear
-import mocks.{MockPensionConnector, MockSessionRepository, MockSubmissionsConnector}
+import mocks.{MockPensionConnector, MockSessionRepository, MockSessionService, MockSubmissionsConnector}
+import models.IncomeTaxUserData
 import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData}
 import models.pension.charges.IncomeFromOverseasPensionsViewModel
 import models.pension.income.{
@@ -32,25 +33,25 @@ import models.pension.income.{
   OverseasPensionContribution,
   OverseasPensionContributionContainer
 }
-import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.OptionValues.convertOptionToValuable
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
-import play.api.http.Status.BAD_REQUEST
 import utils.UnitTest
 
-class IncomeFromOverseasPensionsServiceSpec extends UnitTest with MockPensionConnector with MockSessionRepository with MockSubmissionsConnector {
+class IncomeFromOverseasPensionsServiceSpec
+    extends UnitTest
+    with MockPensionConnector
+    with MockSessionRepository
+    with MockSubmissionsConnector
+    with MockSessionService
+    with BaseServiceSpec {
 
   "saving journey answers" when {
     "downstream calls are successful" when {
       "received payment(s) from foreign pension(s)" should {
         "save the payment details alongside any prior overseas pension contributions (OPC)" in new Test {
-          MockSubmissionsConnector
-            .getUserData(nino, taxYear)
-            .returns(priorOPC.asRight.asFuture)
-
-          MockSessionRepository
-            .find(taxYear, aUser)
-            .returns(sessionWithPayments.some.asRight.asFuture)
+          MockSessionService
+            .loadPriorAndSession(aUser, TaxYear(taxYear))
+            .returns((priorOPC, sessionWithPayments).asRight.toEitherT)
 
           MockPensionConnector
             .savePensionIncome(nino, taxYear, modelWithForeignPensionsAndOpc)
@@ -68,13 +69,9 @@ class IncomeFromOverseasPensionsServiceSpec extends UnitTest with MockPensionCon
       "not receiving any payment from a foreign pension" when {
         "prior OPC claims exist" should {
           "send only the OPC claims, omitting foreign pensions" in new Test { // so to "delete" any previously claimed payment (if it exists)
-            MockSubmissionsConnector
-              .getUserData(nino, taxYear)
-              .returns(priorOPC.asRight.asFuture)
-
-            MockSessionRepository
-              .find(taxYear, aUser)
-              .returns(sessionNoPayments.some.asRight.asFuture)
+            MockSessionService
+              .loadPriorAndSession(aUser, TaxYear(taxYear))
+              .returns((priorOPC, sessionNoPayments).asRight.toEitherT)
 
             MockPensionConnector
               .savePensionIncome(nino, taxYear, modelWithOpcOnly)
@@ -92,13 +89,9 @@ class IncomeFromOverseasPensionsServiceSpec extends UnitTest with MockPensionCon
         }
         "no prior OPC exists" should {
           "call the delete pension income endpoint" in new Test {
-            MockSubmissionsConnector
-              .getUserData(nino, taxYear)
-              .returns(priorNoOPC.asRight.asFuture)
-
-            MockSessionRepository
-              .find(taxYear, aUser)
-              .returns(sessionNoPayments.some.asRight.asFuture)
+            MockSessionService
+              .loadPriorAndSession(aUser, TaxYear(taxYear))
+              .returns((priorNoOPC, sessionNoPayments).asRight.toEitherT)
 
             MockPensionConnector
               .deletePensionIncome(nino, taxYear)
@@ -119,13 +112,9 @@ class IncomeFromOverseasPensionsServiceSpec extends UnitTest with MockPensionCon
     "there are unsuccessful downstream calls" when {
       "no user session is found in the database" should {
         "return SessionNotFound" in new Test {
-          MockSubmissionsConnector
-            .getUserData(nino, taxYear)
-            .returns(IncomeTaxUserData(None).asRight.asFuture)
-
-          MockSessionRepository
-            .find(taxYear, aUser)
-            .returns(DataNotFound.asLeft.asFuture)
+          MockSessionService
+            .loadPriorAndSession(aUser, TaxYear(taxYear))
+            .returns(notFoundResponse)
 
           val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
 
@@ -134,13 +123,9 @@ class IncomeFromOverseasPensionsServiceSpec extends UnitTest with MockPensionCon
       }
       "the pensions downstream returns an unsuccessful result" should {
         "return an APIErrorModel" in new Test {
-          MockSubmissionsConnector
-            .getUserData(nino, taxYear)
-            .returns(priorOPC.asRight.asFuture)
-
-          MockSessionRepository
-            .find(taxYear, aUser)
-            .returns(sessionWithPayments.some.asRight.asFuture)
+          MockSessionService
+            .loadPriorAndSession(aUser, TaxYear(taxYear))
+            .returns((priorOPC, sessionWithPayments).asRight.toEitherT)
 
           MockPensionConnector
             .savePensionIncome(nino, taxYear, modelWithForeignPensionsAndOpc)
@@ -153,9 +138,9 @@ class IncomeFromOverseasPensionsServiceSpec extends UnitTest with MockPensionCon
       }
       "submissions downstream returns an unsuccessful result" should {
         "return an APIErrorModel" in new Test {
-          MockSubmissionsConnector
-            .getUserData(nino, taxYear)
-            .returns(apiError.asLeft.asFuture)
+          MockSessionService
+            .loadPriorAndSession(aUser, TaxYear(taxYear))
+            .returns(apiErrorResponse)
 
           val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
 
@@ -164,13 +149,9 @@ class IncomeFromOverseasPensionsServiceSpec extends UnitTest with MockPensionCon
       }
       "session data could not be updated" should {
         "return DataNotUpdated" in new Test {
-          MockSubmissionsConnector
-            .getUserData(nino, taxYear)
-            .returns(priorOPC.asRight.asFuture)
-
-          MockSessionRepository
-            .find(taxYear, aUser)
-            .returns(sessionWithPayments.some.asRight.asFuture)
+          MockSessionService
+            .loadPriorAndSession(aUser, TaxYear(taxYear))
+            .returns((priorOPC, sessionWithPayments).asRight.toEitherT)
 
           MockPensionConnector
             .savePensionIncome(nino, taxYear, modelWithForeignPensionsAndOpc)
@@ -253,9 +234,7 @@ class IncomeFromOverseasPensionsServiceSpec extends UnitTest with MockPensionCon
       session.copy(pensions = clearedJourneyModel)
     }
 
-    val apiError: APIErrorModel = APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))
-
-    val service = new IncomeFromOverseasPensionsService(mockSessionRepository, mockPensionsConnector, mockSubmissionsConnector)
+    val service = new IncomeFromOverseasPensionsService(mockSessionRepository, mockPensionsConnector, mockSessionService)
   }
 
 }

@@ -19,14 +19,15 @@ package services
 import cats.data.EitherT
 import cats.implicits.catsSyntaxOptionId
 import common.TaxYear
-import connectors.{IncomeTaxUserDataConnector, PensionsConnector}
+import connectors.{DownstreamOutcomeT, PensionsConnector}
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
-import models.mongo.{DatabaseError, PensionsUserData, ServiceError, SessionNotFound}
+import models.mongo.{PensionsUserData, ServiceError}
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import models.pension.income.{CreateUpdatePensionIncomeRequestModel, OverseasPensionContribution, OverseasPensionContributionContainer}
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
 import models.{APIErrorModel, IncomeTaxUserData, User}
 import repositories.PensionsUserDataRepository
+import repositories.PensionsUserDataRepository.QueryResultT
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.Constants.zero
 import utils.EitherTUtils.CasterOps
@@ -35,20 +36,20 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PaymentsIntoOverseasPensionsService @Inject() (repository: PensionsUserDataRepository,
-                                                     submissionsConnector: IncomeTaxUserDataConnector,
+                                                     service: PensionSessionService,
                                                      pensionsConnector: PensionsConnector) {
 
-  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ServiceError, Unit]] = {
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] = {
     val hcWithMtdItId = hc.withMtditId(user.mtditid)
 
-    def processReliefsClaim(prior: IncomeTaxUserData, journey: PaymentsIntoOverseasPensionsViewModel): EitherT[Future, APIErrorModel, Unit] = {
+    def processReliefsClaim(prior: IncomeTaxUserData, journey: PaymentsIntoOverseasPensionsViewModel): DownstreamOutcomeT[Unit] = {
       val downstreamModel = journey.paymentsIntoOverseasPensionsAmount
         .fold(ifEmpty = buildDownstreamReliefsModel(prior, opscAmount = zero))(amount => buildDownstreamReliefsModel(prior, opscAmount = amount))
 
       EitherT(pensionsConnector.savePensionReliefs(user.nino, taxYear.endYear, downstreamModel)(hcWithMtdItId, ec))
     }
 
-    def processIncomeClaim(prior: IncomeTaxUserData, journey: PaymentsIntoOverseasPensionsViewModel): EitherT[Future, APIErrorModel, Unit] = {
+    def processIncomeClaim(prior: IncomeTaxUserData, journey: PaymentsIntoOverseasPensionsViewModel): DownstreamOutcomeT[Unit] = {
       val hasPreviousOPCSubmission =
         prior.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution.map(OPCs => OPCs.forall(_.isBlankSubmission)))).contains(false)
       val areClaimingOPC      = journey.reliefs.nonEmpty
@@ -65,18 +66,17 @@ class PaymentsIntoOverseasPensionsService @Inject() (repository: PensionsUserDat
     }
 
     (for {
-      priorData    <- EitherT(submissionsConnector.getUserData(user.nino, taxYear.endYear)(hcWithMtdItId)).leftAs[ServiceError]
-      maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
-      session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
-      journeyAnswers = session.pensions.paymentsIntoOverseasPensions
-      _ <- processReliefsClaim(priorData, journeyAnswers).leftAs[ServiceError]
-      _ <- processIncomeClaim(priorData, journeyAnswers).leftAs[ServiceError]
+      data <- service.loadPriorAndSession(user, taxYear)
+      (prior, session) = data
+      journeyAnswers   = session.pensions.paymentsIntoOverseasPensions
+      _ <- processReliefsClaim(prior, journeyAnswers).leftAs[ServiceError]
+      _ <- processIncomeClaim(prior, journeyAnswers).leftAs[ServiceError]
       _ <- clearJourneyFromSession(session).leftAs[ServiceError]
     } yield ()).value
 
   }
 
-  private def clearJourneyFromSession(session: PensionsUserData): EitherT[Future, DatabaseError, Unit] = {
+  private def clearJourneyFromSession(session: PensionsUserData): QueryResultT[Unit] = {
     val clearedJourneyModel = session.pensions.copy(paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel())
     val updatedSessionModel = session.copy(pensions = clearedJourneyModel)
 

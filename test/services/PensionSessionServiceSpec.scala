@@ -16,9 +16,11 @@
 
 package services
 
-import builders.AllPensionsDataBuilder.anAllPensionDataEmpty
+import builders.AllPensionsDataBuilder.{anAllPensionDataEmpty, anAllPensionsData}
 import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId}
+import common.TaxYear
 import config._
 import models.IncomeTaxUserData
 import models.mongo._
@@ -74,6 +76,47 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
       val response = service.loadDataAndHandle(taxYear, user)((_, _) => Future(Ok))
 
       status(response) shouldBe INTERNAL_SERVER_ERROR
+    }
+  }
+  "loadPriorAndSession" should {
+    "load both prior and session data when retrieval cals are successful" in {
+      val prior   = IncomeTaxUserData(pensions = anAllPensionsData.some)
+      val session = aPensionsUserData
+
+      super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, prior)
+      super[MockPensionUserDataRepository].mockFind(taxYear, user, session.some.asRight)
+
+      val result = service.loadPriorAndSession(user, TaxYear(taxYear)).value.futureValue
+
+      result shouldBe (prior, session).asRight
+    }
+
+    "return a MongoError when there's an error interacting with the database" in {
+      val mongoError = MongoError("some error")
+
+      super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, IncomeTaxUserData(None))
+      super[MockPensionUserDataRepository].mockFind(taxYear, user, mongoError.asLeft)
+
+      val result = service.loadPriorAndSession(user, TaxYear(taxYear)).value.futureValue
+
+      result shouldBe mongoError.asLeft
+    }
+
+    "return SessionNotFound when no user session is found in the database" in {
+      super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, IncomeTaxUserData(None))
+      super[MockPensionUserDataRepository].mockFind(taxYear, user, Right(None))
+
+      val result = service.loadPriorAndSession(user, TaxYear(taxYear)).value.futureValue
+
+      result shouldBe SessionNotFound.asLeft
+    }
+
+    "return an APIErrorModel when there's an error loading prior data from downstream" in {
+      super[MockIncomeTaxUserDataConnector].mockFindFail(nino, taxYear)
+
+      val result = service.loadPriorAndSession(user, TaxYear(taxYear)).value.futureValue
+
+      result shouldBe apiError.asLeft
     }
   }
 

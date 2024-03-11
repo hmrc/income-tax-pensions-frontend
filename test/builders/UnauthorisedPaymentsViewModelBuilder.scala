@@ -16,6 +16,7 @@
 
 package builders
 
+import cats.implicits.none
 import models.pension.charges.UnauthorisedPaymentsViewModel
 
 object UnauthorisedPaymentsViewModelBuilder {
@@ -91,6 +92,7 @@ object UnauthorisedPaymentsViewModelBuilder {
       ukPensionSchemesQuestion = Some(true),
       pensionSchemeTaxReference = Some(List("some_pstr"))
     )
+
   val neitherClaimViewModel: UnauthorisedPaymentsViewModel =
     UnauthorisedPaymentsViewModel(
       surchargeQuestion = Some(false),
@@ -103,6 +105,12 @@ object UnauthorisedPaymentsViewModelBuilder {
       noSurchargeTaxAmount = None,
       ukPensionSchemesQuestion = Some(true),
       pensionSchemeTaxReference = Some(List("some_pstr"))
+    )
+
+  val neitherClaimViewModelNoPSTR: UnauthorisedPaymentsViewModel =
+    neitherClaimViewModel.copy(
+      ukPensionSchemesQuestion = None,
+      pensionSchemeTaxReference = none[List[String]]
     )
 
 }

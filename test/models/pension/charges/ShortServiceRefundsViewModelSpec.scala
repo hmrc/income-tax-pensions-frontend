@@ -17,10 +17,41 @@
 package models.pension.charges
 
 import builders.OverseasRefundPensionSchemeBuilder.anOverseasRefundPensionScheme
-import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
+import builders.ShortServiceRefundsViewModelBuilder._
+import cats.implicits.{catsSyntaxOptionId, none}
 import support.UnitTest
 
 class ShortServiceRefundsViewModelSpec extends UnitTest { // scalatest:off magic.number
+
+  ".maybeToDownstreamModel" when {
+    "claiming a refund charge and providing schemes details" should {
+      "generate an OverseasSchemeProvider model for each of the schemes" in {
+        val expectedResult = OverseasPensionContributions(
+          overseasSchemeProvider = Seq(
+            OverseasSchemeProvider(
+              providerName = "Scheme Name without UK charge",
+              providerAddress = "Scheme Address 2",
+              providerCountryCode = "FRA",
+              qualifyingRecognisedOverseasPensionScheme = Some(Seq("Q123456")),
+              pensionSchemeTaxReference = None
+            )
+          ),
+          shortServiceRefund = refundCharge,
+          shortServiceRefundTaxPaid = refundTaxPaidCharge
+        )
+
+        aShortServiceRefundsViewModel.maybeToDownstreamModel shouldBe expectedResult.some
+      }
+      "return None if there are any missing mandatory fields" in {
+        viewModelMissingMandatorySchemeFields.maybeToDownstreamModel shouldBe none[OverseasPensionContributions]
+      }
+    }
+    "neither a refund charge nor scheme details are provided" should {
+      "return None" in {
+        minimalShortServiceRefundsViewModel.maybeToDownstreamModel shouldBe none[OverseasPensionContributions]
+      }
+    }
+  }
 
   ".isEmpty" should {
     "return true when no questions have been answered" in {
@@ -93,25 +124,6 @@ class ShortServiceRefundsViewModelSpec extends UnitTest { // scalatest:off magic
     "return false if shortServiceRefund is not 'false'" in {
       emptyShortServiceRefundsViewModel.journeyIsNo shouldBe false
       emptyShortServiceRefundsViewModel.copy(shortServiceRefund = Some(true)).journeyIsNo shouldBe false
-    }
-  }
-
-  ".toDownstreamRequestModel" should {
-    "transform a ShortServiceRefundsViewModel into a OverseasPensionContributions" in {
-      val result = OverseasPensionContributions(
-        overseasSchemeProvider = Seq(
-          OverseasSchemeProvider(
-            providerName = "Scheme Name without UK charge",
-            providerAddress = "Scheme Address 2",
-            providerCountryCode = "FRA",
-            qualifyingRecognisedOverseasPensionScheme = Some(Seq("Q123456")),
-            pensionSchemeTaxReference = None
-          )
-        ),
-        shortServiceRefund = 1999.99,
-        shortServiceRefundTaxPaid = 1000.00
-      )
-      aShortServiceRefundsViewModel.toDownstreamRequestModel shouldBe result
     }
   }
 }
