@@ -29,7 +29,7 @@ import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.TransfersIntoOverseasPensionsPages.{OverseasTransferChargeAmountPage, TaxOnPensionSchemesAmountPage}
 import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.transferIntoOverseasPensions.pensionSchemeTaxTransferChargeView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +41,7 @@ class PensionSchemeTaxTransferController @Inject() (actionsProvider: ActionsProv
                                                     view: pensionSchemeTaxTransferChargeView,
                                                     formsProvider: FormsProvider,
                                                     errorHandler: ErrorHandler,
-                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

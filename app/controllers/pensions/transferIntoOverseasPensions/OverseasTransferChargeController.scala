@@ -32,7 +32,7 @@ import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.TransfersIntoOverseasPensionsPages.OverseasTransferChargeAmountPage
 import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.transferIntoOverseasPensions.OverseasTransferChargeView
 
 import javax.inject.{Inject, Singleton}
@@ -43,7 +43,7 @@ class OverseasTransferChargeController @Inject() (actionsProvider: ActionsProvid
                                                   pensionSessionService: PensionSessionService,
                                                   view: OverseasTransferChargeView,
                                                   errorHandler: ErrorHandler,
-                                                  mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                  mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

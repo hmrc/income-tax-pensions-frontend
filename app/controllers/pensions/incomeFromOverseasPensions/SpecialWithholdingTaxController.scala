@@ -33,7 +33,6 @@ import services.PensionSessionService
 import services.redirects.IncomeFromOverseasPensionsPages.SpecialWithholdingTaxPage
 import services.redirects.IncomeFromOverseasPensionsRedirects.{indexCheckThenJourneyCheck, schemeIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.SpecialWithholdingTaxView
 
 import javax.inject.{Inject, Singleton}
@@ -44,7 +43,7 @@ class SpecialWithholdingTaxController @Inject() (authAction: AuthorisedAction,
                                                  view: SpecialWithholdingTaxView,
                                                  pensionSessionService: PensionSessionService,
                                                  errorHandler: ErrorHandler,
-                                                 cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                 cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
@@ -79,8 +78,7 @@ class SpecialWithholdingTaxController @Inject() (authAction: AuthorisedAction,
   }
 
   private def onValidForm(pensionsUserData: PensionsUserData, taxYear: Int, validForm: (Boolean, Option[BigDecimal]), index: Int)(implicit
-      request: AuthorisationRequest[AnyContent],
-      clock: Clock): Future[Result] =
+      request: AuthorisationRequest[AnyContent]): Future[Result] =
     validForm match {
       case (yesWasSelected, amountOpt) =>
         val ifopData: IncomeFromOverseasPensionsViewModel = pensionsUserData.pensions.incomeFromOverseasPensions

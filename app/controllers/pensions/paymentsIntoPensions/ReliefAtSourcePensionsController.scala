@@ -27,7 +27,6 @@ import services.PensionSessionService
 import services.redirects.PaymentsIntoPensionsRedirects.cyaPageCall
 import services.redirects.SimpleRedirectService.isFinishedCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePensionsView
 
 import javax.inject.{Inject, Singleton}
@@ -39,7 +38,7 @@ class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
                                                   pensionSessionService: PensionSessionService,
                                                   errorHandler: ErrorHandler,
                                                   formsProvider: PaymentsIntoPensionFormProvider,
-                                                  cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                  cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

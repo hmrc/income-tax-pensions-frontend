@@ -28,7 +28,7 @@ import services.PensionSessionService
 import services.redirects.IncomeFromOtherUkPensionsPages.RemovePensionIncomePage
 import services.redirects.IncomeFromOtherUkPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.RemovePensionSchemeView
 
 import javax.inject.{Inject, Singleton}
@@ -39,7 +39,7 @@ class RemovePensionSchemeController @Inject() (mcc: MessagesControllerComponents
                                                authAction: AuthorisedAction,
                                                view: RemovePensionSchemeView,
                                                pensionSessionService: PensionSessionService,
-                                               errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                               errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

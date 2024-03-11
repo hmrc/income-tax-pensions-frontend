@@ -31,7 +31,6 @@ import services.redirects.PaymentsIntoOverseasPensionsPages.EmployerPayOverseasP
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.EmployerPayOverseasPensionView
 
 import javax.inject.{Inject, Singleton}
@@ -43,7 +42,7 @@ class EmployerPayOverseasPensionController @Inject() (
     view: EmployerPayOverseasPensionView,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
-    mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

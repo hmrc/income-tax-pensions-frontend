@@ -30,7 +30,6 @@ import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedO
 import services.redirects.UnauthorisedPaymentsPages.SurchargedAmountPage
 import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.unauthorisedPayments.SurchargeAmountView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +40,7 @@ class SurchargeAmountController @Inject() (authAction: AuthorisedAction,
                                            view: SurchargeAmountView,
                                            pensionSessionService: PensionSessionService,
                                            errorHandler: ErrorHandler,
-                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with FormUtils {

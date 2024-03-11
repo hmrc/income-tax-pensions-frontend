@@ -29,7 +29,6 @@ import services.redirects.PaymentsIntoPensionPages.WorkplacePensionPage
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.paymentsIntoPensions.WorkplacePensionView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +40,7 @@ class WorkplacePensionController @Inject() (authAction: AuthorisedAction,
                                             errorHandler: ErrorHandler,
                                             workplacePensionView: WorkplacePensionView,
                                             formProvider: PaymentsIntoPensionFormProvider,
-                                            mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                            mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

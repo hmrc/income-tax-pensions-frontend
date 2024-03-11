@@ -32,7 +32,7 @@ import services.PensionSessionService
 import services.redirects.PaymentsIntoOverseasPensionsPages.DoubleTaxationAgreementPage
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.paymentsIntoOverseasPensions.DoubleTaxationAgreementView
 
 import javax.inject.{Inject, Singleton}
@@ -43,7 +43,7 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
                                                    pensionSessionService: PensionSessionService,
                                                    view: DoubleTaxationAgreementView,
                                                    errorHandler: ErrorHandler,
-                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

@@ -29,7 +29,6 @@ import services.redirects.PaymentsIntoPensionPages.RasAmountPage
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.paymentsIntoPensions.ReliefAtSourcePaymentsAndTaxReliefAmountView
 
 import javax.inject.{Inject, Singleton}
@@ -42,7 +41,7 @@ class ReliefAtSourcePaymentsAndTaxReliefAmountController @Inject() (
     errorHandler: ErrorHandler,
     view: ReliefAtSourcePaymentsAndTaxReliefAmountView,
     formProvider: PaymentsIntoPensionFormProvider,
-    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>

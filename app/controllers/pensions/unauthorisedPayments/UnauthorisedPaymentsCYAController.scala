@@ -35,7 +35,6 @@ import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyChe
 import services.{ExcludeJourneyService, PensionSessionService, UnauthorisedPaymentsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.unauthorisedPayments.UnauthorisedPaymentsCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -51,7 +50,7 @@ class UnauthorisedPaymentsCYAController @Inject() (
     service: UnauthorisedPaymentsService,
     errorHandler: ErrorHandler,
     excludeJourneyService: ExcludeJourneyService,
-    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

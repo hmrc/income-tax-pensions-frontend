@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.transferIntoOverseasPensions.TransferPensionSavingsView
 
 import javax.inject.{Inject, Singleton}
@@ -38,7 +38,7 @@ class TransferPensionSavingsController @Inject() (actionsProvider: ActionsProvid
                                                   pensionSessionService: PensionSessionService,
                                                   view: TransferPensionSavingsView,
                                                   errorHandler: ErrorHandler,
-                                                  mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                  mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

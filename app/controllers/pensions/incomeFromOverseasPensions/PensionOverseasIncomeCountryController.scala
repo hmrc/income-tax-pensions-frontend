@@ -32,7 +32,6 @@ import services.redirects.IncomeFromOverseasPensionsPages.WhatCountryIsSchemeReg
 import services.redirects.IncomeFromOverseasPensionsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop, schemeIsFinishedCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.PensionOverseasIncomeCountryView
 
 import javax.inject.{Inject, Singleton}
@@ -44,7 +43,7 @@ class PensionOverseasIncomeCountryController @Inject() (
     view: PensionOverseasIncomeCountryView,
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
-    cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

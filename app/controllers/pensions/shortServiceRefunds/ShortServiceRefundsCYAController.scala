@@ -31,7 +31,7 @@ import services.redirects.ShortServiceRefundsPages.CYAPage
 import services.redirects.ShortServiceRefundsRedirects.taskListRedirect
 import services.{PensionSessionService, ShortServiceRefundsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.validateFlow
 import views.html.pensions.shortServiceRefunds.ShortServiceRefundsCYAView
 
@@ -45,7 +45,7 @@ class ShortServiceRefundsCYAController @Inject() (
     sessionService: PensionSessionService,
     service: ShortServiceRefundsService,
     errorHandler: ErrorHandler,
-    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

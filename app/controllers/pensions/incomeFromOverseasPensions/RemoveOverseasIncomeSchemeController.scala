@@ -30,7 +30,7 @@ import services.redirects.IncomeFromOverseasPensionsPages.RemoveSchemePage
 import services.redirects.IncomeFromOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.incomeFromOverseasPensions.RemoveOverseasIncomeSchemeView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +41,7 @@ class RemoveOverseasIncomeSchemeController @Inject() (actionsProvider: ActionsPr
                                                       pensionSessionService: PensionSessionService,
                                                       view: RemoveOverseasIncomeSchemeView,
                                                       errorHandler: ErrorHandler,
-                                                      cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                      cc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {

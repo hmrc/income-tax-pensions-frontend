@@ -31,7 +31,6 @@ import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedO
 import services.redirects.UnauthorisedPaymentsPages.WereAnyUnauthPaymentsFromUkPensionSchemePage
 import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.unauthorisedPayments.WereAnyOfTheUnauthorisedPaymentsView
 
 import javax.inject.{Inject, Singleton}
@@ -43,7 +42,7 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject() (
     authAction: AuthorisedAction,
     view: WereAnyOfTheUnauthorisedPaymentsView,
     pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

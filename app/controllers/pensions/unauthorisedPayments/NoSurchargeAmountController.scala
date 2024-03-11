@@ -30,7 +30,7 @@ import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedO
 import services.redirects.UnauthorisedPaymentsPages.NotSurchargedAmountPage
 import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.unauthorisedPayments.NoSurchargeAmountView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +41,7 @@ class NoSurchargeAmountController @Inject() (authAction: AuthorisedAction,
                                              view: NoSurchargeAmountView,
                                              pensionSessionService: PensionSessionService,
                                              errorHandler: ErrorHandler,
-                                             mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                             mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper

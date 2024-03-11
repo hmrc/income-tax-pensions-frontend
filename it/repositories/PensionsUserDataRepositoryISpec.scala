@@ -24,7 +24,6 @@ import models.mongo._
 import models.pension.charges._
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
-import org.joda.time.{DateTime, DateTimeZone}
 import org.mongodb.scala.model.Indexes.ascending
 import org.mongodb.scala.model.{IndexModel, IndexOptions}
 import org.mongodb.scala.{MongoException, MongoInternalException, MongoWriteException}
@@ -37,6 +36,7 @@ import uk.gov.hmrc.mongo.MongoUtils
 import utils.IntegrationTest
 import utils.PagerDutyHelper.PagerDutyKeys.FAILED_TO_CREATE_UPDATE_PENSIONS_DATA
 
+import java.time.{ZoneOffset, ZonedDateTime}
 import scala.concurrent.Future
 
 class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits with DefaultAwaitTimeout {
@@ -57,7 +57,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
   private val sessionIdOne = UUID.randomUUID
   private val sessionIdTwo = UUID.randomUUID
 
-  private val now = DateTime.now(DateTimeZone.UTC)
+  private val now = ZonedDateTime.now(ZoneOffset.UTC))
 
   private val paymentsIntoPension                   = PaymentsIntoPensionsViewModel().copy(rasPensionPaymentQuestion = Some(true))
   private val pensionAnnualAllowances               = PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(true))

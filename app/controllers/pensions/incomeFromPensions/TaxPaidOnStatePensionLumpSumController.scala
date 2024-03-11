@@ -30,7 +30,7 @@ import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.StatePensionPages.TaxOnStatePensionLumpSumPage
 import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck, statePensionIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.TaxPaidOnStatePensionLumpSumView
 
 import javax.inject.{Inject, Singleton}
@@ -42,7 +42,7 @@ class TaxPaidOnStatePensionLumpSumController @Inject() (actionsProvider: Actions
                                                         view: TaxPaidOnStatePensionLumpSumView,
                                                         errorHandler: ErrorHandler,
                                                         formsProvider: FormsProvider,
-                                                        mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                        mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with SessionHelper
     with I18nSupport {

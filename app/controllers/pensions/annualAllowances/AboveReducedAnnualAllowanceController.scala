@@ -30,7 +30,6 @@ import services.redirects.AnnualAllowancesPages.AboveAnnualAllowancePage
 import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.annualAllowances.AboveReducedAnnualAllowanceView
 
 import javax.inject.{Inject, Singleton}
@@ -42,7 +41,7 @@ class AboveReducedAnnualAllowanceController @Inject() (actionsProvider: ActionsP
                                                        view: AboveReducedAnnualAllowanceView,
                                                        errorHandler: ErrorHandler,
                                                        formsProvider: FormsProvider,
-                                                       cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                       cc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(cc)
     with I18nSupport {
 

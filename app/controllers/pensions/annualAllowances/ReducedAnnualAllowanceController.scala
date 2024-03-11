@@ -30,7 +30,6 @@ import services.redirects.AnnualAllowancesPages.ReducedAnnualAllowancePage
 import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.annualAllowances.ReducedAnnualAllowanceView
 
 import javax.inject.{Inject, Singleton}
@@ -42,7 +41,7 @@ class ReducedAnnualAllowanceController @Inject() (cc: MessagesControllerComponen
                                                   view: ReducedAnnualAllowanceView,
                                                   pensionSessionService: PensionSessionService,
                                                   formsProvider: FormsProvider,
-                                                  errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock)
+                                                  errorHandler: ErrorHandler)(implicit appConfig: AppConfig)
     extends FrontendController(cc)
     with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>

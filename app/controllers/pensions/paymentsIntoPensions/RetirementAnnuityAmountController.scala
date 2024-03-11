@@ -28,7 +28,7 @@ import services.redirects.PaymentsIntoPensionPages.RetirementAnnuityAmountPage
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.paymentsIntoPensions.RetirementAnnuityAmountView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +41,7 @@ class RetirementAnnuityAmountController @Inject() (
     pensionSessionService: PensionSessionService,
     errorHandler: ErrorHandler,
     formProvider: PaymentsIntoPensionFormProvider,
-    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

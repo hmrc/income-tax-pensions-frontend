@@ -22,7 +22,7 @@ import models.mongo.PensionsUserData.localDateFormat
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-import java.time.{Clock, LocalDate, LocalDateTime, ZoneOffset, ZonedDateTime}
+import java.time.{Clock, LocalDate, ZoneOffset, ZonedDateTime}
 
 case class PensionsUserData(sessionId: String,
                             mtdItId: String,

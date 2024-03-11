@@ -30,7 +30,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import services.redirects.IncomeFromOverseasPensionsRedirects.redirectForSchemeLoop
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +40,7 @@ class PensionOverseasIncomeStatus @Inject() (authAction: AuthorisedAction,
                                              view: IncomeFromOverseasPensionsView,
                                              service: PensionSessionService,
                                              errorHandler: ErrorHandler,
-                                             cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                             cc: MessagesControllerComponents)(implicit appConfig: AppConfig,  ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

@@ -26,16 +26,15 @@ import models.mongo._
 import models.pension.AllPensionsData
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, IncomeTaxUserData, User}
-import org.joda.time.DateTimeZone
 import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
 import repositories.PensionsUserDataRepository.QueryResult
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Clock
 import utils.EitherTUtils.CasterOps
 
+import java.time.{Clock, ZoneOffset}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -82,8 +81,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
     }
   }
 
-  def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)(onFail: => A)(onSuccess: => A)(
-      implicit clock: Clock): Future[A] = {
+  def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)(onFail: => A)(onSuccess: => A): Future[A] = {
 
     val userData = PensionsUserData(
       user.sessionId,
@@ -92,7 +90,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       taxYear,
       isPriorSubmission,
       cyaModel,
-      clock.now(DateTimeZone.UTC)
+      Clock.systemUTC().instant().atZone(ZoneOffset.UTC)
     )
 
     repository.createOrUpdate(userData).map {
@@ -111,7 +109,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       taxYear: Int,
       user: User,
       renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
-  )(implicit request: Request[_], hc: HeaderCarrier, clock: Clock): Future[Result] =
+  )(implicit request: Request[_], hc: HeaderCarrier): Future[Result] =
     loadDataAndHandle(taxYear, user) { (sessionData, priorData) =>
       createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear, user, renderView)
     }
@@ -122,7 +120,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       taxYear: Int,
       user: User,
       renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
-  )(implicit request: Request[_], clock: Clock): Future[Result] = {
+  )(implicit request: Request[_]): Future[Result] = {
     val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
     val updatedSessionPensionCYAModel = updatedSession.newPensionsCYAModel
     val summaryView                   = renderView(taxYear, updatedSessionPensionCYAModel, priorData)

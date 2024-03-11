@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
 import services.redirects.StatePensionRedirects.statePensionIsFinishedCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.StatePensionView
 
 import javax.inject.{Inject, Singleton}
@@ -40,7 +40,7 @@ class StatePensionController @Inject() (actionsProvider: ActionsProvider,
                                         view: StatePensionView,
                                         formsProvider: FormsProvider,
                                         errorHandler: ErrorHandler,
-                                        mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                        mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
