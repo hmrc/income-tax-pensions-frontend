@@ -66,8 +66,6 @@ class StatePensionStartDateController @Inject() (actionsProvider: ActionsProvide
     }
   }
 
-  // TODO: Can we be consistent across controllers calling it either journey or answers
-  // !! This is without the DateForm.verifyDate below - I want to see what it actually does
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
     val journey      = request.pensionsUserData.pensions.incomeFromPensions
     val formProvider = formsProvider.stateBenefitDateForm.bindFromRequest()
