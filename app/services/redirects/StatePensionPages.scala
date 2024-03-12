@@ -19,30 +19,18 @@ package services.redirects
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 
 sealed trait StatePensionPages {
-  val journeyNo: Int
   def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean
 }
 
 object StatePensionPages {
 
-  case object DoYouGetRegularStatePaymentsPage extends StatePensionPages {
-    override val journeyNo: Int = 1
-
-    override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean =
-      true
-  }
-
   case object StatePaymentsStartDatePage extends StatePensionPages {
-    override val journeyNo: Int = 2
-
     override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean =
       state.statePension.flatMap(_.amountPaidQuestion).contains(true) &&
         state.statePension.flatMap(_.amount).isDefined
   }
 
   case object StatePensionLumpSumPage extends StatePensionPages {
-    override val journeyNo: Int = 3
-
     override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean = {
       val areClaimingStatePension = state.statePension.flatMap(_.amountPaidQuestion).contains(true)
 
@@ -57,24 +45,21 @@ object StatePensionPages {
   }
 
   case object TaxOnStatePensionLumpSumPage extends StatePensionPages {
-    override val journeyNo: Int = 4
-
     override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean =
       state.statePensionLumpSum.flatMap(_.amountPaidQuestion).contains(true) &&
         state.statePensionLumpSum.flatMap(_.amount).isDefined
   }
 
   case object StatePensionLumpSumStartDatePage extends StatePensionPages {
-    override val journeyNo: Int = 5
-
     override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean =
-      state.statePensionLumpSum.flatMap(_.taxPaidQuestion).isDefined
+      state.statePensionLumpSum.flatMap(_.amountPaidQuestion).contains(true) &&
+        state.statePensionLumpSum.flatMap(_.amount).isDefined
   }
 
   case object StatePensionsCYAPage extends StatePensionPages {
-    override val journeyNo: Int = 7
-
-    override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean =
+    override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean = {
+      println("***" + state.isStatePensionFinished)
       state.isStatePensionFinished
+    }
   }
 }

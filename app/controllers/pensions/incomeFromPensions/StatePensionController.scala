@@ -20,13 +20,11 @@ import cats.implicits.catsSyntaxOptionId
 import config.AppConfig
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
-import models.mongo.PensionsUserData
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
-import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.StatePensionRedirects.{claimLumpSumRedirect, statePensionStartDateRedirect}
+import services.redirects.StatePensionRedirects.{claimLumpSumRedirect, cyaPageRedirect, statePensionStartDateRedirect}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.EitherTUtils.ResultMergersOps
 import utils.SessionHelper
@@ -65,15 +63,17 @@ class StatePensionController @Inject() (actionsProvider: ActionsProvider,
         formErrors => Future.successful(BadRequest(view(formErrors, taxYear))),
         answer => {
           val (bool, maybeAmount) = answer
+          val updatedJourney      = updateSessionModel(journey, bool, maybeAmount)
           service
-            .upsertSession(updateSessionModel(journey, bool, maybeAmount))
-            .onSuccess(determineRedirectFrom(bool, taxYear))
+            .upsertSession(refreshSessionModel(updatedJourney))
+            .onSuccess(determineRedirectFrom(updatedJourney, bool, taxYear))
         }
       )
   }
 
-  private def updateSessionModel(journey: IncomeFromPensionsViewModel, bool: Boolean, maybeAmount: Option[BigDecimal])(implicit
-      request: UserSessionDataRequest[AnyContent]): PensionsUserData = {
+  private def updateSessionModel(journey: IncomeFromPensionsViewModel,
+                                 bool: Boolean,
+                                 maybeAmount: Option[BigDecimal]): IncomeFromPensionsViewModel = {
     def runUpdateFromBase(base: StateBenefitViewModel): StateBenefitViewModel =
       if (bool) base.copy(amountPaidQuestion = true.some, amount = maybeAmount)
       else base.void.copy(amountPaidQuestion = false.some)
@@ -81,13 +81,12 @@ class StatePensionController @Inject() (actionsProvider: ActionsProvider,
     val updatedStatePension = journey.statePension
       .fold(ifEmpty = runUpdateFromBase(StateBenefitViewModel.empty))(runUpdateFromBase)
 
-    val updatedIncomeFromPensions = journey.copy(statePension = updatedStatePension.some)
-
-    refreshSessionModel(updatedIncomeFromPensions)
+    journey.copy(statePension = updatedStatePension.some)
   }
 
-  private def determineRedirectFrom(bool: Boolean, taxYear: Int): Result =
-    if (bool) statePensionStartDateRedirect(taxYear)
+  private def determineRedirectFrom(journey: IncomeFromPensionsViewModel, bool: Boolean, taxYear: Int): Result =
+    if (journey.isStatePensionFinished) cyaPageRedirect(taxYear)
+    else if (bool) statePensionStartDateRedirect(taxYear)
     else claimLumpSumRedirect(taxYear)
 
 }
