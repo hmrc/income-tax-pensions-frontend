@@ -16,7 +16,7 @@
 
 package utils
 
-import org.joda.time.{DateTime, DateTimeZone}
+import java.time.{Clock, Instant, LocalTime, ZoneId, ZonedDateTime}
 
 object UnitTestClock extends Clock {
   private val year   = 2021
@@ -25,5 +25,11 @@ object UnitTestClock extends Clock {
   private val hour   = 0
   private val minute = 0
 
-  override def now(zone: DateTimeZone = DateTimeZone.UTC): DateTime = new DateTime(year, month, day, hour, minute, zone)
+  def now(): ZonedDateTime = ZonedDateTime.now()
+
+  def getZone: ZoneId = ???
+
+  def withZone(zone: ZoneId): Clock = ???
+
+  def instant(): Instant = ???
 }

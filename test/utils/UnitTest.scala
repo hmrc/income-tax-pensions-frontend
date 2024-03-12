@@ -16,7 +16,6 @@
 
 package utils
 
-import akka.actor.ActorSystem
 import builders.PensionsCYAModelBuilder.emptyPensionsData
 import cats.data.EitherT
 import com.codahale.metrics.SharedMetricRegistries
@@ -25,6 +24,7 @@ import config.{AppConfig, ErrorHandler, MockAppConfig}
 import controllers.predicates.actions.AuthorisedAction
 import models.mongo.PensionsUserData
 import models.{AuthorisationRequest, User}
+import org.apache.pekko.actor.ActorSystem
 import org.scalamock.handlers.CallHandler4
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterEach
@@ -43,6 +43,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.templates.AgentAuthErrorPageView
 
+import java.time.Clock
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 
@@ -59,7 +60,7 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
 
   implicit val actorSystem: ActorSystem = ActorSystem()
 
-  implicit val testClock: Clock = UnitTestClock
+  implicit val testClock: UnitTestClock.type = UnitTestClock
 
   def await[T](awaitable: Awaitable[T]): T = Await.result(awaitable, Duration.Inf)
 
