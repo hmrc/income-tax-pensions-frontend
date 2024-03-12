@@ -57,9 +57,7 @@ object StatePensionPages {
   }
 
   case object StatePensionsCYAPage extends StatePensionPages {
-    override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean = {
-      println("***" + state.isStatePensionFinished)
+    override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean =
       state.isStatePensionFinished
-    }
   }
 }
