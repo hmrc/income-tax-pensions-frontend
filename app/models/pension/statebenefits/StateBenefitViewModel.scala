@@ -27,7 +27,7 @@ import utils.{EncryptedValue, SecureGCMCipher}
 import java.time.{Instant, LocalDate}
 import java.util.UUID
 
-// Why do we have all of these fields? Not all of them are questions on the form. Do we send them downstream?
+// TODO: Understand why we have all of these fields? Not all of them are questions on the form. Do we send them downstream?
 case class StateBenefitViewModel(benefitId: Option[UUID] = None,
                                  startDateQuestion: Option[Boolean] = None,
                                  startDate: Option[LocalDate] = None,
