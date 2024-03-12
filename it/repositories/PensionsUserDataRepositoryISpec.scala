@@ -57,7 +57,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
   private val sessionIdOne = UUID.randomUUID
   private val sessionIdTwo = UUID.randomUUID
 
-  private val now = ZonedDateTime.now(ZoneOffset.UTC))
+  private val now = ZonedDateTime.now(ZoneOffset.UTC)
 
   private val paymentsIntoPension                   = PaymentsIntoPensionsViewModel().copy(rasPensionPaymentQuestion = Some(true))
   private val pensionAnnualAllowances               = PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion = Some(true))
@@ -206,7 +206,7 @@ class PensionsUserDataRepositoryISpec extends IntegrationTest with FutureAwaits 
 
   "find" should {
     "get a document and update the TTL" in new EmptyDatabase {
-      private val now  = DateTime.now(DateTimeZone.UTC)
+      private val now  = ZonedDateTime.now(ZoneOffset.UTC)
       private val data = userDataOne.copy(lastUpdated = now)
 
       await(repo.createOrUpdate(data)) mustBe Right(())
