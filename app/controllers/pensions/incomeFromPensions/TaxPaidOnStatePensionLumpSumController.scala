@@ -16,7 +16,7 @@
 
 package controllers.pensions.incomeFromPensions
 
-import cats.implicits.catsSyntaxOptionId
+import cats.implicits.{catsSyntaxOptionId, none}
 import config.AppConfig
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
@@ -27,7 +27,6 @@ import services.PensionSessionService
 import services.redirects.StatePensionPages.TaxOnStatePensionLumpSumPage
 import services.redirects.StatePensionRedirects._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Constants.zero
 import utils.EitherTUtils.ResultMergersOps
 import utils.SessionHelper
 import validation.pensions.incomeFromPensions.StatePensionValidator.validateFlow
@@ -85,7 +84,7 @@ class TaxPaidOnStatePensionLumpSumController @Inject() (actionsProvider: Actions
     val updatedLumpSum = journey.statePensionLumpSum
       .map { lumpSumAnswers =>
         if (bool) lumpSumAnswers.copy(taxPaidQuestion = true.some, taxPaid = maybeAmount)
-        else lumpSumAnswers.copy(taxPaidQuestion = false.some, taxPaid = zero.some)
+        else lumpSumAnswers.copy(taxPaidQuestion = false.some, taxPaid = none[BigDecimal])
       }
 
     journey.copy(statePensionLumpSum = updatedLumpSum)

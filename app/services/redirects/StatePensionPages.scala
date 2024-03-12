@@ -68,8 +68,7 @@ object StatePensionPages {
     override val journeyNo: Int = 5
 
     override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean =
-      state.statePensionLumpSum.flatMap(_.taxPaidQuestion).contains(true) &&
-        state.statePensionLumpSum.flatMap(_.taxPaid).isDefined
+      state.statePensionLumpSum.flatMap(_.taxPaidQuestion).isDefined
   }
 
   case object StatePensionsCYAPage extends StatePensionPages {
