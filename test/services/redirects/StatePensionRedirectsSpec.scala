@@ -81,7 +81,7 @@ class StatePensionRedirectsSpec extends UnitTest {
       }
       "current page is invalid in journey" in {
         val data   = cyaData.copy(incomeFromPensions = IncomeFromPensionsViewModel(statePension = Some(aMinimalStatePensionViewModel)))
-        val result = journeyCheck(WhenDidYouStartGettingStatePaymentsPage, data, taxYear)
+        val result = journeyCheck(StatePaymentsStartDatePage, data, taxYear)
 
         result shouldBe someRedirect
       }

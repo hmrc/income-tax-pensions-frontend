@@ -16,82 +16,78 @@
 
 package controllers.pensions.incomeFromPensions
 
-import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.{StatePensionLumpSumController, StatePensionStartDateController}
+import cats.implicits.catsSyntaxOptionId
+import config.AppConfig
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.PensionsUserData
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel}
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionSessionService
-import services.redirects.StatePensionRedirects.statePensionIsFinishedCheck
+import services.redirects.StatePensionRedirects.{claimLumpSumRedirect, statePensionStartDateRedirect}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.EitherTUtils.ResultMergersOps
+import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.StatePensionView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class StatePensionController @Inject() (actionsProvider: ActionsProvider,
-                                        pensionSessionService: PensionSessionService,
+                                        service: PensionSessionService,
                                         view: StatePensionView,
                                         formsProvider: FormsProvider,
-                                        errorHandler: ErrorHandler,
-                                        mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                        mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
-    val maybeYesNo: Option[Boolean] =
-      sessionData.pensionsUserData.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion)
-    val maybeAmount: Option[BigDecimal] =
-      sessionData.pensionsUserData.pensions.incomeFromPensions.statePension.flatMap(_.amount)
-    (maybeYesNo, maybeAmount) match {
-      case (Some(yesNo), amount) =>
-        Future.successful(Ok(view(formsProvider.statePensionForm(sessionData.user).fill((yesNo, amount)), taxYear)))
-      case _ =>
-        Future.successful(Ok(view(formsProvider.statePensionForm(sessionData.user), taxYear)))
-    }
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit request =>
+    val journey      = request.pensionsUserData.pensions.incomeFromPensions
+    val formProvider = formsProvider.statePensionForm(request.user)
+    val form = journey.statePension
+      .flatMap(_.amountPaidQuestion)
+      .fold(ifEmpty = formProvider)(formProvider.fill(_, journey.statePension.flatMap(_.amount)))
+
+    Ok(view(form, taxYear))
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
-    formsProvider
-      .statePensionForm(sessionData.user)
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
+    val journey      = request.pensionsUserData.pensions.incomeFromPensions
+    val formProvider = formsProvider.statePensionForm(request.user)
+
+    formProvider
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        yesNoAmount =>
-          (yesNoAmount._1, yesNoAmount._2) match {
-            case (true, amount) => updateSessionData(sessionData.pensionsUserData, yesNo = true, amount, taxYear)
-            case (false, _)     => updateSessionData(sessionData.pensionsUserData, yesNo = false, None, taxYear)
-          }
+        formErrors => Future.successful(BadRequest(view(formErrors, taxYear))),
+        answer => {
+          val (bool, maybeAmount) = answer
+          service
+            .upsertSession(updateSessionModel(journey, bool, maybeAmount))
+            .onSuccess(determineRedirectFrom(bool, taxYear))
+        }
       )
   }
 
-  private def updateSessionData[T](pensionUserData: PensionsUserData, yesNo: Boolean, amount: Option[BigDecimal], taxYear: Int)(implicit
-      request: UserSessionDataRequest[T]): Future[Result] = {
-    val viewModel: IncomeFromPensionsViewModel = pensionUserData.pensions.incomeFromPensions
-    val updateStatePension: StateBenefitViewModel =
-      if (yesNo) {
-        viewModel.statePension match {
-          case Some(value) => value.copy(amountPaidQuestion = Some(true), amount = amount)
-          case _           => StateBenefitViewModel(amountPaidQuestion = Some(true), amount = amount)
-        }
-      } else {
-        StateBenefitViewModel(amountPaidQuestion = Some(false))
-      }
+  private def updateSessionModel(journey: IncomeFromPensionsViewModel, bool: Boolean, maybeAmount: Option[BigDecimal])(implicit
+      request: UserSessionDataRequest[AnyContent]): PensionsUserData = {
+    def runUpdateFromBase(base: StateBenefitViewModel): StateBenefitViewModel =
+      if (bool) base.copy(amountPaidQuestion = true.some, amount = maybeAmount)
+      else base.void.copy(amountPaidQuestion = false.some)
 
-    val updatedCyaModel: PensionsCYAModel =
-      pensionUserData.pensions.copy(incomeFromPensions = viewModel.copy(statePension = Some(updateStatePension)))
-    val redirectLocation = if (yesNo) StatePensionStartDateController.show(taxYear) else StatePensionLumpSumController.show(taxYear)
+    val updatedStatePension = journey.statePension
+      .fold(ifEmpty = runUpdateFromBase(StateBenefitViewModel.empty))(runUpdateFromBase)
 
-    pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
-      errorHandler.internalServerError()) {
-      statePensionIsFinishedCheck(updatedCyaModel.incomeFromPensions, taxYear, redirectLocation)
-    }
+    val updatedIncomeFromPensions = journey.copy(statePension = updatedStatePension.some)
+
+    refreshSessionModel(updatedIncomeFromPensions)
   }
+
+  private def determineRedirectFrom(bool: Boolean, taxYear: Int): Result =
+    if (bool) statePensionStartDateRedirect(taxYear)
+    else claimLumpSumRedirect(taxYear)
+
 }

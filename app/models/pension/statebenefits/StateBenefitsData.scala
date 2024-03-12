@@ -20,6 +20,7 @@ import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsPath, OWrites, Reads}
 import utils.JsonUtils.jsonObjNoNulls
 
+// I think the only fields we are interested in are `statePension` and `statePensionLumpSum`
 case class StateBenefitsData(incapacityBenefits: Option[Set[StateBenefit]] = None,
                              statePension: Option[StateBenefit] = None,
                              statePensionLumpSum: Option[StateBenefit] = None,

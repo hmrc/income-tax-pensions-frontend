@@ -159,10 +159,6 @@ class FormsProvider {
   def pensionSchemeDateForm: Form[DateForm.DateModel] =
     DateForm.dateForm("pensionStartDate")
 
-  def statePensionAddToCalculationForm(isAgent: Boolean): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"pensions.statePension.addToCalculation.noEntry.${if (isAgent) "agent" else "individual"}"
-  )
-
   def unauthorisedNonUkTaxOnSurchargedAmountForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
     val agentOrIndividual = if (user.isAgent) "agent" else "individual"
     RadioButtonAmountForm.radioButtonAndAmountForm(

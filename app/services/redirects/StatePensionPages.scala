@@ -16,37 +16,66 @@
 
 package services.redirects
 
+import models.pension.statebenefits.IncomeFromPensionsViewModel
+
 sealed trait StatePensionPages {
   val journeyNo: Int
+  def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean
 }
 
 object StatePensionPages {
 
   case object DoYouGetRegularStatePaymentsPage extends StatePensionPages {
     override val journeyNo: Int = 1
+
+    override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean =
+      true
   }
 
-  case object WhenDidYouStartGettingStatePaymentsPage extends StatePensionPages {
+  case object StatePaymentsStartDatePage extends StatePensionPages {
     override val journeyNo: Int = 2
+
+    override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean =
+      state.statePension.flatMap(_.amountPaidQuestion).contains(true) &&
+        state.statePension.flatMap(_.amount).isDefined
   }
 
   case object StatePensionLumpSumPage extends StatePensionPages {
     override val journeyNo: Int = 3
+
+    override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean = {
+      val areClaimingStatePension = state.statePension.flatMap(_.amountPaidQuestion).contains(true)
+
+      if (areClaimingStatePension)
+        state.statePension.flatMap(_.amountPaidQuestion).contains(true) &&
+        state.statePension.flatMap(_.amount).isDefined &&
+        state.statePension.flatMap(_.startDateQuestion).isDefined &&
+        state.statePension.flatMap(_.startDate).isDefined
+      else
+        state.statePension.flatMap(_.amountPaidQuestion).isDefined // So to ensure the first question in the journey hasn't been skipped
+    }
   }
 
   case object TaxOnStatePensionLumpSumPage extends StatePensionPages {
     override val journeyNo: Int = 4
+
+    override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean =
+      state.statePensionLumpSum.flatMap(_.amountPaidQuestion).contains(true) &&
+        state.statePensionLumpSum.flatMap(_.amount).isDefined
   }
 
-  case object WhenDidYouGetYourStatePensionLumpSumPage extends StatePensionPages {
+  case object StatePensionLumpSumStartDatePage extends StatePensionPages {
     override val journeyNo: Int = 5
-  }
 
-  case object AddStatePensionToIncomeTaxCalcPage extends StatePensionPages {
-    override val journeyNo: Int = 6
+    override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean =
+      state.statePensionLumpSum.flatMap(_.taxPaidQuestion).contains(true) &&
+        state.statePensionLumpSum.flatMap(_.taxPaid).isDefined
   }
 
   case object StatePensionsCYAPage extends StatePensionPages {
     override val journeyNo: Int = 7
+
+    override def isValidInCurrentState(state: IncomeFromPensionsViewModel): Boolean =
+      state.isStatePensionFinished
   }
 }

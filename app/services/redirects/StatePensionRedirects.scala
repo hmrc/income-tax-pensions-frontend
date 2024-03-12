@@ -16,22 +16,23 @@
 
 package services.redirects
 
-import controllers.pensions.incomeFromPensions.routes.{StatePensionCYAController, StatePensionController}
+import controllers.pensions.incomeFromPensions.routes._
 import models.mongo.PensionsCYAModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
 
-object StatePensionRedirects { // scalastyle:off magic.number
+object StatePensionRedirects {
+
+  def firstPageRedirect(taxYear: Int): Result             = Redirect(StatePensionController.show(taxYear))
+  def claimLumpSumRedirect(taxYear: Int): Result          = Redirect(StatePensionLumpSumController.show(taxYear))
+  def taxPaidOnLumpSumRedirect(taxYear: Int): Result      = Redirect(TaxPaidOnStatePensionLumpSumController.show(taxYear))
+  def statePensionStartDateRedirect(taxYear: Int): Result = Redirect(StatePensionStartDateController.show(taxYear))
+  def lumpSumStartDateRedirect(taxYear: Int): Result      = Redirect(StatePensionLumpSumStartDateController.show(taxYear))
+  def cyaPageRedirect(taxYear: Int): Result               = Redirect(cyaPageCall(taxYear))
+  def taskListRedirect(taxYear: Int): Result              = Redirect(IncomeFromPensionsSummaryController.show(taxYear))
 
   def cyaPageCall(taxYear: Int): Call = StatePensionCYAController.show(taxYear)
-
-  def statePensionIsFinishedCheck(cya: IncomeFromPensionsViewModel, taxYear: Int, continueRedirect: Call): Result =
-    if (cya.isFinishedStatePension) {
-      Redirect(cyaPageCall(taxYear))
-    } else {
-      Redirect(continueRedirect)
-    }
 
   def journeyCheck(currentPage: StatePensionPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
     val incomeFromPensions = cya.incomeFromPensions
@@ -92,7 +93,7 @@ object StatePensionRedirects { // scalastyle:off magic.number
         incomeFromPensionsViewModel.statePensionLumpSum.isDefined
       }
     },
-    7 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel => incomeFromPensionsViewModel.isFinishedStatePension }
+    7 -> { incomeFromPensionsViewModel: IncomeFromPensionsViewModel => incomeFromPensionsViewModel.isStatePensionFinished }
   )
 
 }
