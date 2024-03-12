@@ -30,7 +30,6 @@ import services.EncryptionService
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.Codecs.toBson
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-import uk.gov.hmrc.mongo.play.json.formats.MongoFormats
 import uk.gov.hmrc.play.http.logging.Mdc
 import utils.PagerDutyHelper.PagerDutyKeys.{FAILED_TO_CREATE_UPDATE_PENSIONS_DATA, FAILED_TO_ClEAR_PENSIONS_DATA, FAILED_TO_FIND_PENSIONS_DATA}
 import utils.PagerDutyHelper.{PagerDutyKeys, pagerDutyLog}

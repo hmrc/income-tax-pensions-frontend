@@ -20,8 +20,6 @@ import com.google.inject.AbstractModule
 import common.UUID
 import repositories.{PensionsUserDataRepository, PensionsUserDataRepositoryImpl}
 
-import java.time.Clock
-
 class Modules extends AbstractModule {
 
   override def configure(): Unit = {

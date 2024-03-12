@@ -28,7 +28,7 @@ import models.requests.UserPriorAndSessionDataRequest
 import models.{APIErrorBodyModel, APIErrorModel, User}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, RequestHeader, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.UnauthorisedPaymentsPages.CYAPage
 import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}

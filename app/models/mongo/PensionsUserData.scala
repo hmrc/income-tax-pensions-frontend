@@ -18,7 +18,6 @@ package models.mongo
 
 import common.TaxYear
 import models.User
-import models.mongo.PensionsUserData.localDateFormat
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 

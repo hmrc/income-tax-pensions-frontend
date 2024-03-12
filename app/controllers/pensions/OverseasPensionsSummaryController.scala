@@ -27,7 +27,6 @@ import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.OverseasPensionsSummaryView
 
-import java.time.Clock
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -36,7 +35,7 @@ class OverseasPensionsSummaryController @Inject() (
     mcc: MessagesControllerComponents,
     authAction: AuthorisedAction,
     pensionSessionService: PensionSessionService,
-    overseasPensionsSummaryView: OverseasPensionsSummaryView)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    overseasPensionsSummaryView: OverseasPensionsSummaryView)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 
