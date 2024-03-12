@@ -21,7 +21,7 @@ lazy val appName = "income-tax-pensions-frontend"
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := "2.13.12"
 
-lazy val coverageSettings: Seq[Setting[_]] = {
+lazy val coverageSettings: Seq[Setting[?]] = {
   import scoverage.ScoverageKeys
 
   val excludedPackages = Seq(
@@ -47,6 +47,8 @@ lazy val coverageSettings: Seq[Setting[_]] = {
   )
 
   Seq(
+    ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;" +
+      ".*Routes.*;.*viewmodels.govuk.*;",
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
     ScoverageKeys.coverageMinimumStmtTotal := 85,
     ScoverageKeys.coverageFailOnMinimum    := true,
