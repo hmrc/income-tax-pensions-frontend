@@ -26,7 +26,6 @@ import utils.JsonUtils.jsonObjNoNulls
 import java.time.Instant
 import java.util.UUID
 
-// TODO: Can we make `benefitType` richer?
 case class StateBenefitsUserData(benefitType: String,
                                  sessionDataId: Option[UUID] = None,
                                  sessionId: String,
@@ -36,12 +35,6 @@ case class StateBenefitsUserData(benefitType: String,
                                  benefitDataType: String,
                                  claim: Option[ClaimCYAModel],
                                  lastUpdated: Instant = Instant.ofEpochMilli(Instant.now().toEpochMilli)) {
-
-//  lazy val isPriorSubmission: Boolean  = claim.exists(_.benefitId.isDefined)
-//  lazy val isNewClaim: Boolean         = !isPriorSubmission
-//  lazy val isHmrcData: Boolean         = benefitDataType == "hmrcData"
-//  lazy val isCustomerAdded: Boolean    = benefitDataType == "customerAdded"
-//  lazy val isCustomerOverride: Boolean = benefitDataType == "customerOverride"
 
   def encrypted(implicit aesGcmAdCrypto: AesGcmAdCrypto, associatedText: String): EncryptedStateBenefitsUserData = EncryptedStateBenefitsUserData(
     benefitType: String,
