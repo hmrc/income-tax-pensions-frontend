@@ -46,7 +46,7 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
   private def summaryRowForSurchargeAmount(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
       messages: Messages): Option[SummaryListRow] =
     unauthorisedPaymentsViewModel.surchargeQuestion
-      .filter(_ == true)
+      .filter(identity)
       .map(_ =>
         summaryListRowWithOptionalAmountValue(
           "unauthorisedPayments.cya.amountSurcharged",
@@ -57,7 +57,7 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
   private def summaryRowForSurchargeTaxAmount(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
       messages: Messages): Option[SummaryListRow] =
     unauthorisedPaymentsViewModel.surchargeQuestion
-      .filter(_ == true)
+      .filter(identity)
       .map(_ =>
         summaryListRowWithOptionalAmountValue(
           "unauthorisedPayments.cya.nonUkTaxAmountSurcharged",
@@ -68,7 +68,7 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
   private def summaryRowForNotSurchargeAmount(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
       messages: Messages): Option[SummaryListRow] =
     unauthorisedPaymentsViewModel.noSurchargeQuestion
-      .filter(_ == true)
+      .filter(identity)
       .map(_ =>
         summaryListRowWithOptionalAmountValue(
           "unauthorisedPayments.cya.amountNotSurcharged",
@@ -79,7 +79,7 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
   private def summaryRowForNotSurchargeTaxAmount(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
       messages: Messages): Option[SummaryListRow] =
     unauthorisedPaymentsViewModel.noSurchargeQuestion
-      .filter(_ == true)
+      .filter(identity)
       .map(_ =>
         summaryListRowWithOptionalAmountValue(
           "unauthorisedPayments.cya.nonUkTaxAmountNotSurcharged",
@@ -90,7 +90,7 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
   private def summaryRowForUKPensionSchemes(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
       messages: Messages): Option[SummaryListRow] =
     unauthorisedPaymentsViewModel.unauthorisedPaymentQuestion
-      .filter(_ == true)
+      .filter(identity)
       .map(_ =>
         summaryListRowWithBooleanValue(
           "unauthorisedPayments.common.ukPensionSchemes",
@@ -101,10 +101,10 @@ object UnauthorisedPaymentsCYAViewHelper extends CYABaseHelper {
   private def summaryRowForUKPensionSchemeTaxReferences(unauthorisedPaymentsViewModel: UnauthorisedPaymentsViewModel, taxYear: Int)(implicit
       messages: Messages): Option[SummaryListRow] =
     unauthorisedPaymentsViewModel.unauthorisedPaymentQuestion
-      .filter(_ == true)
+      .filter(identity)
       .flatMap(_ =>
         unauthorisedPaymentsViewModel.ukPensionSchemesQuestion
-          .filter(_ == true)
+          .filter(identity)
           .map(_ =>
             summaryListRowWithStrings(
               "unauthorisedPayments.cya.pensionSchemeTaxReferences",
