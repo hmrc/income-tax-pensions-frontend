@@ -41,8 +41,8 @@ class ReliefsSchemeSummaryController @Inject() (view: ReliefSchemeSummaryView,
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit userSessionDataRequest =>
-    val updatedUserData = cleanUpReliefs(userSessionDataRequest.pensionsUserData)
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit userSessionDataRequest =>
+    val updatedUserData = cleanUpReliefs(userSessionDataRequest.sessionData)
     val checkRedirect   = journeyCheck(ReliefsSchemeSummaryPage, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
       Future.successful(Ok(view(taxYear, updatedUserData.pensions.paymentsIntoOverseasPensions.reliefs)))

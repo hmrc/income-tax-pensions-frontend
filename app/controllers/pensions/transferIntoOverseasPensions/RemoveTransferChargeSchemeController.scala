@@ -46,9 +46,9 @@ class RemoveTransferChargeSchemeController @Inject() (actionsProvider: ActionsPr
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionUserData =>
     val checkRedirect = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val transferChargeScheme = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
       validatedIndex(index, transferChargeScheme.size).fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) { i =>
         transferChargeScheme(i).name.fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) { name =>
@@ -58,14 +58,14 @@ class RemoveTransferChargeSchemeController @Inject() (actionsProvider: ActionsPr
     }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    val transferChargeScheme = sessionUserData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionScheme
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionUserData =>
+    val transferChargeScheme = sessionUserData.sessionData.pensions.transfersIntoOverseasPensions.transferPensionScheme
     validatedIndex(index, transferChargeScheme.size)
       .fold(Future.successful(Redirect(TransferChargeSummaryController.show(taxYear)))) { i =>
         val updatedTransferScheme = transferChargeScheme.patch(i, Nil, 1)
         val checkRedirect         = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
-          updateSessionData(sessionUserData.pensionsUserData, updatedTransferScheme, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.sessionData), cyaPageCall(taxYear))(checkRedirect) { _ =>
+          updateSessionData(sessionUserData.sessionData, updatedTransferScheme, taxYear)
         }
       }
   }

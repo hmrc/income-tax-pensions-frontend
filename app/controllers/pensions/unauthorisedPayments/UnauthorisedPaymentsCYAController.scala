@@ -24,7 +24,7 @@ import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
-import models.requests.UserPriorAndSessionDataRequest
+import models.requests.UserRequestWithSessionAndPrior
 import models.{APIErrorBodyModel, APIErrorModel, User}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -58,7 +58,7 @@ class UnauthorisedPaymentsCYAController @Inject() (
   lazy val logger: Logger = Logger(this.getClass.getName)
 
   def show(taxYear: Int): Action[AnyContent] = auditProvider.unauthorisedPaymentsViewAuditing(taxYear) async { implicit sessionDataRequest =>
-    val cyaData = sessionDataRequest.pensionsUserData
+    val cyaData = sessionDataRequest.sessionData
     if (!cyaData.pensions.unauthorisedPayments.isFinished) {
       val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(cyaData), cyaPageCall(taxYear))(checkRedirect) { data =>
@@ -75,7 +75,7 @@ class UnauthorisedPaymentsCYAController @Inject() (
   // TODO: check conditions for excluding Pensions from submission without gateway
   private def maybeExcludePension(unauthorisedPaymentModel: UnauthorisedPaymentsViewModel,
                                   taxYear: Int,
-                                  priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent])(implicit
+                                  priorAndSessionRequest: UserRequestWithSessionAndPrior[AnyContent])(implicit
       request: Request[_]): EitherT[Future, Result, Unit] =
     (if (!unauthorisedPaymentModel.surchargeQuestion.exists(x => x) && !unauthorisedPaymentModel.noSurchargeQuestion.exists(x => x)) {
        EitherT(excludeJourneyService.excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)).void
@@ -84,7 +84,7 @@ class UnauthorisedPaymentsCYAController @Inject() (
      }).leftSemiflatMap(_ => errorHandler.futureInternalServerError())
 
   private def maybeUpdateAnswers(cya: PensionsUserData, prior: Option[AllPensionsData], taxYear: Int)(implicit
-      priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] =
+      priorAndSessionRequest: UserRequestWithSessionAndPrior[AnyContent]): EitherT[Future, Result, Result] =
     if (isEqual(cya.pensions, prior)) {
       EitherT.rightT[Future, Result](toSummaryRedirect(taxYear))
     } else {
@@ -93,8 +93,8 @@ class UnauthorisedPaymentsCYAController @Inject() (
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.unauthorisedPaymentsUpdateAuditing(taxYear) async { implicit priorAndSessionRequest =>
     val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(priorAndSessionRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-      val (sessionData, priorData, unauthorisedPaymentModel) = (data, priorAndSessionRequest.pensions, data.pensions.unauthorisedPayments)
+    redirectBasedOnCurrentAnswers(taxYear, Some(priorAndSessionRequest.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      val (sessionData, priorData, unauthorisedPaymentModel) = (data, priorAndSessionRequest.maybePrior, data.pensions.unauthorisedPayments)
 
       (for {
         _      <- maybeExcludePension(unauthorisedPaymentModel, taxYear, priorAndSessionRequest).map(_ => toSummaryRedirect(taxYear))
@@ -106,7 +106,7 @@ class UnauthorisedPaymentsCYAController @Inject() (
   private def performSubmission(taxYear: Int, cya: Option[PensionsUserData])(implicit
       user: User,
       hc: HeaderCarrier,
-      request: UserPriorAndSessionDataRequest[AnyContent]): Future[Result] =
+      request: UserRequestWithSessionAndPrior[AnyContent]): Future[Result] =
     (cya match {
       case Some(_) =>
         service.saveAnswers(user, TaxYear(taxYear)) map {

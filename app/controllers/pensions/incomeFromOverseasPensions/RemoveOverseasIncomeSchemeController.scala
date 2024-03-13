@@ -46,25 +46,25 @@ class RemoveOverseasIncomeSchemeController @Inject() (actionsProvider: ActionsPr
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    val overseasIncomeSchemes = sessionUserData.pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionUserData =>
+    val overseasIncomeSchemes = sessionUserData.sessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
     validatedIndex(index, overseasIncomeSchemes.size).fold(Future.successful(Redirect(CountrySummaryListController.show(taxYear)))) { i =>
       overseasIncomeSchemes(i).alphaTwoCode.fold(Future.successful(Redirect(CountrySummaryListController.show(taxYear)))) { country =>
         val checkRedirect = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
+        redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.sessionData), cyaPageCall(taxYear))(checkRedirect) { _ =>
           Future.successful(Ok(view(taxYear, country, index)))
         }
       }
     }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    val overseasIncomeSchemes = sessionUserData.pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionUserData =>
+    val overseasIncomeSchemes = sessionUserData.sessionData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
     validatedIndex(index, overseasIncomeSchemes.size)
       .fold(Future.successful(Redirect(CountrySummaryListController.show(taxYear)))) { i =>
         val checkRedirect       = journeyCheck(RemoveSchemePage, _: PensionsCYAModel, taxYear)
         val updatedRefundScheme = overseasIncomeSchemes.patch(i, Nil, 1)
-        redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+        redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
           updateSessionData(data, updatedRefundScheme, taxYear)
         }
       }

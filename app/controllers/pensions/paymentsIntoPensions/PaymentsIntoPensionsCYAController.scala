@@ -22,7 +22,7 @@ import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
-import models.requests.UserPriorAndSessionDataRequest
+import models.requests.UserRequestWithSessionAndPrior
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -54,7 +54,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
   def show(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsViewAuditing(taxYear) async { implicit sessionDataRequest =>
-    val cyaData = sessionDataRequest.pensionsUserData
+    val cyaData = sessionDataRequest.sessionData
     if (!cyaData.pensions.paymentsIntoPension.isFinished) {
       val checkRedirect = journeyCheck(CheckYourAnswersPage, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(cyaData), cyaPageCall(taxYear))(checkRedirect) { data =>
@@ -67,8 +67,8 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsUpdateAuditing(taxYear) async { implicit priorAndSessionRequest =>
-    val modelFromSession   = priorAndSessionRequest.pensionsUserData.pensions.paymentsIntoPension
-    val modelFromPriorData = priorAndSessionRequest.pensions.map(_.getPaymentsIntoPensionsCyaFromPrior)
+    val modelFromSession   = priorAndSessionRequest.sessionData.pensions.paymentsIntoPension
+    val modelFromPriorData = priorAndSessionRequest.maybePrior.map(_.getPaymentsIntoPensionsCyaFromPrior)
 
     if (isDifferent(modelFromSession, modelFromPriorData)) {
       performSubmission(TaxYear(taxYear), modelFromSession)(hc, priorAndSessionRequest)
@@ -79,7 +79,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
 
   private def excludeJourney(taxYear: TaxYear, paymentsIntoPensionFromSession: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
-      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Unit] = {
+      request: UserRequestWithSessionAndPrior[AnyContent]): EitherT[Future, Result, Unit] = {
     val user = request.user
     val res =
       if (!paymentsIntoPensionFromSession.rasPensionPaymentQuestion.exists(x =>
@@ -98,7 +98,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
 
   private def performSubmission(taxYear: TaxYear, sessionData: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
-      request: UserPriorAndSessionDataRequest[AnyContent]): Future[Result] =
+      request: UserRequestWithSessionAndPrior[AnyContent]): Future[Result] =
     (for {
       _      <- excludeJourney(taxYear, sessionData)
       result <- persist(taxYear, sessionData)
@@ -106,12 +106,12 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
 
   private def persist(taxYear: TaxYear, sessionData: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
-      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] = {
+      request: UserRequestWithSessionAndPrior[AnyContent]): EitherT[Future, Result, Result] = {
     val res = pensionReliefsService.persistPaymentIntoPensionViewModel(
       request.user,
       taxYear,
       sessionData,
-      request.pensions.flatMap(_.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions)))
+      request.maybePrior.flatMap(_.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions)))
 
     res.map(_ => Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear.endYear))).leftMap { err =>
       logger.info(s"[PaymentIntoPensionsCYAController][submit] Failed to create or update session: ${err}")

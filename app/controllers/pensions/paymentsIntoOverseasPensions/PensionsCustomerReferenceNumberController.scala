@@ -50,42 +50,43 @@ class PensionsCustomerReferenceNumberController @Inject() (actionsProvider: Acti
     incorrectFormatMsg = s"overseasPension.pensionsCustomerReferenceNumber.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionDataRequest =>
-    index match {
-      case Some(_) =>
-        indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, index, PensionsCustomerReferenceNumberPage, taxYear) { relief =>
-          relief.customerReference match {
-            case Some(customerReferenceNumber) =>
-              Future.successful(
-                Ok(
-                  view(
-                    referenceForm(sessionDataRequest.user)
-                      .fill(customerReferenceNumber),
-                    taxYear,
-                    index)))
-            case None =>
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
+    implicit sessionDataRequest =>
+      index match {
+        case Some(_) =>
+          indexCheckThenJourneyCheck(sessionDataRequest.sessionData, index, PensionsCustomerReferenceNumberPage, taxYear) { relief =>
+            relief.customerReference match {
+              case Some(customerReferenceNumber) =>
+                Future.successful(
+                  Ok(
+                    view(
+                      referenceForm(sessionDataRequest.user)
+                        .fill(customerReferenceNumber),
+                      taxYear,
+                      index)))
+              case None =>
+                Future.successful(Ok(view(referenceForm(sessionDataRequest.user), taxYear, index)))
+            }
+          }
+        case None =>
+          val checkRedirect = journeyCheck(PensionsCustomerReferenceNumberPage, _: PensionsCYAModel, taxYear)
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionDataRequest.sessionData), cyaPageCall(taxYear))(checkRedirect) {
+            data: PensionsUserData =>
               Future.successful(Ok(view(referenceForm(sessionDataRequest.user), taxYear, index)))
           }
-        }
-      case None =>
-        val checkRedirect = journeyCheck(PensionsCustomerReferenceNumberPage, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(sessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-          data: PensionsUserData =>
-            Future.successful(Ok(view(referenceForm(sessionDataRequest.user), taxYear, index)))
-        }
-    }
+      }
   }
 
-  def submit(taxYear: Int, optIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int, optIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
     implicit sessionDataRequest =>
-      val piop = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions
+      val piop = sessionDataRequest.sessionData.pensions.paymentsIntoOverseasPensions
 
       def createOrUpdateSessionData(updatedCyaModel: PensionsCYAModel, newIndex: Some[Int]): Future[Result] =
         pensionSessionService.createOrUpdateSessionData(
           sessionDataRequest.user,
           updatedCyaModel,
           taxYear,
-          sessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
+          sessionDataRequest.sessionData.isPriorSubmission)(errorHandler.internalServerError()) {
           schemeIsFinishedCheck(
             updatedCyaModel.paymentsIntoOverseasPensions.reliefs,
             newIndex.getOrElse(0),
@@ -96,7 +97,7 @@ class PensionsCustomerReferenceNumberController @Inject() (actionsProvider: Acti
       optIndex match {
         case None =>
           val checkRedirect = journeyCheck(PensionsCustomerReferenceNumberPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(sessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionDataRequest.sessionData), cyaPageCall(taxYear))(checkRedirect) {
             data: PensionsUserData =>
               referenceForm(sessionDataRequest.user)
                 .bindFromRequest()
@@ -112,13 +113,13 @@ class PensionsCustomerReferenceNumberController @Inject() (actionsProvider: Acti
                 )
           }
         case Some(index) =>
-          indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, Some(index), PensionsCustomerReferenceNumberPage, taxYear) { _: Relief =>
+          indexCheckThenJourneyCheck(sessionDataRequest.sessionData, Some(index), PensionsCustomerReferenceNumberPage, taxYear) { _: Relief =>
             referenceForm(sessionDataRequest.user)
               .bindFromRequest()
               .fold(
                 formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, Some(index)))),
                 pensionCustomerReferenceNumber => {
-                  val updatedCyaModel: PensionsCYAModel = sessionDataRequest.pensionsUserData.pensions.copy(
+                  val updatedCyaModel: PensionsCYAModel = sessionDataRequest.sessionData.pensions.copy(
                     paymentsIntoOverseasPensions = piop.copy(
                       reliefs = piop.reliefs.updated(
                         index,

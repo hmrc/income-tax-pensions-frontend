@@ -49,9 +49,9 @@ class StatePensionLumpSumController @Inject() (
     with SessionHelper
     with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
     val checkRedirect = journeyCheck(StatePensionLumpSumPage, _, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val amountPaidQuestion = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amountPaidQuestion)
       val amount             = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.amount)
 
@@ -62,9 +62,9 @@ class StatePensionLumpSumController @Inject() (
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
     val checkRedirect = journeyCheck(StatePensionLumpSumPage, _, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       formsProvider
         .statePensionLumpSum(sessionData.user)
         .bindFromRequest()

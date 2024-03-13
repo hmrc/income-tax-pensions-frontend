@@ -45,8 +45,8 @@ class RemoveRefundSchemeController @Inject() (actionsProvider: ActionsProvider,
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    val answers = request.pensionsUserData.pensions.shortServiceRefunds
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val answers = request.sessionData.pensions.shortServiceRefunds
 
     validateIndex[RemoveRefundSchemePage](index, answers, taxYear) { validIndex =>
       validateFlow(answers, RemoveRefundSchemePage(), taxYear, validIndex.some) {
@@ -61,13 +61,13 @@ class RemoveRefundSchemeController @Inject() (actionsProvider: ActionsProvider,
     }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    val answers = request.pensionsUserData.pensions.shortServiceRefunds
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val answers = request.sessionData.pensions.shortServiceRefunds
 
     validateIndex[RemoveRefundSchemePage](index, answers, taxYear) { validIndex =>
       validateFlow(answers, RemoveRefundSchemePage(), taxYear, validIndex.some) {
         val updatedSchemes = answers.refundPensionScheme.patch(validIndex, Nil, 1)
-        val updatedModel   = updateSessionModel(request.pensionsUserData, updatedSchemes)
+        val updatedModel   = updateSessionModel(request.sessionData, updatedSchemes)
 
         service
           .upsertSession(updatedModel)

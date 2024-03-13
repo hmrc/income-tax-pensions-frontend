@@ -42,8 +42,8 @@ class CountrySummaryListController @Inject() (actionsProvider: ActionsProvider,
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    cleanUpSchemes(sessionUserData.pensionsUserData).flatMap {
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionUserData =>
+    cleanUpSchemes(sessionUserData.sessionData).flatMap {
       case Right(updatedUserData) =>
         val checkRedirect = journeyCheck(CountrySchemeSummaryListPage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>

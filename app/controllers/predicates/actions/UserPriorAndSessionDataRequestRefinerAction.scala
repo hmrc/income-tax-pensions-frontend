@@ -17,25 +17,28 @@
 package controllers.predicates.actions
 
 import config.ErrorHandler
-import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
+import models.requests.{UserRequestWithSessionAndPrior, UserSessionDataRequest}
 import play.api.mvc.{ActionRefiner, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class UserPriorAndSessionDataRequestRefinerAction(taxYear: Int, pensionSessionService: PensionSessionService, errorHandler: ErrorHandler)(
-    implicit ec: ExecutionContext)
-    extends ActionRefiner[UserSessionDataRequest, UserPriorAndSessionDataRequest]
+case class UserPriorAndSessionDataRequestRefinerAction(taxYear: Int, service: PensionSessionService, errorHandler: ErrorHandler)(implicit
+    ec: ExecutionContext)
+    extends ActionRefiner[UserSessionDataRequest, UserRequestWithSessionAndPrior]
     with FrontendHeaderCarrierProvider {
 
   override protected[predicates] def executionContext: ExecutionContext = ec
 
-  override protected[predicates] def refine[A](input: UserSessionDataRequest[A]): Future[Either[Result, UserPriorAndSessionDataRequest[A]]] =
-    pensionSessionService.loadPriorData(taxYear, input.user)(hc(input.request)).map {
-      case Left(error) =>
-        Left(errorHandler.handleError(error.status)(input.request))
-      case Right(incomeTaxUserData) =>
-        Right(UserPriorAndSessionDataRequest(input.pensionsUserData, incomeTaxUserData.pensions, input.user, input.request))
-    }
+  override protected[predicates] def refine[A](input: UserSessionDataRequest[A]): Future[Either[Result, UserRequestWithSessionAndPrior[A]]] =
+    service
+      .loadPriorData(taxYear, input.user)(hc(input.request))
+      .map {
+        case Left(error) =>
+          Left(errorHandler.handleError(error.status)(input.request))
+
+        case Right(prior) =>
+          Right(UserRequestWithSessionAndPrior(input.sessionData, prior.pensions, input.user, input.request))
+      }
 }

@@ -49,7 +49,7 @@ class TransferIntoOverseasPensionsCYAController @Inject() (
     with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsViewAuditing(taxYear) async { implicit sessionDataRequest =>
-    val cyaData = sessionDataRequest.pensionsUserData
+    val cyaData = sessionDataRequest.sessionData
     if (!cyaData.pensions.transfersIntoOverseasPensions.isFinished) {
       val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(cyaData), cyaPageCall(taxYear))(checkRedirect) { data =>
@@ -63,8 +63,8 @@ class TransferIntoOverseasPensionsCYAController @Inject() (
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsUpdateAuditing(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
-      if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
+      if (sessionDataDifferentThanPriorData(sessionData.pensions, request.maybePrior)) {
         chargesService.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
           case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))

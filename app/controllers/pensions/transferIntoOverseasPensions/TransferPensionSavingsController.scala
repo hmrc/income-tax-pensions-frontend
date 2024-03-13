@@ -43,8 +43,8 @@ class TransferPensionSavingsController @Inject() (actionsProvider: ActionsProvid
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
-    val transferPensionSavings = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionSavings
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
+    val transferPensionSavings = sessionData.sessionData.pensions.transfersIntoOverseasPensions.transferPensionSavings
 
     transferPensionSavings match {
       case Some(x) => Future.successful(Ok(view(yesNoForm(sessionData.user).fill(x), taxYear)))
@@ -52,12 +52,12 @@ class TransferPensionSavingsController @Inject() (actionsProvider: ActionsProvid
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionUserData =>
     yesNoForm(sessionUserData.user)
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        transferPensionSavings => updateSessionData(sessionUserData.pensionsUserData, transferPensionSavings, taxYear)
+        transferPensionSavings => updateSessionData(sessionUserData.sessionData, transferPensionSavings, taxYear)
       )
   }
 

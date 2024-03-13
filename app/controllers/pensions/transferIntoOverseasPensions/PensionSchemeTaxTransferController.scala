@@ -46,9 +46,9 @@ class PensionSchemeTaxTransferController @Inject() (actionsProvider: ActionsProv
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
     val checkRedirect = journeyCheck(TaxOnPensionSchemesAmountPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val transferSchemeChargeAmount: Option[BigDecimal] =
         data.pensions.transfersIntoOverseasPensions.pensionSchemeTransferChargeAmount
       val transferSchemeCharge: Option[Boolean] = data.pensions.transfersIntoOverseasPensions.pensionSchemeTransferCharge
@@ -59,7 +59,7 @@ class PensionSchemeTaxTransferController @Inject() (actionsProvider: ActionsProv
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
     formsProvider
       .pensionSchemeTaxTransferForm(sessionData.user)
       .bindFromRequest()
@@ -67,7 +67,7 @@ class PensionSchemeTaxTransferController @Inject() (actionsProvider: ActionsProv
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNoAmount => {
           val checkRedirect = journeyCheck(OverseasTransferChargeAmountPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
             (yesNoAmount._1, yesNoAmount._2) match {
               case (true, amount) => updateSessionData(data, yesNo = true, amount, taxYear)
               case (false, _)     => updateSessionData(data, yesNo = false, None, taxYear)

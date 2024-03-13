@@ -49,10 +49,10 @@ class StatePensionStartDateController @Inject() (actionsProvider: ActionsProvide
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
     implicit userSessionDataRequest: UserSessionDataRequest[AnyContent] =>
       val checkRedirect = journeyCheck(WhenDidYouStartGettingStatePaymentsPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
+      redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.sessionData), cyaPageCall(taxYear))(checkRedirect) {
         data: PensionsUserData =>
           Future.successful(showStartDate(taxYear, data))
       }
@@ -72,9 +72,9 @@ class StatePensionStartDateController @Inject() (actionsProvider: ActionsProvide
       }
     }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit userSessionDataRequest =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit userSessionDataRequest =>
     val checkRedirect = journeyCheck(WhenDidYouStartGettingStatePaymentsPage, _, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val verifiedForm = formProvider.stateBenefitDateForm.bindFromRequest()
       verifiedForm
         .copy(errors = DateForm.verifyDate(verifiedForm.get, "incomeFromPensions.stateBenefitStartDate"))

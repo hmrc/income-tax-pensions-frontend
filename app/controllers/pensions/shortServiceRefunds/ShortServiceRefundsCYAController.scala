@@ -24,7 +24,7 @@ import models.IncomeTaxUserData
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
-import models.requests.UserPriorAndSessionDataRequest
+import models.requests.UserRequestWithSessionAndPrior
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.redirects.ShortServiceRefundsPages.CYAPage
@@ -51,7 +51,7 @@ class ShortServiceRefundsCYAController @Inject() (
     with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsViewAuditing(taxYear) async { implicit request =>
-    val answers = request.pensionsUserData.pensions.shortServiceRefunds
+    val answers = request.sessionData.pensions.shortServiceRefunds
 
     validateFlow(answers, CYAPage, taxYear) {
       Future.successful(Ok(view(taxYear, answers)))
@@ -59,7 +59,7 @@ class ShortServiceRefundsCYAController @Inject() (
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsUpdateAuditing(taxYear) async { implicit request =>
-    val answers = request.pensionsUserData.pensions.shortServiceRefunds
+    val answers = request.sessionData.pensions.shortServiceRefunds
 
     validateFlow(answers, CYAPage, taxYear) {
       val resultOrError: EitherT[Future, ServiceError, Result] =
@@ -76,7 +76,7 @@ class ShortServiceRefundsCYAController @Inject() (
   }
 
   private def processSubmission(session: PensionsUserData, prior: IncomeTaxUserData, taxYear: Int)(implicit
-      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, ServiceError, Unit] =
+      request: UserRequestWithSessionAndPrior[AnyContent]): EitherT[Future, ServiceError, Unit] =
     if (sessionDeviatesFromPrior(session.pensions, prior.pensions))
       EitherT(service.saveAnswers(request.user, TaxYear(taxYear)))
     else EitherT.pure[Future, ServiceError](())

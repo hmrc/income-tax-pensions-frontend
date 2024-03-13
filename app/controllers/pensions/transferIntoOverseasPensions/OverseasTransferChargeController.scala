@@ -48,9 +48,9 @@ class OverseasTransferChargeController @Inject() (actionsProvider: ActionsProvid
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
     val checkRedirect = journeyCheck(OverseasTransferChargeAmountPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val transferChargeAmount: Option[BigDecimal] = data.pensions.transfersIntoOverseasPensions.overseasTransferChargeAmount
       val transferCharge: Option[Boolean]          = data.pensions.transfersIntoOverseasPensions.overseasTransferCharge
       (transferCharge, transferChargeAmount) match {
@@ -60,14 +60,14 @@ class OverseasTransferChargeController @Inject() (actionsProvider: ActionsProvid
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionUserData =>
     amountForm(sessionUserData.user)
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNoAmount => {
           val checkRedirect = journeyCheck(OverseasTransferChargeAmountPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+          redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
             (yesNoAmount._1, yesNoAmount._2) match {
               case (true, amount) => updateSessionData(data, yesNo = true, amount, taxYear)
               case (false, _)     => updateSessionData(data, yesNo = false, None, taxYear)

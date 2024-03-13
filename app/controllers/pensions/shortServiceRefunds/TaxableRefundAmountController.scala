@@ -45,16 +45,16 @@ class TaxableRefundAmountController @Inject() (actionsProvider: ActionsProvider,
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit request =>
-    val answers      = request.pensionsUserData.pensions.shortServiceRefunds
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) { implicit request =>
+    val answers      = request.sessionData.pensions.shortServiceRefunds
     val formProvider = formsProvider.shortServiceTaxableRefundForm(request.user)
     val form         = answers.shortServiceRefund.fold(ifEmpty = formProvider)(formProvider.fill(_, answers.shortServiceRefundCharge))
 
     Ok(view(form, taxYear))
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    val journey      = request.pensionsUserData.pensions.shortServiceRefunds
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val journey      = request.sessionData.pensions.shortServiceRefunds
     val formProvider = formsProvider.shortServiceTaxableRefundForm(request.user)
 
     formProvider
@@ -79,9 +79,9 @@ class TaxableRefundAmountController @Inject() (actionsProvider: ActionsProvider,
 
   private def updateSessionModel(updatedJourney: ShortServiceRefundsViewModel)(implicit
       request: UserSessionDataRequest[AnyContent]): PensionsUserData = {
-    val updatedSession = request.pensionsUserData.pensions.copy(shortServiceRefunds = updatedJourney)
+    val updatedSession = request.sessionData.pensions.copy(shortServiceRefunds = updatedJourney)
 
-    request.pensionsUserData.copy(pensions = updatedSession)
+    request.sessionData.copy(pensions = updatedSession)
   }
 
   private def determineRedirectFrom(journey: ShortServiceRefundsViewModel, bool: Boolean, taxYear: Int): Result =

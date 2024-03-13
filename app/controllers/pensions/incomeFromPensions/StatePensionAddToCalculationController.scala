@@ -49,9 +49,9 @@ class StatePensionAddToCalculationController @Inject() (actionsProvider: Actions
     with SessionHelper
     with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
     val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage, _, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       data.pensions.incomeFromPensions.statePensionLumpSum.fold {
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       } { sp: StateBenefitViewModel =>
@@ -67,9 +67,9 @@ class StatePensionAddToCalculationController @Inject() (actionsProvider: Actions
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
     val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage, _, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       formsProvider
         .statePensionAddToCalculationForm(sessionData.user.isAgent)
         .bindFromRequest()

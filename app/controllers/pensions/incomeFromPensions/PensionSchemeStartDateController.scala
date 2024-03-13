@@ -48,9 +48,9 @@ class PensionSchemeStartDateController @Inject() (pensionSessionService: Pension
     extends FrontendController(mcc)
     with I18nSupport {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
     implicit sessionDataRequest =>
-      indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, pensionSchemeIndex, WhenDidYouStartGettingPaymentsPage, taxYear) { data =>
+      indexCheckThenJourneyCheck(sessionDataRequest.sessionData, pensionSchemeIndex, WhenDidYouStartGettingPaymentsPage, taxYear) { data =>
         val viewModel = data.pensions.incomeFromPensions.uKPensionIncomes
         val index     = pensionSchemeIndex.getOrElse(0)
         viewModel(index).startDate.fold {
@@ -68,9 +68,9 @@ class PensionSchemeStartDateController @Inject() (pensionSessionService: Pension
       }
   }
 
-  def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
     implicit sessionDataRequest =>
-      indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, pensionSchemeIndex, WhenDidYouStartGettingPaymentsPage, taxYear) { data =>
+      indexCheckThenJourneyCheck(sessionDataRequest.sessionData, pensionSchemeIndex, WhenDidYouStartGettingPaymentsPage, taxYear) { data =>
         val index        = pensionSchemeIndex.getOrElse(0)
         val verifiedForm = formProvider.pensionSchemeDateForm.bindFromRequest()
         verifiedForm

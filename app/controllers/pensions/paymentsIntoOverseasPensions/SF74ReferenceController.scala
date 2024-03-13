@@ -46,9 +46,9 @@ class SF74ReferenceController @Inject() (actionsProvider: ActionsProvider,
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
     implicit userSessionDataRequest =>
-      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, SF74ReferencePage, taxYear) { relief: Relief =>
+      indexCheckThenJourneyCheck(userSessionDataRequest.sessionData, reliefIndex, SF74ReferencePage, taxYear) { relief: Relief =>
         relief.sf74Reference match {
           case Some(value) => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear, reliefIndex)))
           case None        => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
@@ -56,14 +56,14 @@ class SF74ReferenceController @Inject() (actionsProvider: ActionsProvider,
       }
   }
 
-  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
     implicit userSessionDataRequest =>
-      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, SF74ReferencePage, taxYear) { _: Relief =>
+      indexCheckThenJourneyCheck(userSessionDataRequest.sessionData, reliefIndex, SF74ReferencePage, taxYear) { _: Relief =>
         formsProvider.sf74ReferenceIdForm
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
-            sf74Reference => updateSessionData(userSessionDataRequest.pensionsUserData, Some(sf74Reference), taxYear, reliefIndex.get)
+            sf74Reference => updateSessionData(userSessionDataRequest.sessionData, Some(sf74Reference), taxYear, reliefIndex.get)
           )
       }
   }

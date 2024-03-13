@@ -46,9 +46,9 @@ class AboveReducedAnnualAllowanceController @Inject() (actionsProvider: ActionsP
     extends FrontendController(cc)
     with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
     val checkRedirect = journeyCheck(AboveAnnualAllowancePage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val aboveAnnualAllowanceQuestion = data.pensions.pensionsAnnualAllowances.aboveAnnualAllowanceQuestion
       val amount                       = data.pensions.pensionsAnnualAllowances.aboveAnnualAllowance
 
@@ -62,9 +62,9 @@ class AboveReducedAnnualAllowanceController @Inject() (actionsProvider: ActionsP
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
     val checkRedirect = journeyCheck(AboveAnnualAllowancePage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       formsProvider
         .aboveAnnualAllowanceForm(sessionData.user)
         .bindFromRequest()

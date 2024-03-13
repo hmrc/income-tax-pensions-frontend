@@ -46,9 +46,9 @@ class PensionProviderPaidTaxController @Inject() (actionsProvider: ActionsProvid
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
     val checkRedirect = journeyCheck(PensionProviderPaidTaxPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val providePaidAnnualAllowanceQuestion = data.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion
       val taxPaid                            = data.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider
 
@@ -61,9 +61,9 @@ class PensionProviderPaidTaxController @Inject() (actionsProvider: ActionsProvid
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
     val checkRedirect = journeyCheck(PensionProviderPaidTaxPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       pensionProviderPaidTaxForm(sessionData.user.isAgent)
         .bindFromRequest()
         .fold(

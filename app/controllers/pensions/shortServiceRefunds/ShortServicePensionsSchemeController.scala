@@ -50,8 +50,8 @@ class ShortServicePensionsSchemeController @Inject() (actionsProvider: ActionsPr
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    val answers = request.pensionsUserData.pensions.shortServiceRefunds
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val answers = request.sessionData.pensions.shortServiceRefunds
 
     validateIndex[SchemeDetailsPage](index, answers, taxYear) { validIndex =>
       validateFlow(answers, SchemeDetailsPage(), taxYear, validIndex.some) {
@@ -64,8 +64,8 @@ class ShortServicePensionsSchemeController @Inject() (actionsProvider: ActionsPr
 
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    val journey = request.pensionsUserData.pensions.shortServiceRefunds
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val journey = request.sessionData.pensions.shortServiceRefunds
 
     validateIndex[SchemeDetailsPage](index, journey, taxYear) { validIndex =>
       validateFlow(journey, SchemeDetailsPage(), taxYear, validIndex.some) {
@@ -74,8 +74,8 @@ class ShortServicePensionsSchemeController @Inject() (actionsProvider: ActionsPr
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, validIndex))),
             scheme => {
-              val updatedSession = updateSessionModel(request.pensionsUserData, scheme, validIndex)
-              val userData       = request.pensionsUserData.copy(pensions = updatedSession)
+              val updatedSession = updateSessionModel(request.sessionData, scheme, validIndex)
+              val userData       = request.sessionData.copy(pensions = updatedSession)
 
               service
                 .upsertSession(userData)
