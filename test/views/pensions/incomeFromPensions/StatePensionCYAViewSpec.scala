@@ -30,12 +30,11 @@ import views.html.pensions.incomeFromPensions.StatePensionCYAView
 class StatePensionCYAViewSpec extends ViewUnitTest { // scalastyle:off magic.number
 
   object ChangeLinks {
-    val changeStatePension             = () => routes.StatePensionController.show(taxYearEOY).url
-    val changeStartDate                = () => routes.StatePensionStartDateController.show(taxYearEOY).url
-    val changeLumpSum                  = () => routes.StatePensionLumpSumController.show(taxYearEOY).url
-    val changeLumpSumTax               = () => routes.TaxPaidOnStatePensionLumpSumController.show(taxYearEOY).url
-    val changeLumpSumStartDate         = () => routes.StatePensionLumpSumStartDateController.show(taxYearEOY).url
-    val changeAddStatePensionToTaxCalc = () => routes.StatePensionAddToCalculationController.show(taxYearEOY).url
+    val changeStatePension     = () => routes.StatePensionController.show(taxYearEOY).url
+    val changeStartDate        = () => routes.StatePensionStartDateController.show(taxYearEOY).url
+    val changeLumpSum          = () => routes.StatePensionLumpSumController.show(taxYearEOY).url
+    val changeLumpSumTax       = () => routes.TaxPaidOnStatePensionLumpSumController.show(taxYearEOY).url
+    val changeLumpSumStartDate = () => routes.StatePensionLumpSumStartDateController.show(taxYearEOY).url
   }
 
   trait CommonExpectedResults {
@@ -160,47 +159,35 @@ class StatePensionCYAViewSpec extends ViewUnitTest { // scalastyle:off magic.num
       "render the CYA page when answering State Pension = No, Lump Sum = No, Adding State Pension to tax calculations= No" when {
         val viewModel = anIncomeFromPensionsViewModel.copy(
           statePension = anIncomeFromPensionsViewModel.statePension.map(_.copy(amountPaidQuestion = Some(false), taxPaidQuestion = Some(false))),
-          statePensionLumpSum = anIncomeFromPensionsViewModel.statePensionLumpSum.map(
-            _.copy(amountPaidQuestion = Some(false), taxPaidQuestion = Some(false), addToCalculation = Some(false)))
+          statePensionLumpSum =
+            anIncomeFromPensionsViewModel.statePensionLumpSum.map(_.copy(amountPaidQuestion = Some(false), taxPaidQuestion = Some(false)))
         )
         implicit val document: Document = renderPage(userScenario, viewModel)
 
         cyaRowCheck(statePension, statePensionValue, ChangeLinks.changeStatePension(), hiddenStatePension, 1)
         cyaRowCheck(lumpSum, lumpSumValue, ChangeLinks.changeLumpSum(), hiddenLumpSum, 2)
-        cyaRowCheck(
-          addStatePensionToTaxCalc,
-          addStatePensionToTaxCalcAnswer,
-          ChangeLinks.changeAddStatePensionToTaxCalc(),
-          hiddenAddStatePensionToTaxCalc,
-          3)
         buttonCheck(buttonText)
       }
 
       "render the CYA page when answering State Pension = Yes, Lump Sum = No, Adding State Pension to tax calculations= No" when {
         val viewModel = anIncomeFromPensionsViewModel.copy(
           statePension = anIncomeFromPensionsViewModel.statePension.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(false))),
-          statePensionLumpSum = anIncomeFromPensionsViewModel.statePensionLumpSum.map(
-            _.copy(amountPaidQuestion = Some(false), taxPaidQuestion = Some(false), addToCalculation = Some(false)))
+          statePensionLumpSum =
+            anIncomeFromPensionsViewModel.statePensionLumpSum.map(_.copy(amountPaidQuestion = Some(false), taxPaidQuestion = Some(false)))
         )
         implicit val document: Document = renderPage(userScenario, viewModel)
 
         cyaRowCheck(statePension, statePensionValue, ChangeLinks.changeStatePension(), hiddenStatePension, 1)
         cyaRowCheck(pensionStartDate, pensionStartDateValue, ChangeLinks.changeStartDate(), hiddenPensionStartDate, 2)
         cyaRowCheck(lumpSum, lumpSumValue, ChangeLinks.changeLumpSum(), hiddenLumpSum, 3)
-        cyaRowCheck(
-          addStatePensionToTaxCalc,
-          addStatePensionToTaxCalcAnswer,
-          ChangeLinks.changeAddStatePensionToTaxCalc(),
-          hiddenAddStatePensionToTaxCalc,
-          4)
         buttonCheck(buttonText)
       }
 
       "render the CYA page when answering State Pension = Yes, Lump Sum = Yes, Lump sum tax = No, Adding State Pension to tax calculations = No" when {
         val viewModel = anIncomeFromPensionsViewModel.copy(
           statePension = anIncomeFromPensionsViewModel.statePension.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(false))),
-          statePensionLumpSum = anIncomeFromPensionsViewModel.statePensionLumpSum.map(
-            _.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(false), addToCalculation = Some(false)))
+          statePensionLumpSum =
+            anIncomeFromPensionsViewModel.statePensionLumpSum.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(false)))
         )
         implicit val document: Document = renderPage(userScenario, viewModel)
 
@@ -209,20 +196,14 @@ class StatePensionCYAViewSpec extends ViewUnitTest { // scalastyle:off magic.num
         cyaRowCheck(lumpSum, lumpSumValue, ChangeLinks.changeLumpSum(), hiddenLumpSum, 3)
         cyaRowCheck(lumpSumTax, lumpSumTaxValue, ChangeLinks.changeLumpSumTax(), hiddenLumpSumTax, 4)
         cyaRowCheck(lumpSumDate, lumpSumDateValue, ChangeLinks.changeLumpSumStartDate(), hiddenLumpSumDate, 5)
-        cyaRowCheck(
-          addStatePensionToTaxCalc,
-          addStatePensionToTaxCalcAnswer,
-          ChangeLinks.changeAddStatePensionToTaxCalc(),
-          hiddenAddStatePensionToTaxCalc,
-          6)
         buttonCheck(buttonText)
       }
 
       "render the CYA page when answering State Pension = Yes, Lump Sum = Yes, Lump sum tax = Yes, Adding State Pension to tax calculations = No" when {
         val viewModel = anIncomeFromPensionsViewModel.copy(
           statePension = anIncomeFromPensionsViewModel.statePension.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(false))),
-          statePensionLumpSum = anIncomeFromPensionsViewModel.statePensionLumpSum.map(
-            _.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(true), addToCalculation = Some(false)))
+          statePensionLumpSum =
+            anIncomeFromPensionsViewModel.statePensionLumpSum.map(_.copy(amountPaidQuestion = Some(true), taxPaidQuestion = Some(true)))
         )
         implicit val document: Document = renderPage(userScenario, viewModel)
 
@@ -231,12 +212,6 @@ class StatePensionCYAViewSpec extends ViewUnitTest { // scalastyle:off magic.num
         cyaRowCheck(lumpSum, lumpSumValue, ChangeLinks.changeLumpSum(), hiddenLumpSum, 3)
         cyaRowCheck(lumpSumTax, lumpSumTaxValue, ChangeLinks.changeLumpSumTax(), hiddenLumpSumTax, 4)
         cyaRowCheck(lumpSumDate, lumpSumDateValue, ChangeLinks.changeLumpSumStartDate(), hiddenLumpSumDate, 5)
-        cyaRowCheck(
-          addStatePensionToTaxCalc,
-          addStatePensionToTaxCalcAnswer,
-          ChangeLinks.changeAddStatePensionToTaxCalc(),
-          hiddenAddStatePensionToTaxCalc,
-          6)
         buttonCheck(buttonText)
       }
     }

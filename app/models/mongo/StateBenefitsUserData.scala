@@ -36,12 +36,6 @@ case class StateBenefitsUserData(benefitType: String,
                                  claim: Option[ClaimCYAModel],
                                  lastUpdated: Instant = Instant.ofEpochMilli(Instant.now().toEpochMilli)) {
 
-  lazy val isPriorSubmission: Boolean  = claim.exists(_.benefitId.isDefined)
-  lazy val isNewClaim: Boolean         = !isPriorSubmission
-  lazy val isHmrcData: Boolean         = benefitDataType == "hmrcData"
-  lazy val isCustomerAdded: Boolean    = benefitDataType == "customerAdded"
-  lazy val isCustomerOverride: Boolean = benefitDataType == "customerOverride"
-
   def encrypted(implicit aesGcmAdCrypto: AesGcmAdCrypto, associatedText: String): EncryptedStateBenefitsUserData = EncryptedStateBenefitsUserData(
     benefitType: String,
     sessionDataId = sessionDataId,

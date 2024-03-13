@@ -19,14 +19,15 @@ package models.pension.statebenefits
 import models.mongo.TextAndKey
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
+import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, instantDecryptor, localDateDecryptor, uuidDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, instantEncryptor, localDateEncryptor, uuidEncryptor}
-import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, localDateDecryptor, uuidDecryptor, instantDecryptor}
 import utils.{EncryptedValue, SecureGCMCipher}
 
 import java.time.{Instant, LocalDate}
 import java.util.UUID
 
+// TODO: Understand why we have all of these fields? Not all of them are questions on the form. Do we send them downstream?
 case class StateBenefitViewModel(benefitId: Option[UUID] = None,
                                  startDateQuestion: Option[Boolean] = None,
                                  startDate: Option[LocalDate] = None,
@@ -39,15 +40,28 @@ case class StateBenefitViewModel(benefitId: Option[UUID] = None,
                                  amountPaidQuestion: Option[Boolean] = None,
                                  amount: Option[BigDecimal] = None,
                                  taxPaidQuestion: Option[Boolean] = None,
-                                 taxPaid: Option[BigDecimal] = None,
-                                 addToCalculation: Option[Boolean] = None) {
+                                 taxPaid: Option[BigDecimal] = None) {
+
+  def void: StateBenefitViewModel = StateBenefitViewModel()
+
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
-  def isFinished: Boolean =
-    amountPaidQuestion.exists(x =>
-      !x ||
-        amount.isDefined && startDateQuestion.getOrElse(false) && startDate.isDefined && addToCalculation.isDefined &&
-        (if (taxPaidQuestion.getOrElse(false)) taxPaid.isDefined else true))
+  def isFinished: Boolean = {
+    val noClaim = amountPaidQuestion.contains(false)
+
+    // Fields common across the state pension and state pension lump sum journeys
+    val areCommonAnswered = amount.isDefined &&
+      startDateQuestion.isDefined &&
+      startDate.isDefined
+
+    val areClaimingLumpSum = taxPaidQuestion.contains(true)
+
+    val isLumpSumFinished =
+      if (areClaimingLumpSum) taxPaid.isDefined
+      else true
+
+    noClaim || areCommonAnswered && isLumpSumFinished
+  }
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedStateBenefitViewModel =
     EncryptedStateBenefitViewModel(
@@ -63,13 +77,14 @@ case class StateBenefitViewModel(benefitId: Option[UUID] = None,
       amountPaidQuestion = amountPaidQuestion.map(_.encrypted),
       amount = amount.map(_.encrypted),
       taxPaidQuestion = taxPaidQuestion.map(_.encrypted),
-      taxPaid = taxPaid.map(_.encrypted),
-      addToCalculation = addToCalculation.map(_.encrypted)
+      taxPaid = taxPaid.map(_.encrypted)
     )
 }
 
 object StateBenefitViewModel {
   implicit val format: OFormat[StateBenefitViewModel] = Json.format[StateBenefitViewModel]
+
+  val empty: StateBenefitViewModel = StateBenefitViewModel()
 }
 
 case class EncryptedStateBenefitViewModel(
@@ -103,8 +118,7 @@ case class EncryptedStateBenefitViewModel(
       amountPaidQuestion = amountPaidQuestion.map(_.decrypted[Boolean]),
       amount = amount.map(_.decrypted[BigDecimal]),
       taxPaidQuestion = taxPaidQuestion.map(_.decrypted[Boolean]),
-      taxPaid = taxPaid.map(_.decrypted[BigDecimal]),
-      addToCalculation = addToCalculation.map(_.decrypted[Boolean])
+      taxPaid = taxPaid.map(_.decrypted[BigDecimal])
     )
 }
 

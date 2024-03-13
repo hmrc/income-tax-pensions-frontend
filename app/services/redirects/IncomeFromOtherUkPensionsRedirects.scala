@@ -139,7 +139,7 @@ object IncomeFromOtherUkPensionsRedirects {
       },
       8 -> { viewModel: IncomeFromPensionsViewModel =>
         if (isPageValidInJourney(2, viewModel)) {
-          viewModel.isFinishedUkPension
+          viewModel.isUkPensionFinished
         } else {
           !viewModel.uKPensionIncomesQuestion.getOrElse(true)
         }

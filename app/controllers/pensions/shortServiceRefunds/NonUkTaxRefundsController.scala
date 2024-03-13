@@ -26,7 +26,7 @@ import models.pension.charges.ShortServiceRefundsViewModel
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.ShortServiceRefundsService
+import services.PensionSessionService
 import services.redirects.ShortServiceRefundsPages.NonUkTaxRefundsAmountPage
 import services.redirects.ShortServiceRefundsRedirects.{cyaPageRedirect, refundSchemeRedirect, refundSummaryRedirect}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NonUkTaxRefundsController @Inject() (actionsProvider: ActionsProvider,
-                                           service: ShortServiceRefundsService,
+                                           service: PensionSessionService,
                                            view: NonUkTaxRefundsView,
                                            formsProvider: FormsProvider,
                                            mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)

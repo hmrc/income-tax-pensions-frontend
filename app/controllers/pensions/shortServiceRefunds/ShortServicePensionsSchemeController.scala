@@ -28,7 +28,7 @@ import models.pension.charges.OverseasRefundPensionScheme
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ShortServiceRefundsService
+import services.PensionSessionService
 import services.redirects.ShortServiceRefundsPages.SchemeDetailsPage
 import services.redirects.ShortServiceRefundsRedirects.refundSummaryRedirect
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -43,7 +43,7 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class ShortServicePensionsSchemeController @Inject() (actionsProvider: ActionsProvider,
-                                                      service: ShortServiceRefundsService,
+                                                      service: PensionSessionService,
                                                       view: ShortServicePensionsSchemeView,
                                                       mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)

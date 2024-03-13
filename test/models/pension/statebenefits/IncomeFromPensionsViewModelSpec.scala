@@ -39,23 +39,23 @@ class IncomeFromPensionsViewModelSpec extends UnitTest {
   ".isFinished" should {
     "return true" when {
       "all required parameters are populated" in {
-        aStatePensionIncomeFromPensionsViewModel.isFinishedStatePension shouldBe true
+        aStatePensionIncomeFromPensionsViewModel.isStatePensionFinished shouldBe true
         IncomeFromPensionsViewModel(
           statePension = Some(aMinimalStatePensionViewModel),
           statePensionLumpSum = Some(aMinimalStatePensionLumpSumViewModel)
-        ).isFinishedStatePension shouldBe true
+        ).isStatePensionFinished shouldBe true
       }
     }
 
     "return false" when {
       "not all necessary questions have been populated" in {
-        aStatePensionIncomeFromPensionsViewModel.copy(statePension = None).isFinishedStatePension shouldBe false
+        aStatePensionIncomeFromPensionsViewModel.copy(statePension = None).isStatePensionFinished shouldBe false
         aStatePensionIncomeFromPensionsViewModel
           .copy(statePension = Some(
             aMinimalStatePensionViewModel.copy(
               amountPaidQuestion = Some(true)
             )))
-          .isFinishedStatePension shouldBe false
+          .isStatePensionFinished shouldBe false
       }
     }
   }

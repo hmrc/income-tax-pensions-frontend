@@ -29,8 +29,7 @@ object StatePensionCYAHelper extends CYABaseHelper {
       startDateSR(incomeFromPensionsViewModel.statePension, taxYear),
       lumpSumSR(incomeFromPensionsViewModel.statePensionLumpSum, taxYear),
       lumpSumTaxSR(incomeFromPensionsViewModel.statePensionLumpSum, taxYear),
-      lumSumSDateSR(incomeFromPensionsViewModel.statePensionLumpSum, taxYear),
-      addStatePensionToTaxCalcSR(incomeFromPensionsViewModel.statePensionLumpSum, taxYear)
+      lumSumSDateSR(incomeFromPensionsViewModel.statePensionLumpSum, taxYear)
     ).flatten
 
   private def statePensionSR(viewModel: Option[StateBenefitViewModel], taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] =
@@ -80,16 +79,5 @@ object StatePensionCYAHelper extends CYABaseHelper {
             "statePension.cya.lumpSumDate.label",
             sb.startDate.map(st => st.format(dateToStringFormat)),
             routes.StatePensionLumpSumStartDateController.show(taxYear)
-          )))
-
-  private def addStatePensionToTaxCalcSR(viewModel: Option[StateBenefitViewModel], taxYear: Int)(implicit
-      messages: Messages): Option[SummaryListRow] =
-    viewModel.flatMap(sb =>
-      sb.addToCalculation
-        .map(_ =>
-          summaryListRowWithString(
-            "statePension.cya.taxCalc.label",
-            Some(displayedValue(viewModel.flatMap(_.addToCalculation))),
-            routes.StatePensionAddToCalculationController.show(taxYear)
           )))
 }
