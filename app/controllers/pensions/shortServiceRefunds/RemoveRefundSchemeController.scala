@@ -23,7 +23,7 @@ import models.mongo.PensionsUserData
 import models.pension.charges.OverseasRefundPensionScheme
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ShortServiceRefundsService
+import services.PensionSessionService
 import services.redirects.ShortServiceRefundsPages.RemoveRefundSchemePage
 import services.redirects.ShortServiceRefundsRedirects.refundSummaryRedirect
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RemoveRefundSchemeController @Inject() (actionsProvider: ActionsProvider,
-                                              service: ShortServiceRefundsService,
+                                              service: PensionSessionService,
                                               view: RemoveRefundSchemeView,
                                               errorHandler: ErrorHandler,
                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)

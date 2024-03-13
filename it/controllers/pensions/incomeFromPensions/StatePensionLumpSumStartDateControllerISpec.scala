@@ -27,7 +27,7 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{addToCalculationUrl, statePension, statePensionCyaUrl, statePensionLumpSumStartDateUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionCyaUrl, statePensionLumpSumStartDateUrl}
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -131,7 +131,7 @@ class StatePensionLumpSumStartDateControllerISpec extends IntegrationTest with V
       }
 
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe addToCalculationUrl(taxYearEOY)
+      result.headers("location").head shouldBe statePensionCyaUrl(taxYearEOY)
     }
 
     "persist amount and redirect to the 'CYA' page when model is now complete" in {
