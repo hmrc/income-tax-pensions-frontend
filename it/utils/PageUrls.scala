@@ -85,8 +85,6 @@ object PageUrls extends IntegrationTest {
 
     def statePensionLumpSumStartDateUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-lump-sum-date"
 
-    def addToCalculationUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/state-pension-add-to-calculation"
-
     def statePensionCyaUrl(taxYear: Int): String = s"$appUrl/$taxYear/pension-income/check-state-pension"
 
     //  ****     Other UK Pension      ****

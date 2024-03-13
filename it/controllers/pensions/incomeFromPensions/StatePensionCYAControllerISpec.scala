@@ -26,13 +26,14 @@ import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
 import builders.StateBenefitsUserDataBuilder.aCreateStatePensionBenefitsUD
 import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelOne
 import builders.UserBuilder.aUser
+import cats.implicits.catsSyntaxOptionId
 import models.mongo.PensionsCYAModel
 import models.pension.statebenefits.{ClaimCYAModel, IncomeFromPensionsViewModel, StateBenefitViewModel}
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionIncomeSummaryUrl, statePension, statePensionCyaUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{pensionIncomeSummaryUrl, statePension, statePensionCyaUrl, statePensionLumpSumUrl}
 import utils.PageUrls.{fullUrl, pensionSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -42,13 +43,6 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
 
   private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false) =
     PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
-
-  private val newIncomeFromPensions: IncomeFromPensionsViewModel = anIncomeFromPensionEmptyViewModel.copy(
-    uKPensionIncomesQuestion = Some(true),
-    uKPensionIncomes = Seq(
-      anUkPensionIncomeViewModelOne
-        .copy(pensionSchemeName = Some("New Pension Scheme"), pensionSchemeRef = Some("123/123"), pensionId = Some("123456")))
-  )
 
   private val statePensionCYAModel: ClaimCYAModel = aCreateStatePensionBenefitsUD.claim.get
 
@@ -73,8 +67,10 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
     pensions = aPensionsCYAGeneratedFromPriorEmpty.copy(
       incomeFromPensions = IncomeFromPensionsViewModel(
         statePension = Some(stateBenefitData),
+        statePensionLumpSum = StateBenefitViewModel.empty.copy(amountPaidQuestion = false.some).some,
         uKPensionIncomesQuestion = Some(true),
-        uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne)))
+        uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne)
+      ))
   )
 
   ".show" should {
@@ -147,36 +143,6 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
     }
 
     "redirect to pensions summary" when {
-
-      "there is no prior data and CYA data is submitted" which {
-        val form = Map[String, String]()
-
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual()
-          stateBenefitsSubmissionStub(Json.toJson(stateBenefitData).toString(), nino)
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(
-            aPensionsUserData.copy(
-              pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions),
-              taxYear = taxYear
-            ))
-          urlPost(
-            fullUrl(statePensionCyaUrl(taxYear)),
-            form,
-            follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-        }
-
-        "have the status SEE OTHER" in {
-          result.status shouldBe SEE_OTHER
-        }
-
-        "redirects to the summary page" in {
-          result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
-        }
-      }
-
       "CYA data has been updated and differs from prior data" which {
         val form           = Map[String, String]()
         val submissionData = stateBenefitData.copy(amount = Some(500.20), taxPaid = Some(20.05))

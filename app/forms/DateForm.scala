@@ -25,6 +25,8 @@ import play.api.i18n.Messages
 import java.time.LocalDate
 import scala.util.Try
 
+// TODO: This code is needs refactoring. Validations should be on the forms themselves not applied post-request binding
+//  (e.g. like in `StatePensionsStartDateController`)
 object DateForm extends InputFilters {
 
   case class DateModel(day: String, month: String, year: String) {

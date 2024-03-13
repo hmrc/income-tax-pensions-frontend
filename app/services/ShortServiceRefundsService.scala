@@ -24,22 +24,18 @@ import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo.{PensionsUserData, ServiceError}
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, ShortServiceRefundsViewModel}
 import models.{IncomeTaxUserData, User}
-import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
 import repositories.PensionsUserDataRepository.QueryResultT
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class ShortServiceRefundsService @Inject() (sessionService: PensionSessionService,
                                             repository: PensionsUserDataRepository,
                                             pensionsConnector: PensionsConnector,
                                             errorHandler: ErrorHandler) {
-
-  def upsertSession(session: PensionsUserData)(implicit ec: ExecutionContext, request: Request[_]): EitherT[Future, Result, Unit] =
-    EitherT(sessionService.createOrUpdateSession(session)).leftMap(_ => errorHandler.internalServerError())
 
   def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] =
     (for {

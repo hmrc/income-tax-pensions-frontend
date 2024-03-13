@@ -37,9 +37,12 @@
 
 @titleForUse = @{messages(s"pensions.statePensionLumpSumStartDate.title.${if(request.user.isAgent) "agent" else "individual"}")}
 
-@layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = form.hasErrors, isAgent = request.user.isAgent) {
+@layout(pageTitle = titleForUse,
+        taxYear = Some(taxYear),
+        hasErrors = form.hasErrors,
+        isAgent = request.user.isAgent) {
 
-    @errorSummary(form.errors.distinct.map{ error =>
+    @errorSummary(form.errors.distinct.map { error =>
         error.key match {
             case "invalidFormat" | "emptyDayMonth" | "emptyDayYear" | "emptyDay" | "emptyAll" => error.copy(key = "day")
             case "emptyMonthYear" | "emptyMonth" => error.copy(key = "month")

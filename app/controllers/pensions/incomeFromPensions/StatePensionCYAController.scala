@@ -16,21 +16,23 @@
 
 package controllers.pensions.incomeFromPensions
 
+import cats.data.EitherT
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
-import models.mongo.PensionsCYAModel
+import models.IncomeTaxUserData
+import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
+import models.requests.UserPriorAndSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.redirects.StatePensionPages.StatePensionsCYAPage
-import services.redirects.StatePensionRedirects.{cyaPageCall, journeyCheck}
+import services.redirects.StatePensionRedirects.taskListRedirect
 import services.{PensionSessionService, StatePensionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
+import validation.pensions.incomeFromPensions.StatePensionValidator.validateFlow
 import views.html.pensions.incomeFromPensions.StatePensionCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -47,34 +49,39 @@ class StatePensionCYAController @Inject() (auditProvider: AuditActionsProvider,
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsViewAuditing(taxYear) async { implicit userSessionDataRequest =>
-    val checkRedirect = journeyCheck(StatePensionsCYAPage, _, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-      Future.successful(Ok(view(taxYear, data.pensions.incomeFromPensions)))
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsViewAuditing(taxYear) async { implicit request =>
+    val journey = request.pensionsUserData.pensions.incomeFromPensions
+
+    validateFlow(journey, StatePensionsCYAPage, taxYear) {
+      Future.successful(Ok(view(taxYear, journey)))
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsUpdateAuditing(taxYear) async { implicit request =>
-    sessionService.loadDataAndHandle(taxYear, request.user) { (session, prior) =>
-      session.fold(
-        Future.successful(Redirect(appConfig.incomeTaxSubmissionOverviewUrl(taxYear)))
-      ) { model =>
-        if (sessionDataDifferentThanPriorData(model.pensions, prior)) {
-          statePensionService.saveAnswers(request.user, TaxYear(taxYear)) map {
-            case Left(_)  => errorHandler.internalServerError()
-            case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
-          }
-        } else {
-          Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
-        }
-      }
+    val journey = request.pensionsUserData.pensions.incomeFromPensions
+
+    validateFlow(journey, StatePensionsCYAPage, taxYear) {
+      val resultOrError: EitherT[Future, ServiceError, Result] =
+        for {
+          data <- sessionService.loadPriorAndSession(request.user, TaxYear(taxYear))
+          (prior, session) = data
+          _ <- processSubmission(session, prior, taxYear)
+        } yield taskListRedirect(taxYear)
+
+      resultOrError
+        .leftMap(_ => errorHandler.internalServerError())
+        .merge
     }
+
   }
 
-  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
-    priorData match {
-      case Some(prior) => !cyaData.equals(generateSessionModelFromPrior(prior))
-      case None        => true
-    }
+  private def processSubmission(session: PensionsUserData, prior: IncomeTaxUserData, taxYear: Int)(implicit
+      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, ServiceError, Unit] =
+    if (sessionDeviatesFromPrior(session.pensions, prior.pensions))
+      EitherT(statePensionService.saveAnswers(request.user, TaxYear(taxYear)))
+    else EitherT.pure[Future, ServiceError](())
+
+  private def sessionDeviatesFromPrior(session: PensionsCYAModel, maybePrior: Option[AllPensionsData]): Boolean =
+    maybePrior.fold(ifEmpty = true)(prior => !session.equals(generateSessionModelFromPrior(prior)))
 
 }

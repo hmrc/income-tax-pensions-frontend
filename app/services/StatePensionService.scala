@@ -58,16 +58,16 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
       session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
       statePensionSubmission        = buildDownstreamRequestModel(session, StatePension, taxYear.endYear)
       statePensionLumpSumSubmission = buildDownstreamRequestModel(session, StatePensionLumpSum, taxYear.endYear)
-      _ <- processClaim(statePensionSubmission, hcWithMtdItId, user)
-      _ <- processClaim(statePensionLumpSumSubmission, hcWithMtdItId, user)
+      _ <- processClaim(statePensionSubmission, user)(ec, hcWithMtdItId)
+      _ <- processClaim(statePensionLumpSumSubmission, user)(ec, hcWithMtdItId)
       _ <- EitherT(clearJourneyFromSession(session)).leftAs[ServiceError]
       _ <- EitherT(incomeTaxSubmissionConnector.refreshPensionsResponse(user.nino, user.mtditid, taxYear.endYear)).leftAs[ServiceError]
     } yield ()).value
   }
 
   private def clearJourneyFromSession(session: PensionsUserData): QueryResult[Unit] = {
-    val clearedJourneyModel =
-      session.pensions.incomeFromPensions.copy(
+    val clearedJourneyModel = session.pensions.incomeFromPensions
+      .copy(
         statePension = None,
         statePensionLumpSum = None
       )
@@ -77,8 +77,8 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
     repository.createOrUpdate(updatedSessionModel)
   }
 
-  private def processClaim(answers: StateBenefitsUserData, hc: HeaderCarrier, user: User)(implicit ec: ExecutionContext): ServiceOutcomeT[Unit] =
-    if (answers.claim.exists(_.amount.nonEmpty)) EitherT(connector.saveClaimData(user.nino, answers)(hc, ec)).leftAs[ServiceError]
+  private def processClaim(answers: StateBenefitsUserData, user: User)(implicit ec: ExecutionContext, hc: HeaderCarrier): ServiceOutcomeT[Unit] =
+    if (answers.claim.exists(_.amount.nonEmpty)) EitherT(connector.saveClaimData(user.nino, answers)).leftAs[ServiceError]
     else EitherT.pure[Future, ServiceError](())
 
   private def buildDownstreamRequestModel(sessionData: PensionsUserData, benefitType: BenefitType, taxYear: Int): StateBenefitsUserData = {

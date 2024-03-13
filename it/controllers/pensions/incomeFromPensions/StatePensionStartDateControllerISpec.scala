@@ -117,8 +117,8 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
   ".submit" should {
     "persist amount and redirect to StatePensionLumpSum page" in {
       val formData = startDateForm(validDay, validMonth, validYear)
-      val viewModel = IncomeFromPensionsViewModel(statePension = Some(
-        aStatePensionViewModel.copy(startDate = Some(LocalDate.parse("2019-11-14")), startDateQuestion = Some(true), addToCalculation = Some(true))))
+      val viewModel = IncomeFromPensionsViewModel(statePension =
+        Some(aStatePensionViewModel.copy(startDate = Some(LocalDate.parse("2019-11-14")), startDateQuestion = Some(true))))
 
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
