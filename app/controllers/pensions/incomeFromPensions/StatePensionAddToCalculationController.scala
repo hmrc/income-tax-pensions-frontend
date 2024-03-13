@@ -49,17 +49,17 @@ class StatePensionAddToCalculationController @Inject() (actionsProvider: Actions
     with SessionHelper
     with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage, _, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       data.pensions.incomeFromPensions.statePensionLumpSum.fold {
         Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
       } { sp: StateBenefitViewModel =>
         sp.addToCalculation.fold {
-          Future.successful(Ok(view(formsProvider.statePensionAddToCalculationForm(sessionData.user.isAgent), taxYear)))
+          Future.successful(Ok(view(formsProvider.statePensionAddToCalculationForm(request.user.isAgent), taxYear)))
         } { addToCalculation: Boolean =>
           val filledForm: Form[Boolean] = formsProvider
-            .statePensionAddToCalculationForm(sessionData.user.isAgent)
+            .statePensionAddToCalculationForm(request.user.isAgent)
             .fill(addToCalculation)
           Future.successful(Ok(view(filledForm, taxYear)))
         }
@@ -67,11 +67,11 @@ class StatePensionAddToCalculationController @Inject() (actionsProvider: Actions
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(AddStatePensionToIncomeTaxCalcPage, _, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       formsProvider
-        .statePensionAddToCalculationForm(sessionData.user.isAgent)
+        .statePensionAddToCalculationForm(request.user.isAgent)
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),

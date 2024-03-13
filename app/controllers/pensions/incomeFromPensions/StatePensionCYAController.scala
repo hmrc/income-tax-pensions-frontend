@@ -47,9 +47,9 @@ class StatePensionCYAController @Inject() (auditProvider: AuditActionsProvider,
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsViewAuditing(taxYear) async { implicit userSessionDataRequest =>
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsViewAuditing(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(StatePensionsCYAPage, _, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       Future.successful(Ok(view(taxYear, data.pensions.incomeFromPensions)))
     }
   }

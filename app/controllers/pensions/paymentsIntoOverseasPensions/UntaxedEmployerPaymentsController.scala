@@ -44,38 +44,33 @@ class UntaxedEmployerPaymentsController @Inject() (actionsProvider: ActionsProvi
     with I18nSupport {
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
-    implicit sessionUserData =>
-      val piopSessionData = sessionUserData.sessionData.pensions.paymentsIntoOverseasPensions
+    implicit request =>
+      val piopSessionData = request.sessionData.pensions.paymentsIntoOverseasPensions
 
-      indexCheckThenJourneyCheck(sessionUserData.sessionData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: Relief =>
+      indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: Relief =>
         Future.successful(
           Ok(
-            view(
-              UntaxedEmployerPayments(
-                taxYear,
-                pensionSchemeIndex,
-                piopSessionData,
-                formsProvider.untaxedEmployerPayments(sessionUserData.user.isAgent)))))
+            view(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData, formsProvider.untaxedEmployerPayments(request.user.isAgent)))))
       }
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] =
-    actionsProvider.authoriseWithSession(taxYear).async { implicit sessionUserData =>
-      val piopSessionData = sessionUserData.sessionData.pensions.paymentsIntoOverseasPensions
+    actionsProvider.authoriseWithSession(taxYear).async { implicit request =>
+      val piopSessionData = request.sessionData.pensions.paymentsIntoOverseasPensions
 
-      indexCheckThenJourneyCheck(sessionUserData.sessionData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: Relief =>
+      indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: Relief =>
         formsProvider
-          .untaxedEmployerPayments(sessionUserData.user.isAgent)
+          .untaxedEmployerPayments(request.user.isAgent)
           .bindFromRequest()
           .fold(
             formWithErrors =>
               Future.successful(BadRequest(view(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData, formWithErrors)))),
             amount =>
-              service.updateUntaxedEmployerPayments(sessionUserData.sessionData, amount, pensionSchemeIndex).map {
+              service.updateUntaxedEmployerPayments(request.sessionData, amount, pensionSchemeIndex).map {
                 case Left(_) => errorHandler.internalServerError()
                 case Right(_) =>
                   schemeIsFinishedCheck(
-                    sessionUserData.sessionData.pensions.paymentsIntoOverseasPensions.reliefs,
+                    request.sessionData.pensions.paymentsIntoOverseasPensions.reliefs,
                     pensionSchemeIndex.getOrElse(0),
                     taxYear,
                     PensionReliefTypeController.show(taxYear, pensionSchemeIndex)

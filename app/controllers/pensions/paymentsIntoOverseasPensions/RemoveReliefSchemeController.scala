@@ -45,19 +45,19 @@ class RemoveReliefSchemeController @Inject() (actionsProvider: ActionsProvider,
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionUserData =>
-    indexCheckThenJourneyCheck(sessionUserData.sessionData, index, RemoveReliefsSchemePage, taxYear) { relief: Relief =>
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    indexCheckThenJourneyCheck(request.sessionData, index, RemoveReliefsSchemePage, taxYear) { relief: Relief =>
       Future.successful(Ok(view(taxYear = taxYear, reliefSchemeList = List(relief), index = index)))
     }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionUserData =>
-    val pensionReliefScheme = sessionUserData.sessionData.pensions.paymentsIntoOverseasPensions.reliefs
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val pensionReliefScheme = request.sessionData.pensions.paymentsIntoOverseasPensions.reliefs
     validatedIndex(index, pensionReliefScheme.size)
       .fold(Future.successful(Redirect(ReliefsSchemeSummaryController.show(taxYear)))) { i =>
-        indexCheckThenJourneyCheck(sessionUserData.sessionData, Some(i), RemoveReliefsSchemePage, taxYear) { _ =>
+        indexCheckThenJourneyCheck(request.sessionData, Some(i), RemoveReliefsSchemePage, taxYear) { _ =>
           val updatedPensionReliefScheme = pensionReliefScheme.patch(i, Nil, 1)
-          updateSessionData(sessionUserData.sessionData, updatedPensionReliefScheme, taxYear)
+          updateSessionData(request.sessionData, updatedPensionReliefScheme, taxYear)
         }
       }
   }

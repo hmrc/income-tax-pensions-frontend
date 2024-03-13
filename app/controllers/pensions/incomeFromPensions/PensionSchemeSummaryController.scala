@@ -37,8 +37,8 @@ class PensionSchemeSummaryController @Inject() (view: PensionSchemeSummaryView, 
     with SessionHelper {
 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
-    implicit userSessionDataRequest =>
-      indexCheckThenJourneyCheck(userSessionDataRequest.sessionData, pensionSchemeIndex, SchemeSummaryPage, taxYear) { data =>
+    implicit request =>
+      indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, SchemeSummaryPage, taxYear) { data =>
         val scheme: UkPensionIncomeViewModel = data.pensions.incomeFromPensions.uKPensionIncomes(pensionSchemeIndex.getOrElse(0))
         Future.successful(Ok(view(taxYear, scheme, pensionSchemeIndex)))
       }

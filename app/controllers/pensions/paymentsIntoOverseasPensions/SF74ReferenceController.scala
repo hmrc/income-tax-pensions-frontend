@@ -46,26 +46,24 @@ class SF74ReferenceController @Inject() (actionsProvider: ActionsProvider,
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
-    implicit userSessionDataRequest =>
-      indexCheckThenJourneyCheck(userSessionDataRequest.sessionData, reliefIndex, SF74ReferencePage, taxYear) { relief: Relief =>
-        relief.sf74Reference match {
-          case Some(value) => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear, reliefIndex)))
-          case None        => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
-        }
+  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, SF74ReferencePage, taxYear) { relief: Relief =>
+      relief.sf74Reference match {
+        case Some(value) => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear, reliefIndex)))
+        case None        => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
       }
+    }
   }
 
-  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
-    implicit userSessionDataRequest =>
-      indexCheckThenJourneyCheck(userSessionDataRequest.sessionData, reliefIndex, SF74ReferencePage, taxYear) { _: Relief =>
-        formsProvider.sf74ReferenceIdForm
-          .bindFromRequest()
-          .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
-            sf74Reference => updateSessionData(userSessionDataRequest.sessionData, Some(sf74Reference), taxYear, reliefIndex.get)
-          )
-      }
+  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, SF74ReferencePage, taxYear) { _: Relief =>
+      formsProvider.sf74ReferenceIdForm
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, reliefIndex))),
+          sf74Reference => updateSessionData(request.sessionData, Some(sf74Reference), taxYear, reliefIndex.get)
+        )
+    }
   }
 
   private def updateSessionData[T](pensionsUserData: PensionsUserData, sf74Reference: Option[String], taxYear: Int, idx: Int)(implicit

@@ -45,29 +45,29 @@ class StatePensionController @Inject() (actionsProvider: ActionsProvider,
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     val maybeYesNo: Option[Boolean] =
-      sessionData.sessionData.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion)
+      request.sessionData.pensions.incomeFromPensions.statePension.flatMap(_.amountPaidQuestion)
     val maybeAmount: Option[BigDecimal] =
-      sessionData.sessionData.pensions.incomeFromPensions.statePension.flatMap(_.amount)
+      request.sessionData.pensions.incomeFromPensions.statePension.flatMap(_.amount)
     (maybeYesNo, maybeAmount) match {
       case (Some(yesNo), amount) =>
-        Future.successful(Ok(view(formsProvider.statePensionForm(sessionData.user).fill((yesNo, amount)), taxYear)))
+        Future.successful(Ok(view(formsProvider.statePensionForm(request.user).fill((yesNo, amount)), taxYear)))
       case _ =>
-        Future.successful(Ok(view(formsProvider.statePensionForm(sessionData.user), taxYear)))
+        Future.successful(Ok(view(formsProvider.statePensionForm(request.user), taxYear)))
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     formsProvider
-      .statePensionForm(sessionData.user)
+      .statePensionForm(request.user)
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNoAmount =>
           (yesNoAmount._1, yesNoAmount._2) match {
-            case (true, amount) => updateSessionData(sessionData.sessionData, yesNo = true, amount, taxYear)
-            case (false, _)     => updateSessionData(sessionData.sessionData, yesNo = false, None, taxYear)
+            case (true, amount) => updateSessionData(request.sessionData, yesNo = true, amount, taxYear)
+            case (false, _)     => updateSessionData(request.sessionData, yesNo = false, None, taxYear)
           }
       )
   }

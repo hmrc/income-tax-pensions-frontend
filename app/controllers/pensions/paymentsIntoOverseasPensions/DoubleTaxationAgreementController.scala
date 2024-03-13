@@ -48,9 +48,9 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
-    indexCheckThenJourneyCheck(sessionData.sessionData, index, DoubleTaxationAgreementPage, taxYear) { relief: Relief =>
-      val form: Form[DoubleTaxationAgreementFormModel] = dblTaxationAgreementForm(sessionData.user).fill(updateViewModel(relief))
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    indexCheckThenJourneyCheck(request.sessionData, index, DoubleTaxationAgreementPage, taxYear) { relief: Relief =>
+      val form: Form[DoubleTaxationAgreementFormModel] = dblTaxationAgreementForm(request.user).fill(updateViewModel(relief))
       Future.successful(Ok(view(form, taxYear, index)))
     }
   }

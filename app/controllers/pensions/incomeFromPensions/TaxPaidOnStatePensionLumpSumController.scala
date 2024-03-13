@@ -47,26 +47,26 @@ class TaxPaidOnStatePensionLumpSumController @Inject() (actionsProvider: Actions
     with SessionHelper
     with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(TaxOnStatePensionLumpSumPage, _, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val taxPaidQuestion = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.taxPaidQuestion)
       val taxPaid         = data.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.taxPaid)
 
       (taxPaidQuestion, taxPaid) match {
         case (Some(yesNo), taxPaid) =>
-          Future.successful(Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(sessionData.user).fill((yesNo, taxPaid)), taxYear)))
+          Future.successful(Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(request.user).fill((yesNo, taxPaid)), taxYear)))
         case _ =>
-          Future.successful(Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(sessionData.user), taxYear)))
+          Future.successful(Ok(view(formsProvider.taxPaidOnStatePensionLumpSum(request.user), taxYear)))
       }
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(TaxOnStatePensionLumpSumPage, _, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       formsProvider
-        .taxPaidOnStatePensionLumpSum(sessionData.user)
+        .taxPaidOnStatePensionLumpSum(request.user)
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),

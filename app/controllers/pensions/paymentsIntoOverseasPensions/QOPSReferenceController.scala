@@ -49,8 +49,8 @@ class QOPSReferenceController @Inject() (actionsProvider: ActionsProvider,
     incorrectFormatMsg = "common.overseasPensions.qops.error.incorrectFormat"
   )
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit sessionData =>
-    indexCheckThenJourneyCheck(sessionData.sessionData, index, QOPSReferencePage, taxYear) { relief: Relief =>
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    indexCheckThenJourneyCheck(request.sessionData, index, QOPSReferencePage, taxYear) { relief: Relief =>
       relief.qopsReference match {
         case Some(qopsNumber) => Future.successful(Ok(view(referenceForm.fill(removePrefix(qopsNumber)), taxYear, index)))
         case None             => Future.successful(Ok(view(referenceForm, taxYear, index)))
