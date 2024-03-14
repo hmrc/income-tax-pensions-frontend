@@ -40,7 +40,7 @@ object AppDependencies {
     "com.vladsch.flexmark"    % "flexmark-all"            % "0.64.8"           % "test, it",
     "org.playframework"      %% "play-test"               % "3.0.1"            % Test,
     "org.scalatestplus.play" %% "scalatestplus-play"      % "7.0.1"            % "test, it",
-    "com.github.tomakehurst"  % "wiremock-jre8"           % "3.0.1"           % Test pomOnly(),
+//    "com.github.tomakehurst"  % "wiremock-jre8"           % "3.0.1"           % Test pomOnly(),
     "org.scalamock"          %% "scalamock"               % "5.2.0"            % Test
   )
 }
