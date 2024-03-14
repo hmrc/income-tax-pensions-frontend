@@ -31,8 +31,41 @@ import views.html.pensions.paymentsIntoOverseasPensions.UntaxedEmployerPaymentsV
 
 class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvider {
 
+  private lazy val underTest = inject[UntaxedEmployerPaymentsView]
+  override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
+    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
+    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
+    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
+    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
+  )
   val poundPrefixText = "£"
   val amountInputName = "amount"
+
+  trait SpecificExpectedResults {
+    val expectedPara2: String
+    val expectedSub1Para1: String
+    val expectedSub2Para1: String
+    val expectedSub2Details1: String
+    val expectedSub2Details2: String
+    val expectedSub2Details3: String
+    val expectedQuestion: String
+    val expectedErrorNoEntry: String
+    val expectedErrorTooBig: String
+    val expectedErrorInvalidFormat: String
+  }
+
+  trait CommonExpectedResults {
+    lazy val expectedHeading: String = expectedTitle
+    val expectedTitle: String
+    val expectedErrorTitle: String
+    val expectedPara1: String
+    val expectedSubHeading1: String
+    val expectedSubHeading2: String
+    val expectedDetailsHeading: String
+    val expectedCaption: Int => String
+    val expectedButtonText: String
+    val hintText: String
+  }
 
   object Selectors {
 
@@ -61,32 +94,6 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
 
     def detailsBulletSelector(index: Int): String = s"#main-content > div > div > div:nth-child(5) > details > div > ol > > li:nth-child($index)"
 
-  }
-
-  trait SpecificExpectedResults {
-    val expectedPara2: String
-    val expectedSub1Para1: String
-    val expectedSub2Para1: String
-    val expectedSub2Details1: String
-    val expectedSub2Details2: String
-    val expectedSub2Details3: String
-    val expectedQuestion: String
-    val expectedErrorNoEntry: String
-    val expectedErrorTooBig: String
-    val expectedErrorInvalidFormat: String
-  }
-
-  trait CommonExpectedResults {
-    val expectedTitle: String
-    lazy val expectedHeading: String = expectedTitle
-    val expectedErrorTitle: String
-    val expectedPara1: String
-    val expectedSubHeading1: String
-    val expectedSubHeading2: String
-    val expectedDetailsHeading: String
-    val expectedCaption: Int => String
-    val expectedButtonText: String
-    val hintText: String
   }
 
   object ExpectedIndividualEN extends SpecificExpectedResults {
@@ -170,15 +177,6 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
     val expectedSubHeading2: String    = "Cynlluniau buddiannau (cynlluniau cyfartaledd cyflog neu gyflog terfynol)"
     val expectedDetailsHeading: String = "Cyfrifwch werth y taliadau i mewn i gynllun buddiannau"
   }
-
-  override protected val userScenarios: Seq[UserScenario[CommonExpectedResults, SpecificExpectedResults]] = Seq(
-    UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN, Some(ExpectedIndividualEN)),
-    UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN, Some(ExpectedAgentEN)),
-    UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY, Some(ExpectedIndividualCY)),
-    UserScenario(isWelsh = true, isAgent = true, CommonExpectedCY, Some(ExpectedAgentCY))
-  )
-
-  private lazy val underTest = inject[UntaxedEmployerPaymentsView]
   userScenarios.foreach { user =>
     import Selectors._
     import user.commonExpectedResults._
@@ -203,7 +201,7 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
         textOnPageCheck(expectedSubHeading2, sub2Selector)
         textOnPageCheck(user.specificExpectedResults.get.expectedSub2Para1, sub2SelectorPara1)
         textOnPageCheck(expectedDetailsHeading, detailsTitle)
-        //TODO need to investigate and fix how changing joda time to java time has affected this test
+        // TODO need to investigate and fix how changing joda time to java time has affected this test
 //        textOnPageCheck(user.specificExpectedResults.get.expectedSub2Details1, detailsBulletSelector(1))
 //        textOnPageCheck(user.specificExpectedResults.get.expectedSub2Details2, detailsBulletSelector(2))
 //        textOnPageCheck(user.specificExpectedResults.get.expectedSub2Details3, detailsBulletSelector(3))
@@ -235,7 +233,7 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
         textOnPageCheck(expectedSubHeading2, sub2Selector)
         textOnPageCheck(user.specificExpectedResults.get.expectedSub2Para1, sub2SelectorPara1)
         textOnPageCheck(expectedDetailsHeading, detailsTitle)
-        //TODO need to investigate and fix how changing joda time to java time has affected this test
+        // TODO need to investigate and fix how changing joda time to java time has affected this test
 //        textOnPageCheck(user.specificExpectedResults.get.expectedSub2Details1, detailsBulletSelector(1))
 //        textOnPageCheck(user.specificExpectedResults.get.expectedSub2Details2, detailsBulletSelector(2))
 //        textOnPageCheck(user.specificExpectedResults.get.expectedSub2Details3, detailsBulletSelector(3))

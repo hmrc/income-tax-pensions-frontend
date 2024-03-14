@@ -43,14 +43,13 @@ import cats.implicits._
 import models.pension.charges.UnauthorisedPaymentsViewModel
 
 @Singleton
-class UnauthorisedPaymentsCYAController @Inject() (
-    auditProvider: AuditActionsProvider,
-    view: UnauthorisedPaymentsCYAView,
-    pensionSessionService: PensionSessionService,
-    service: UnauthorisedPaymentsService,
-    errorHandler: ErrorHandler,
-    excludeJourneyService: ExcludeJourneyService,
-    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsProvider,
+                                                   view: UnauthorisedPaymentsCYAView,
+                                                   pensionSessionService: PensionSessionService,
+                                                   service: UnauthorisedPaymentsService,
+                                                   errorHandler: ErrorHandler,
+                                                   excludeJourneyService: ExcludeJourneyService,
+                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 
@@ -66,6 +65,18 @@ class UnauthorisedPaymentsCYAController @Inject() (
     } else {
       pensionSessionService.createOrUpdateSessionData(sessionDataRequest.user, cyaData.pensions, taxYear, isPriorSubmission = false)(
         errorHandler.internalServerError())(Ok(view(taxYear, cyaData.pensions.unauthorisedPayments)))
+    }
+  }
+
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.unauthorisedPaymentsUpdateAuditing(taxYear) async { implicit priorAndSessionRequest =>
+    val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
+    redirectBasedOnCurrentAnswers(taxYear, Some(priorAndSessionRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      val (sessionData, priorData, unauthorisedPaymentModel) = (data, priorAndSessionRequest.pensions, data.pensions.unauthorisedPayments)
+
+      (for {
+        _      <- maybeExcludePension(unauthorisedPaymentModel, taxYear, priorAndSessionRequest).map(_ => toSummaryRedirect(taxYear))
+        result <- maybeUpdateAnswers(sessionData, priorData, taxYear)
+      } yield result).merge
     }
   }
 
@@ -89,18 +100,6 @@ class UnauthorisedPaymentsCYAController @Inject() (
     } else {
       EitherT.right[Result](performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest))
     }
-
-  def submit(taxYear: Int): Action[AnyContent] = auditProvider.unauthorisedPaymentsUpdateAuditing(taxYear) async { implicit priorAndSessionRequest =>
-    val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(priorAndSessionRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-      val (sessionData, priorData, unauthorisedPaymentModel) = (data, priorAndSessionRequest.pensions, data.pensions.unauthorisedPayments)
-
-      (for {
-        _      <- maybeExcludePension(unauthorisedPaymentModel, taxYear, priorAndSessionRequest).map(_ => toSummaryRedirect(taxYear))
-        result <- maybeUpdateAnswers(sessionData, priorData, taxYear)
-      } yield result).merge
-    }
-  }
 
   private def performSubmission(taxYear: Int, cya: Option[PensionsUserData])(implicit
       user: User,

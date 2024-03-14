@@ -31,11 +31,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class PensionsSummaryController @Inject() (
-    mcc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    pensionSessionService: PensionSessionService,
-    pensionsSummaryView: PensionsSummaryView)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class PensionsSummaryController @Inject() (mcc: MessagesControllerComponents,
+                                           authAction: AuthorisedAction,
+                                           pensionSessionService: PensionSessionService,
+                                           pensionsSummaryView: PensionsSummaryView)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>

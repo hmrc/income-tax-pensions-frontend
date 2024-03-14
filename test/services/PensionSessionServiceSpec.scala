@@ -120,7 +120,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
     }
   }
 
-  //TODO need to investigate and fix how changing joda time to java time has affected this test
+  // TODO need to investigate and fix how changing joda time to java time has affected this test
   ".createOrUpdateSessionData" should {
     "return SEE_OTHER(303) status when createOrUpdate succeeds" ignore {
       mockCreateOrUpdate(emptySessionData, Right(()))

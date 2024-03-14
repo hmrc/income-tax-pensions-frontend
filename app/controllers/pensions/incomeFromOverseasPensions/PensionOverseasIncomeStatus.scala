@@ -40,13 +40,9 @@ class PensionOverseasIncomeStatus @Inject() (authAction: AuthorisedAction,
                                              view: IncomeFromOverseasPensionsView,
                                              service: PensionSessionService,
                                              errorHandler: ErrorHandler,
-                                             cc: MessagesControllerComponents)(implicit appConfig: AppConfig,  ec: ExecutionContext)
+                                             cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
-
-  def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
-  )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     service
@@ -65,6 +61,15 @@ class PensionOverseasIncomeStatus @Inject() (authAction: AuthorisedAction,
             case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
           }
       }
+  }
+
+  private def cleanUpSchemes(pensionsUserData: PensionsUserData): Future[Either[DatabaseError, Seq[PensionScheme]]] = {
+    val schemes            = pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
+    val filteredSchemes    = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
+    val updatedViewModel   = pensionsUserData.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = filteredSchemes)
+    val updatedPensionData = pensionsUserData.pensions.copy(incomeFromOverseasPensions = updatedViewModel)
+    val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
+    service.createOrUpdateSession(updatedUserData).map(_.map(_ => filteredSchemes))
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
@@ -106,12 +111,7 @@ class PensionOverseasIncomeStatus @Inject() (authAction: AuthorisedAction,
       )
   }
 
-  private def cleanUpSchemes(pensionsUserData: PensionsUserData): Future[Either[DatabaseError, Seq[PensionScheme]]] = {
-    val schemes            = pensionsUserData.pensions.incomeFromOverseasPensions.overseasIncomePensionSchemes
-    val filteredSchemes    = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
-    val updatedViewModel   = pensionsUserData.pensions.incomeFromOverseasPensions.copy(overseasIncomePensionSchemes = filteredSchemes)
-    val updatedPensionData = pensionsUserData.pensions.copy(incomeFromOverseasPensions = updatedViewModel)
-    val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
-    service.createOrUpdateSession(updatedUserData).map(_.map(_ => filteredSchemes))
-  }
+  def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = s"incomeFromOverseasPensions.incomeFromOverseasPension.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
+  )
 }

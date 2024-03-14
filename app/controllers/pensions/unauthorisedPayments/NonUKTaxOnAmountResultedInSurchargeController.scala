@@ -36,13 +36,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NonUKTaxOnAmountResultedInSurchargeController @Inject() (
-    authAction: AuthorisedAction,
-    view: NonUKTaxOnAmountResultedInSurchargeView,
-    pensionSessionService: PensionSessionService,
-    formsProvider: FormsProvider,
-    errorHandler: ErrorHandler,
-    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class NonUKTaxOnAmountResultedInSurchargeController @Inject() (authAction: AuthorisedAction,
+                                                               view: NonUKTaxOnAmountResultedInSurchargeView,
+                                                               pensionSessionService: PensionSessionService,
+                                                               formsProvider: FormsProvider,
+                                                               errorHandler: ErrorHandler,
+                                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with SessionHelper
     with I18nSupport {

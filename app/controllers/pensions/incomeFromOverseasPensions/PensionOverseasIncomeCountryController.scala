@@ -38,18 +38,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PensionOverseasIncomeCountryController @Inject() (
-    authAction: AuthorisedAction,
-    view: PensionOverseasIncomeCountryView,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class PensionOverseasIncomeCountryController @Inject() (authAction: AuthorisedAction,
+                                                        view: PensionOverseasIncomeCountryView,
+                                                        pensionSessionService: PensionSessionService,
+                                                        errorHandler: ErrorHandler,
+                                                        cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
-
-  private def countryForm(user: User): Form[String] = CountryForm.countryForm(
-    agentOrIndividual = if (user.isAgent) "agent" else "individual"
-  )
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
@@ -81,6 +76,10 @@ class PensionOverseasIncomeCountryController @Inject() (
       case _ => Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
     }
   }
+
+  private def countryForm(user: User): Form[String] = CountryForm.countryForm(
+    agentOrIndividual = if (user.isAgent) "agent" else "individual"
+  )
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     val countriesToInclude = Countries.overseasCountries

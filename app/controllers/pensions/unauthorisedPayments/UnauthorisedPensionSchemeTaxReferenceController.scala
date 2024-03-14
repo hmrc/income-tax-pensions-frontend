@@ -36,12 +36,11 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UnauthorisedPensionSchemeTaxReferenceController @Inject() (
-    cc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    view: PensionSchemeTaxReferenceView,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class UnauthorisedPensionSchemeTaxReferenceController @Inject() (cc: MessagesControllerComponents,
+                                                                 authAction: AuthorisedAction,
+                                                                 view: PensionSchemeTaxReferenceView,
+                                                                 pensionSessionService: PensionSessionService,
+                                                                 errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
@@ -68,6 +67,14 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject() (
           }
       }
   }
+
+  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Option[String] =
+    pensionSchemeIndex match {
+      case Some(index) if pensionSchemesList.size > index =>
+        Some(pensionSchemesList(index))
+      case _ =>
+        None
+    }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     val errorMsgDetails = (
@@ -109,12 +116,4 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject() (
           }
       )
   }
-
-  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Option[String] =
-    pensionSchemeIndex match {
-      case Some(index) if pensionSchemesList.size > index =>
-        Some(pensionSchemesList(index))
-      case _ =>
-        None
-    }
 }

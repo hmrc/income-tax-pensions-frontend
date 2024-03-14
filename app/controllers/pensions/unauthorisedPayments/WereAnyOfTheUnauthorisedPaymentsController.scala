@@ -37,18 +37,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class WereAnyOfTheUnauthorisedPaymentsController @Inject() (
-    cc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    view: WereAnyOfTheUnauthorisedPaymentsView,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class WereAnyOfTheUnauthorisedPaymentsController @Inject() (cc: MessagesControllerComponents,
+                                                            authAction: AuthorisedAction,
+                                                            view: WereAnyOfTheUnauthorisedPaymentsView,
+                                                            pensionSessionService: PensionSessionService,
+                                                            errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
-
-  def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry.${if (user.isAgent) "agent" else "individual"}"
-  )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
@@ -63,6 +58,10 @@ class WereAnyOfTheUnauthorisedPaymentsController @Inject() (
         }
     }
   }
+
+  def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = s"common.unauthorisedPayments.error.checkbox.or.radioButton.noEntry.${if (user.isAgent) "agent" else "individual"}"
+  )
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     yesNoForm(request.user)
