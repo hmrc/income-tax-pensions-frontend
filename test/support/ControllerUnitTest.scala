@@ -21,7 +21,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.stubMessagesControllerComponents
 import play.api.test.{DefaultAwaitTimeout, FutureAwaits, Injecting}
-import utils.{Clock, TestTaxYearHelper, UnitTestClock}
+import utils.{TestTaxYearHelper, UnitTestClock}
 
 import scala.concurrent.ExecutionContext
 
@@ -30,6 +30,6 @@ trait ControllerUnitTest extends UnitTest with FutureAwaits with DefaultAwaitTim
   protected implicit val cc: MessagesControllerComponents = stubMessagesControllerComponents()
   protected implicit val appConfig: AppConfig             = new MockAppConfig().config()
   protected implicit lazy val ec: ExecutionContext        = ExecutionContext.Implicits.global
-  protected implicit val testClock: Clock                 = UnitTestClock
+  protected implicit val testClock: UnitTestClock.type    = UnitTestClock
 
 }
