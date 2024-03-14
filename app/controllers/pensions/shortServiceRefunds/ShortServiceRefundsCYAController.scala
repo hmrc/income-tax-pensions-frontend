@@ -39,13 +39,12 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ShortServiceRefundsCYAController @Inject() (
-    auditProvider: AuditActionsProvider,
-    view: ShortServiceRefundsCYAView,
-    sessionService: PensionSessionService,
-    service: ShortServiceRefundsService,
-    errorHandler: ErrorHandler,
-    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+class ShortServiceRefundsCYAController @Inject() (auditProvider: AuditActionsProvider,
+                                                  view: ShortServiceRefundsCYAView,
+                                                  sessionService: PensionSessionService,
+                                                  service: ShortServiceRefundsService,
+                                                  errorHandler: ErrorHandler,
+                                                  mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

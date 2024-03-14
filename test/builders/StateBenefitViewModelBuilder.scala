@@ -52,8 +52,7 @@ object StateBenefitViewModelBuilder {
     amountPaidQuestion = Some(true),
     amount = Some(166.88),
     taxPaidQuestion = Some(true),
-    taxPaid = Some(3.99),
-    addToCalculation = Some(true)
+    taxPaid = Some(3.99)
   )
 
   val aStatePensionViewModel: StateBenefitViewModel = StateBenefitViewModel(
@@ -69,8 +68,7 @@ object StateBenefitViewModelBuilder {
     amountPaidQuestion = Some(true),
     amount = Some(166.88),
     taxPaidQuestion = None,
-    taxPaid = None,
-    addToCalculation = Some(true)
+    taxPaid = None
   )
 
   val aStatePensionLumpSumViewModel: StateBenefitViewModel = StateBenefitViewModel(
@@ -86,8 +84,7 @@ object StateBenefitViewModelBuilder {
     amountPaidQuestion = Some(true),
     amount = Some(200.00),
     taxPaidQuestion = Some(true),
-    taxPaid = Some(50.00),
-    addToCalculation = Some(true)
+    taxPaid = Some(50.00)
   )
 
   val aPriorStatePensionViewModel: StateBenefitViewModel = StateBenefitViewModel(
@@ -103,8 +100,7 @@ object StateBenefitViewModelBuilder {
     amountPaidQuestion = Some(true),
     amount = Some(166.88),
     taxPaidQuestion = None,
-    taxPaid = None,
-    addToCalculation = Some(true)
+    taxPaid = None
   )
 
   val aPriorStatePensionLumpSumViewModel: StateBenefitViewModel = StateBenefitViewModel(
@@ -120,8 +116,7 @@ object StateBenefitViewModelBuilder {
     amountPaidQuestion = Some(true),
     amount = Some(200.00),
     taxPaidQuestion = Some(true),
-    taxPaid = Some(50.00),
-    addToCalculation = Some(true)
+    taxPaid = Some(50.00)
   )
 
   val aStatePensionNoAddToCalculationViewModel: StateBenefitViewModel = StateBenefitViewModel(
@@ -137,8 +132,7 @@ object StateBenefitViewModelBuilder {
     amountPaidQuestion = Some(true),
     amount = Some(166.88),
     taxPaidQuestion = None,
-    taxPaid = None,
-    addToCalculation = None
+    taxPaid = None
   )
 
   val aStatePensionLumpSumNoAddToCalculationViewModel: StateBenefitViewModel = StateBenefitViewModel(
@@ -154,8 +148,7 @@ object StateBenefitViewModelBuilder {
     amountPaidQuestion = Some(true),
     amount = Some(200.00),
     taxPaidQuestion = Some(true),
-    taxPaid = Some(50.00),
-    addToCalculation = None
+    taxPaid = Some(50.00)
   )
 
   val aMinimalStatePensionViewModel: StateBenefitViewModel = StateBenefitViewModel(
@@ -171,8 +164,7 @@ object StateBenefitViewModelBuilder {
     amountPaidQuestion = Some(false),
     amount = None,
     taxPaidQuestion = None,
-    taxPaid = None,
-    addToCalculation = None
+    taxPaid = None
   )
 
   val aMinimalStatePensionLumpSumViewModel: StateBenefitViewModel = StateBenefitViewModel(
@@ -188,8 +180,7 @@ object StateBenefitViewModelBuilder {
     amountPaidQuestion = Some(false),
     amount = None,
     taxPaidQuestion = None,
-    taxPaid = None,
-    addToCalculation = None
+    taxPaid = None
   )
 
   val anEmptyStateBenefitViewModel: StateBenefitViewModel = StateBenefitViewModel()

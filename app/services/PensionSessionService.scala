@@ -81,6 +81,10 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
     }
   }
 
+  def upsertSession(session: PensionsUserData)(implicit ec: ExecutionContext, request: Request[_]): EitherT[Future, Result, Unit] =
+    EitherT(repository.createOrUpdate(session))
+      .leftMap(_ => errorHandler.internalServerError())
+
   def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)(onFail: => A)(onSuccess: => A): Future[A] = {
 
     val userData = PensionsUserData(

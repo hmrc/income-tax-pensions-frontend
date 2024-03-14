@@ -41,8 +41,7 @@ class StateBenefitViewModelSpec extends UnitTest {
         aStatePensionLumpSumViewModel
           .copy(
             taxPaidQuestion = Some(false),
-            taxPaid = None,
-            addToCalculation = Some(false)
+            taxPaid = None
           )
           .isFinished
       }
@@ -50,7 +49,7 @@ class StateBenefitViewModelSpec extends UnitTest {
 
     "return false" when {
       "not all necessary questions have been populated" in {
-        aStatePensionLumpSumViewModel.copy(taxPaidQuestion = None, addToCalculation = None).isFinished
+        aStatePensionLumpSumViewModel.copy(taxPaidQuestion = None).isFinished
       }
     }
   }

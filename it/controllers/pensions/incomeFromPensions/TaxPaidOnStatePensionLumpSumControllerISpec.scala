@@ -23,8 +23,14 @@ import builders.IncomeFromPensionsViewModelBuilder.{
 }
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
-import builders.StateBenefitViewModelBuilder.{aStatePensionLumpSumViewModel, anStateBenefitViewModelOne, anStateBenefitViewModelTwo}
+import builders.StateBenefitViewModelBuilder.{
+  aStatePensionLumpSumNoAddToCalculationViewModel,
+  aStatePensionLumpSumViewModel,
+  anStateBenefitViewModelOne,
+  anStateBenefitViewModelTwo
+}
 import builders.UserBuilder.{aUser, aUserRequest}
+import cats.implicits.{catsSyntaxOptionId, none}
 import forms.{RadioButtonAmountForm, YesNoForm}
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
@@ -34,7 +40,10 @@ import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionCyaUrl,
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
+import java.time.LocalDate
+
 // scalastyle:off magic.number
+// TODO: We need to ideally rewrite these integration tests, as they are too tightly coupled.
 class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndAfterEach with ViewHelpers with PensionsDatabaseHelper {
 
   override val userScenarios: Seq[UserScenario[_, _]] = Seq.empty
@@ -138,13 +147,16 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
     }
 
     "redirect to the 'State Pension Lump Sum start date' page and update question to 'Yes' with correct taxPaid amount" in {
-      lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "42.24")
+      val amount                         = BigDecimal(42.24)
+      lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> s"$amount")
 
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
         val pensionsViewModel =
-          anIncomeFromPensionsViewModel.copy(statePensionLumpSum = Some(anStateBenefitViewModelOne.copy(taxPaidQuestion = None)))
+          anIncomeFromPensionsViewModel.copy(statePensionLumpSum = Some(
+            anStateBenefitViewModelOne
+              .copy(startDateQuestion = none[Boolean], startDate = none[LocalDate], taxPaidQuestion = true.some, taxPaid = amount.some)))
         insertCyaData(pensionsUserDataWithIncomeFromPensions(pensionsViewModel))
 
         urlPost(
@@ -195,7 +207,10 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(aStatePensionIncomeFromPensionsNoAddToCalculationViewModel))
+        val lumpSum = aStatePensionLumpSumNoAddToCalculationViewModel.copy(startDateQuestion = none[Boolean], startDate = none[LocalDate])
+        insertCyaData(
+          pensionsUserDataWithIncomeFromPensions(aStatePensionIncomeFromPensionsNoAddToCalculationViewModel.copy(statePensionLumpSum = lumpSum.some)))
+
         urlPost(
           fullUrl(taxOnLumpSumUrl(taxYearEOY)),
           body = form,

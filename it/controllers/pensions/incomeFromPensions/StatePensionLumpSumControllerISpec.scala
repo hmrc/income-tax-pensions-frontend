@@ -159,7 +159,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
         StateBenefitViewModel(amountPaidQuestion = Some(true), amount = Some(BigDecimal("42.24"))))
     }
 
-    "redirect to the 'Add to calculation' page when submitting answer as 'No' with no further lump sum data" in {
+    "redirect to the 'CYA' page when submitting answer as 'No' with no further lump sum data" in {
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> RadioButtonAmountForm.no)
 
       lazy val result: WSResponse = {
@@ -179,7 +179,7 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       }
 
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(addToCalculationUrl(taxYearEOY))
+      result.header("location") shouldBe Some(statePensionCyaUrl(taxYearEOY))
 
       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
       cyaModel.pensions.incomeFromPensions.statePensionLumpSum shouldBe Some(aMinimalStatePensionViewModel)
