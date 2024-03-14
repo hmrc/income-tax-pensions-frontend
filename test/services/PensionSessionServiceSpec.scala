@@ -120,9 +120,8 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
     }
   }
 
-  // TODO need to investigate and fix how changing joda time to java time has affected this test
   ".createOrUpdateSessionData" should {
-    "return SEE_OTHER(303) status when createOrUpdate succeeds" ignore {
+    "return SEE_OTHER(303) status when createOrUpdate succeeds" in {
       mockCreateOrUpdate(emptySessionData, Right(()))
       val response = service.createOrUpdateSessionData(user, emptyPensionsData, taxYear, isPriorSubmission = true)(Redirect("400"))(Redirect("303"))
 
@@ -130,7 +129,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
       redirectUrl(response) shouldBe "303"
     }
 
-    "return BAD_REQUEST(400) status when createOrUpdate fails" ignore {
+    "return BAD_REQUEST(400) status when createOrUpdate fails" in {
       mockCreateOrUpdate(emptySessionData, Left(DataNotUpdated))
       val response: Future[Result] =
         service.createOrUpdateSessionData(user, emptyPensionsData, taxYear, isPriorSubmission = true)(Redirect("400"))(Redirect("303"))
