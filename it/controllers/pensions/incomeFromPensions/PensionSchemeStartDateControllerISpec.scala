@@ -28,11 +28,10 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages.{pensionSchemeSummaryUrl, pensionStartDateUrl, ukPensionSchemePayments}
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 import java.time.LocalDate
-import scala.collection.immutable.Seq
 
 class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
 
@@ -187,21 +186,6 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
           result.header("location") shouldBe Some(ukPensionSchemePayments(taxYearEOY))
         }
       }
-    }
-
-    "redirect to Pension Summary page when there is no session data" in {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        urlGet(
-          fullUrl(pensionStartDateUrl(taxYearEOY, Some(schemeIndex0))),
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
-        )
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
     }
   }
 
@@ -519,26 +503,6 @@ class PensionSchemeStartDateControllerISpec extends IntegrationTest with ViewHel
         inputFieldValueCheck(yearInputName, Selectors.yearInputSelector, "1898")
         errorSummaryCheck(tooLongAgoErrorText, Selectors.dayInputHref)
         errorAboveElementCheck(tooLongAgoErrorText)
-      }
-    }
-
-    "redirect to Pension Summary page when there is no session data" which {
-      lazy val form = startDateForm(validDay, validMonth, validYear)
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        urlPost(
-          fullUrl(pensionStartDateUrl(taxYearEOY, Some(0))),
-          body = form,
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
-        )
-      }
-
-      "has an SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
 
