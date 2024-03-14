@@ -26,7 +26,7 @@ import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
 import models.pension.charges.UnauthorisedPaymentsViewModel
-import models.requests.UserRequestWithSessionAndPrior
+import models.requests.UserPriorAndSessionDataRequest
 import models.{APIErrorBodyModel, APIErrorModel, User}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -75,7 +75,7 @@ class UnauthorisedPaymentsCYAController @Inject() (
   // TODO: check conditions for excluding Pensions from submission without gateway
   private def maybeExcludePension(unauthorisedPaymentModel: UnauthorisedPaymentsViewModel,
                                   taxYear: Int,
-                                  priorAndSessionRequest: UserRequestWithSessionAndPrior[AnyContent])(implicit
+                                  priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent])(implicit
       request: Request[_]): EitherT[Future, Result, Unit] =
     (if (!unauthorisedPaymentModel.surchargeQuestion.exists(x => x) && !unauthorisedPaymentModel.noSurchargeQuestion.exists(x => x)) {
        EitherT(excludeJourneyService.excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)).void
@@ -84,7 +84,7 @@ class UnauthorisedPaymentsCYAController @Inject() (
      }).leftSemiflatMap(_ => errorHandler.futureInternalServerError())
 
   private def maybeUpdateAnswers(cya: PensionsUserData, prior: Option[AllPensionsData], taxYear: Int)(implicit
-      priorAndSessionRequest: UserRequestWithSessionAndPrior[AnyContent]): EitherT[Future, Result, Result] =
+      priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] =
     if (isEqual(cya.pensions, prior)) {
       EitherT.rightT[Future, Result](toSummaryRedirect(taxYear))
     } else {
@@ -106,7 +106,7 @@ class UnauthorisedPaymentsCYAController @Inject() (
   private def performSubmission(taxYear: Int, cya: Option[PensionsUserData])(implicit
       user: User,
       hc: HeaderCarrier,
-      request: UserRequestWithSessionAndPrior[AnyContent]): Future[Result] =
+      request: UserPriorAndSessionDataRequest[AnyContent]): Future[Result] =
     (cya match {
       case Some(_) =>
         service.saveAnswers(user, TaxYear(taxYear)) map {

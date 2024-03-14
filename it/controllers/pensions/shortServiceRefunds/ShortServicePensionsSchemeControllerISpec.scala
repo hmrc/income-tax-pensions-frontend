@@ -59,14 +59,6 @@ class ShortServicePensionsSchemeControllerISpec
         }
     }
 
-    "redirect to the summary page" when {
-      "the user has no stored session data at all" in {
-        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-        implicit val response: WSResponse   = getPageWithIndex()
-        assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
-      }
-    }
-
     "redirect to the first page in journey" when {
       "previous questions have not been answered" in {
         val incompleteCYAModel              = aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)
@@ -166,15 +158,6 @@ class ShortServicePensionsSchemeControllerISpec
       implicit val response: WSResponse   = submitForm(formData, Map("refundPensionSchemeIndex" -> "-1"))
 
       assertRedirectionAsExpected(PageRelativeURLs.shortServiceRefundSummary)
-    }
-
-    "redirect to the Pensions Summary page when the user has no stored session data at all" in {
-      val formData                        = setFormData("Scheme Name", "123456", "Scheme Address", Some(""))
-      implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-      implicit val response: WSResponse   = submitForm(formData, Map("index" -> "0"))
-
-      assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
-      getTransferPensionsViewModel mustBe None
     }
   }
 

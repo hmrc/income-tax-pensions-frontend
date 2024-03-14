@@ -28,7 +28,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoOverseasPensions.{paymentsIntoOverseasPensionsCyaUrl, paymentsIntoPensionSchemeUrl}
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, pensionSummaryUrl}
+import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
@@ -54,45 +54,6 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         )
       }
       result.status shouldBe OK
-    }
-
-    "redirect to the Pensions Summary page" when {
-      "in year" in {
-        lazy implicit val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(aUser.isAgent)
-          insertCyaData(pensionsUsersData(aPensionsCYAModel))
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-
-          urlGet(
-            fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYear)),
-            !aUser.isAgent,
-            follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList))
-          )
-        }
-
-        result.status shouldBe SEE_OTHER
-        result.headers("Location").head shouldBe pensionSummaryUrl(taxYear)
-      }
-
-      "there is no CYA data" in {
-        lazy implicit val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(aUser.isAgent)
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
-
-          urlGet(
-            fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYearEOY)),
-            !aUser.isAgent,
-            follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
-          )
-        }
-
-        result.status shouldBe SEE_OTHER
-        result.headers("Location").head shouldBe pensionSummaryUrl(taxYearEOY)
-      }
     }
 
     "redirect to the first page in journey when submission model is incomplete" in {
@@ -164,24 +125,6 @@ class PaymentsIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         result.status shouldBe SEE_OTHER
         result.headers("location").head shouldBe overseasPensionsSummaryUrl(taxYearEOY)
       }
-    }
-
-    "redirect to the Pensions Summary page when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(aPensionsUserData)
-        userDataStub(anIncomeTaxUserData, nino, taxYear)
-        urlPost(
-          fullUrl(paymentsIntoOverseasPensionsCyaUrl(taxYear)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-          follow = false,
-          body = ""
-        )
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe pensionSummaryUrl(taxYear)
     }
 
     "redirect to the first page in journey when submission model is incomplete" in {

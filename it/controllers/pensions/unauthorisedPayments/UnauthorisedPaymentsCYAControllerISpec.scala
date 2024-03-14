@@ -470,43 +470,25 @@ class UnauthorisedPaymentsCYAControllerISpec
         val userData = anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData))
         lazy val result: WSResponse = {
           dropPensionsDB()
-          userDataStub(userData, nino, taxYear)
-          pensionChargesSessionStub("", nino, taxYear)
+          userDataStub(userData, nino, taxYearEOY)
+          pensionChargesSessionStub("", nino, taxYearEOY)
           insertCyaData(aPensionsUserData)
           authoriseAgentOrIndividual()
           urlPost(
-            fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)),
+            fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYearEOY)),
             form,
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
+            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
         "has a SEE OTHER status" in {
           result.status shouldBe SEE_OTHER
         }
         "redirects to the summary page" in {
-          result.headers("Location").head shouldBe pensionSummaryUrl(taxYear)
+          result.headers("Location").head shouldBe pensionSummaryUrl(taxYearEOY)
         }
       }
 
-      "there is no CYA data available" which {
-        val form = Map[String, String]()
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual()
-          pensionChargesSessionStub("", nino, taxYear)
-          urlPost(
-            fullUrl(checkUnauthorisedPaymentsCyaUrl(taxYear)),
-            form,
-            follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-        }
-        "have the status SEE OTHER" in {
-          result.status shouldBe SEE_OTHER
-        }
-        "redirects to the overview page" in {
-          result.headers("Location").head shouldBe pensionSummaryUrl(taxYear)
-        }
-      }
     }
   }
 }

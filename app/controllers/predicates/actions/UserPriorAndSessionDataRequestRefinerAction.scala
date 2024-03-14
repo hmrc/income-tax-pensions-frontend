@@ -16,8 +16,9 @@
 
 package controllers.predicates.actions
 
+import cats.implicits.catsSyntaxEitherId
 import config.ErrorHandler
-import models.requests.{UserRequestWithSessionAndPrior, UserSessionDataRequest}
+import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
 import play.api.mvc.{ActionRefiner, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
@@ -26,19 +27,26 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class UserPriorAndSessionDataRequestRefinerAction(taxYear: Int, service: PensionSessionService, errorHandler: ErrorHandler)(implicit
     ec: ExecutionContext)
-    extends ActionRefiner[UserSessionDataRequest, UserRequestWithSessionAndPrior]
+    extends ActionRefiner[UserSessionDataRequest, UserPriorAndSessionDataRequest]
     with FrontendHeaderCarrierProvider {
 
   override protected[predicates] def executionContext: ExecutionContext = ec
 
-  override protected[predicates] def refine[A](input: UserSessionDataRequest[A]): Future[Either[Result, UserRequestWithSessionAndPrior[A]]] =
+  override protected[predicates] def refine[A](input: UserSessionDataRequest[A]): Future[Either[Result, UserPriorAndSessionDataRequest[A]]] =
     service
       .loadPriorData(taxYear, input.user)(hc(input.request))
       .map {
         case Left(error) =>
-          Left(errorHandler.handleError(error.status)(input.request))
+          errorHandler
+            .handleError(error.status)(input.request)
+            .asLeft
 
         case Right(prior) =>
-          Right(UserRequestWithSessionAndPrior(input.sessionData, prior.pensions, input.user, input.request))
+          UserPriorAndSessionDataRequest(
+            sessionData = input.sessionData,
+            maybePrior = prior.pensions,
+            user = input.user,
+            request = input.request
+          ).asRight
       }
 }

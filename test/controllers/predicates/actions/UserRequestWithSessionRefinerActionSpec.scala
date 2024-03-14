@@ -27,7 +27,7 @@ import support.mocks.{MockErrorHandler, MockPensionSessionService}
 
 import scala.concurrent.ExecutionContext
 
-class UserSessionDataRequestRefinerActionSpec extends UnitTest with MockPensionSessionService with MockErrorHandler {
+class UserRequestWithSessionRefinerActionSpec extends UnitTest with MockPensionSessionService with MockErrorHandler {
 
   private val executionContext = ExecutionContext.global
 

@@ -18,7 +18,7 @@ package controllers.predicates.actions
 
 import config.{AppConfig, ErrorHandler}
 import models.AuthorisationRequest
-import models.requests.{UserRequestWithSessionAndPrior, UserSessionDataRequest}
+import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionBuilder, AnyContent}
 import services.PensionSessionService
@@ -41,7 +41,7 @@ class ActionsProvider @Inject() (authAction: AuthorisedAction,
     endOfYear(taxYear)
       .andThen(UserRequestWithSessionRefinerAction(taxYear, pensionSessionService, errorHandler))
 
-  def authoriseWithSessionAndPrior(taxYear: Int): ActionBuilder[UserRequestWithSessionAndPrior, AnyContent] =
+  def authoriseWithSessionAndPrior(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
     authoriseWithSession(taxYear)
       .andThen(UserPriorAndSessionDataRequestRefinerAction(taxYear, pensionSessionService, errorHandler))
 

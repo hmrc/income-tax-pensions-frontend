@@ -22,7 +22,7 @@ import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
-import models.requests.UserRequestWithSessionAndPrior
+import models.requests.UserPriorAndSessionDataRequest
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -79,7 +79,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
 
   private def excludeJourney(taxYear: TaxYear, paymentsIntoPensionFromSession: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
-      request: UserRequestWithSessionAndPrior[AnyContent]): EitherT[Future, Result, Unit] = {
+      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Unit] = {
     val user = request.user
     val res =
       if (!paymentsIntoPensionFromSession.rasPensionPaymentQuestion.exists(x =>
@@ -98,7 +98,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
 
   private def performSubmission(taxYear: TaxYear, sessionData: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
-      request: UserRequestWithSessionAndPrior[AnyContent]): Future[Result] =
+      request: UserPriorAndSessionDataRequest[AnyContent]): Future[Result] =
     (for {
       _      <- excludeJourney(taxYear, sessionData)
       result <- persist(taxYear, sessionData)
@@ -106,7 +106,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
 
   private def persist(taxYear: TaxYear, sessionData: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
-      request: UserRequestWithSessionAndPrior[AnyContent]): EitherT[Future, Result, Result] = {
+      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] = {
     val res = pensionReliefsService.persistPaymentIntoPensionViewModel(
       request.user,
       taxYear,

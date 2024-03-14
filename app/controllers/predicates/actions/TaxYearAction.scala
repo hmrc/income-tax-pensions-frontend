@@ -43,10 +43,13 @@ class TaxYearAction @Inject() (taxYear: Int, missingTaxYearReset: Boolean)(impli
     val validClientTaxYears = request.session.get(VALID_TAX_YEARS)
 
     if (validClientTaxYears.isDefined) {
+      println("here")
       val validTaxYears = validClientTaxYears.get.split(",").toSeq.map(_.toInt)
       if (!appConfig.taxYearErrorFeature || validTaxYears.contains(taxYear)) {
+        print("here2")
         val sameTaxYear = request.session.get(TAX_YEAR).exists(_.toInt == taxYear)
         if (sameTaxYear || !missingTaxYearReset) {
+          println("here3")
           Future.successful(Right(request))
         } else {
           logger.info("[TaxYearAction][refine] Tax year provided is different than that in session. Redirecting to overview.")

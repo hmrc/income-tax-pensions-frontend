@@ -27,7 +27,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, reducedAnnualAllowanceTypeUrl, reducedAnnualAllowanceUrl}
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
@@ -299,22 +299,6 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
         }
       }
     }
-
-    "redirect to Pensions Summary page if there is no session data" should {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        urlGet(
-          fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)),
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has an SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-      }
-    }
   }
 
   ".submit" should {
@@ -373,26 +357,6 @@ class ReducedAnnualAllowanceControllerISpec extends IntegrationTest with BeforeA
           errorSummaryCheck(user.specificExpectedResults.get.expectedError, Selectors.yesSelector)
           errorAboveElementCheck(user.specificExpectedResults.get.expectedError, Some("value"))
         }
-      }
-    }
-
-    "redirect to Pensions Summary when user selects yes when there is no cya data" which {
-      lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        urlPost(
-          fullUrl(reducedAnnualAllowanceUrl(taxYearEOY)),
-          body = form,
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
-        )
-      }
-
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
 

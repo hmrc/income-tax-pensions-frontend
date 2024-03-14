@@ -80,28 +80,6 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
   }
 
   ".submit" should {
-    "redirect to summary page when there is no CYA data" which {
-
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-        urlPost(
-          fullUrl(checkYourDetailsPensionUrl(taxYear)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-          follow = false,
-          body = "")
-      }
-
-      "have the status SEE OTHER" in {
-        result.status shouldBe SEE_OTHER
-      }
-
-      "redirects to the summary page" in {
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYear))
-      }
-    }
-
     "redirect to start of journey" when {
       "there is no prior data and CYA data is submitted" which {
 

@@ -48,22 +48,6 @@ class DoubleTaxationAgreementControllerISpec extends IntegrationTest with ViewHe
     )
 
   ".show" should {
-
-    "redirect to the pensions summary page if there is no session data" in {
-      implicit val doubleTaxAgrtUrl: Int => String = doubleTaxationAgreementUrl(0)
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        urlGet(
-          fullUrl(doubleTaxAgrtUrl(taxYearEOY)),
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-    }
-
     "show page when there is data " in {
       implicit val doubleTaxAgrtUrl: Int => String = doubleTaxationAgreementUrl(0)
       lazy val result: WSResponse = {

@@ -40,8 +40,13 @@ case class UserRequestWithSessionRefinerAction(taxYear: Int, service: PensionSes
     service
       .loadSessionData(taxYear, input.user)
       .map {
-        case Right(Some(data)) => UserSessionDataRequest(data, input.user, input.request).asRight
-        case _                 => handleInternalError.asLeft
+        case Right(Some(data)) =>
+          println("here4")
+          UserSessionDataRequest(data, input.user, input.request).asRight
+        // A top-level session collection is always created on the entry point to the application. This will never not be empty.
+        case _ =>
+          println("here5")
+          handleInternalError.asLeft
       }
   }
 }

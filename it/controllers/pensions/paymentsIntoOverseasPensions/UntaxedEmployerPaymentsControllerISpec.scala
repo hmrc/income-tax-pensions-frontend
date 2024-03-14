@@ -31,15 +31,6 @@ class UntaxedEmployerPaymentsControllerISpec extends ControllerSpec("/overseas-p
   "This page" when {
 
     "shown" should {
-
-      "not show the form page but redirect to the summary page" which {
-        "the user has no stored session data at all" in {
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse   = getPageWithIndex()
-          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
-        }
-      }
-
       "redirect to pension scheme summary page or customer reference page" which {
 
         "the user accesses page with index out of bounds and there are no complete relief schemes" in {

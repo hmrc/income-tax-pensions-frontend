@@ -21,7 +21,7 @@ import models.mongo.PensionsUserData
 import models.pension.AllPensionsData
 import play.api.mvc.{Request, WrappedRequest}
 
-case class UserRequestWithSessionAndPrior[T](sessionData: PensionsUserData,
+case class UserPriorAndSessionDataRequest[T](sessionData: PensionsUserData,
                                              maybePrior: Option[AllPensionsData] = None,
                                              user: User,
                                              request: Request[T])

@@ -24,7 +24,7 @@ import models.IncomeTaxUserData
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
-import models.requests.UserRequestWithSessionAndPrior
+import models.requests.UserPriorAndSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.redirects.StatePensionPages.StatePensionsCYAPage
@@ -76,7 +76,7 @@ class StatePensionCYAController @Inject() (auditProvider: AuditActionsProvider,
   }
 
   private def processSubmission(session: PensionsUserData, prior: IncomeTaxUserData, taxYear: Int)(implicit
-      request: UserRequestWithSessionAndPrior[AnyContent]): EitherT[Future, ServiceError, Unit] =
+      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, ServiceError, Unit] =
     if (sessionDeviatesFromPrior(session.pensions, prior.pensions))
       EitherT(statePensionService.saveAnswers(request.user, TaxYear(taxYear)))
     else EitherT.pure[Future, ServiceError](())

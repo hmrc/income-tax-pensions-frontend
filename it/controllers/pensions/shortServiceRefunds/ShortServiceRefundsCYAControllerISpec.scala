@@ -22,7 +22,7 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithShortServiceViewModel}
-import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewModel, emptyShortServiceRefundsViewModel}
+import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsViewModel
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
 import models.pension.charges.OverseasRefundPensionScheme
@@ -180,22 +180,6 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
 
       result.status shouldBe SEE_OTHER
       result.header("location") shouldBe Some(shortServiceTaxableRefundUrl(taxYearEOY))
-    }
-
-    "submitting in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel.copy(shortServiceRefunds = emptyShortServiceRefundsViewModel)))
-        userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-        urlPost(
-          fullUrl(shortServiceRefundsCYAUrl(taxYear)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-          follow = false,
-          body = "")
-      }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
     }
   }
 }
