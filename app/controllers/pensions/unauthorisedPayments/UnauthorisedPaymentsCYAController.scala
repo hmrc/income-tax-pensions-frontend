@@ -68,18 +68,6 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = auditProvider.unauthorisedPaymentsUpdateAuditing(taxYear) async { implicit priorAndSessionRequest =>
-    val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(priorAndSessionRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-      val (sessionData, priorData, unauthorisedPaymentModel) = (data, priorAndSessionRequest.pensions, data.pensions.unauthorisedPayments)
-
-      (for {
-        _      <- maybeExcludePension(unauthorisedPaymentModel, taxYear, priorAndSessionRequest).map(_ => toSummaryRedirect(taxYear))
-        result <- maybeUpdateAnswers(sessionData, priorData, taxYear)
-      } yield result).merge
-    }
-  }
-
   private def toSummaryRedirect(taxYear: Int) = Redirect(routes.PensionsSummaryController.show(taxYear))
 
   // TODO: check conditions for excluding Pensions from submission without gateway
