@@ -26,7 +26,6 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpecLike
 
-// scalastyle:off
 class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks with Matchers {
 
   val amount: BigDecimal = BigDecimal(123.00)
@@ -53,7 +52,6 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
 
     def setPensionReliefs(newPensionReliefs: Reliefs) =
       priorBase.copy(pensionReliefs = priorBase.pensionReliefs.map(_.copy(pensionReliefs = newPensionReliefs)))
-
 
     val cases = Table(
       ("Downstream Model", "Expected FE Model"),
@@ -125,7 +123,6 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
       )
     )
 
-
     "convert prior data to FE model" in forAll(cases) { (downstreamModel, expectedModel) =>
       val actual = AllPensionsData.generateSessionModelFromPrior(setPensionReliefs(downstreamModel))
       assert(actual.paymentsIntoPension === expectedModel)
@@ -194,4 +191,3 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
       priorBase.copy(pensionCharges = priorBase.pensionCharges.map(_.copy(pensionSchemeUnauthorisedPayments = unauth)))
   }
 }
-// scalastyle:on
