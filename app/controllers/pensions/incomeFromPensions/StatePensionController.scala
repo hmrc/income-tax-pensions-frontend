@@ -43,8 +43,8 @@ class StatePensionController @Inject() (actionsProvider: ActionsProvider,
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) { implicit request =>
-    val journey      = request.pensionsUserData.pensions.incomeFromPensions
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) { implicit request =>
+    val journey      = request.sessionData.pensions.incomeFromPensions
     val formProvider = formsProvider.statePensionForm(request.user)
     val form = journey.statePension
       .flatMap(_.amountPaidQuestion)
@@ -53,8 +53,8 @@ class StatePensionController @Inject() (actionsProvider: ActionsProvider,
     Ok(view(form, taxYear))
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    val journey      = request.pensionsUserData.pensions.incomeFromPensions
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val journey      = request.sessionData.pensions.incomeFromPensions
     val formProvider = formsProvider.statePensionForm(request.user)
 
     formProvider

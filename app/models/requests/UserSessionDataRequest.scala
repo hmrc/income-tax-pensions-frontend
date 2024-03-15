@@ -20,4 +20,4 @@ import models.User
 import models.mongo.PensionsUserData
 import play.api.mvc.{Request, WrappedRequest}
 
-case class UserSessionDataRequest[T](pensionsUserData: PensionsUserData, user: User, request: Request[T]) extends WrappedRequest[T](request)
+case class UserSessionDataRequest[T](sessionData: PensionsUserData, user: User, request: Request[T]) extends WrappedRequest[T](request)

@@ -43,21 +43,21 @@ class TransferPensionSavingsController @Inject() (actionsProvider: ActionsProvid
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
-    val transferPensionSavings = sessionData.pensionsUserData.pensions.transfersIntoOverseasPensions.transferPensionSavings
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val transferPensionSavings = request.sessionData.pensions.transfersIntoOverseasPensions.transferPensionSavings
 
     transferPensionSavings match {
-      case Some(x) => Future.successful(Ok(view(yesNoForm(sessionData.user).fill(x), taxYear)))
-      case None    => Future.successful(Ok(view(yesNoForm(sessionData.user), taxYear)))
+      case Some(x) => Future.successful(Ok(view(yesNoForm(request.user).fill(x), taxYear)))
+      case None    => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    yesNoForm(sessionUserData.user)
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    yesNoForm(request.user)
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
-        transferPensionSavings => updateSessionData(sessionUserData.pensionsUserData, transferPensionSavings, taxYear)
+        transferPensionSavings => updateSessionData(request.sessionData, transferPensionSavings, taxYear)
       )
   }
 

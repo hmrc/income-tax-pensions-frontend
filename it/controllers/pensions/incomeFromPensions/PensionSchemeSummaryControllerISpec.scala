@@ -131,19 +131,5 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
       }
     }
 
-    "redirect to Pension Summary page when there is no session data" in {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        urlGet(
-          fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(schemeIndex0))),
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
-        )
-      }
-
-      result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-    }
   }
 }

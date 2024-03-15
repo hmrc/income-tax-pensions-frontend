@@ -257,20 +257,6 @@ class AboveReducedAnnualAllowanceControllerISpec extends IntegrationTest with Vi
       }
     }
 
-    "redirect to the pension summary task list if there is no session data" in {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        urlGet(
-          fullUrl(aboveReducedAnnualAllowanceUrl(taxYearEOY)),
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-      result.status shouldBe SEE_OTHER
-      result.header("location").value shouldBe pensionSummaryUrl(taxYearEOY)
-
-    }
-
     "redirect to reduced annual allowance page" when {
       "previous questions have not been answered" which {
         lazy val result: WSResponse = {

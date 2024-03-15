@@ -52,25 +52,25 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
   lazy val logger: Logger                         = Logger(this.getClass.getName)
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsViewAuditing(taxYear) async { implicit sessionDataRequest =>
-    val cyaData = sessionDataRequest.pensionsUserData
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsViewAuditing(taxYear) async { implicit request =>
+    val cyaData = request.sessionData
     if (!cyaData.pensions.paymentsIntoPension.isFinished) {
       val checkRedirect = journeyCheck(CheckYourAnswersPage, _, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(cyaData), cyaPageCall(taxYear))(checkRedirect) { data =>
         Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
       }
     } else {
-      pensionSessionService.createOrUpdateSessionData(sessionDataRequest.user, cyaData.pensions, taxYear, isPriorSubmission = false)(
+      pensionSessionService.createOrUpdateSessionData(request.user, cyaData.pensions, taxYear, isPriorSubmission = false)(
         errorHandler.internalServerError())(Ok(view(taxYear, cyaData.pensions.paymentsIntoPension)))
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsUpdateAuditing(taxYear) async { implicit priorAndSessionRequest =>
-    val modelFromSession   = priorAndSessionRequest.pensionsUserData.pensions.paymentsIntoPension
-    val modelFromPriorData = priorAndSessionRequest.pensions.map(_.getPaymentsIntoPensionsCyaFromPrior)
+  def submit(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsUpdateAuditing(taxYear) async { implicit request =>
+    val modelFromSession   = request.sessionData.pensions.paymentsIntoPension
+    val modelFromPriorData = request.maybePrior.map(_.getPaymentsIntoPensionsCyaFromPrior)
 
     if (isDifferent(modelFromSession, modelFromPriorData)) {
-      performSubmission(TaxYear(taxYear), modelFromSession)(hc, priorAndSessionRequest)
+      performSubmission(TaxYear(taxYear), modelFromSession)(hc, request)
     } else {
       Future.successful(Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear)))
     }
@@ -110,7 +110,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
       request.user,
       taxYear,
       sessionData,
-      request.pensions.flatMap(_.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions)))
+      request.maybePrior.flatMap(_.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions)))
 
     res.map(_ => Redirect(controllers.pensions.routes.PensionsSummaryController.show(taxYear.endYear))).leftMap { err =>
       logger.info(s"[PaymentIntoPensionsCYAController][submit] Failed to create or update session: ${err}")

@@ -33,7 +33,7 @@ import play.api.http.Status.{NO_CONTENT, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages._
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -186,26 +186,6 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
       }
     }
 
-    "redirect to the pensions summary page when there is no CYA regardless of prior data" which {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        userDataStub(IncomeTaxUserData(None), nino, taxYearEOY)
-        urlGet(
-          fullUrl(ukPensionIncomeCyaUrl(taxYearEOY)),
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "has the status SEE OTHER" in {
-        result.status shouldBe SEE_OTHER
-      }
-
-      "redirects to the pensions summary page" in {
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-      }
-    }
-
     "redirect to the first page in the journey when previous questions are unanswered" which {
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -231,31 +211,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
   }
 
   ".submit" should {
-
-    "redirect to the pensions summary page when there is no CYA data available" which {
-      val form = Map[String, String]()
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        urlPost(
-          fullUrl(ukPensionIncomeCyaUrl(taxYear)),
-          form,
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-      }
-
-      "have the status SEE OTHER" in {
-        result.status shouldBe SEE_OTHER
-      }
-
-      "redirects to the overview page" in {
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYear))
-      }
-    }
-
     "redirect to pensions income summary page" when {
-
       "there is no prior data and CYA data is submitted" which {
         val form = Map[String, String]()
 

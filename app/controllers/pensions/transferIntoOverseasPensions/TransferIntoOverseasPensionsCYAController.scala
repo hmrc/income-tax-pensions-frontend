@@ -47,23 +47,23 @@ class TransferIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsViewAuditing(taxYear) async { implicit sessionDataRequest =>
-    val cyaData = sessionDataRequest.pensionsUserData
+  def show(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsViewAuditing(taxYear) async { implicit request =>
+    val cyaData = request.sessionData
     if (!cyaData.pensions.transfersIntoOverseasPensions.isFinished) {
       val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
       redirectBasedOnCurrentAnswers(taxYear, Some(cyaData), cyaPageCall(taxYear))(checkRedirect) { data =>
         Future.successful(Ok(view(taxYear, data.pensions.transfersIntoOverseasPensions)))
       }
     } else {
-      pensionSessionService.createOrUpdateSessionData(sessionDataRequest.user, cyaData.pensions, taxYear, isPriorSubmission = false)(
+      pensionSessionService.createOrUpdateSessionData(request.user, cyaData.pensions, taxYear, isPriorSubmission = false)(
         errorHandler.internalServerError())(Ok(view(taxYear, cyaData.pensions.transfersIntoOverseasPensions)))
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsUpdateAuditing(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
-      if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
+      if (sessionDataDifferentThanPriorData(sessionData.pensions, request.maybePrior)) {
         chargesService.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
           case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))

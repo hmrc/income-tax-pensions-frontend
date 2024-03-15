@@ -212,35 +212,6 @@ class IncomeFromOverseasPensionsCYAControllerISpec
 
   ".submit" should {
     "redirect to the summary page" when {
-      "there is no CYA data available" should {
-
-        val form     = Map[String, String]()
-        val userData = anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData))
-
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual()
-          userDataStub(userData, nino, taxYear)
-          pensionIncomeSessionStub("", nino, taxYear)
-          urlPost(
-            fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)),
-            form,
-            follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList))
-          )
-        }
-
-        "have the status SEE OTHER" in {
-          result.status shouldBe SEE_OTHER
-        }
-
-        "redirects to the summary page" in {
-          result.headers("Location").head shouldBe PensionsSummaryController.show(taxYear).url
-        }
-      }
-    }
-
-    "redirect to the summary page" when {
 
       "the CYA data is persisted" should {
 

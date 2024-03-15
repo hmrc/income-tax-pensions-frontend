@@ -29,14 +29,6 @@ class RemoveTransferChargeSchemeControllerISpec
   "This page" when {
 
     ".show" should {
-      "not show the form page but redirect to the summary page" when {
-        "the user has no stored session data at all" in {
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse   = getPageWithIndex()
-          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
-        }
-      }
-
       "redirect to transfer charge pension scheme summary page" when {
         "the user accesses page with index out of bounds" in {
           val sessionData                     = pensionsUserData(aPensionsCYAModel)
@@ -61,14 +53,6 @@ class RemoveTransferChargeSchemeControllerISpec
           getTransferPensionsViewModel mustBe Some(expectedViewModel)
 
         }
-      }
-
-      "redirect to the Pensions Summary page when the user has no stored session data at all" in {
-        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-        implicit val response: WSResponse   = submitForm(Map("" -> ""), Map("index" -> "0"))
-
-        assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
-        getTransferPensionsViewModel mustBe None
       }
     }
   }

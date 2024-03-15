@@ -30,15 +30,6 @@ import play.api.libs.ws.WSResponse
 class OverseasTransferChargeControllerISpec extends YesNoAmountControllerSpec("/overseas-pensions/overseas-transfer-charges/transfer-charge") {
 
   ".show" should {
-    "redirect to the summary page" when {
-      "the user has no stored session data at all" in {
-
-        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-        implicit val response: WSResponse   = getPage
-
-        assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
-      }
-    }
     "appear as expected" when {
       "the user has no pension-related session data and" when {
 
@@ -346,15 +337,6 @@ class OverseasTransferChargeControllerISpec extends YesNoAmountControllerSpec("/
   }
 
   ".submit" should {
-    "redirect to the pensions summary page when the user has no stored session data at all" in {
-
-      implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-      implicit val response: WSResponse   = submitForm(SubmittedFormDataForYesNoAmountPage(Some(false), None))
-
-      assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
-      getViewModel mustBe None
-    }
-
     "redirect to the start of the journey" when {
       "the journey is incomplete" in {
         val cyaModel                        = aPensionsCYAModel.copy(transfersIntoOverseasPensions = emptyTransfersIntoOverseasPensionsViewModel)

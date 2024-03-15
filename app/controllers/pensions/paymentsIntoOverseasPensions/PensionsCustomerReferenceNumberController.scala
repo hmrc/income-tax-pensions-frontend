@@ -49,85 +49,79 @@ class PensionsCustomerReferenceNumberController @Inject() (actionsProvider: Acti
     incorrectFormatMsg = s"overseasPension.pensionsCustomerReferenceNumber.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
   )
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionDataRequest =>
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     index match {
       case Some(_) =>
-        indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, index, PensionsCustomerReferenceNumberPage, taxYear) { relief =>
+        indexCheckThenJourneyCheck(request.sessionData, index, PensionsCustomerReferenceNumberPage, taxYear) { relief =>
           relief.customerReference match {
             case Some(customerReferenceNumber) =>
               Future.successful(
                 Ok(
                   view(
-                    referenceForm(sessionDataRequest.user)
+                    referenceForm(request.user)
                       .fill(customerReferenceNumber),
                     taxYear,
                     index)))
             case None =>
-              Future.successful(Ok(view(referenceForm(sessionDataRequest.user), taxYear, index)))
+              Future.successful(Ok(view(referenceForm(request.user), taxYear, index)))
           }
         }
       case None =>
         val checkRedirect = journeyCheck(PensionsCustomerReferenceNumberPage, _: PensionsCYAModel, taxYear)
-        redirectBasedOnCurrentAnswers(taxYear, Some(sessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-          data: PensionsUserData =>
-            Future.successful(Ok(view(referenceForm(sessionDataRequest.user), taxYear, index)))
+        redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
+          Future.successful(Ok(view(referenceForm(request.user), taxYear, index)))
         }
     }
   }
 
-  def submit(taxYear: Int, optIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionDataRequest =>
-      val piop = sessionDataRequest.pensionsUserData.pensions.paymentsIntoOverseasPensions
+  def submit(taxYear: Int, optIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val piop = request.sessionData.pensions.paymentsIntoOverseasPensions
 
-      def createOrUpdateSessionData(updatedCyaModel: PensionsCYAModel, newIndex: Some[Int]): Future[Result] =
-        pensionSessionService.createOrUpdateSessionData(
-          sessionDataRequest.user,
-          updatedCyaModel,
+    def createOrUpdateSessionData(updatedCyaModel: PensionsCYAModel, newIndex: Some[Int]): Future[Result] =
+      pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, request.sessionData.isPriorSubmission)(
+        errorHandler.internalServerError()) {
+        schemeIsFinishedCheck(
+          updatedCyaModel.paymentsIntoOverseasPensions.reliefs,
+          newIndex.getOrElse(0),
           taxYear,
-          sessionDataRequest.pensionsUserData.isPriorSubmission)(errorHandler.internalServerError()) {
-          schemeIsFinishedCheck(
-            updatedCyaModel.paymentsIntoOverseasPensions.reliefs,
-            newIndex.getOrElse(0),
-            taxYear,
-            UntaxedEmployerPaymentsController.show(taxYear, newIndex))
-        }
-
-      optIndex match {
-        case None =>
-          val checkRedirect = journeyCheck(PensionsCustomerReferenceNumberPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(sessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) {
-            data: PensionsUserData =>
-              referenceForm(sessionDataRequest.user)
-                .bindFromRequest()
-                .fold(
-                  formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, optIndex))),
-                  pensionCustomerReferenceNumber => {
-                    val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
-                      paymentsIntoOverseasPensions = piop.copy(
-                        reliefs = piop.reliefs :+ Relief(customerReference = Some(pensionCustomerReferenceNumber))
-                      ))
-                    createOrUpdateSessionData(updatedCyaModel, Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))
-                  }
-                )
-          }
-        case Some(index) =>
-          indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, Some(index), PensionsCustomerReferenceNumberPage, taxYear) { _: Relief =>
-            referenceForm(sessionDataRequest.user)
-              .bindFromRequest()
-              .fold(
-                formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, Some(index)))),
-                pensionCustomerReferenceNumber => {
-                  val updatedCyaModel: PensionsCYAModel = sessionDataRequest.pensionsUserData.pensions.copy(
-                    paymentsIntoOverseasPensions = piop.copy(
-                      reliefs = piop.reliefs.updated(
-                        index,
-                        piop.reliefs(index).copy(customerReference = Some(pensionCustomerReferenceNumber))
-                      )))
-                  val currentIndex = optIndex.fold(Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))(Some(_))
-                  createOrUpdateSessionData(updatedCyaModel, currentIndex)
-                }
-              )
-          }
+          UntaxedEmployerPaymentsController.show(taxYear, newIndex))
       }
+
+    optIndex match {
+      case None =>
+        val checkRedirect = journeyCheck(PensionsCustomerReferenceNumberPage, _: PensionsCYAModel, taxYear)
+        redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
+          referenceForm(request.user)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, optIndex))),
+              pensionCustomerReferenceNumber => {
+                val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
+                  paymentsIntoOverseasPensions = piop.copy(
+                    reliefs = piop.reliefs :+ Relief(customerReference = Some(pensionCustomerReferenceNumber))
+                  ))
+                createOrUpdateSessionData(updatedCyaModel, Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))
+              }
+            )
+        }
+      case Some(index) =>
+        indexCheckThenJourneyCheck(request.sessionData, Some(index), PensionsCustomerReferenceNumberPage, taxYear) { _: Relief =>
+          referenceForm(request.user)
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, Some(index)))),
+              pensionCustomerReferenceNumber => {
+                val updatedCyaModel: PensionsCYAModel = request.sessionData.pensions.copy(
+                  paymentsIntoOverseasPensions = piop.copy(
+                    reliefs = piop.reliefs.updated(
+                      index,
+                      piop.reliefs(index).copy(customerReference = Some(pensionCustomerReferenceNumber))
+                    )))
+                val currentIndex = optIndex.fold(Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))(Some(_))
+                createOrUpdateSessionData(updatedCyaModel, currentIndex)
+              }
+            )
+        }
+    }
   }
 }

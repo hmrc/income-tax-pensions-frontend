@@ -39,9 +39,9 @@ class TransferChargeSummaryController @Inject() (actionsProvider: ActionsProvide
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(SchemesPayingTransferChargesSummary, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       Future.successful(Ok(view(taxYear, data.pensions.transfersIntoOverseasPensions.transferPensionScheme)))
     }
   }

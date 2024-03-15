@@ -24,7 +24,6 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.pensionsUserDataWithAnnualAllowances
 import builders.UserBuilder.aUser
-import models.IncomeTaxUserData
 import models.mongo.PensionsCYAModel
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -76,40 +75,6 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
         result.header("location") shouldBe Some(reducedAnnualAllowanceUrl(taxYearEOY))
       }
     }
-
-    "redirect to the Pensions Summary page" when {
-      "there is no CYA regardless of prior data" in {
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual()
-          userDataStub(IncomeTaxUserData(None), nino, taxYearEOY)
-          urlGet(
-            fullUrl(annualAllowancesCYAUrl(taxYearEOY)),
-            follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-        }
-
-        result.status shouldBe SEE_OTHER
-        result.header("location").head shouldBe pensionSummaryUrl(taxYearEOY)
-      }
-
-      "in year" in {
-        lazy implicit val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual(aUser.isAgent)
-          insertCyaData(pensionsUsersData(aPensionsCYAModel))
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          urlGet(
-            fullUrl(annualAllowancesCYAUrl(taxYear)),
-            !aUser.isAgent,
-            follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-        }
-
-        result.status shouldBe SEE_OTHER
-        result.headers("Location").head shouldBe pensionSummaryUrl(taxYear)
-      }
-    }
   }
 
   ".submit" should {
@@ -149,23 +114,6 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
         result.status shouldBe SEE_OTHER
         result.headers("location").head shouldBe pensionSummaryUrl(taxYearEOY)
       }
-    }
-
-    "redirect to Pensions Summary page when in year" in {
-      lazy implicit val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual(aUser.isAgent)
-        insertCyaData(pensionsUsersData(aPensionsCYAModel))
-        userDataStub(anIncomeTaxUserData, nino, taxYear)
-        urlPost(
-          fullUrl(annualAllowancesCYAUrl(taxYear)),
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)),
-          follow = false,
-          body = ""
-        )
-      }
-      result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe pensionSummaryUrl(taxYear)
     }
 
     "redirect to reduced annual allowance page when previous questions have not been answered" which {

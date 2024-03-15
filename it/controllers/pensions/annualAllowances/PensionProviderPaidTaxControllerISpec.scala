@@ -98,26 +98,6 @@ class PensionProviderPaidTaxControllerISpec extends IntegrationTest with ViewHel
 
   ".submit" should {
 
-    "redirect to Pensions Summary when user selects yes when there is no cya data" which {
-      lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "14.55")
-
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        urlPost(
-          fullUrl(pensionProviderPaidTaxUrl(taxYearEOY)),
-          body = form,
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
-        )
-      }
-
-      "has a SEE_OTHER(303) status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-      }
-    }
-
     "redirect to reduced annual allowance page" when {
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "14.55")
 

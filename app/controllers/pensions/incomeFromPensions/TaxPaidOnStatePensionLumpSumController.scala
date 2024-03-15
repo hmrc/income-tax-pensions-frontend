@@ -45,8 +45,8 @@ class TaxPaidOnStatePensionLumpSumController @Inject() (actionsProvider: Actions
     with SessionHelper
     with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    val journey      = request.pensionsUserData.pensions.incomeFromPensions
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val journey      = request.sessionData.pensions.incomeFromPensions
     val formProvider = formsProvider.taxPaidOnStatePensionLumpSum(request.user)
 
     validateFlow(journey, TaxOnStatePensionLumpSumPage, taxYear) {
@@ -59,8 +59,8 @@ class TaxPaidOnStatePensionLumpSumController @Inject() (actionsProvider: Actions
 
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    val journey      = request.pensionsUserData.pensions.incomeFromPensions
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val journey      = request.sessionData.pensions.incomeFromPensions
     val formProvider = formsProvider.taxPaidOnStatePensionLumpSum(request.user)
 
     formProvider
