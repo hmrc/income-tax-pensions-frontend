@@ -16,31 +16,33 @@
 
 package controllers.predicates.actions
 
+import cats.implicits.catsSyntaxEitherId
 import config.ErrorHandler
 import models.AuthorisationRequest
 import models.requests.UserSessionDataRequest
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.{ActionRefiner, Result}
-import services.{PensionSessionService, RedirectService}
+import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class UserSessionDataRequestRefinerAction(taxYear: Int, pensionSessionService: PensionSessionService, errorHandler: ErrorHandler)(implicit
+case class UserRequestWithSessionRefinerAction(taxYear: Int, service: PensionSessionService, errorHandler: ErrorHandler)(implicit
     ec: ExecutionContext)
     extends ActionRefiner[AuthorisationRequest, UserSessionDataRequest]
     with FrontendHeaderCarrierProvider {
 
   override protected[predicates] def executionContext: ExecutionContext = ec
 
-  override protected[predicates] def refine[A](input: AuthorisationRequest[A]): Future[Either[Result, UserSessionDataRequest[A]]] =
-    pensionSessionService.loadSessionData(taxYear, input.user).map {
-      case Left(_) => Left(errorHandler.handleError(INTERNAL_SERVER_ERROR)(input.request))
-      case Right(optPensionsUserData) =>
-        RedirectService.redirectBasedOnRequest(optPensionsUserData, taxYear) match {
-          case Left(value) => Left(value)
-          case Right(pensionsUserData) =>
-            Right(UserSessionDataRequest(pensionsUserData, input.user, input.request))
-        }
-    }
+  override protected[predicates] def refine[A](input: AuthorisationRequest[A]): Future[Either[Result, UserSessionDataRequest[A]]] = {
+    def handleInternalError = errorHandler.handleError(INTERNAL_SERVER_ERROR)(input.request)
+
+    service
+      .loadSessionData(taxYear, input.user)
+      .map {
+        case Right(Some(data)) => UserSessionDataRequest(data, input.user, input.request).asRight
+        // A top-level session collection is always created on the entry point to the application. This will never be empty.
+        case _ => handleInternalError.asLeft
+      }
+  }
 }

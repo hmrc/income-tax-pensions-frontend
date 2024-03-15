@@ -50,7 +50,7 @@ class StatePensionCYAController @Inject() (auditProvider: AuditActionsProvider,
     with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsViewAuditing(taxYear) async { implicit request =>
-    val journey = request.pensionsUserData.pensions.incomeFromPensions
+    val journey = request.sessionData.pensions.incomeFromPensions
 
     validateFlow(journey, StatePensionsCYAPage, taxYear) {
       Future.successful(Ok(view(taxYear, journey)))
@@ -58,7 +58,7 @@ class StatePensionCYAController @Inject() (auditProvider: AuditActionsProvider,
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsUpdateAuditing(taxYear) async { implicit request =>
-    val journey = request.pensionsUserData.pensions.incomeFromPensions
+    val journey = request.sessionData.pensions.incomeFromPensions
 
     validateFlow(journey, StatePensionsCYAPage, taxYear) {
       val resultOrError: EitherT[Future, ServiceError, Result] =

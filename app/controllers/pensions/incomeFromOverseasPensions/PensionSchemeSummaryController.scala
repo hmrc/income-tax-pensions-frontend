@@ -38,14 +38,14 @@ class PensionSchemeSummaryController @Inject() (actionsProvider: ActionsProvider
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, index, PensionSchemeSummaryPage, taxYear) { data =>
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    indexCheckThenJourneyCheck(request.sessionData, index, PensionSchemeSummaryPage, taxYear) { data =>
       Future.successful(Ok(pageView(OverseasPensionSchemeSummaryPage.apply(taxYear, data, index))))
     }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionUserData =>
-    indexCheckThenJourneyCheck(sessionUserData.pensionsUserData, index, PensionSchemeSummaryPage, taxYear) { _ =>
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    indexCheckThenJourneyCheck(request.sessionData, index, PensionSchemeSummaryPage, taxYear) { _ =>
       Future.successful(Redirect(CountrySummaryListController.show(taxYear)))
     }
   }

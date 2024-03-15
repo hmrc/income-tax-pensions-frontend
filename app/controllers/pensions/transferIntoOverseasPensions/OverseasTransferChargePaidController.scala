@@ -48,9 +48,9 @@ class OverseasTransferChargePaidController @Inject() (actionsProvider: ActionsPr
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionUserData =>
-      cleanUpSchemes(sessionUserData.pensionsUserData).flatMap {
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
+    implicit request =>
+      cleanUpSchemes(request.sessionData).flatMap {
         case Right(updatedUserData) =>
           val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear)
 
@@ -83,9 +83,9 @@ class OverseasTransferChargePaidController @Inject() (actionsProvider: ActionsPr
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] =
-    actionsProvider.userSessionDataFor(taxYear).async { implicit sessionUserData =>
+    actionsProvider.authoriseWithSession(taxYear).async { implicit request =>
       val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(sessionUserData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
         val schemes = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
         validatedSchemes(pensionSchemeIndex, schemes) match {
           case Left(_) => Future.successful(Redirect(redirectForSchemeLoop(schemes, taxYear)))

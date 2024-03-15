@@ -35,15 +35,6 @@ class TransferPensionsSchemeControllerISpec
   "This page" when { // scalastyle:off magic.number line.size.limit
 
     "requested to be shown" should {
-
-      "redirect to the summary page" which {
-        "the user has no stored session data at all" in {
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse   = getPageWithIndex()
-          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
-        }
-      }
-
       "redirect to first page of journey" when {
         "previous question has not been answered" in {
           val incompleteCYAModel = aPensionsCYAModel.copy(

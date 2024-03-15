@@ -27,11 +27,11 @@ import support.mocks.{MockErrorHandler, MockPensionSessionService}
 
 import scala.concurrent.ExecutionContext
 
-class UserSessionDataRequestRefinerActionSpec extends UnitTest with MockPensionSessionService with MockErrorHandler {
+class UserRequestWithSessionRefinerActionSpec extends UnitTest with MockPensionSessionService with MockErrorHandler {
 
   private val executionContext = ExecutionContext.global
 
-  private val underTest = UserSessionDataRequestRefinerAction(taxYear, mockPensionSessionService, mockErrorHandler)(executionContext)
+  private val underTest = UserRequestWithSessionRefinerAction(taxYear, mockPensionSessionService, mockErrorHandler)(executionContext)
 
   ".executionContext" should {
     "return the given execution context" in {

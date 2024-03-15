@@ -52,8 +52,8 @@ class ActionsProviderSpec extends ControllerUnitTest with MockAuthorisedAction w
 
   for ((actionName: String, action) <- Seq(
       ("endOfYear", actionsProvider.endOfYear: ActionType),
-      ("userSessionDataFo", actionsProvider.userSessionDataFor: ActionType),
-      ("userPriorAndSessionDataFor", actionsProvider.userPriorAndSessionDataFor: ActionType)
+      ("userSessionDataFo", actionsProvider.authoriseWithSession: ActionType),
+      ("userPriorAndSessionDataFor", actionsProvider.authoriseWithSessionAndPrior: ActionType)
     ))
     s".$actionName(taxYear)" should {
 

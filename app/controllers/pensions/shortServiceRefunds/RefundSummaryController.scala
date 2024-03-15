@@ -36,8 +36,8 @@ class RefundSummaryController @Inject() (actionsProvider: ActionsProvider, view:
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    val answers = request.pensionsUserData.pensions.shortServiceRefunds
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val answers = request.sessionData.pensions.shortServiceRefunds
 
     validateFlow(answers, RefundSchemesSummaryPage, taxYear)(
       Future.successful(Ok(view(taxYear, answers.refundPensionScheme)))

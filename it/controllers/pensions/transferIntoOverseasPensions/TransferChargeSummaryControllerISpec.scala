@@ -28,7 +28,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.TransferIntoOverseasPensions._
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // scalastyle:off magic.number
@@ -184,22 +184,6 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
       "if journey is incomplete" in {
         result.status shouldBe SEE_OTHER
         result.header("location") shouldBe Some(transferPensionSavingsUrl(taxYearEOY))
-      }
-    }
-
-    "redirect to the pensions summary page if there is no session data" should {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        urlGet(
-          fullUrl(transferChargeSummaryUrl(taxYearEOY)),
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-
-      "have a SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
       }
     }
   }

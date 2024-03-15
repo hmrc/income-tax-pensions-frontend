@@ -46,28 +46,28 @@ class PensionSchemeTaxTransferController @Inject() (actionsProvider: ActionsProv
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(TaxOnPensionSchemesAmountPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val transferSchemeChargeAmount: Option[BigDecimal] =
         data.pensions.transfersIntoOverseasPensions.pensionSchemeTransferChargeAmount
       val transferSchemeCharge: Option[Boolean] = data.pensions.transfersIntoOverseasPensions.pensionSchemeTransferCharge
       (transferSchemeCharge, transferSchemeChargeAmount) match {
-        case (Some(a), amount) => Future.successful(Ok(view(formsProvider.pensionSchemeTaxTransferForm(sessionData.user).fill((a, amount)), taxYear)))
-        case _                 => Future.successful(Ok(view(formsProvider.pensionSchemeTaxTransferForm(sessionData.user), taxYear)))
+        case (Some(a), amount) => Future.successful(Ok(view(formsProvider.pensionSchemeTaxTransferForm(request.user).fill((a, amount)), taxYear)))
+        case _                 => Future.successful(Ok(view(formsProvider.pensionSchemeTaxTransferForm(request.user), taxYear)))
       }
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     formsProvider
-      .pensionSchemeTaxTransferForm(sessionData.user)
+      .pensionSchemeTaxTransferForm(request.user)
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),
         yesNoAmount => {
           val checkRedirect = journeyCheck(OverseasTransferChargeAmountPage, _: PensionsCYAModel, taxYear)
-          redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+          redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
             (yesNoAmount._1, yesNoAmount._2) match {
               case (true, amount) => updateSessionData(data, yesNo = true, amount, taxYear)
               case (false, _)     => updateSessionData(data, yesNo = false, None, taxYear)

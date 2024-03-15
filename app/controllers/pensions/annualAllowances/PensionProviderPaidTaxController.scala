@@ -46,25 +46,25 @@ class PensionProviderPaidTaxController @Inject() (actionsProvider: ActionsProvid
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(PensionProviderPaidTaxPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val providePaidAnnualAllowanceQuestion = data.pensions.pensionsAnnualAllowances.pensionProvidePaidAnnualAllowanceQuestion
       val taxPaid                            = data.pensions.pensionsAnnualAllowances.taxPaidByPensionProvider
 
       (providePaidAnnualAllowanceQuestion, taxPaid) match {
         case (Some(bool), amount) =>
-          Future.successful(Ok(view(pensionProviderPaidTaxForm(sessionData.user.isAgent).fill((bool, amount)), taxYear)))
+          Future.successful(Ok(view(pensionProviderPaidTaxForm(request.user.isAgent).fill((bool, amount)), taxYear)))
         case _ =>
-          Future.successful(Ok(view(pensionProviderPaidTaxForm(sessionData.user.isAgent), taxYear)))
+          Future.successful(Ok(view(pensionProviderPaidTaxForm(request.user.isAgent), taxYear)))
       }
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(PensionProviderPaidTaxPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-      pensionProviderPaidTaxForm(sessionData.user.isAgent)
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      pensionProviderPaidTaxForm(request.user.isAgent)
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),

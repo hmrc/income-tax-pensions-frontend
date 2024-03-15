@@ -46,27 +46,27 @@ class AboveReducedAnnualAllowanceController @Inject() (actionsProvider: ActionsP
     extends FrontendController(cc)
     with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(AboveAnnualAllowancePage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       val aboveAnnualAllowanceQuestion = data.pensions.pensionsAnnualAllowances.aboveAnnualAllowanceQuestion
       val amount                       = data.pensions.pensionsAnnualAllowances.aboveAnnualAllowance
 
       (aboveAnnualAllowanceQuestion, amount) match {
         case (Some(yesNo), amount) =>
           Future.successful(
-            Ok(view(formsProvider.aboveAnnualAllowanceForm(sessionData.user).fill((yesNo, amount): (Boolean, Option[BigDecimal])), taxYear)))
+            Ok(view(formsProvider.aboveAnnualAllowanceForm(request.user).fill((yesNo, amount): (Boolean, Option[BigDecimal])), taxYear)))
         case _ =>
-          Future.successful(Ok(view(formsProvider.aboveAnnualAllowanceForm(sessionData.user), taxYear)))
+          Future.successful(Ok(view(formsProvider.aboveAnnualAllowanceForm(request.user), taxYear)))
       }
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(AboveAnnualAllowancePage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(sessionData.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       formsProvider
-        .aboveAnnualAllowanceForm(sessionData.user)
+        .aboveAnnualAllowanceForm(request.user)
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear))),

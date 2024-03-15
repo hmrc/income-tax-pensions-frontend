@@ -46,8 +46,8 @@ class StatePensionStartDateController @Inject() (actionsProvider: ActionsProvide
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    val journey      = request.pensionsUserData.pensions.incomeFromPensions
+  def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val journey      = request.sessionData.pensions.incomeFromPensions
     val formProvider = formsProvider.stateBenefitDateForm
 
     validateFlow(journey, StatePaymentsStartDatePage, taxYear) {
@@ -66,8 +66,8 @@ class StatePensionStartDateController @Inject() (actionsProvider: ActionsProvide
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    val journey      = request.pensionsUserData.pensions.incomeFromPensions
+  def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val journey      = request.sessionData.pensions.incomeFromPensions
     val formProvider = formsProvider.stateBenefitDateForm.bindFromRequest()
 
     validateFlow(journey, StatePaymentsStartDatePage, taxYear) {

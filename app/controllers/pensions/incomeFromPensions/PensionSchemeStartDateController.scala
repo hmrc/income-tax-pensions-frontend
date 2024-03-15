@@ -48,9 +48,9 @@ class PensionSchemeStartDateController @Inject() (pensionSessionService: Pension
     extends FrontendController(mcc)
     with I18nSupport {
 
-  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionDataRequest =>
-      indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, pensionSchemeIndex, WhenDidYouStartGettingPaymentsPage, taxYear) { data =>
+  def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
+    implicit request =>
+      indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, WhenDidYouStartGettingPaymentsPage, taxYear) { data =>
         val viewModel = data.pensions.incomeFromPensions.uKPensionIncomes
         val index     = pensionSchemeIndex.getOrElse(0)
         viewModel(index).startDate.fold {
@@ -68,9 +68,9 @@ class PensionSchemeStartDateController @Inject() (pensionSessionService: Pension
       }
   }
 
-  def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit sessionDataRequest =>
-      indexCheckThenJourneyCheck(sessionDataRequest.pensionsUserData, pensionSchemeIndex, WhenDidYouStartGettingPaymentsPage, taxYear) { data =>
+  def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
+    implicit request =>
+      indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, WhenDidYouStartGettingPaymentsPage, taxYear) { data =>
         val index        = pensionSchemeIndex.getOrElse(0)
         val verifiedForm = formProvider.pensionSchemeDateForm.bindFromRequest()
         verifiedForm
@@ -87,7 +87,7 @@ class PensionSchemeStartDateController @Inject() (pensionSessionService: Pension
                 viewModel.uKPensionIncomes.updated(index, pensionScheme.copy(startDate = Some(newStartDate)))
               val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedPensionIncomesList))
 
-              pensionSessionService.createOrUpdateSessionData(sessionDataRequest.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
+              pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                 errorHandler.internalServerError()) {
                 Redirect(PensionSchemeSummaryController.show(taxYear, pensionSchemeIndex))
               }

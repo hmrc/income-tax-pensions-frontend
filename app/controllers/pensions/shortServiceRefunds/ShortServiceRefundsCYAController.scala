@@ -50,7 +50,7 @@ class ShortServiceRefundsCYAController @Inject() (auditProvider: AuditActionsPro
     with SessionHelper {
 
   def show(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsViewAuditing(taxYear) async { implicit request =>
-    val answers = request.pensionsUserData.pensions.shortServiceRefunds
+    val answers = request.sessionData.pensions.shortServiceRefunds
 
     validateFlow(answers, CYAPage, taxYear) {
       Future.successful(Ok(view(taxYear, answers)))
@@ -58,7 +58,7 @@ class ShortServiceRefundsCYAController @Inject() (auditProvider: AuditActionsPro
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsUpdateAuditing(taxYear) async { implicit request =>
-    val answers = request.pensionsUserData.pensions.shortServiceRefunds
+    val answers = request.sessionData.pensions.shortServiceRefunds
 
     validateFlow(answers, CYAPage, taxYear) {
       val resultOrError: EitherT[Future, ServiceError, Result] =
