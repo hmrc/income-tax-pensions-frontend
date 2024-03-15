@@ -31,7 +31,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.TransferIntoOverseasPensions._
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl, pensionSummaryUrl}
+import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {

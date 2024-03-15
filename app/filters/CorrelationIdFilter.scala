@@ -16,9 +16,9 @@
 
 package filters
 
-import akka.stream.Materializer
 import models.logging.CorrelationId.{RequestHeaderOps, ResultOps}
 import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
+import org.apache.pekko.stream.Materializer
 import org.slf4j.MDC
 import play.api.mvc._
 

@@ -25,18 +25,16 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class IncomeFromPensionsSummaryController @Inject() (
-    mcc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    pensionSessionService: PensionSessionService,
-    view: IncomeFromPensionsSummaryView)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class IncomeFromPensionsSummaryController @Inject() (mcc: MessagesControllerComponents,
+                                                     authAction: AuthorisedAction,
+                                                     pensionSessionService: PensionSessionService,
+                                                     view: IncomeFromPensionsSummaryView)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

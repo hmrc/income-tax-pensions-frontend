@@ -26,8 +26,9 @@ import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges._
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 
+import java.time.ZonedDateTime
+
 object PensionUserDataStub extends IntegrationTest {
-  implicit val testClock: Clock = UnitTestClock
 
   val paymentsIntoPensionViewModel: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
     Some(true),
@@ -77,7 +78,7 @@ object PensionUserDataStub extends IntegrationTest {
       taxYear = taxyear,
       isPriorSubmission = isPriorSubmission,
       pensions = cya,
-      lastUpdated = testClock.now()
+      lastUpdated = ZonedDateTime.now()
     )
   // scalastyle:on magic.number
 

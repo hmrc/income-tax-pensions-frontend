@@ -23,7 +23,7 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithIncomeOverseasPension}
 import builders.UserBuilder.aUser
-import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
+import controllers.pensions.routes.OverseasPensionsSummaryController
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.PensionScheme
 import models.pension.reliefs.PaymentsIntoPensionsViewModel

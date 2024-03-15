@@ -31,25 +31,19 @@ import services.redirects.PaymentsIntoOverseasPensionsPages.EmployerPayOverseasP
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.EmployerPayOverseasPensionView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmployerPayOverseasPensionController @Inject() (
-    authAction: AuthorisedAction,
-    view: EmployerPayOverseasPensionView,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class EmployerPayOverseasPensionController @Inject() (authAction: AuthorisedAction,
+                                                      view: EmployerPayOverseasPensionView,
+                                                      pensionSessionService: PensionSessionService,
+                                                      errorHandler: ErrorHandler,
+                                                      mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
-
-  def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"overseasPension.employerPayOverseasPension.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
-  )
 
   def show(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
     pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
@@ -103,5 +97,9 @@ class EmployerPayOverseasPensionController @Inject() (
           }
       )
   }
+
+  def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = s"overseasPension.employerPayOverseasPension.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
+  )
 
 }

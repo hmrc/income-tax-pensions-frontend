@@ -45,7 +45,7 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
   private def summaryRowForAmountCharged(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit
       messages: Messages): Option[SummaryListRow] =
     transfersIntoOverseasPensionsViewModel.transferPensionSavings
-      .filter(_ == true)
+      .filter(identity)
       .map(_ =>
         transfersIntoOverseasPensionsViewModel.overseasTransferCharge match {
           case Some(true) if transfersIntoOverseasPensionsViewModel.overseasTransferChargeAmount.isDefined =>
@@ -64,9 +64,9 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
 
   private def summaryRowForTaxOnAmountCharged(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit
       messages: Messages): Option[SummaryListRow] =
-    transfersIntoOverseasPensionsViewModel.transferPensionSavings.filter(_ == true).flatMap { _ =>
+    transfersIntoOverseasPensionsViewModel.transferPensionSavings.filter(identity).flatMap { _ =>
       transfersIntoOverseasPensionsViewModel.overseasTransferCharge
-        .filter(_ == true)
+        .filter(identity)
         .map(_ =>
           transfersIntoOverseasPensionsViewModel.pensionSchemeTransferCharge match {
             case Some(true) if transfersIntoOverseasPensionsViewModel.pensionSchemeTransferChargeAmount.isDefined =>
@@ -86,10 +86,10 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
 
   private def summaryRowForSchemesPayingTax(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit
       messages: Messages): Option[SummaryListRow] =
-    transfersIntoOverseasPensionsViewModel.transferPensionSavings.filter(_ == true).flatMap { _ =>
-      transfersIntoOverseasPensionsViewModel.overseasTransferCharge.filter(_ == true).flatMap { _ =>
+    transfersIntoOverseasPensionsViewModel.transferPensionSavings.filter(identity).flatMap { _ =>
+      transfersIntoOverseasPensionsViewModel.overseasTransferCharge.filter(identity).flatMap { _ =>
         transfersIntoOverseasPensionsViewModel.pensionSchemeTransferCharge
-          .filter(_ == true)
+          .filter(identity)
           .map(_ =>
             summaryListRowWithStrings(
               "transferIntoOverseasPensions.cya.schemesPayingTax",

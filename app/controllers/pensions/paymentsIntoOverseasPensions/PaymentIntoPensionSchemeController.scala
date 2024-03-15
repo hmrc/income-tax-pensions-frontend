@@ -30,7 +30,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.Html
 import services.PensionSessionService
-import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.PaymentIntoPensionSchemeView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +40,7 @@ class PaymentIntoPensionSchemeController @Inject() (cc: MessagesControllerCompon
                                                     authAction: AuthorisedAction,
                                                     view: PaymentIntoPensionSchemeView,
                                                     pensionSessionService: PensionSessionService,
-                                                    errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                    errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends BaseYesNoAmountController(cc, pensionSessionService, authAction, errorHandler)
     with I18nSupport {
 

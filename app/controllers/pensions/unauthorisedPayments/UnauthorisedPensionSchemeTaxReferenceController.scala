@@ -30,19 +30,17 @@ import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.UnauthorisedPaymentsPages.PSTRPage
 import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.unauthorisedPayments.PensionSchemeTaxReferenceView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UnauthorisedPensionSchemeTaxReferenceController @Inject() (
-    cc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    view: PensionSchemeTaxReferenceView,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class UnauthorisedPensionSchemeTaxReferenceController @Inject() (cc: MessagesControllerComponents,
+                                                                 authAction: AuthorisedAction,
+                                                                 view: PensionSchemeTaxReferenceView,
+                                                                 pensionSessionService: PensionSessionService,
+                                                                 errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
@@ -69,6 +67,14 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject() (
           }
       }
   }
+
+  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Option[String] =
+    pensionSchemeIndex match {
+      case Some(index) if pensionSchemesList.size > index =>
+        Some(pensionSchemesList(index))
+      case _ =>
+        None
+    }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = authAction.async { implicit request =>
     val errorMsgDetails = (
@@ -110,12 +116,4 @@ class UnauthorisedPensionSchemeTaxReferenceController @Inject() (
           }
       )
   }
-
-  private def checkIndexScheme(pensionSchemeIndex: Option[Int], pensionSchemesList: Seq[String]): Option[String] =
-    pensionSchemeIndex match {
-      case Some(index) if pensionSchemesList.size > index =>
-        Some(pensionSchemesList(index))
-      case _ =>
-        None
-    }
 }

@@ -32,7 +32,6 @@ import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.{ExcludeJourneyService, PensionReliefsService, PensionSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import utils.EqualsHelper.isDifferent
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
@@ -46,7 +45,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
                                                    pensionReliefsService: PensionReliefsService,
                                                    errorHandler: ErrorHandler,
                                                    excludeJourneyService: ExcludeJourneyService,
-                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport {
 

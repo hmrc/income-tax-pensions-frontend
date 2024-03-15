@@ -25,7 +25,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.OverseasPensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
@@ -36,7 +35,7 @@ class OverseasPensionsSummaryController @Inject() (
     mcc: MessagesControllerComponents,
     authAction: AuthorisedAction,
     pensionSessionService: PensionSessionService,
-    overseasPensionsSummaryView: OverseasPensionsSummaryView)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+    overseasPensionsSummaryView: OverseasPensionsSummaryView)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

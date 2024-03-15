@@ -29,7 +29,7 @@ import services.PensionSessionService
 import services.redirects.PaymentsIntoOverseasPensionsPages.QOPSReferencePage
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.paymentsIntoOverseasPensions.QOPSReferenceView
 
 import javax.inject.{Inject, Singleton}
@@ -40,7 +40,7 @@ class QOPSReferenceController @Inject() (actionsProvider: ActionsProvider,
                                          view: QOPSReferenceView,
                                          pensionSessionService: PensionSessionService,
                                          errorHandler: ErrorHandler,
-                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

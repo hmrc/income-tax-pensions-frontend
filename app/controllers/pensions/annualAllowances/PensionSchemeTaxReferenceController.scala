@@ -32,7 +32,6 @@ import services.redirects.AnnualAllowancesPages.PSTRPage
 import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.annualAllowances.PensionSchemeTaxReferenceView
 
 import javax.inject.{Inject, Singleton}
@@ -43,7 +42,7 @@ class PensionSchemeTaxReferenceController @Inject() (cc: MessagesControllerCompo
                                                      authAction: AuthorisedAction,
                                                      view: PensionSchemeTaxReferenceView,
                                                      pensionSessionService: PensionSessionService,
-                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 

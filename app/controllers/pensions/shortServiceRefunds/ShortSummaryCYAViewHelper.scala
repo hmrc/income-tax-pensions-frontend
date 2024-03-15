@@ -44,7 +44,7 @@ object ShortSummaryCYAViewHelper extends CYABaseHelper {
   private def summaryRowForShortServiceRefundsAmount(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)(implicit
       messages: Messages): Option[SummaryListRow] =
     shortServiceRefundsViewModel.shortServiceRefund
-      .filter(_ == true)
+      .filter(identity)
       .flatMap(_ =>
         shortServiceRefundsViewModel.shortServiceRefund match {
           case Some(true) if shortServiceRefundsViewModel.shortServiceRefundCharge.isDefined =>
@@ -77,7 +77,7 @@ object ShortSummaryCYAViewHelper extends CYABaseHelper {
   private def summaryRowForShortServiceRefundChargeAmount(shortServiceRefundsViewModel: ShortServiceRefundsViewModel, taxYear: Int)(implicit
       messages: Messages): Option[SummaryListRow] =
     shortServiceRefundsViewModel.shortServiceRefundTaxPaid
-      .filter(_ == true)
+      .filter(identity)
       .flatMap(_ =>
         shortServiceRefundsViewModel.shortServiceRefundTaxPaid match {
           case Some(true) if shortServiceRefundsViewModel.shortServiceRefundTaxPaidCharge.isDefined =>

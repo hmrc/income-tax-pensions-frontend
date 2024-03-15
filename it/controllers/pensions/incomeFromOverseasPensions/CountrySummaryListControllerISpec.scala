@@ -28,7 +28,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromOverseasPensionsPages._
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, pensionSummaryUrl}
+import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
 import utils.ViewUtils.bigDecimalCurrency
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 

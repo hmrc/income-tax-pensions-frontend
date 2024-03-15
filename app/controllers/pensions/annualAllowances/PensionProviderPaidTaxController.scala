@@ -30,7 +30,7 @@ import services.redirects.AnnualAllowancesPages.PensionProviderPaidTaxPage
 import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.annualAllowances.PensionProviderPaidTaxView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +41,7 @@ class PensionProviderPaidTaxController @Inject() (actionsProvider: ActionsProvid
                                                   pensionSessionService: PensionSessionService,
                                                   view: PensionProviderPaidTaxView,
                                                   errorHandler: ErrorHandler,
-                                                  cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                  cc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {

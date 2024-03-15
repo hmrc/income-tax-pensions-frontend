@@ -28,7 +28,6 @@ import services.redirects.PaymentsIntoPensionPages.TotalRasPage
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.paymentsIntoPensions.TotalPaymentsIntoRASView
 
 import java.text.NumberFormat
@@ -42,7 +41,7 @@ class TotalPaymentsIntoRASController @Inject() (authAction: AuthorisedAction,
                                                 errorHandler: ErrorHandler,
                                                 view: TotalPaymentsIntoRASView,
                                                 formProvider: PaymentsIntoPensionFormProvider,
-                                                mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 
