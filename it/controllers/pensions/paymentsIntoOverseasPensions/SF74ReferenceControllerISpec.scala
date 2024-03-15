@@ -70,22 +70,6 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
         }
       }
     }
-
-    "redirect to the overseas pensions summary page if there is no session data" should {
-      lazy val result: WSResponse = {
-        dropPensionsDB()
-        authoriseAgentOrIndividual()
-        urlGet(
-          fullUrl(sf74ReferenceUrl(taxYearEOY, schemeIndex0)),
-          follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
-      }
-      "have a SEE_OTHER status" in {
-        result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(pensionSummaryUrl(taxYearEOY))
-      }
-    }
-
     "redirect to the first page in scheme loop if the index doesn't match and there are NO pension schemes" should {
       val pensionsNoSchemesViewModel =
         aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aTransitionalCorrespondingRelief.copy(sf74Reference = None)))

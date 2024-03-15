@@ -24,7 +24,7 @@ import play.api.mvc.AnyContent
 package object incomeFromPensions {
 
   def refreshSessionModel(updatedJourney: IncomeFromPensionsViewModel)(implicit request: UserSessionDataRequest[AnyContent]): PensionsUserData = {
-    val updatedPensions = request.pensionsUserData.pensions.copy(incomeFromPensions = updatedJourney)
-    request.pensionsUserData.copy(pensions = updatedPensions)
+    val updatedPensions = request.sessionData.pensions.copy(incomeFromPensions = updatedJourney)
+    request.sessionData.copy(pensions = updatedPensions)
   }
 }

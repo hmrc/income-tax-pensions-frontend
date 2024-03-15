@@ -37,14 +37,6 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
         response.status equals OK
       }
 
-      "redirect to the summary page" when {
-        "the user has no stored session data at all" in {
-          implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-          implicit val response: WSResponse   = getPageWithIndex()
-          assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
-        }
-      }
-
       "redirect to relief scheme summary page" when {
         "the user accesses page with index out of bounds" in {
           val sessionData                     = pensionsUserData(aPensionsCYAModel)
@@ -85,14 +77,6 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
           assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
           getPaymentsIntoOverseasPensionsViewModel mustBe Some(aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty))
         }
-      }
-
-      "redirect to the Pensions Summary page when the user has no stored session data at all" in {
-        implicit val userConfig: UserConfig = userConfigWhenIrrelevant(None)
-        implicit val response: WSResponse   = submitForm(Map("" -> ""), Map("index" -> "0"))
-
-        assertRedirectionAsExpected(PageRelativeURLs.pensionsSummaryPage)
-        getTransferPensionsViewModel mustBe None
       }
     }
   }

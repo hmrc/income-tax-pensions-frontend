@@ -50,15 +50,15 @@ class UkPensionIncomeCYAController @Inject() (mcc: MessagesControllerComponents,
 
   def show(taxYear: Int): Action[AnyContent] = auditProvider.ukPensionIncomeViewAuditing(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(CheckUkPensionIncomeCYAPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
       Future.successful(Ok(view(taxYear, data.pensions.incomeFromPensions)))
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.ukPensionIncomeUpdateAuditing(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(CheckUkPensionIncomeCYAPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(request.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
-      if (sessionDataDifferentThanPriorData(sessionData.pensions, request.pensions)) {
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
+      if (sessionDataDifferentThanPriorData(sessionData.pensions, request.maybePrior)) {
         service.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
           case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))

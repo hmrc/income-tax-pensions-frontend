@@ -48,20 +48,20 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit sessionData =>
-    indexCheckThenJourneyCheck(sessionData.pensionsUserData, index, DoubleTaxationAgreementPage, taxYear) { relief: Relief =>
-      val form: Form[DoubleTaxationAgreementFormModel] = dblTaxationAgreementForm(sessionData.user).fill(updateViewModel(relief))
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    indexCheckThenJourneyCheck(request.sessionData, index, DoubleTaxationAgreementPage, taxYear) { relief: Relief =>
+      val form: Form[DoubleTaxationAgreementFormModel] = dblTaxationAgreementForm(request.user).fill(updateViewModel(relief))
       Future.successful(Ok(view(form, taxYear, index)))
     }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async { implicit request =>
-    indexCheckThenJourneyCheck(request.pensionsUserData, index, DoubleTaxationAgreementPage, taxYear) { _ =>
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    indexCheckThenJourneyCheck(request.sessionData, index, DoubleTaxationAgreementPage, taxYear) { _ =>
       dblTaxationAgreementForm(request.user)
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
-          doubleTaxationAgreement => updateSessionData(request.pensionsUserData, doubleTaxationAgreement, taxYear, index.get)
+          doubleTaxationAgreement => updateSessionData(request.sessionData, doubleTaxationAgreement, taxYear, index.get)
         )
     }
   }

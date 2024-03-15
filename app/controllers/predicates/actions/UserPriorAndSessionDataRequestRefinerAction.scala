@@ -16,6 +16,7 @@
 
 package controllers.predicates.actions
 
+import cats.implicits.catsSyntaxEitherId
 import config.ErrorHandler
 import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
 import play.api.mvc.{ActionRefiner, Result}
@@ -24,18 +25,28 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvi
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class UserPriorAndSessionDataRequestRefinerAction(taxYear: Int, pensionSessionService: PensionSessionService, errorHandler: ErrorHandler)(
-    implicit ec: ExecutionContext)
+case class UserPriorAndSessionDataRequestRefinerAction(taxYear: Int, service: PensionSessionService, errorHandler: ErrorHandler)(implicit
+    ec: ExecutionContext)
     extends ActionRefiner[UserSessionDataRequest, UserPriorAndSessionDataRequest]
     with FrontendHeaderCarrierProvider {
 
   override protected[predicates] def executionContext: ExecutionContext = ec
 
   override protected[predicates] def refine[A](input: UserSessionDataRequest[A]): Future[Either[Result, UserPriorAndSessionDataRequest[A]]] =
-    pensionSessionService.loadPriorData(taxYear, input.user)(hc(input.request)).map {
-      case Left(error) =>
-        Left(errorHandler.handleError(error.status)(input.request))
-      case Right(incomeTaxUserData) =>
-        Right(UserPriorAndSessionDataRequest(input.pensionsUserData, incomeTaxUserData.pensions, input.user, input.request))
-    }
+    service
+      .loadPriorData(taxYear, input.user)(hc(input.request))
+      .map {
+        case Left(error) =>
+          errorHandler
+            .handleError(error.status)(input.request)
+            .asLeft
+
+        case Right(prior) =>
+          UserPriorAndSessionDataRequest(
+            sessionData = input.sessionData,
+            maybePrior = prior.pensions,
+            user = input.user,
+            request = input.request
+          ).asRight
+      }
 }

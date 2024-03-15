@@ -49,10 +49,10 @@ class TransferPensionsSchemeController @Inject() (actionsProvider: ActionsProvid
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
     implicit userSessionDataRequest =>
       val checkRedirect = journeyCheck(DidAUKPensionSchemePayTransferChargePage, _: PensionsCYAModel, taxYear, index)
-      redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.pensionsUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
+      redirectBasedOnCurrentAnswers(taxYear, Some(userSessionDataRequest.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
         val tcPensionSchemes = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
         validatedIndex(index, tcPensionSchemes.size) match {
           case Some(idx) =>
@@ -65,9 +65,9 @@ class TransferPensionsSchemeController @Inject() (actionsProvider: ActionsProvid
       }
   }
 
-  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
+  def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
     implicit userSessionDataRequest =>
-      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, index, DidAUKPensionSchemePayTransferChargePage, taxYear) { data =>
+      indexCheckThenJourneyCheck(userSessionDataRequest.sessionData, index, DidAUKPensionSchemePayTransferChargePage, taxYear) { data =>
         val tcPensionSchemes = data.pensions.transfersIntoOverseasPensions.transferPensionScheme
         validatedIndex(index, tcPensionSchemes.size) match {
 

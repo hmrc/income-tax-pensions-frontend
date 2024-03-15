@@ -41,7 +41,7 @@ object PensionsAuditAction {
       with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = Future.successful {
-      val auditModel = PaymentsIntoPensionsAudit.standardAudit(req.user, req.pensionsUserData)
+      val auditModel = PaymentsIntoPensionsAudit.standardAudit(req.user, req.sessionData)
       auditService.sendAudit(auditModel.toAuditModelView)(hc(req.request), ec, PaymentsIntoPensionsAudit.writes)
       None
     }
@@ -53,8 +53,8 @@ object PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = Future.successful {
       val toAuditModel = {
-        val auditModel = PaymentsIntoPensionsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) { () =>
+        val auditModel = PaymentsIntoPensionsAudit.amendAudit(req.user, req.sessionData, req.maybePrior)
+        if (req.maybePrior.isEmpty) { () =>
           auditModel.toAuditModelCreate
         } else { () =>
           auditModel.toAuditModelAmend
@@ -70,7 +70,7 @@ object PensionsAuditAction {
       with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = Future.successful {
-      val auditModel = UnauthorisedPaymentsAudit.standardAudit(req.user, req.pensionsUserData)
+      val auditModel = UnauthorisedPaymentsAudit.standardAudit(req.user, req.sessionData)
       auditService.sendAudit(auditModel.toAuditModelView)(hc(req.request), ec, UnauthorisedPaymentsAudit.writes)
       None
     }
@@ -82,8 +82,8 @@ object PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = Future.successful {
       val toAuditModel = {
-        val auditModel = UnauthorisedPaymentsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) { () =>
+        val auditModel = UnauthorisedPaymentsAudit.amendAudit(req.user, req.sessionData, req.maybePrior)
+        if (req.maybePrior.isEmpty) { () =>
           auditModel.toAuditModelCreate
         } else { () =>
           auditModel.toAuditModelAmend
@@ -99,7 +99,7 @@ object PensionsAuditAction {
       with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
-      val auditModel = IncomeFromOverseasPensionsAudit.standardAudit(req.user, req.pensionsUserData)
+      val auditModel = IncomeFromOverseasPensionsAudit.standardAudit(req.user, req.sessionData)
       auditService.sendAudit(auditModel.toAuditModelView)(hc(req.request), ec, IncomeFromOverseasPensionsAudit.writes)
       Future.successful(None)
     }
@@ -110,8 +110,8 @@ object PensionsAuditAction {
       with PensionsAuditAction {
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = IncomeFromOverseasPensionsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) { () =>
+        val auditModel = IncomeFromOverseasPensionsAudit.amendAudit(req.user, req.sessionData, req.maybePrior)
+        if (req.maybePrior.isEmpty) { () =>
           auditModel.toAuditModelCreate
         } else { () =>
           auditModel.toAuditModelAmend
@@ -127,7 +127,7 @@ object PensionsAuditAction {
       with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
-      val auditModel = PaymentsIntoOverseasPensionsAudit.standardAudit(req.user, req.pensionsUserData)
+      val auditModel = PaymentsIntoOverseasPensionsAudit.standardAudit(req.user, req.sessionData)
       auditService.sendAudit(auditModel.toAuditModelView)(hc(req.request), ec, PaymentsIntoOverseasPensionsAudit.writes)
       Future.successful(None)
     }
@@ -139,8 +139,8 @@ object PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = PaymentsIntoOverseasPensionsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) { () =>
+        val auditModel = PaymentsIntoOverseasPensionsAudit.amendAudit(req.user, req.sessionData, req.maybePrior)
+        if (req.maybePrior.isEmpty) { () =>
           auditModel.toAuditModelCreate
         } else { () =>
           auditModel.toAuditModelAmend
@@ -156,7 +156,7 @@ object PensionsAuditAction {
       with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
-      val auditModel = ShortServiceRefundsAudit.standardAudit(req.user, req.pensionsUserData)
+      val auditModel = ShortServiceRefundsAudit.standardAudit(req.user, req.sessionData)
       auditService.sendAudit(auditModel.toAuditModelView)(hc(req.request), ec, ShortServiceRefundsAudit.writes)
       Future.successful(None)
     }
@@ -168,8 +168,8 @@ object PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = ShortServiceRefundsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) { () =>
+        val auditModel = ShortServiceRefundsAudit.amendAudit(req.user, req.sessionData, req.maybePrior)
+        if (req.maybePrior.isEmpty) { () =>
           auditModel.toAuditModelCreate
         } else { () =>
           auditModel.toAuditModelAmend
@@ -185,7 +185,7 @@ object PensionsAuditAction {
       with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
-      val auditModel = IncomeFromStatePensionsAudit.standardAudit(req.user, req.pensionsUserData)
+      val auditModel = IncomeFromStatePensionsAudit.standardAudit(req.user, req.sessionData)
       auditService.sendAudit(auditModel.toAuditModelView)(hc(req.request), ec, IncomeFromStatePensionsAudit.writes)
       Future.successful(None)
     }
@@ -197,8 +197,8 @@ object PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = IncomeFromStatePensionsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) { () =>
+        val auditModel = IncomeFromStatePensionsAudit.amendAudit(req.user, req.sessionData, req.maybePrior)
+        if (req.maybePrior.isEmpty) { () =>
           auditModel.toAuditModelCreate
         } else { () =>
           auditModel.toAuditModelAmend
@@ -214,7 +214,7 @@ object PensionsAuditAction {
       with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
-      val auditModel = UkPensionIncomeAudit.standardAudit(req.user, req.pensionsUserData)
+      val auditModel = UkPensionIncomeAudit.standardAudit(req.user, req.sessionData)
       auditService.sendAudit(auditModel.toAuditModelView)(hc(req.request), ec, UkPensionIncomeAudit.writes)
       Future.successful(None)
     }
@@ -225,8 +225,8 @@ object PensionsAuditAction {
       with PensionsAuditAction {
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = UkPensionIncomeAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) { () =>
+        val auditModel = UkPensionIncomeAudit.amendAudit(req.user, req.sessionData, req.maybePrior)
+        if (req.maybePrior.isEmpty) { () =>
           auditModel.toAuditModelCreate
         } else { () =>
           auditModel.toAuditModelAmend
@@ -242,7 +242,7 @@ object PensionsAuditAction {
       with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
-      val auditModel = AnnualAllowancesAudit.standardAudit(req.user, req.pensionsUserData)
+      val auditModel = AnnualAllowancesAudit.standardAudit(req.user, req.sessionData)
       auditService.sendAudit(auditModel.toAuditModelView)(hc(req.request), ec, AnnualAllowancesAudit.writes)
       Future.successful(None)
     }
@@ -254,8 +254,8 @@ object PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = AnnualAllowancesAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) { () =>
+        val auditModel = AnnualAllowancesAudit.amendAudit(req.user, req.sessionData, req.maybePrior)
+        if (req.maybePrior.isEmpty) { () =>
           auditModel.toAuditModelCreate
         } else { () =>
           auditModel.toAuditModelAmend
@@ -271,7 +271,7 @@ object PensionsAuditAction {
       with PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserSessionDataRequest[A]): Future[Option[Result]] = {
-      val auditModel = TransfersIntoOverseasPensionsAudit.standardAudit(req.user, req.pensionsUserData)
+      val auditModel = TransfersIntoOverseasPensionsAudit.standardAudit(req.user, req.sessionData)
       auditService.sendAudit(auditModel.toAuditModelView)(hc(req.request), ec, TransfersIntoOverseasPensionsAudit.writes)
       Future.successful(None)
     }
@@ -283,8 +283,8 @@ object PensionsAuditAction {
 
     override protected[auditActions] def filter[A](req: UserPriorAndSessionDataRequest[A]): Future[Option[Result]] = {
       val toAuditModel = {
-        val auditModel = TransfersIntoOverseasPensionsAudit.amendAudit(req.user, req.pensionsUserData, req.pensions)
-        if (req.pensions.isEmpty) { () =>
+        val auditModel = TransfersIntoOverseasPensionsAudit.amendAudit(req.user, req.sessionData, req.maybePrior)
+        if (req.maybePrior.isEmpty) { () =>
           auditModel.toAuditModelCreate
         } else { () =>
           auditModel.toAuditModelAmend

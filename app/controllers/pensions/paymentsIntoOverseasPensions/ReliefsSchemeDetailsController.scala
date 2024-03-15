@@ -38,17 +38,15 @@ class ReliefsSchemeDetailsController @Inject() (view: ReliefSchemeDetailsView, a
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit userSessionDataRequest =>
-      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, ReliefsSchemeDetailsPage, taxYear) { relief: Relief =>
-        Future.successful(Ok(view(taxYear, relief, reliefIndex)))
-      }
+  def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, ReliefsSchemeDetailsPage, taxYear) { relief: Relief =>
+      Future.successful(Ok(view(taxYear, relief, reliefIndex)))
+    }
   }
 
-  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.userSessionDataFor(taxYear) async {
-    implicit userSessionDataRequest =>
-      indexCheckThenJourneyCheck(userSessionDataRequest.pensionsUserData, reliefIndex, ReliefsSchemeDetailsPage, taxYear) { _ =>
-        Future.successful(Redirect(ReliefsSchemeSummaryController.show(taxYear)))
-      }
+  def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, ReliefsSchemeDetailsPage, taxYear) { _ =>
+      Future.successful(Redirect(ReliefsSchemeSummaryController.show(taxYear)))
+    }
   }
 }
