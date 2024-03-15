@@ -43,7 +43,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.templates.AgentAuthErrorPageView
 
-import java.time.Clock
+import java.time.ZonedDateTime
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 
@@ -59,8 +59,6 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
   }
 
   implicit val actorSystem: ActorSystem = ActorSystem()
-
-  implicit val testClock: UnitTestClock.type = UnitTestClock
 
   def await[T](awaitable: Awaitable[T]): T = Await.result(awaitable, Duration.Inf)
 
@@ -161,7 +159,7 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
   val user: User = authorisationRequest.user
 
   val emptySessionData: PensionsUserData =
-    PensionsUserData(sessionId, "1234567890", nino, taxYear, isPriorSubmission = true, emptyPensionsData, testClock.now())
+    PensionsUserData(sessionId, "1234567890", nino, taxYear, isPriorSubmission = true, emptyPensionsData, ZonedDateTime.now())
 
   implicit class ToFutureOps[A](value: A) {
     def asFuture: Future[A] = Future.successful(value)

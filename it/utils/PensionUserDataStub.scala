@@ -27,7 +27,6 @@ import models.pension.charges._
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 
 object PensionUserDataStub extends IntegrationTest {
-  implicit val testClock: UnitTestClock.type = UnitTestClock
 
   val paymentsIntoPensionViewModel: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
     Some(true),
