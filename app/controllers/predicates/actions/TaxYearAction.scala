@@ -45,7 +45,6 @@ class TaxYearAction @Inject() (taxYear: Int, missingTaxYearReset: Boolean)(impli
     if (validClientTaxYears.isDefined) {
       val validTaxYears = validClientTaxYears.get.split(",").toSeq.map(_.toInt)
       if (!appConfig.taxYearErrorFeature || validTaxYears.contains(taxYear)) {
-        print("here2")
         val sameTaxYear = request.session.get(TAX_YEAR).exists(_.toInt == taxYear)
         if (sameTaxYear || !missingTaxYearReset) {
           Future.successful(Right(request))
