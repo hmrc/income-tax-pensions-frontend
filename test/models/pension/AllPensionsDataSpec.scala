@@ -53,7 +53,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
     def setPensionReliefs(newPensionReliefs: Reliefs) =
       priorBase.copy(pensionReliefs = priorBase.pensionReliefs.map(_.copy(pensionReliefs = newPensionReliefs)))
 
-    // @formatter:off
+    // scalastyle:off formatter
     val cases = Table(
       ("Downstream Model", "Expected FE Model"),
       (emptyReliefs, baseModel),
@@ -123,7 +123,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
         )
       )
     )
-    // @formatter:on
+    // scalastyle:on formatter
 
     "convert prior data to FE model" in forAll(cases) { (downstreamModel, expectedModel) =>
       val actual = AllPensionsData.generateSessionModelFromPrior(setPensionReliefs(downstreamModel))
