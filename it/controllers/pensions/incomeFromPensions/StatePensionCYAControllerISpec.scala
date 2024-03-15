@@ -40,7 +40,7 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
-  private val statePensionCYAModel: ClaimCYAModel = aCreateStatePensionBenefitsUD.claim.get
+  private val statePensionCYAModel: ClaimCYAModel     = aCreateStatePensionBenefitsUD.claim.get
   private val stateBenefitData = StateBenefitViewModel(
     benefitId = statePensionCYAModel.benefitId,
     startDateQuestion = Some(true),
