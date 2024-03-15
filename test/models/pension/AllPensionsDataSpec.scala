@@ -26,7 +26,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.wordspec.AnyWordSpecLike
 
-// scalastyle:off all
+// scalastyle:off
 class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks with Matchers {
 
   val amount: BigDecimal = BigDecimal(123.00)
@@ -194,4 +194,4 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
       priorBase.copy(pensionCharges = priorBase.pensionCharges.map(_.copy(pensionSchemeUnauthorisedPayments = unauth)))
   }
 }
-// scalastyle:on all
+// scalastyle:on
