@@ -25,8 +25,6 @@ class Modules extends AbstractModule {
   override def configure(): Unit = {
     bind(classOf[AppConfig]).asEagerSingleton()
     bind(classOf[UUID]).toInstance(UUID)
-    // TODO: do we need to bind Clock?
-    //    bind(classOf[Clock]).toInstance(Clock)
     bind(classOf[PensionsUserDataRepository]).to(classOf[PensionsUserDataRepositoryImpl]).asEagerSingleton()
   }
 
