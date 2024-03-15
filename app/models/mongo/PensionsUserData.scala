@@ -21,7 +21,7 @@ import models.User
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-import java.time.{Clock, LocalDate, ZoneOffset, ZonedDateTime}
+import java.time.{Clock, ZoneOffset, ZonedDateTime}
 
 case class PensionsUserData(sessionId: String,
                             mtdItId: String,
@@ -32,8 +32,6 @@ case class PensionsUserData(sessionId: String,
                             lastUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC))
 
 object PensionsUserData extends MongoJavatimeFormats {
-
-  implicit val mongoJodaDateTimeFormats: Format[LocalDate] = localDateFormat
 
   implicit val formats: Format[PensionsUserData] = Json.format[PensionsUserData]
 
@@ -59,8 +57,6 @@ case class EncryptedPensionsUserData(sessionId: String,
                                      lastUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC))
 
 object EncryptedPensionsUserData extends MongoJavatimeFormats {
-
-  implicit val mongoJodaDateTimeFormats: Format[LocalDate] = localDateFormat
 
   implicit val formats: Format[EncryptedPensionsUserData] = Json.format[EncryptedPensionsUserData]
 }
