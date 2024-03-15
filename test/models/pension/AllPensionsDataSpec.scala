@@ -28,7 +28,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 
 class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks with Matchers {
 
-  val amount: BigDecimal     = BigDecimal(123.00)
+  val amount: BigDecimal = BigDecimal(123.00)
   val zeroAmount: BigDecimal = BigDecimal(0.00)
 
   val priorBase: AllPensionsData = anAllPensionsData
@@ -72,7 +72,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
         emptyReliefs.copy(
           regularPensionContributions = Some(10.0),
           oneOffPensionContributionsPaid = None,
-          retirementAnnuityPayments = None,
+          retirementAnnuityPayments = None
         ),
         baseModel.copy(
           rasPensionPaymentQuestion = Some(true),
@@ -121,7 +121,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
           workplacePensionPaymentsQuestion = Some(false),
           totalWorkplacePensionPayments = zero
         )
-      ),
+      )
     )
     // @formatter:on
 
