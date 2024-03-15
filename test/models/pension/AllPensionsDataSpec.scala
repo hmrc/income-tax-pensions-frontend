@@ -65,7 +65,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
         baseModel.copy(
           rasPensionPaymentQuestion = Some(true),
           totalRASPaymentsAndTaxRelief = Some(10.0),
-          oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
+          oneOffRasPaymentPlusTaxReliefQuestion = Some(false)
         )
       ),
       (
