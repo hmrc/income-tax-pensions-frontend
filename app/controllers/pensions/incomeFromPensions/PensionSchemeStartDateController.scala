@@ -30,7 +30,6 @@ import services.PensionSessionService
 import services.redirects.IncomeFromOtherUkPensionsPages.WhenDidYouStartGettingPaymentsPage
 import services.redirects.IncomeFromOtherUkPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import utils.DateTimeUtil.localDateTimeFormat
 import views.html.pensions.incomeFromPensions.PensionSchemeStartDateView
 
@@ -44,7 +43,7 @@ class PensionSchemeStartDateController @Inject() (pensionSessionService: Pension
                                                   view: PensionSchemeStartDateView,
                                                   actionsProvider: ActionsProvider,
                                                   formProvider: FormsProvider,
-                                                  mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                  mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport {
 

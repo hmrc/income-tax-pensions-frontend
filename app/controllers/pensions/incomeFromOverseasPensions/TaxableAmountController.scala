@@ -30,7 +30,7 @@ import services.PensionSessionService
 import services.redirects.IncomeFromOverseasPensionsPages.YourTaxableAmountPage
 import services.redirects.IncomeFromOverseasPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.incomeFromOverseasPensions.TaxableAmountView
 
 import java.text.NumberFormat
@@ -43,7 +43,7 @@ class TaxableAmountController @Inject() (authAction: AuthorisedAction,
                                          pensionSessionService: PensionSessionService,
                                          view: TaxableAmountView,
                                          errorHandler: ErrorHandler,
-                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper

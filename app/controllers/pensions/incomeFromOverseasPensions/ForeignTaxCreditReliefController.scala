@@ -33,7 +33,6 @@ import services.PensionSessionService
 import services.redirects.IncomeFromOverseasPensionsPages.ForeignTaxCreditReliefPage
 import services.redirects.IncomeFromOverseasPensionsRedirects.{indexCheckThenJourneyCheck, schemeIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.incomeFromOverseasPensions.ForeignTaxCreditReliefView
 
 import javax.inject.{Inject, Singleton}
@@ -44,7 +43,7 @@ class ForeignTaxCreditReliefController @Inject() (authAction: AuthorisedAction,
                                                   view: ForeignTaxCreditReliefView,
                                                   pensionSessionService: PensionSessionService,
                                                   errorHandler: ErrorHandler,
-                                                  cc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                  cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport {
 
@@ -89,8 +88,7 @@ class ForeignTaxCreditReliefController @Inject() (authAction: AuthorisedAction,
   }
 
   private def onValidForm(pensionsUserData: PensionsUserData, taxYear: Int, validForm: Boolean, index: Int)(implicit
-      request: AuthorisationRequest[AnyContent],
-      clock: Clock): Future[Result] =
+      request: AuthorisationRequest[AnyContent]): Future[Result] =
     validForm match {
       case yesWasSelected =>
         val ifopData: IncomeFromOverseasPensionsViewModel = pensionsUserData.pensions.incomeFromOverseasPensions

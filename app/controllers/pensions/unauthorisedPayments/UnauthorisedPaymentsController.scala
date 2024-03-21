@@ -30,7 +30,6 @@ import services.PensionSessionService
 import services.redirects.SimpleRedirectService.isFinishedCheck
 import services.redirects.UnauthorisedPaymentsRedirects.cyaPageCall
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.unauthorisedPayments.UnauthorisedPaymentsView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +40,7 @@ class UnauthorisedPaymentsController @Inject() (mcc: MessagesControllerComponent
                                                 authAction: AuthorisedAction,
                                                 pensionSessionService: PensionSessionService,
                                                 errorHandler: ErrorHandler,
-                                                view: UnauthorisedPaymentsView)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                view: UnauthorisedPaymentsView)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

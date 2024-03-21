@@ -36,6 +36,5 @@ object CommonData {
 
   implicit val headerCarrierWithSession: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(sessionId)))
   implicit val ec: ExecutionContext                    = ExecutionContext.Implicits.global
-  implicit val testClock: Clock                        = UnitTestClock
 
 }

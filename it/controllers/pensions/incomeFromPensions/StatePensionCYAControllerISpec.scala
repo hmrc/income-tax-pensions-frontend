@@ -40,12 +40,7 @@ import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
 
   override val userScenarios: Seq[UserScenario[_, _]] = Nil
-
-  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false) =
-    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
-
-  private val statePensionCYAModel: ClaimCYAModel = aCreateStatePensionBenefitsUD.claim.get
-
+  private val statePensionCYAModel: ClaimCYAModel     = aCreateStatePensionBenefitsUD.claim.get
   private val stateBenefitData = StateBenefitViewModel(
     benefitId = statePensionCYAModel.benefitId,
     startDateQuestion = Some(true),
@@ -61,7 +56,6 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
     taxPaidQuestion = statePensionCYAModel.taxPaidQuestion,
     taxPaid = statePensionCYAModel.taxPaid
   )
-
   private val priorCYAData = aPensionsUserData.copy(
     taxYear = taxYear,
     pensions = aPensionsCYAGeneratedFromPriorEmpty.copy(
@@ -72,6 +66,9 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
         uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne)
       ))
   )
+
+  private def pensionsUsersData(pensionsCyaModel: PensionsCYAModel, isPrior: Boolean = false) =
+    PensionsUserDataBuilder.aPensionsUserData.copy(isPriorSubmission = isPrior, pensions = pensionsCyaModel)
 
   ".show" should {
 

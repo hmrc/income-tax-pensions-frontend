@@ -30,7 +30,7 @@ import services.PensionSessionService
 import services.redirects.IncomeFromOtherUkPensionsPages.HowMuchPensionDidYouGetPaidPage
 import services.redirects.IncomeFromOtherUkPensionsRedirects.{indexCheckThenJourneyCheck, redirectForSchemeLoop, schemeIsFinishedCheck}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.incomeFromPensions.PensionAmountView
 
 import javax.inject.{Inject, Singleton}
@@ -42,7 +42,7 @@ class PensionAmountController @Inject() (mcc: MessagesControllerComponents,
                                          view: PensionAmountView,
                                          pensionSessionService: PensionSessionService,
                                          errorHandler: ErrorHandler,
-                                         formsProvider: FormsProvider)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                         formsProvider: FormsProvider)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper

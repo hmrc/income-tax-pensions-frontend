@@ -29,20 +29,18 @@ import services.redirects.PaymentsIntoPensionPages.OneOffRasAmountPage
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.paymentsIntoPensions.OneOffRASPaymentsAmountView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OneOffRASPaymentsAmountController @Inject() (
-    authAction: AuthorisedAction,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    view: OneOffRASPaymentsAmountView,
-    formProvider: PaymentsIntoPensionFormProvider,
-    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class OneOffRASPaymentsAmountController @Inject() (authAction: AuthorisedAction,
+                                                   pensionSessionService: PensionSessionService,
+                                                   errorHandler: ErrorHandler,
+                                                   view: OneOffRASPaymentsAmountView,
+                                                   formProvider: PaymentsIntoPensionFormProvider,
+                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 

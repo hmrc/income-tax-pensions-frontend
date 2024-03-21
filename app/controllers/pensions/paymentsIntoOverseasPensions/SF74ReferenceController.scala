@@ -29,7 +29,7 @@ import services.PensionSessionService
 import services.redirects.PaymentsIntoOverseasPensionsPages.SF74ReferencePage
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.paymentsIntoOverseasPensions.SF74ReferenceView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +41,7 @@ class SF74ReferenceController @Inject() (actionsProvider: ActionsProvider,
                                          view: SF74ReferenceView,
                                          formsProvider: FormsProvider,
                                          errorHandler: ErrorHandler,
-                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

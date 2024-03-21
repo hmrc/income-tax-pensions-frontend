@@ -53,7 +53,6 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
     def setPensionReliefs(newPensionReliefs: Reliefs) =
       priorBase.copy(pensionReliefs = priorBase.pensionReliefs.map(_.copy(pensionReliefs = newPensionReliefs)))
 
-    // @formatter:off
     val cases = Table(
       ("Downstream Model", "Expected FE Model"),
       (emptyReliefs, baseModel),
@@ -65,14 +64,14 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
         baseModel.copy(
           rasPensionPaymentQuestion = Some(true),
           totalRASPaymentsAndTaxRelief = Some(10.0),
-          oneOffRasPaymentPlusTaxReliefQuestion = Some(false),
+          oneOffRasPaymentPlusTaxReliefQuestion = Some(false)
         )
       ),
       (
         emptyReliefs.copy(
           regularPensionContributions = Some(10.0),
           oneOffPensionContributionsPaid = None,
-          retirementAnnuityPayments = None,
+          retirementAnnuityPayments = None
         ),
         baseModel.copy(
           rasPensionPaymentQuestion = Some(true),
@@ -121,9 +120,8 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
           workplacePensionPaymentsQuestion = Some(false),
           totalWorkplacePensionPayments = zero
         )
-      ),
+      )
     )
-    // @formatter:on
 
     "convert prior data to FE model" in forAll(cases) { (downstreamModel, expectedModel) =>
       val actual = AllPensionsData.generateSessionModelFromPrior(setPensionReliefs(downstreamModel))

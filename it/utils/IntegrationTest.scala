@@ -16,7 +16,6 @@
 
 package utils
 
-import akka.actor.ActorSystem
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.StateBenefitsModelBuilder.aStateBenefitsModel
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
@@ -26,6 +25,7 @@ import controllers.predicates.actions.AuthorisedAction
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.IncomeTaxUserData
 import models.mongo.PensionsUserData
+import org.apache.pekko.actor.ActorSystem
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -74,7 +74,7 @@ trait IntegrationTest
 
   implicit val actorSystem: ActorSystem = ActorSystem()
 
-  implicit val integrationTestClock: IntegrationTestClock.type = IntegrationTestClock
+//  implicit val integrationTestClock: IntegrationTestClock.type = IntegrationTestClock
 
   implicit def wsClient: WSClient = app.injector.instanceOf[WSClient]
 

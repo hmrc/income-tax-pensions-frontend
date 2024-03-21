@@ -22,7 +22,6 @@ import com.mongodb.client.model.Updates.set
 import config.AppConfig
 import models.User
 import models.mongo._
-import org.joda.time.{DateTime, DateTimeZone}
 import org.mongodb.scala.MongoException
 import org.mongodb.scala.model.{FindOneAndReplaceOptions, FindOneAndUpdateOptions}
 import play.api.Logging
@@ -31,11 +30,11 @@ import services.EncryptionService
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.Codecs.toBson
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-import uk.gov.hmrc.mongo.play.json.formats.MongoJodaFormats
 import uk.gov.hmrc.play.http.logging.Mdc
 import utils.PagerDutyHelper.PagerDutyKeys.{FAILED_TO_CREATE_UPDATE_PENSIONS_DATA, FAILED_TO_ClEAR_PENSIONS_DATA, FAILED_TO_FIND_PENSIONS_DATA}
 import utils.PagerDutyHelper.{PagerDutyKeys, pagerDutyLog}
 
+import java.time.{ZoneOffset, ZonedDateTime}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
@@ -58,7 +57,7 @@ class PensionsUserDataRepositoryImpl @Inject() (mongo: MongoComponent, appConfig
     lazy val start = "[PensionsUserDataRepositoryImpl][find]"
 
     val queryFilter = filter(user.sessionId, user.mtditid, user.nino, taxYear)
-    val update      = set("lastUpdated", toBson(DateTime.now(DateTimeZone.UTC))(MongoJodaFormats.dateTimeWrites))
+    val update      = set("lastUpdated", toBson(ZonedDateTime.now(ZoneOffset.UTC)))
     val options     = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
 
     val findResult = collection.findOneAndUpdate(queryFilter, update, options).toFutureOption().map(Right(_)).recover { case exception: Exception =>

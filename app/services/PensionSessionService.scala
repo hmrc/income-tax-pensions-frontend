@@ -26,16 +26,15 @@ import models.mongo._
 import models.pension.AllPensionsData
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, IncomeTaxUserData, User}
-import org.joda.time.DateTimeZone
 import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
 import repositories.PensionsUserDataRepository.QueryResult
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Clock
 import utils.EitherTUtils.CasterOps
 
+import java.time.{Clock, ZoneOffset}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,9 +43,6 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
                                        submissionsConnector: IncomeTaxUserDataConnector,
                                        errorHandler: ErrorHandler)(implicit ec: ExecutionContext)
     extends Logging {
-
-  def loadPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): DownstreamOutcome[IncomeTaxUserData] =
-    submissionsConnector.getUserData(user.nino, taxYear)(hc.withMtditId(user.mtditid))
 
   def loadSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[PensionsUserData]]] =
     repository.find(taxYear, user).map(_.leftMap(_ => ()))
@@ -60,11 +56,33 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
     } yield (prior, session)
 
+  def loadPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): DownstreamOutcome[IncomeTaxUserData] =
+    submissionsConnector.getUserData(user.nino, taxYear)(hc.withMtditId(user.mtditid))
+
   def getPensionsSessionDataResult(taxYear: Int, user: User)(result: Option[PensionsUserData] => Future[Result])(implicit
       request: Request[_]): Future[Result] =
     repository.find(taxYear, user).flatMap {
       case Left(_)      => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(value) => result(value)
+    }
+
+  def upsertSession(session: PensionsUserData)(implicit ec: ExecutionContext, request: Request[_]): EitherT[Future, Result, Unit] =
+    EitherT(repository.createOrUpdate(session))
+      .leftMap(_ => errorHandler.internalServerError())
+
+  def createOrUpdateSession(pensionsUserData: PensionsUserData): QueryResult[Unit] =
+    repository.createOrUpdate(pensionsUserData).map {
+      case Left(error: DatabaseError) => Left(error)
+      case Right(_)                   => Right(())
+    }
+
+  def mergePriorDataToSession(
+      taxYear: Int,
+      user: User,
+      renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
+  )(implicit request: Request[_], hc: HeaderCarrier): Future[Result] =
+    loadDataAndHandle(taxYear, user) { (sessionData, priorData) =>
+      createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear, user, renderView)
     }
 
   def loadDataAndHandle(taxYear: Int, user: User)(block: (Option[PensionsUserData], Option[AllPensionsData]) => Future[Result])(implicit
@@ -82,51 +100,13 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
     }
   }
 
-  def upsertSession(session: PensionsUserData)(implicit ec: ExecutionContext, request: Request[_]): EitherT[Future, Result, Unit] =
-    EitherT(repository.createOrUpdate(session))
-      .leftMap(_ => errorHandler.internalServerError())
-
-  def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)(onFail: => A)(onSuccess: => A)(
-      implicit clock: Clock): Future[A] = {
-
-    val userData = PensionsUserData(
-      user.sessionId,
-      user.mtditid,
-      user.nino,
-      taxYear,
-      isPriorSubmission,
-      cyaModel,
-      clock.now(DateTimeZone.UTC)
-    )
-
-    repository.createOrUpdate(userData).map {
-      case Right(_) => onSuccess
-      case Left(_)  => onFail
-    }
-  }
-
-  def createOrUpdateSession(pensionsUserData: PensionsUserData): QueryResult[Unit] =
-    repository.createOrUpdate(pensionsUserData).map {
-      case Left(error: DatabaseError) => Left(error)
-      case Right(_)                   => Right(())
-    }
-
-  def mergePriorDataToSession(
-      taxYear: Int,
-      user: User,
-      renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
-  )(implicit request: Request[_], hc: HeaderCarrier, clock: Clock): Future[Result] =
-    loadDataAndHandle(taxYear, user) { (sessionData, priorData) =>
-      createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear, user, renderView)
-    }
-
   private def createOrUpdateSessionIfNeeded(
       sessionData: Option[PensionsUserData],
       priorData: Option[AllPensionsData],
       taxYear: Int,
       user: User,
       renderView: (Int, PensionsCYAModel, Option[AllPensionsData]) => Result
-  )(implicit request: Request[_], clock: Clock): Future[Result] = {
+  )(implicit request: Request[_]): Future[Result] = {
     val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
     val updatedSessionPensionCYAModel = updatedSession.newPensionsCYAModel
     val summaryView                   = renderView(taxYear, updatedSessionPensionCYAModel, priorData)
@@ -136,6 +116,25 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
         errorHandler.handleError(INTERNAL_SERVER_ERROR))(summaryView)
     } else {
       Future.successful(summaryView)
+    }
+  }
+
+  def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)(onFail: => A)(
+      onSuccess: => A): Future[A] = {
+
+    val userData = PensionsUserData(
+      user.sessionId,
+      user.mtditid,
+      user.nino,
+      taxYear,
+      isPriorSubmission,
+      cyaModel,
+      Clock.systemUTC().instant().atZone(ZoneOffset.UTC)
+    )
+
+    repository.createOrUpdate(userData).map {
+      case Right(_) => onSuccess
+      case Left(_)  => onFail
     }
   }
 }

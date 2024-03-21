@@ -32,25 +32,19 @@ import services.redirects.IncomeFromOtherUkPensionsPages.DoYouGetUkPensionScheme
 import services.redirects.IncomeFromOtherUkPensionsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.incomeFromPensions.UkPensionSchemePaymentsView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class UkPensionSchemePaymentsController @Inject() (
-    mcc: MessagesControllerComponents,
-    authAction: AuthorisedAction,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    view: UkPensionSchemePaymentsView)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class UkPensionSchemePaymentsController @Inject() (mcc: MessagesControllerComponents,
+                                                   authAction: AuthorisedAction,
+                                                   pensionSessionService: PensionSessionService,
+                                                   errorHandler: ErrorHandler,
+                                                   view: UkPensionSchemePaymentsView)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
-
-  private def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
-    missingInputError = s"pensions.ukPensionSchemePayments.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
-  )
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
@@ -69,6 +63,15 @@ class UkPensionSchemePaymentsController @Inject() (
 
       case _ => Future.successful(Ok(view(yesNoForm(request.user), taxYear)))
     }
+  }
+
+  private def cleanUpSchemes(pensionsUserData: PensionsUserData)(implicit ec: ExecutionContext): Future[Either[DatabaseError, PensionsUserData]] = {
+    val schemes            = pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+    val filteredSchemes    = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
+    val updatedViewModel   = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = filteredSchemes)
+    val updatedPensionData = pensionsUserData.pensions.copy(incomeFromPensions = updatedViewModel)
+    val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
+    pensionSessionService.createOrUpdateSession(updatedUserData).map(_.map(_ => updatedUserData))
   }
 
   def submit(taxYear: Int): Action[AnyContent] = authAction.async { implicit request =>
@@ -100,12 +103,7 @@ class UkPensionSchemePaymentsController @Inject() (
       )
   }
 
-  private def cleanUpSchemes(pensionsUserData: PensionsUserData)(implicit ec: ExecutionContext): Future[Either[DatabaseError, PensionsUserData]] = {
-    val schemes            = pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
-    val filteredSchemes    = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
-    val updatedViewModel   = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = filteredSchemes)
-    val updatedPensionData = pensionsUserData.pensions.copy(incomeFromPensions = updatedViewModel)
-    val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
-    pensionSessionService.createOrUpdateSession(updatedUserData).map(_.map(_ => updatedUserData))
-  }
+  private def yesNoForm(user: User): Form[Boolean] = YesNoForm.yesNoForm(
+    missingInputError = s"pensions.ukPensionSchemePayments.error.noEntry.${if (user.isAgent) "agent" else "individual"}"
+  )
 }

@@ -25,7 +25,6 @@ import models.mongo.{PensionsUserData, ServiceError}
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Clock
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,8 +37,7 @@ class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDa
                                          paymentsIntoPensions: PaymentsIntoPensionsViewModel,
                                          existingOverseasPensionSchemeContributions: Option[BigDecimal])(implicit
       hc: HeaderCarrier,
-      ec: ExecutionContext,
-      clock: Clock): EitherT[Future, ApiError, Unit] = {
+      ec: ExecutionContext): EitherT[Future, ApiError, Unit] = {
     val reliefs            = paymentsIntoPensions.toReliefs(existingOverseasPensionSchemeContributions)
     val updatedReliefsData = CreateUpdatePensionReliefsModel(pensionReliefs = reliefs)
 
@@ -60,7 +58,7 @@ class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDa
     }
   }
 
-  private def removeSubmittedData(taxYear: TaxYear, userData: Option[PensionsUserData], user: User)(implicit clock: Clock): PensionsUserData =
+  private def removeSubmittedData(taxYear: TaxYear, userData: Option[PensionsUserData], user: User): PensionsUserData =
     userData
       .map(data => data.copy(pensions = data.pensions.removePaymentsIntoPension()))
       .getOrElse(PensionsUserData.empty(user, taxYear))

@@ -31,7 +31,6 @@ import services.redirects.PaymentsIntoOverseasPensionsPages.PensionsCustomerRefe
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck, schemeIsFinishedCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.PensionsCustomerReferenceNumberView
 
 import javax.inject.{Inject, Singleton}
@@ -42,7 +41,7 @@ class PensionsCustomerReferenceNumberController @Inject() (actionsProvider: Acti
                                                            view: PensionsCustomerReferenceNumberView,
                                                            pensionSessionService: PensionSessionService,
                                                            errorHandler: ErrorHandler,
-                                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock)
+                                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport {
 

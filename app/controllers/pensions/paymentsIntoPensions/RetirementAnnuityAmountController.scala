@@ -28,20 +28,19 @@ import services.redirects.PaymentsIntoPensionPages.RetirementAnnuityAmountPage
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.paymentsIntoPensions.RetirementAnnuityAmountView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RetirementAnnuityAmountController @Inject() (
-    authAction: AuthorisedAction,
-    retirementAnnuityAmountView: RetirementAnnuityAmountView,
-    pensionSessionService: PensionSessionService,
-    errorHandler: ErrorHandler,
-    formProvider: PaymentsIntoPensionFormProvider,
-    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+class RetirementAnnuityAmountController @Inject() (authAction: AuthorisedAction,
+                                                   retirementAnnuityAmountView: RetirementAnnuityAmountView,
+                                                   pensionSessionService: PensionSessionService,
+                                                   errorHandler: ErrorHandler,
+                                                   formProvider: PaymentsIntoPensionFormProvider,
+                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

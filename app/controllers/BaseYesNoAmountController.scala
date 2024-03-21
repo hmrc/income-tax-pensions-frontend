@@ -28,7 +28,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.Html
 import services.PensionSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 abstract class BaseYesNoAmountController @Inject() (cc: MessagesControllerComponents,
                                                     pensionSessionService: PensionSessionService,
                                                     authAction: AuthorisedAction,
-                                                    errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                    errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc) {
 
   def prepareView(pensionsUserData: PensionsUserData, taxYear: Int)(implicit request: AuthorisationRequest[AnyContent]): Html
@@ -121,8 +120,7 @@ abstract class BaseYesNoAmountController @Inject() (cc: MessagesControllerCompon
         validForm => onValidForm(pensionsUserData, taxYear, validForm))
 
   private def onValidForm(pensionsUserData: PensionsUserData, taxYear: Int, validForm: (Boolean, Option[BigDecimal]))(implicit
-      request: AuthorisationRequest[AnyContent],
-      clock: Clock): Future[Result] =
+      request: AuthorisationRequest[AnyContent]): Future[Result] =
     validForm match {
       case (yesWasSelected, amountOpt) =>
         val updatedData = proposedUpdatedSessionDataModel(pensionsUserData, yesWasSelected, amountOpt)

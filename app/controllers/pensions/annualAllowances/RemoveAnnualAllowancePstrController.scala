@@ -30,7 +30,7 @@ import services.redirects.AnnualAllowancesPages.RemovePSTRPage
 import services.redirects.AnnualAllowancesRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Clock, SessionHelper}
+import utils.SessionHelper
 import views.html.pensions.annualAllowances.RemoveAnnualAllowancesPstrView
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +41,7 @@ class RemoveAnnualAllowancePstrController @Inject() (cc: MessagesControllerCompo
                                                      authAction: AuthorisedAction,
                                                      view: RemoveAnnualAllowancesPstrView,
                                                      pensionSessionService: PensionSessionService,
-                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {

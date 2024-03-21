@@ -31,7 +31,6 @@ import services.redirects.PaymentsIntoOverseasPensionsPages.TaxEmployerPaymentsP
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck, redirectForSchemeLoop}
 import services.redirects.SimpleRedirectService.{isFinishedCheck, redirectBasedOnCurrentAnswers}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.Clock
 import views.html.pensions.paymentsIntoOverseasPensions.TaxEmployerPaymentsView
 
 import javax.inject.{Inject, Singleton}
@@ -42,7 +41,7 @@ class TaxEmployerPaymentsController @Inject() (authAction: AuthorisedAction,
                                                view: TaxEmployerPaymentsView,
                                                pensionSessionService: PensionSessionService,
                                                errorHandler: ErrorHandler,
-                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, clock: Clock, ec: ExecutionContext)
+                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 
