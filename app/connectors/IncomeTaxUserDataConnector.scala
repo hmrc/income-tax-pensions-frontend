@@ -44,8 +44,7 @@ class IncomeTaxUserDataConnector @Inject() (val http: HttpClient, val config: Ap
   private def refreshPensionsResponse(taxYear: Int, nino: String)(hc: HeaderCarrier): DownstreamOutcome[Unit] = {
     implicit val headerCarrier: HeaderCarrier = hcWithCorrelationId(hc)
 
-    val url = config.incomeTaxSubmissionBEBaseUrl + s"/income-tax/nino/$nino/sources/session?taxYear=$taxYear"
-    // Refreshes the cache of pensions only.
+    val url   = config.incomeTaxSubmissionBEBaseUrl + s"/income-tax/nino/$nino/sources/session?taxYear=$taxYear"
     val model = RefreshIncomeSourceRequest("pensions")
     ConnectorRequestInfo("PUT", url, "income-tax-submission").logRequestWithBody(logger, model)
     http.PUT[RefreshIncomeSourceRequest, DownstreamErrorOr[Unit]](url, model)
