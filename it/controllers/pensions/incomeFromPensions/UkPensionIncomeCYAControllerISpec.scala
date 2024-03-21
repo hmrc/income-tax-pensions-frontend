@@ -245,7 +245,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           val payload = Json.toJson(newIncomeFromPensions.uKPensionIncomes.map(_.toDownstreamModel).head).toString()
           dropPensionsDB()
           authoriseAgentOrIndividual()
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
+          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData.copy(employmentPensions = None))), nino, taxYear)
           insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(incomeFromPensions = newIncomeFromPensions), taxYear = taxYear))
           employmentPensionStub(payload, nino, NO_CONTENT, "{}")
           urlPost(
