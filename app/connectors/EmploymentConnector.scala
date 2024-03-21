@@ -18,7 +18,8 @@ package connectors
 
 import config.AppConfig
 import connectors.Connector.hcWithCorrelationId
-import connectors.httpParsers.EmploymentSessionHttpParser.EmploymentSessionHttpReads
+import connectors.httpParsers.DeleteEmploymentHttpParser.DeleteEmploymentHttpReads
+import connectors.httpParsers.SaveEmploymentHttpParser.SaveEmploymentHttpReads
 import models.logging.ConnectorRequestInfo
 import models.pension.employmentPensions.CreateUpdateEmploymentRequest
 import play.api.Logging
@@ -28,7 +29,7 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class EmploymentConnector @Inject() (val http: HttpClient, val config: AppConfig) extends Logging {
-  def saveEmploymentPensionsData(nino: String, taxYear: Int, model: CreateUpdateEmploymentRequest)(implicit
+  def saveEmployment(nino: String, taxYear: Int, model: CreateUpdateEmploymentRequest)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): DownstreamOutcome[Unit] = {
 
@@ -37,8 +38,24 @@ class EmploymentConnector @Inject() (val http: HttpClient, val config: AppConfig
 
     http.POST[CreateUpdateEmploymentRequest, DownstreamErrorOr[Unit]](url, model)(
       CreateUpdateEmploymentRequest.format,
-      EmploymentSessionHttpReads,
+      SaveEmploymentHttpReads,
       hcWithCorrelationId,
       ec)
+  }
+
+  def deleteEmployment(nino: String, taxYear: Int, employmentId: String)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): DownstreamOutcome[Unit] = {
+    // TODO: Will there ever be HMRC-held employments?
+    val source = "CUSTOMER"
+    val url    = s"${config.employmentBEBaseUrl}/income-tax/nino/$nino/sources/$employmentId/$source?taxYear=$taxYear"
+
+    ConnectorRequestInfo("DELETE", url, "income-tax-employment").logRequest(logger)
+
+    http.DELETE[DownstreamErrorOr[Unit]](url)(
+      DeleteEmploymentHttpReads,
+      hcWithCorrelationId,
+      ec
+    )
   }
 }

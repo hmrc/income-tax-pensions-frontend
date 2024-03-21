@@ -216,7 +216,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         val form = Map[String, String]()
 
         lazy val result: WSResponse = {
-          val payload = Json.toJson(newIncomeFromPensions.uKPensionIncomes.map(_.toDownstreamRequest).head).toString()
+          val payload = Json.toJson(newIncomeFromPensions.uKPensionIncomes.map(_.toDownstreamModel).head).toString()
           dropPensionsDB()
           authoriseAgentOrIndividual()
           userDataStub(IncomeTaxUserData(None), nino, taxYear)
@@ -242,7 +242,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         val form = Map[String, String]()
 
         lazy val result: WSResponse = {
-          val payload = Json.toJson(newIncomeFromPensions.uKPensionIncomes.map(_.toDownstreamRequest).head).toString()
+          val payload = Json.toJson(newIncomeFromPensions.uKPensionIncomes.map(_.toDownstreamModel).head).toString()
           dropPensionsDB()
           authoriseAgentOrIndividual()
           userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)

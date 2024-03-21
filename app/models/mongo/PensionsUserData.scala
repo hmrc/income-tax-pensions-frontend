@@ -32,6 +32,7 @@ case class PensionsUserData(sessionId: String,
                             lastUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC))
 
 object PensionsUserData extends MongoJavatimeFormats {
+  type SessionData = PensionsUserData
 
   implicit val formats: Format[PensionsUserData] = Json.format[PensionsUserData]
 

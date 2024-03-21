@@ -62,7 +62,7 @@ class EmploymentConnectorISpec extends IntegrationTest {
         val payload = Json
           .toJson(
             aPensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
-              .map(_.toDownstreamRequest)
+              .map(_.toDownstreamModel)
               .head)
           .toString()
 
@@ -77,8 +77,8 @@ class EmploymentConnectorISpec extends IntegrationTest {
         val sessionUserData =
           aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions))
 
-        val model = sessionUserData.pensions.incomeFromPensions.uKPensionIncomes.map(_.toDownstreamRequest).head
-        Await.result(connector.saveEmploymentPensionsData(nino, taxYear, model)(hc, ec), Duration.Inf)
+        val model = sessionUserData.pensions.incomeFromPensions.uKPensionIncomes.map(_.toDownstreamModel).head
+        Await.result(connector.saveEmployment(nino, taxYear, model)(hc, ec), Duration.Inf)
       }
     }
   }

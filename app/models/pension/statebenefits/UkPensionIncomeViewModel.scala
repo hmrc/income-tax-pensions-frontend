@@ -18,7 +18,7 @@ package models.pension.statebenefits
 
 import models.mongo.TextAndKey
 import models.pension.employmentPensions.CreateUpdateEmploymentRequest
-import CreateUpdateEmploymentRequest.{CreateUpdateEmployment, CreateUpdateEmploymentData, PayModel}
+import models.pension.employmentPensions.CreateUpdateEmploymentRequest.{CreateUpdateEmployment, CreateUpdateEmploymentData, PayModel}
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
@@ -49,7 +49,7 @@ case class UkPensionIncomeViewModel(employmentId: Option[String] = None,
       isCustomerEmploymentData = isCustomerEmploymentData.map(_.encrypted)
     )
 
-  def toDownstreamRequest: CreateUpdateEmploymentRequest =
+  def toDownstreamModel: CreateUpdateEmploymentRequest =
     CreateUpdateEmploymentRequest(
       employmentId = this.employmentId,
       employment = Some(
