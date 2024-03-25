@@ -49,7 +49,8 @@ object StatusHelper {
     cya.exists(!_.shortServiceRefunds.isEmpty)
 
   def statePensionIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
-    cya.exists(_.incomeFromPensions.statePension.exists(!_.isEmpty))
+    cya.exists(_.incomeFromPensions.statePension.exists(!_.isEmpty)) ||
+      cya.exists(_.incomeFromPensions.statePensionLumpSum.exists(!_.isEmpty))
 
   def ukPensionsSchemeIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
     cya.exists(_.incomeFromPensions.uKPensionIncomesQuestion.isDefined)
@@ -63,7 +64,7 @@ object StatusHelper {
     prior.map(_.getPaymentsIntoPensionsCyaFromPrior).exists(_.isFinished)
 
   def statePensionsHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.exists(_.stateBenefits.exists(_.stateBenefitsData.exists(_.statePension.nonEmpty)))
+    prior.exists(_.stateBenefits.exists(_.stateBenefitsData.exists(data => data.statePension.nonEmpty || data.statePensionLumpSum.nonEmpty)))
 
   def ukPensionsSchemeHasPriorData(prior: Option[AllPensionsData]): Boolean =
     prior.exists(_.employmentPensions.exists(_.employmentData.nonEmpty))

@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-import cats.data.EitherT
-import models.mongo.ServiceError
+package utils
 
 import scala.concurrent.Future
 
-package object services {
-  type ServiceOutcome[A]  = Future[Either[ServiceError, A]]
-  type ServiceOutcomeT[A] = EitherT[Future, ServiceError, A]
+object FutureUtils {
 
-  def sequence[A, B](s: Seq[Either[A, B]]): Either[A, Seq[B]] =
-    s.foldRight(Right(Nil): Either[A, Seq[B]]) { (e, acc) =>
-      for {
-        xs <- acc
-        x  <- e
-      } yield xs :+ x
-    }
-
+  implicit class FutureOps[A](value: A) {
+    def toFuture: Future[A] = Future.successful(value)
+  }
 }

@@ -23,11 +23,11 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys.FAILED_TO_FIND_PENSIONS_DATA
 import utils.PagerDutyHelper.pagerDutyLog
 
-object StateBenefitsSessionHttpParser extends APIParser {
-  override val parserName: String = "StateBenefitsSessionHttpParser"
+object SaveStateBenefitsHttpParser extends APIParser {
+  override val parserName: String = "SaveStateBenefitsHttpParser"
   override val service: String    = "income-tax-state-benefits"
 
-  implicit object StateBenefitsSessionHttpReads extends HttpReads[DownstreamErrorOr[Unit]] {
+  implicit object SaveStateBenefitsHttpReads extends HttpReads[DownstreamErrorOr[Unit]] {
 
     override def read(method: String, url: String, response: HttpResponse): DownstreamErrorOr[Unit] = {
       ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)

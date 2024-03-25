@@ -17,12 +17,13 @@
 package services
 
 import cats.data.EitherT
+import cats.implicits.{catsSyntaxList, catsSyntaxSemigroup, toTraverseOps}
 import common.TaxYear
-import connectors.{IncomeTaxUserDataConnector, StateBenefitsConnector}
-import models.User
+import connectors._
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo._
 import models.pension.statebenefits.ClaimCYAModel
+import models.{APIErrorModel, IncomeTaxUserData, User}
 import repositories.PensionsUserDataRepository
 import repositories.PensionsUserDataRepository.QueryResult
 import services.BenefitType.{StatePension, StatePensionLumpSum}
@@ -30,6 +31,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
 
 import java.time.{Instant, LocalDate}
+import java.util.UUID
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,23 +49,70 @@ object BenefitType {
 }
 
 class StatePensionService @Inject() (repository: PensionsUserDataRepository,
-                                     connector: StateBenefitsConnector,
-                                     incomeTaxSubmissionConnector: IncomeTaxUserDataConnector) {
+                                     service: PensionSessionService,
+                                     stateBenefitsConnector: StateBenefitsConnector,
+                                     submissionsConnector: IncomeTaxUserDataConnector) {
 
   def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] = {
     val hcWithMtdItId = hc.withMtditId(user.mtditid)
 
     (for {
-      maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
-      session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
-      statePensionSubmission        = buildDownstreamRequestModel(session, StatePension, taxYear.endYear)
-      statePensionLumpSumSubmission = buildDownstreamRequestModel(session, StatePensionLumpSum, taxYear.endYear)
-      _ <- processClaim(statePensionSubmission, user)(ec, hcWithMtdItId)
-      _ <- processClaim(statePensionLumpSumSubmission, user)(ec, hcWithMtdItId)
+      data <- service.loadPriorAndSession(user, taxYear)
+      (prior, session) = data
+      _ <- EitherT(processSubmission(session, prior, taxYear.endYear, user)(hcWithMtdItId, ec)).leftAs[ServiceError]
       _ <- EitherT(clearJourneyFromSession(session)).leftAs[ServiceError]
-      _ <- EitherT(incomeTaxSubmissionConnector.refreshPensionsResponse(user.nino, user.mtditid, taxYear.endYear)).leftAs[ServiceError]
+      _ <- EitherT(submissionsConnector.refreshPensionsResponse(user.nino, user.mtditid, taxYear.endYear)).leftAs[ServiceError]
     } yield ()).value
   }
+
+  private def processSubmission(session: PensionsUserData, prior: IncomeTaxUserData, taxYear: Int, user: User)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): DownstreamOutcome[Unit] = {
+    val reqModels = List(StatePension, StatePensionLumpSum).map(buildDownstreamRequestModel(_, session, taxYear))
+    (for {
+      _   <- runDeleteIfRequired(prior, session, user, taxYear)
+      res <- reqModels.traverse(runSaveIfRequired(_, user.nino))
+    } yield res).value.collapse
+  }
+
+  private def runDeleteIfRequired(prior: IncomeTaxUserData, session: PensionsUserData, user: User, taxYear: Int)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): DownstreamOutcomeT[Unit] = {
+    val priorIds = {
+      val maybeSbData      = prior.pensions.flatMap(_.stateBenefits.flatMap(_.stateBenefitsData))
+      val maybeSpId        = maybeSbData.flatMap(_.statePension.map(_.benefitId))
+      val maybeSpLumpSumId = maybeSbData.flatMap(_.statePensionLumpSum.map(_.benefitId))
+      List(maybeSpId, maybeSpLumpSumId).flatten
+    }
+
+    val sessionIds = {
+      val maybeSpId        = session.pensions.incomeFromPensions.statePension.flatMap(_.benefitId)
+      val maybeSpLumpSumId = session.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.benefitId)
+      List(maybeSpId, maybeSpLumpSumId).flatten
+    }
+
+    priorIds
+      .diff(sessionIds)
+      .toNel
+      .fold(EitherT.pure[Future, APIErrorModel](())) { ids =>
+        for {
+          _ <- EitherT(doDelete(ids.toList, user.nino, taxYear))
+          _ <- EitherT(refreshSubmissionsCache(user, taxYear))
+        } yield ()
+      }
+  }
+
+  private def doDelete(ids: List[UUID], nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] =
+    ids
+      .traverse[Future, DownstreamErrorOr[Unit]](id => stateBenefitsConnector.deleteClaim(nino, taxYear, id))
+      .map(sequence)
+      .collapse
+
+  private def runSaveIfRequired(answers: StateBenefitsUserData, nino: String)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): DownstreamOutcomeT[Unit] =
+    if (answers.claim.exists(_.amount.nonEmpty)) EitherT(stateBenefitsConnector.saveClaimData(nino, answers))
+    else EitherT.pure[Future, APIErrorModel](())
 
   private def clearJourneyFromSession(session: PensionsUserData): QueryResult[Unit] = {
     val clearedJourneyModel = session.pensions.incomeFromPensions
@@ -77,14 +126,13 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
     repository.createOrUpdate(updatedSessionModel)
   }
 
-  private def processClaim(answers: StateBenefitsUserData, user: User)(implicit ec: ExecutionContext, hc: HeaderCarrier): ServiceOutcomeT[Unit] =
-    if (answers.claim.exists(_.amount.nonEmpty)) EitherT(connector.saveClaimData(user.nino, answers)).leftAs[ServiceError]
-    else EitherT.pure[Future, ServiceError](())
+  private def refreshSubmissionsCache(user: User, taxYear: Int)(implicit hc: HeaderCarrier): DownstreamOutcome[Unit] =
+    submissionsConnector.refreshPensionsResponse(user.nino, user.mtditid, taxYear)
 
-  private def buildDownstreamRequestModel(sessionData: PensionsUserData, benefitType: BenefitType, taxYear: Int): StateBenefitsUserData = {
+  private def buildDownstreamRequestModel(benefitType: BenefitType, session: PensionsUserData, taxYear: Int): StateBenefitsUserData = {
     val stateBenefit = benefitType match {
-      case StatePension        => sessionData.pensions.incomeFromPensions.statePension
-      case StatePensionLumpSum => sessionData.pensions.incomeFromPensions.statePensionLumpSum
+      case StatePension        => session.pensions.incomeFromPensions.statePension
+      case StatePensionLumpSum => session.pensions.incomeFromPensions.statePensionLumpSum
     }
 
     val claimModel = ClaimCYAModel(
@@ -102,13 +150,20 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
     StateBenefitsUserData(
       benefitType = benefitType.value,
       sessionDataId = None,
-      sessionId = sessionData.sessionId,
-      mtdItId = sessionData.mtdItId,
-      nino = sessionData.nino,
+      sessionId = session.sessionId,
+      mtdItId = session.mtdItId,
+      nino = session.nino,
       taxYear = taxYear,
       benefitDataType = if (claimModel.benefitId.isEmpty) "customerAdded" else "customerOverride",
       claim = Some(claimModel),
-      lastUpdated = Instant.parse(sessionData.lastUpdated.toLocalDateTime.toString + "Z")
+      lastUpdated = Instant.parse(session.lastUpdated.toLocalDateTime.toString + "Z")
     )
+  }
+
+  private implicit class DownstreamOutcomeOps(value: DownstreamOutcome[Seq[Unit]]) {
+    def collapse(implicit ec: ExecutionContext): DownstreamOutcome[Unit] =
+      EitherT(value)
+        .map(_.reduce(_ |+| _))
+        .value
   }
 }
