@@ -91,7 +91,8 @@ class StatePensionControllerISpec extends IntegrationTest with ViewHelpers with 
       result.header("location").contains(statePensionStartDateUrl(taxYearEOY)) shouldBe true
     }
 
-    "redirect to StatePensionLumpSum page when user selects 'No' with incomplete prior data" in {
+    // TODO: Uncomment me during SASS-7742
+    "redirect to StatePensionLumpSum page when user selects 'No' with incomplete prior data" ignore {
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)

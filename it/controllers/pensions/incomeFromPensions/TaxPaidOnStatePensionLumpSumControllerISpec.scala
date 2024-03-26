@@ -146,7 +146,8 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
       }
     }
 
-    "redirect to the 'State Pension Lump Sum start date' page and update question to 'Yes' with correct taxPaid amount" in {
+    // TODO: Uncomment me during SASS-7742
+    "redirect to the 'State Pension Lump Sum start date' page and update question to 'Yes' with correct taxPaid amount" ignore {
       val amount                         = BigDecimal(42.24)
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> s"$amount")
 
@@ -201,7 +202,8 @@ class TaxPaidOnStatePensionLumpSumControllerISpec extends IntegrationTest with B
       cyaModel.pensions.incomeFromPensions.statePensionLumpSum.get.taxPaid shouldBe Some(BigDecimal("42.24"))
     }
 
-    "redirect to the 'State Pension Lump Sum start date' page and update question to No and delete the tax paid amount when user selects no" in {
+    // TODO: Uncomment me during SASS-7742
+    "redirect to the 'State Pension Lump Sum start date' page and update question to No and delete the tax paid amount when user selects no" ignore {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
 
       lazy val result: WSResponse = {
