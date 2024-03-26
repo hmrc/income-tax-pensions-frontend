@@ -16,121 +16,309 @@
 
 package services
 
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
+import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyViewModel, spAndSpLumpSum, statePensionOnly}
 import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.StateBenefitViewModelBuilder.{aPriorStatePensionLumpSumViewModel, aPriorStatePensionViewModel}
-import builders.StateBenefitsUserDataBuilder._
+import builders.StateBenefitBuilder.{anStateBenefitFour, anStateBenefitThree}
+import builders.StateBenefitViewModelBuilder.{anStateBenefitViewModel, anStateBenefitViewModelOne}
+import builders.StateBenefitsModelBuilder
 import builders.UserBuilder.aUser
-import config.{MockIncomeTaxUserDataConnector, MockPensionUserDataRepository, MockStateBenefitsConnector}
-import models.mongo.{DataNotFound, DataNotUpdated, PensionsCYAModel, PensionsUserData}
-import models.pension.statebenefits.IncomeFromPensionsViewModel
-import models.{APIErrorBodyModel, APIErrorModel}
-import org.scalatest.concurrent.ScalaFutures
-import play.api.http.Status.BAD_REQUEST
+import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId, none}
+import common.TaxYear
+import mocks.{MockSessionRepository, MockSessionService, MockStateBenefitsConnector, MockSubmissionsConnector}
+import models.IncomeTaxUserData
+import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData}
+import models.pension.statebenefits.{AllStateBenefitsData, IncomeFromPensionsViewModel}
+import org.scalatest.OptionValues.convertOptionToValuable
 import utils.UnitTest
 
 class StatePensionServiceSpec
     extends UnitTest
-    with MockPensionUserDataRepository
+    with MockSubmissionsConnector
+    with MockSessionRepository
+    with MockSessionService
     with MockStateBenefitsConnector
-    with MockIncomeTaxUserDataConnector
-    with ScalaFutures {
+    with BaseServiceSpec {
 
-  val service = new StatePensionService(mockPensionUserDataRepository, mockStateBenefitsConnector, mockSubmissionsConnector)
+  "saving journey answers" when {
+    "all external calls are successful" when {
+      "there's no intent to delete existing claims" when {
+        "claiming state pension or state pension lump sum" should {
+          "save the one being claimed" in new Test {
+            // This is the benefitId being claimed for in the session.
+            val benefitIdFromSession = anStateBenefitViewModelOne.benefitId.value
 
-  val journeyAnswers: IncomeFromPensionsViewModel = anIncomeFromPensionsViewModel
-  val pensionSessionAnswers: PensionsCYAModel     = emptyPensionsData.copy(incomeFromPensions = journeyAnswers)
-  val allUserData: PensionsUserData               = aPensionsUserData.copy(pensions = pensionSessionAnswers)
+            // I.e. session claims 1 state benefit, but prior has 0.
+            MockSessionService
+              .loadPriorAndSession(aUser, TaxYear(taxYearEOY))
+              .returns((noPriorClaim, sessionSpOnly).asRight.toEitherT)
 
-  val modelAfterJourneySubmission: IncomeFromPensionsViewModel = journeyAnswers.copy(
-    statePension = None,
-    statePensionLumpSum = None
-  )
+            MockStateBenefitsConnector
+              .saveClaim(nino)
+              .returns(().asRight.asFuture)
 
-  val sessionDataAfterSubmission: PensionsCYAModel =
-    pensionSessionAnswers.copy(
-      incomeFromPensions = modelAfterJourneySubmission
-    )
+            MockStateBenefitsConnector
+              .deleteClaim(nino, taxYearEOY, benefitIdFromSession)
+              .never()
 
-  val allUserDataAfterSubmission: PensionsUserData = allUserData.copy(pensions = sessionDataAfterSubmission)
+            MockSubmissionsConnector
+              .refreshPensionsResponse(nino, mtditid, taxYearEOY)
+              .returns(().asRight.asFuture)
+              .repeat(1)
 
-  "saving journey answers" should {
+            MockSessionRepository
+              .createOrUpdate(clearedJourneyFromSession(sessionSpOnly))
+              .returns(().asRight.asFuture)
 
-    "return Right(Unit) and clear income from pensions cya from DB" when {
+            val result = await(service.saveAnswers(aUser, TaxYear(taxYearEOY)))
 
-      "both StatePension and StatePensionLumpSum models are successfully submitted" in {
-        mockFind(taxYear, aUser, Right(Option(allUserData)))
+            result shouldBe ().asRight
+          }
+        }
+        "claiming both state pension lump sum and state pension" should {
+          "save both of them" in new Test {
+            val spBenefitIdFromSession        = anStateBenefitViewModelOne.benefitId.value
+            val spLumpSumBenefitIdFromSession = anStateBenefitViewModel.benefitId.value
 
-        mockSaveClaimData(nino, aCreateStatePensionBenefitsUD, Right(()))
-        mockSaveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD, Right(()))
-        mockCreateOrUpdate(allUserDataAfterSubmission, Right(()))
-        mockRefreshPensionsResponse()
+            // I.e. session claims 2 state benefit, but prior has 0.
+            MockSessionService
+              .loadPriorAndSession(aUser, TaxYear(taxYearEOY))
+              .returns((noPriorClaim, sessionSpAndSpLumpSum).asRight.toEitherT)
 
-        val result = await(service.saveAnswers(aUser, currentTaxYear))
-        result shouldBe Right(())
+            MockStateBenefitsConnector
+              .saveClaim(nino)
+              .returns(().asRight.asFuture)
+              .repeat(2)
+
+            MockStateBenefitsConnector
+              .deleteClaim(nino, taxYearEOY, spBenefitIdFromSession)
+              .never()
+
+            MockStateBenefitsConnector
+              .deleteClaim(nino, taxYearEOY, spLumpSumBenefitIdFromSession)
+              .never()
+
+            MockSubmissionsConnector
+              .refreshPensionsResponse(nino, mtditid, taxYearEOY)
+              .returns(().asRight.asFuture)
+              .repeat(2)
+
+            MockSessionRepository
+              .createOrUpdate(clearedJourneyFromSession(sessionSpAndSpLumpSum))
+              .returns(().asRight.asFuture)
+
+            val result = await(service.saveAnswers(aUser, TaxYear(taxYearEOY)))
+
+            result shouldBe ().asRight
+          }
+        }
       }
+      "intent is to delete a claim" when {
+        "intent is to delete both claims" should {
+          "delete both" in new Test {
+            // Both the benefitIds that for existing claims, hence ones that should be deleted.
+            val priorSpBenefitId        = anStateBenefitThree.benefitId
+            val priorSpLumpSumBenefitId = anStateBenefitFour.benefitId
 
-      "only StatePension model is submitted, updating a prior submission" in {
-        val statePensionOnlySessionData: PensionsUserData =
-          allUserData.copy(pensions = allUserData.pensions.copy(
-            incomeFromPensions =
-              pensionSessionAnswers.incomeFromPensions.copy(statePension = Some(aPriorStatePensionViewModel), statePensionLumpSum = None)
-          ))
+            // I.e. session claims 0 state benefit, but prior has 2.
+            MockSessionService
+              .loadPriorAndSession(aUser, TaxYear(taxYearEOY))
+              .returns((priorSpAndSpLumpSum, sessionNoClaim).asRight.toEitherT)
 
-        mockFind(taxYear, aUser, Right(Option(statePensionOnlySessionData)))
+            MockStateBenefitsConnector
+              .saveClaim(nino)
+              .never()
 
-        mockSaveClaimData(nino, anUpdateStatePensionBenefitsUD, Right(()))
-        mockCreateOrUpdate(allUserDataAfterSubmission, Right(()))
-        mockRefreshPensionsResponse()
+            MockStateBenefitsConnector
+              .deleteClaim(nino, taxYearEOY, priorSpBenefitId)
+              .returns(().asRight.asFuture)
 
-        val result = await(service.saveAnswers(aUser, currentTaxYear))
-        result shouldBe Right(())
+            MockStateBenefitsConnector
+              .deleteClaim(nino, taxYearEOY, priorSpLumpSumBenefitId)
+              .returns(().asRight.asFuture)
+
+            MockSubmissionsConnector
+              .refreshPensionsResponse(nino, mtditid, taxYearEOY)
+              .returns(().asRight.asFuture)
+
+            MockSessionRepository
+              .createOrUpdate(clearedJourneyFromSession(sessionNoClaim))
+              .returns(().asRight.asFuture)
+
+            val result = await(service.saveAnswers(aUser, TaxYear(taxYearEOY)))
+
+            result shouldBe ().asRight
+          }
+        }
+        "intent is to delete one of the claims" should {
+          "delete one only" in new Test {
+            // The benefitId of the claim that exists as a prior submission but not a claim in the session.
+            val priorSpLumpSumBenefitId = anStateBenefitFour.benefitId
+            // The session benefitId
+            val spBenefitIdFromSession = anStateBenefitViewModelOne.benefitId.value
+
+            // I.e. session claims 1 state benefit, but prior has 2.
+            MockSessionService
+              .loadPriorAndSession(aUser, TaxYear(taxYearEOY))
+              .returns((priorSpAndSpLumpSum, sessionSpOnly).asRight.toEitherT)
+
+            MockStateBenefitsConnector
+              .saveClaim(nino)
+              .returns(().asRight.asFuture)
+              .repeat(1)
+
+            MockStateBenefitsConnector
+              .deleteClaim(nino, taxYearEOY, priorSpLumpSumBenefitId)
+              .returns(().asRight.asFuture)
+
+            MockStateBenefitsConnector
+              .deleteClaim(nino, taxYearEOY, spBenefitIdFromSession)
+              .never()
+
+            MockSubmissionsConnector
+              .refreshPensionsResponse(nino, mtditid, taxYearEOY)
+              .returns(().asRight.asFuture)
+              .repeat(2)
+
+            MockSessionRepository
+              .createOrUpdate(clearedJourneyFromSession(sessionSpOnly))
+              .returns(().asRight.asFuture)
+
+            val result = await(service.saveAnswers(aUser, TaxYear(taxYearEOY)))
+
+            result shouldBe ().asRight
+          }
+        }
       }
+    }
+    "no user session is found in the database" should {
+      "return SessionNotFound" in new Test {
+        MockSessionService
+          .loadPriorAndSession(aUser, TaxYear(taxYearEOY))
+          .returns(notFoundResponse)
 
-      "only StatePensionLumpSum model is submitted, updating a prior submission" in {
-        val statePensionLumpSumOnlySessionData: PensionsUserData =
-          allUserData.copy(pensions = allUserData.pensions.copy(
-            incomeFromPensions =
-              pensionSessionAnswers.incomeFromPensions.copy(statePension = None, statePensionLumpSum = Some(aPriorStatePensionLumpSumViewModel))
-          ))
+        val result = await(service.saveAnswers(aUser, TaxYear(taxYearEOY)))
 
-        mockFind(taxYear, aUser, Right(Option(statePensionLumpSumOnlySessionData)))
-
-        mockSaveClaimData(nino, anUpdateStatePensionLumpSumBenefitsUD, Right(()))
-        mockCreateOrUpdate(allUserDataAfterSubmission, Right(()))
-        mockRefreshPensionsResponse()
-
-        val result = await(service.saveAnswers(aUser, currentTaxYear))
-        result shouldBe Right(())
+        result shouldBe DataNotFound.asLeft
       }
     }
 
-    "return Left(DataNotFound) when user can not be found in DB" in {
-      mockFind(taxYear, aUser, Left(DataNotFound))
+    "save state pension downstream returns an unsuccessful result" should {
+      "return an APIErrorModel" in new Test {
+        MockSessionService
+          .loadPriorAndSession(aUser, TaxYear(taxYearEOY))
+          .returns((noPriorClaim, sessionSpOnly).asRight.toEitherT)
 
-      val result = await(service.saveAnswers(aUser, currentTaxYear))
-      result shouldBe Left(DataNotFound)
+        MockStateBenefitsConnector
+          .saveClaim(nino)
+          .returns(apiError.asLeft.asFuture)
+
+        val result = await(service.saveAnswers(aUser, TaxYear(taxYearEOY)))
+
+        result shouldBe apiError.asLeft
+      }
+    }
+    "delete state pensions downstream returns an unsuccessful result" should {
+      "return an APIErrorModel" in new Test {
+        // The benefitId of the claim that exists as a prior submission but not a claim in the session.
+        val priorSpLumpSumBenefitId = anStateBenefitFour.benefitId
+
+        // I.e. session claims 1 state benefit, but prior has 2.
+        MockSessionService
+          .loadPriorAndSession(aUser, TaxYear(taxYearEOY))
+          .returns((priorSpAndSpLumpSum, sessionSpOnly).asRight.toEitherT)
+
+        MockStateBenefitsConnector
+          .deleteClaim(nino, taxYearEOY, priorSpLumpSumBenefitId)
+          .returns(apiError.asLeft.asFuture)
+
+        val result = await(service.saveAnswers(aUser, TaxYear(taxYearEOY)))
+
+        result shouldBe apiError.asLeft
+      }
     }
 
-    "return Left(APIErrorModel) when pension connector could not be connected" in {
-      mockFind(taxYear, aUser, Right(Option(allUserData)))
+    "submissions downstream returns an unsuccessful result" should {
+      "return an APIErrorModel" in new Test {
+        MockSessionService
+          .loadPriorAndSession(aUser, TaxYear(taxYearEOY))
+          .returns(apiErrorResponse)
 
-      mockSaveClaimData(nino, aCreateStatePensionBenefitsUD, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed"))))
+        val result = await(service.saveAnswers(aUser, TaxYear(taxYearEOY)))
 
-      val result = await(service.saveAnswers(aUser, currentTaxYear))
-      result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
+        result shouldBe apiError.asLeft
+      }
     }
 
-    "return Left(DataNotUpdated) when data could not be updated" in {
-      mockFind(taxYear, aUser, Right(Option(allUserData)))
+    "session data could not be updated" should {
+      "return DataNotUpdated" in new Test {
+        // This is the benefitId being claimed for in the session.
+        val benefitIdFromSession = anStateBenefitViewModelOne.benefitId.value
 
-      mockSaveClaimData(nino, aCreateStatePensionBenefitsUD, Right(()))
-      mockSaveClaimData(nino, aCreateStatePensionLumpSumBenefitsUD, Right(()))
-      mockCreateOrUpdate(allUserDataAfterSubmission, Left(DataNotUpdated))
+        // I.e. session claims 1 state benefit, but prior has 0.
+        MockSessionService
+          .loadPriorAndSession(aUser, TaxYear(taxYearEOY))
+          .returns((noPriorClaim, sessionSpOnly).asRight.toEitherT)
 
-      val result = await(service.saveAnswers(aUser, currentTaxYear))
-      result shouldBe Left(DataNotUpdated)
+        MockStateBenefitsConnector
+          .saveClaim(nino)
+          .returns(().asRight.asFuture)
+
+        MockStateBenefitsConnector
+          .deleteClaim(nino, taxYearEOY, benefitIdFromSession)
+          .never()
+
+        MockSubmissionsConnector
+          .refreshPensionsResponse(nino, mtditid, taxYearEOY)
+          .returns(().asRight.asFuture)
+          .repeat(1)
+
+        MockSessionRepository
+          .createOrUpdate(clearedJourneyFromSession(sessionSpOnly))
+          .returns(DataNotUpdated.asLeft.asFuture)
+
+        val result = await(service.saveAnswers(aUser, TaxYear(taxYearEOY)))
+
+        result shouldBe DataNotUpdated.asLeft
+      }
     }
   }
+
+  trait Test {
+    def priorWith(stateBenefits: Option[AllStateBenefitsData]): IncomeTaxUserData =
+      IncomeTaxUserData(anAllPensionsData.copy(stateBenefits = stateBenefits).some)
+
+    val noPriorClaim        = priorWith(none[AllStateBenefitsData])
+    val priorSpAndSpLumpSum = priorWith(StateBenefitsModelBuilder.aStateBenefitsModel.some)
+
+    def sessionWith(answers: IncomeFromPensionsViewModel): PensionsUserData =
+      aPensionsUserData.copy(
+        pensions = emptyPensionsData.copy(
+          incomeFromPensions = answers
+        ))
+
+    val sessionSpOnly         = sessionWith(statePensionOnly)
+    val sessionSpAndSpLumpSum = sessionWith(spAndSpLumpSum)
+    val sessionNoClaim        = sessionWith(anIncomeFromPensionEmptyViewModel)
+
+    def clearedJourneyFromSession(session: PensionsUserData): PensionsUserData = {
+      val clearedJourneyModel = session.pensions.incomeFromPensions
+        .copy(
+          statePension = None,
+          statePensionLumpSum = None
+        )
+
+      session.copy(pensions = session.pensions.copy(incomeFromPensions = clearedJourneyModel))
+    }
+
+    val service = new StatePensionService(
+      mockSessionRepository,
+      mockSessionService,
+      mockStateBenefitsConnector,
+      mockSubmissionsConnector
+    )
+
+  }
+
 }

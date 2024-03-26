@@ -33,6 +33,11 @@ trait MockSubmissionsConnector extends MockFactory {
         .getUserData(_: String, _: Int)(_: HeaderCarrier))
         .expects(nino, taxYear, *)
 
+    def refreshPensionsResponse(nino: String, mtditid: String, taxYear: Int) =
+      (mockSubmissionsConnector
+        .refreshPensionsResponse(_: String, _: String, _: Int)(_: HeaderCarrier))
+        .expects(nino, mtditid, taxYear, *)
+
   }
 
 }

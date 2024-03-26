@@ -32,7 +32,7 @@ import utils.EitherTUtils.CasterOps
 
 import java.time.{Instant, LocalDate}
 import java.util.UUID
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 sealed trait BenefitType {
@@ -48,6 +48,7 @@ object BenefitType {
   }
 }
 
+@Singleton
 class StatePensionService @Inject() (repository: PensionsUserDataRepository,
                                      service: PensionSessionService,
                                      stateBenefitsConnector: StateBenefitsConnector,
@@ -61,7 +62,6 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
       (prior, session) = data
       _ <- EitherT(processSubmission(session, prior, taxYear.endYear, user)(hcWithMtdItId, ec)).leftAs[ServiceError]
       _ <- EitherT(clearJourneyFromSession(session)).leftAs[ServiceError]
-      _ <- EitherT(submissionsConnector.refreshPensionsResponse(user.nino, user.mtditid, taxYear.endYear)).leftAs[ServiceError]
     } yield ()).value
   }
 
@@ -71,25 +71,15 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
     val reqModels = List(StatePension, StatePensionLumpSum).map(buildDownstreamRequestModel(_, session, taxYear))
     (for {
       _   <- runDeleteIfRequired(prior, session, user, taxYear)
-      res <- reqModels.traverse(runSaveIfRequired(_, user.nino))
+      res <- reqModels.traverse(runSaveIfRequired(_, user, taxYear))
     } yield res).value.collapse
   }
 
   private def runDeleteIfRequired(prior: IncomeTaxUserData, session: PensionsUserData, user: User, taxYear: Int)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): DownstreamOutcomeT[Unit] = {
-    val priorIds = {
-      val maybeSbData      = prior.pensions.flatMap(_.stateBenefits.flatMap(_.stateBenefitsData))
-      val maybeSpId        = maybeSbData.flatMap(_.statePension.map(_.benefitId))
-      val maybeSpLumpSumId = maybeSbData.flatMap(_.statePensionLumpSum.map(_.benefitId))
-      List(maybeSpId, maybeSpLumpSumId).flatten
-    }
-
-    val sessionIds = {
-      val maybeSpId        = session.pensions.incomeFromPensions.statePension.flatMap(_.benefitId)
-      val maybeSpLumpSumId = session.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.benefitId)
-      List(maybeSpId, maybeSpLumpSumId).flatten
-    }
+    val priorIds   = obtainPriorBenefitIds(prior)
+    val sessionIds = obtainSessionBenefitIds(session)
 
     priorIds
       .diff(sessionIds)
@@ -108,11 +98,30 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
       .map(sequence)
       .collapse
 
-  private def runSaveIfRequired(answers: StateBenefitsUserData, nino: String)(implicit
+  private def runSaveIfRequired(answers: StateBenefitsUserData, user: User, taxYear: Int)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): DownstreamOutcomeT[Unit] =
-    if (answers.claim.exists(_.amount.nonEmpty)) EitherT(stateBenefitsConnector.saveClaimData(nino, answers))
+    if (answers.claim.exists(_.amount.nonEmpty))
+      for {
+        _ <- EitherT(stateBenefitsConnector.saveClaim(user.nino, answers))
+        _ <- EitherT(refreshSubmissionsCache(user, taxYear))
+      } yield ()
     else EitherT.pure[Future, APIErrorModel](())
+
+  private def obtainSessionBenefitIds(session: PensionsUserData) = {
+    val maybeSpId        = session.pensions.incomeFromPensions.statePension.flatMap(_.benefitId)
+    val maybeSpLumpSumId = session.pensions.incomeFromPensions.statePensionLumpSum.flatMap(_.benefitId)
+
+    List(maybeSpId, maybeSpLumpSumId).flatten
+  }
+
+  private def obtainPriorBenefitIds(prior: IncomeTaxUserData) = {
+    val maybeSbData      = prior.pensions.flatMap(_.stateBenefits.flatMap(_.stateBenefitsData))
+    val maybeSpId        = maybeSbData.flatMap(_.statePension.map(_.benefitId))
+    val maybeSpLumpSumId = maybeSbData.flatMap(_.statePensionLumpSum.map(_.benefitId))
+
+    List(maybeSpId, maybeSpLumpSumId).flatten
+  }
 
   private def clearJourneyFromSession(session: PensionsUserData): QueryResult[Unit] = {
     val clearedJourneyModel = session.pensions.incomeFromPensions

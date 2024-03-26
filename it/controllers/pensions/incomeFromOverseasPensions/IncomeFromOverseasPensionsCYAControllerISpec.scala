@@ -38,6 +38,10 @@ import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPe
 import utils.PageUrls.fullUrl
 import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
+// TODO: Controller tests need rewriting. They should be easy to read and easy to refactor when the implementation changes.
+//       It is debatable whether we need ITs or not, but if we do, they should be high level and test surface interactions, not
+//       very tightly coupled as they are here. Our journey tests should be our safety net for the flow of pages within a journey.
+//       We should rewrite the tests when we start to address technical debt.
 class IncomeFromOverseasPensionsCYAControllerISpec
     extends IntegrationTest
     with ViewHelpers

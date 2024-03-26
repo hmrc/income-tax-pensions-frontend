@@ -31,10 +31,8 @@ import scala.concurrent.ExecutionContext
 
 class StateBenefitsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends Logging {
 
-  val baseUrl: String = appConfig.statePensionBEBaseUrl
-
-  def saveClaimData(nino: String, model: StateBenefitsUserData)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
-    val url = baseUrl + s"/income-tax-state-benefits/claim-data/nino/$nino"
+  def saveClaim(nino: String, model: StateBenefitsUserData)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
+    val url = appConfig.statePensionBEBaseUrl + s"/income-tax-state-benefits/claim-data/nino/$nino"
     ConnectorRequestInfo("PUT", url, "income-tax-state-benefits").logRequestWithBody(logger, model)
     http.PUT[StateBenefitsUserData, DownstreamErrorOr[Unit]](url, model)(
       StateBenefitsUserData.stateBenefitsUserDataWrites,
@@ -43,8 +41,8 @@ class StateBenefitsConnector @Inject() (val http: HttpClient, val appConfig: App
       ec)
   }
 
-  def deleteClaim(nino: String, taxYear: Int, sessionId: UUID)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
-    val url = baseUrl + s"/income-tax-state-benefits/claim-data/nino/$nino/$taxYear/session/$sessionId/remove"
+  def deleteClaim(nino: String, taxYear: Int, benefitId: UUID)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
+    val url = appConfig.statePensionBEBaseUrl + s"/income-tax-state-benefits/claim-data/nino/$nino/$taxYear/$benefitId/remove"
     ConnectorRequestInfo("DELETE", url, "income-tax-state-benefits").logRequest(logger)
     http.DELETE[DownstreamErrorOr[Unit]](url)(
       DeleteStateBenefitsHttpReads,

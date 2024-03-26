@@ -20,7 +20,9 @@ import builders.StateBenefitViewModelBuilder.{
   aStatePensionLumpSumNoAddToCalculationViewModel,
   aStatePensionLumpSumViewModel,
   aStatePensionNoAddToCalculationViewModel,
-  aStatePensionViewModel
+  aStatePensionViewModel,
+  anStateBenefitViewModel,
+  anStateBenefitViewModelOne
 }
 import builders.UkPensionIncomeViewModelBuilder.{anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo}
 import models.pension.statebenefits.IncomeFromPensionsViewModel
@@ -43,6 +45,27 @@ object IncomeFromPensionsViewModelBuilder {
   val aStatePensionIncomeFromPensionsNoAddToCalculationViewModel: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
     statePension = Some(aStatePensionNoAddToCalculationViewModel),
     statePensionLumpSum = Some(aStatePensionLumpSumNoAddToCalculationViewModel),
+    uKPensionIncomesQuestion = None,
+    uKPensionIncomes = Seq.empty
+  )
+
+  val statePensionOnly: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
+    statePension = Some(anStateBenefitViewModel),
+    statePensionLumpSum = None,
+    uKPensionIncomesQuestion = None,
+    uKPensionIncomes = Seq.empty
+  )
+
+  val statePensionLumpSumOnly: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
+    statePension = None,
+    statePensionLumpSum = Some(anStateBenefitViewModel),
+    uKPensionIncomesQuestion = None,
+    uKPensionIncomes = Seq.empty
+  )
+
+  val spAndSpLumpSum: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
+    statePension = Some(anStateBenefitViewModelOne),
+    statePensionLumpSum = Some(anStateBenefitViewModel),
     uKPensionIncomesQuestion = None,
     uKPensionIncomes = Seq.empty
   )
