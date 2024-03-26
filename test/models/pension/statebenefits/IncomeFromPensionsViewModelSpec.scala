@@ -16,7 +16,11 @@
 
 package models.pension.statebenefits
 
-import builders.IncomeFromPensionsViewModelBuilder.{aStatePensionIncomeFromPensionsViewModel, anIncomeFromPensionEmptyViewModel, anIncomeFromPensionsViewModel}
+import builders.IncomeFromPensionsViewModelBuilder.{
+  aStatePensionIncomeFromPensionsViewModel,
+  anIncomeFromPensionEmptyViewModel,
+  anIncomeFromPensionsViewModel
+}
 import builders.StateBenefitViewModelBuilder.{aMinimalStatePensionLumpSumViewModel, aMinimalStatePensionViewModel}
 import utils.UnitTest
 
