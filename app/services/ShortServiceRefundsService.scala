@@ -34,8 +34,7 @@ import scala.concurrent.ExecutionContext
 
 class ShortServiceRefundsService @Inject() (sessionService: PensionSessionService,
                                             repository: PensionsUserDataRepository,
-                                            pensionsConnector: PensionsConnector,
-                                            errorHandler: ErrorHandler) {
+                                            pensionsConnector: PensionsConnector) {
 
   def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] =
     (for {

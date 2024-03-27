@@ -47,8 +47,8 @@ object BenefitType {
 }
 
 class StatePensionService @Inject() (repository: PensionsUserDataRepository,
-                                     connector: StateBenefitsConnector,
-                                     incomeTaxSubmissionConnector: IncomeTaxUserDataConnector) {
+                                     stateBenefitsConnector: StateBenefitsConnector,
+                                     submissionsConnector: IncomeTaxUserDataConnector) {
 
   def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] = {
     val hcWithMtdItId = hc.withMtditId(user.mtditid)
@@ -61,7 +61,7 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
       _ <- processClaim(statePensionSubmission, user)(ec, hcWithMtdItId)
       _ <- processClaim(statePensionLumpSumSubmission, user)(ec, hcWithMtdItId)
       _ <- EitherT(clearJourneyFromSession(session)).leftAs[ServiceError]
-      _ <- EitherT(incomeTaxSubmissionConnector.refreshPensionsResponse(user.nino, user.mtditid, taxYear.endYear)).leftAs[ServiceError]
+      _ <- EitherT(submissionsConnector.refreshPensionsResponse(user.nino, user.mtditid, taxYear.endYear)).leftAs[ServiceError]
     } yield ()).value
   }
 
@@ -78,7 +78,7 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
   }
 
   private def processClaim(answers: StateBenefitsUserData, user: User)(implicit ec: ExecutionContext, hc: HeaderCarrier): ServiceOutcomeT[Unit] =
-    if (answers.claim.exists(_.amount.nonEmpty)) EitherT(connector.saveClaimData(user.nino, answers)).leftAs[ServiceError]
+    if (answers.claim.exists(_.amount.nonEmpty)) EitherT(stateBenefitsConnector.saveClaimData(user.nino, answers)).leftAs[ServiceError]
     else EitherT.pure[Future, ServiceError](())
 
   private def buildDownstreamRequestModel(sessionData: PensionsUserData, benefitType: BenefitType, taxYear: Int): StateBenefitsUserData = {
