@@ -215,7 +215,7 @@ class ShortServiceRefundsServiceSpec
       chargesRequestModel(priorCharges, none[OverseasPensionContributions])
 
     val service =
-      new ShortServiceRefundsService(mockSessionService, mockSessionRepository, mockPensionsConnector, mockErrorHandler)
+      new ShortServiceRefundsService(mockSessionService, mockSessionRepository, mockPensionsConnector)
 
   }
 }

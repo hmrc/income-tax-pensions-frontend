@@ -23,4 +23,5 @@ object FutureUtils {
   implicit class FutureOps[A](value: A) {
     def toFuture: Future[A] = Future.successful(value)
   }
+
 }

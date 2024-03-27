@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,16 @@ package connectors.httpParsers
 
 import connectors.DownstreamErrorOr
 import models.logging.ConnectorResponseInfo
-import models.pension.employmentPensions.CreateUpdateEmploymentRequest.CreatedEmployment
-import play.api.http.Status.CREATED
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
-object EmploymentSessionHttpParser extends APIParser {
-  override val parserName: String = "EmploymentSessionResponse"
+object DeleteEmploymentHttpParser extends APIParser {
+  override val parserName: String = "DeleteEmploymentHttpParser"
   override val service: String    = "income-tax-employment"
 
-  implicit object EmploymentSessionHttpReads extends HttpReads[DownstreamErrorOr[Unit]] {
+  implicit object DeleteEmploymentHttpReads extends HttpReads[DownstreamErrorOr[Unit]] {
     override def read(method: String, url: String, response: HttpResponse): DownstreamErrorOr[Unit] = {
       ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)
-
-      response.status match {
-        case CREATED => response.json.validate[CreatedEmployment].fold[DownstreamErrorOr[Unit]](_ => badSuccessJsonFromAPI, _ => Right(()))
-        case _ =>
-          SessionHttpReads.read(method, url, response)
-      }
+      SessionHttpReads.read(method, url, response)
     }
   }
 }

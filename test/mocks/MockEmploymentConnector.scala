@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,31 @@
  * limitations under the License.
  */
 
-package config
+package mocks
 
-import connectors.{DownstreamOutcome, EmploymentConnector}
-import models.APIErrorModel
+import connectors.EmploymentConnector
 import models.pension.employmentPensions.CreateUpdateEmploymentRequest
-import org.scalamock.handlers.CallHandler5
 import org.scalamock.scalatest.MockFactory
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 trait MockEmploymentConnector extends MockFactory {
 
   val mockEmploymentConnector: EmploymentConnector = mock[EmploymentConnector]
 
-  def mockSaveEmploymentPensionsData(nino: String, taxYear: Int, model: CreateUpdateEmploymentRequest, response: Either[APIErrorModel, Unit])
-      : CallHandler5[String, Int, CreateUpdateEmploymentRequest, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
-    (mockEmploymentConnector
-      .saveEmployment(_: String, _: Int, _: CreateUpdateEmploymentRequest)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(nino, taxYear, model, *, *)
-      .returns(Future.successful(response))
-      .anyNumberOfTimes()
+  object MockEmploymentConnector {
+
+    def saveEmployment(nino: String, taxYear: Int) =
+      (mockEmploymentConnector
+        .saveEmployment(_: String, _: Int, _: CreateUpdateEmploymentRequest)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(nino, taxYear, *, *, *)
+
+    def deleteEmployment(nino: String, taxYear: Int, employmentId: String) =
+      (mockEmploymentConnector
+        .deleteEmployment(_: String, _: Int, _: String)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(nino, taxYear, employmentId, *, *)
+
+  }
+
 }

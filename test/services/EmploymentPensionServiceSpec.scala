@@ -16,79 +16,246 @@
 
 package services
 
+import builders.AllPensionsDataBuilder.anAllPensionsData
+import builders.EmploymentPensionModelBuilder.anotherEmploymentPensionModel
+import builders.EmploymentPensionsBuilder
+import builders.IncomeFromPensionsViewModelBuilder.{anIncomeFromPensionEmptyViewModel, viewModelSingularClaim}
 import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelOne
 import builders.UserBuilder.aUser
-import config.{MockEmploymentConnector, MockPensionUserDataRepository}
-import models.mongo.{DataNotFound, DataNotUpdated, DatabaseError, PensionsUserData}
-import models.{APIErrorBodyModel, APIErrorModel}
-import org.scalatest.concurrent.ScalaFutures
-import play.api.http.Status.BAD_REQUEST
+import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId, none}
+import common.TaxYear
+import mocks.{MockEmploymentConnector, MockSessionRepository, MockSessionService, MockSubmissionsConnector}
+import models.IncomeTaxUserData
+import models.IncomeTaxUserData.PriorData
+import models.mongo.PensionsUserData.SessionData
+import models.mongo.{DataNotFound, DataNotUpdated, PensionsUserData}
+import models.pension.employmentPensions.EmploymentPensions
+import models.pension.statebenefits.IncomeFromPensionsViewModel
+import org.scalatest.OptionValues.convertOptionToValuable
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import utils.UnitTest
 
-class EmploymentPensionServiceSpec extends UnitTest with MockPensionUserDataRepository with MockEmploymentConnector with ScalaFutures {
+class EmploymentPensionServiceSpec
+    extends UnitTest
+    with MockSubmissionsConnector
+    with MockSessionRepository
+    with MockSessionService
+    with MockEmploymentConnector
+    with BaseServiceSpec {
 
-  val employmentPensionService = new EmploymentPensionService(mockPensionUserDataRepository, mockEmploymentConnector)
+  "saving journey answers" when {
+    "all external calls are successful" when {
+      "claiming employment" when {
+        "there's no intent to delete any existing employments" should {
+          "save employment only" in new Test {
+            val idOfSessionClaim = anUkPensionIncomeViewModelOne.employmentId.value
 
-  ".saveAnswers" should {
+            // I.e. session claims 1 employments, but prior has 0.
+            MockSessionService
+              .loadPriorAndSession(aUser, TaxYear(taxYear))
+              .returns((noPriorClaim, sessionOneClaim).asRight.toEitherT)
 
-    "return Right(Unit) when model is saved successfully and UK Pensions cya is cleared from DB" in new Setup {
-      mockSessionFind()
-      mockEmploymentSaves()
-      mockUpdateSession()
-      val result = await(employmentPensionService.saveAnswers(aUser, currentTaxYear))
-      result shouldBe Right(())
+            MockEmploymentConnector
+              .saveEmployment(nino, taxYear)
+              .returns(().asRight.asFuture)
+
+            MockEmploymentConnector
+              .deleteEmployment(nino, taxYear, idOfSessionClaim)
+              .never()
+
+            MockSubmissionsConnector
+              .refreshPensionsResponse(nino, mtditid, taxYear)
+              .returns(().asRight.asFuture)
+              .repeat(1)
+
+            MockSessionRepository
+              .createOrUpdate(clearedJourneyFromSession(sessionOneClaim))
+              .returns(().asRight.asFuture)
+
+            val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
+
+            result shouldBe ().asRight
+          }
+        }
+        "deletion required" should {
+          "save employment and trigger deletion of the relevant employments only" in new Test {
+            // As this id is not present in the session but is a prior submission
+            val idToDelete    = anotherEmploymentPensionModel.employmentId
+            val idNotToDelete = anUkPensionIncomeViewModelOne.employmentId.value
+
+            // I.e. session claims 1 employments, but prior has 2.
+            MockSessionService
+              .loadPriorAndSession(aUser, TaxYear(taxYear))
+              .returns((priorTwoClaims, sessionOneClaim).asRight.toEitherT)
+
+            MockEmploymentConnector
+              .saveEmployment(nino, taxYear)
+              .returns(().asRight.asFuture)
+
+            MockEmploymentConnector
+              .deleteEmployment(nino, taxYear, idToDelete)
+              .returns(().asRight.asFuture)
+
+            MockEmploymentConnector
+              .deleteEmployment(nino, taxYear, idNotToDelete)
+              .never()
+
+            MockSubmissionsConnector
+              .refreshPensionsResponse(nino, mtditid, taxYear)
+              .returns(().asRight.asFuture)
+              .repeat(2)
+
+            MockSessionRepository
+              .createOrUpdate(clearedJourneyFromSession(sessionOneClaim))
+              .returns(().asRight.asFuture)
+
+            val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
+
+            result shouldBe ().asRight
+          }
+        }
+      }
+      "not claiming employment and nothing to delete" should {
+        "not trigger saving or deletion" in new Test {
+          // I.e. session claims 0 employments, prior has 0.
+          MockSessionService
+            .loadPriorAndSession(aUser, TaxYear(taxYear))
+            .returns((noPriorClaim, sessionNoClaim).asRight.toEitherT)
+
+          MockSessionRepository
+            .createOrUpdate(clearedJourneyFromSession(sessionNoClaim))
+            .returns(().asRight.asFuture)
+
+          val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
+
+          result shouldBe ().asRight
+        }
+      }
     }
+  }
+  "no user session is found in the database" should {
+    "return SessionNotFound" in new Test {
+      MockSessionService
+        .loadPriorAndSession(aUser, TaxYear(taxYear))
+        .returns(notFoundResponse)
 
-    "return Left(DataNotFound) when user can not be found in DB" in new Setup {
-      override val findResponse: Either[DatabaseError, Option[PensionsUserData]] = Left(DataNotFound)
-      mockSessionFind()
-      val result = await(employmentPensionService.saveAnswers(aUser, currentTaxYear))
-      result shouldBe Left(DataNotFound)
+      val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
+
+      result shouldBe DataNotFound.asLeft
     }
+  }
 
-    "return Left(APIErrorModel) when Bad Request is returned from connector" in new Setup {
-      override val saveResponse = Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
-      mockSessionFind()
-      mockEmploymentSaves()
-      val result = await(employmentPensionService.saveAnswers(aUser, currentTaxYear))
-      result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
+  "save employment downstream returns an unsuccessful result" should {
+    "return an APIErrorModel" in new Test {
+      MockSessionService
+        .loadPriorAndSession(aUser, TaxYear(taxYear))
+        .returns((noPriorClaim, sessionOneClaim).asRight.toEitherT)
+
+      MockEmploymentConnector
+        .saveEmployment(nino, taxYear)
+        .returns(apiError.asLeft.asFuture)
+
+      val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
+
+      result shouldBe apiError.asLeft
     }
+  }
+  "delete employment downstream returns an unsuccessful result" should {
+    "return an APIErrorModel" in new Test {
+      // As this id is not present in the session but is a prior submission
+      val expectedId = anotherEmploymentPensionModel.employmentId
 
-    "return Left(DataNotUpdated) when session data could not be cleared from data base" in new Setup {
-      override val updateSessionResponse = Left(DataNotUpdated)
-      mockSessionFind()
-      mockEmploymentSaves()
-      mockUpdateSession()
-      val result = await(employmentPensionService.saveAnswers(aUser, currentTaxYear))
-      result shouldBe Left(DataNotUpdated)
+      // I.e. session claims 1 employments, but prior has 2.
+      MockSessionService
+        .loadPriorAndSession(aUser, TaxYear(taxYear))
+        .returns((priorTwoClaims, sessionOneClaim).asRight.toEitherT)
+
+      MockEmploymentConnector
+        .deleteEmployment(nino, taxYear, expectedId)
+        .returns(apiError.asLeft.asFuture)
+
+      MockEmploymentConnector
+        .saveEmployment(nino, taxYear)
+        .never()
+
+      val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
+
+      result shouldBe apiError.asLeft
     }
+  }
 
-    trait Setup {
-      type SessionResponse = Either[APIErrorModel, Unit]
+  "submissions downstream returns an unsuccessful result" should {
+    "return an APIErrorModel" in new Test {
+      MockSessionService
+        .loadPriorAndSession(aUser, TaxYear(taxYear))
+        .returns(apiErrorResponse)
 
-      val findResponse: Either[DatabaseError, Option[PensionsUserData]] = Right(Option(sessionUserData))
-      val saveResponse: SessionResponse                                 = Right(())
-      val updateSessionResponse: Either[DatabaseError, Unit]            = Right(())
+      val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
 
-      lazy val sessionUserData =
-        aPensionsUserData.copy(pensions = emptyPensionsData.copy(incomeFromPensions = aPensionsUserData.pensions.incomeFromPensions))
+      result shouldBe apiError.asLeft
+    }
+  }
 
-      def mockSessionFind(): Unit = mockFind(taxYear, aUser, findResponse)
+  "session data could not be updated" should {
+    "return DataNotUpdated" in new Test {
+      // I.e. session claims 1 employments, but prior has 0.
+      MockSessionService
+        .loadPriorAndSession(aUser, TaxYear(taxYear))
+        .returns((noPriorClaim, sessionOneClaim).asRight.toEitherT)
 
-      def mockEmploymentSaves(): Unit =
-        sessionUserData.pensions.incomeFromPensions.uKPensionIncomes
-          .map(_.toDownstreamRequest)
-          .foreach(cuer => mockSaveEmploymentPensionsData(nino, taxYear, cuer, saveResponse))
+      MockEmploymentConnector
+        .saveEmployment(nino, taxYear)
+        .returns(().asRight.asFuture)
 
-      lazy val userWithEmptySaveIncomeFromPensionCya = aPensionsUserData
-        .copy(pensions = emptyPensionsData.copy(incomeFromPensions =
-          aPensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = Nil, uKPensionIncomesQuestion = None)))
+      MockSubmissionsConnector
+        .refreshPensionsResponse(nino, mtditid, taxYear)
+        .returns(().asRight.asFuture)
+        .repeat(1)
 
-      def mockUpdateSession(): Unit =
-        mockCreateOrUpdate(userWithEmptySaveIncomeFromPensionCya, updateSessionResponse)
+      MockSessionRepository
+        .createOrUpdate(clearedJourneyFromSession(sessionOneClaim))
+        .returns(DataNotUpdated.asLeft.asFuture)
+
+      val result = service.saveAnswers(aUser, TaxYear(taxYear)).futureValue
+
+      result shouldBe DataNotUpdated.asLeft
 
     }
   }
 
+  trait Test {
+    def priorWith(employment: Option[EmploymentPensions]): PriorData =
+      IncomeTaxUserData(anAllPensionsData.copy(employmentPensions = employment).some)
+
+    val noPriorClaim   = priorWith(none[EmploymentPensions])
+    val priorTwoClaims = priorWith(EmploymentPensionsBuilder.anEmploymentPensions.some)
+
+    private def sessionWith(journeyAnswers: IncomeFromPensionsViewModel): PensionsUserData =
+      aPensionsUserData.copy(
+        pensions = emptyPensionsData.copy(
+          incomeFromPensions = journeyAnswers
+        ))
+
+    val sessionOneClaim = sessionWith(viewModelSingularClaim)
+    val sessionNoClaim  = sessionWith(anIncomeFromPensionEmptyViewModel)
+
+    def clearedJourneyFromSession(session: SessionData): SessionData = {
+      val clearedJourneyModel = session.pensions.incomeFromPensions
+        .copy(
+          uKPensionIncomes = Seq.empty,
+          uKPensionIncomesQuestion = None
+        )
+      session.copy(pensions = session.pensions.copy(incomeFromPensions = clearedJourneyModel))
+    }
+
+    val service = new EmploymentPensionService(
+      mockSessionService,
+      mockSessionRepository,
+      mockEmploymentConnector,
+      mockSubmissionsConnector
+    )
+
+  }
 }

@@ -21,8 +21,9 @@ import models.pension.statebenefits.AllStateBenefitsData
 import play.api.libs.json.{Json, OFormat}
 
 // TODO: Investigate whether we need state benefits at this level here, can we not use the one sat inside pensions?
-case class IncomeTaxUserData(pensions: Option[AllPensionsData] = None, stateBenefits: Option[AllStateBenefitsData] = None)
+final case class IncomeTaxUserData(pensions: Option[AllPensionsData] = None, stateBenefits: Option[AllStateBenefitsData] = None)
 
 object IncomeTaxUserData {
+  type PriorData = IncomeTaxUserData
   implicit val formats: OFormat[IncomeTaxUserData] = Json.format[IncomeTaxUserData]
 }
