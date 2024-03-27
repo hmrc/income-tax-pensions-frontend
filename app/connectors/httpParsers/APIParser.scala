@@ -16,6 +16,8 @@
 
 package connectors.httpParsers
 
+import cats.implicits.catsSyntaxEitherId
+import connectors.DownstreamErrorOr
 import models.{APIErrorBodyModel, APIErrorModel, APIErrorsBodyModel}
 import play.api.Logging
 import play.api.http.Status._
@@ -36,7 +38,7 @@ trait APIParser extends Logging {
     Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
   }
 
-  def handleAPIError[Response](response: HttpResponse, statusOverride: Option[Int] = None): Either[APIErrorModel, Response] = {
+  def handleAPIError[Response](response: HttpResponse, statusOverride: Option[Int] = None): DownstreamErrorOr[Response] = {
 
     val status = statusOverride.getOrElse(response.status)
 
@@ -58,21 +60,23 @@ trait APIParser extends Logging {
     }
   }
 
-  type SessionResponse = Either[APIErrorModel, Unit]
-
-  implicit object SessionHttpReads extends HttpReads[SessionResponse] {
-    override def read(method: String, url: String, response: HttpResponse): SessionResponse =
+  implicit object SessionHttpReads extends HttpReads[DownstreamErrorOr[Unit]] {
+    override def read(method: String, url: String, response: HttpResponse): DownstreamErrorOr[Unit] =
       response.status match {
-        case NO_CONTENT => Right(())
+        case NO_CONTENT => ().asRight
+
         case BAD_REQUEST =>
           pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
           handleAPIError(response)
+
         case INTERNAL_SERVER_ERROR =>
           pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
           handleAPIError(response)
+
         case SERVICE_UNAVAILABLE =>
           pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
           handleAPIError(response)
+
         case _ =>
           pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
           handleAPIError(response, Some(INTERNAL_SERVER_ERROR))

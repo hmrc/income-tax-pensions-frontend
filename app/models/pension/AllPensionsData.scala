@@ -43,6 +43,7 @@ case class AllPensionsData(pensionReliefs: Option[PensionReliefs],
 }
 
 object AllPensionsData {
+  type PriorPensionsData = AllPensionsData
   implicit val formats: OFormat[AllPensionsData] = Json.format[AllPensionsData]
 
   val Zero: BigDecimal = 0.0
