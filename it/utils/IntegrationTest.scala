@@ -74,8 +74,6 @@ trait IntegrationTest
 
   implicit val actorSystem: ActorSystem = ActorSystem()
 
-//  implicit val integrationTestClock: IntegrationTestClock.type = IntegrationTestClock
-
   implicit def wsClient: WSClient = app.injector.instanceOf[WSClient]
 
   val httpClient: HttpClient = app.injector.instanceOf[HttpClient]

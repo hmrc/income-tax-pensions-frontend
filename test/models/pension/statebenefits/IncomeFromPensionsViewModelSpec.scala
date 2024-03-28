@@ -49,12 +49,13 @@ class IncomeFromPensionsViewModelSpec extends UnitTest {
 
     "return false" when {
       "not all necessary questions have been populated" in {
-        aStatePensionIncomeFromPensionsViewModel.copy(statePension = None).isStatePensionFinished shouldBe false
+        aStatePensionIncomeFromPensionsViewModel.copy(statePension = None, statePensionLumpSum = None).isStatePensionFinished shouldBe false
+
         aStatePensionIncomeFromPensionsViewModel
-          .copy(statePension = Some(
-            aMinimalStatePensionViewModel.copy(
-              amountPaidQuestion = Some(true)
-            )))
+          .copy(
+            statePension = Some(aMinimalStatePensionViewModel.copy(amountPaidQuestion = Some(true))),
+            statePensionLumpSum = Some(aMinimalStatePensionViewModel.copy(amountPaidQuestion = Some(true)))
+          )
           .isStatePensionFinished shouldBe false
       }
     }

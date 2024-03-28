@@ -32,8 +32,7 @@ trait TestTaxYearHelper {
 
   val taxYearEndOfYearMinusOne: Int = taxYearEOY - 1
 
-  val validTaxYearList: Seq[Int]       = Seq(taxYearEndOfYearMinusOne, taxYearEOY, taxYear)
-  val validTaxYearListSingle: Seq[Int] = Seq(taxYear)
+  val validTaxYearList: Seq[Int] = Seq(taxYearEndOfYearMinusOne, taxYearEOY, taxYear)
 
   val invalidTaxYear: Int = taxYear + 999
 }

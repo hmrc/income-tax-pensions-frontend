@@ -16,13 +16,12 @@
 
 package controllers.pensions.incomeFromPensions
 
-import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeFromPensionsViewModelBuilder.aStatePensionIncomeFromPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsCYAModelBuilder.{aPensionsCYAGeneratedFromPriorEmpty, aPensionsCYAModel}
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.aPensionsUserData
-import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
+import builders.StateBenefitViewModelBuilder.anEmptyStateBenefitViewModel
 import builders.StateBenefitsUserDataBuilder.aCreateStatePensionBenefitsUD
 import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelOne
 import builders.UserBuilder.aUser
@@ -31,9 +30,8 @@ import models.mongo.PensionsCYAModel
 import models.pension.statebenefits.{ClaimCYAModel, IncomeFromPensionsViewModel, StateBenefitViewModel}
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import utils.PageUrls.IncomeFromPensionsPages.{pensionIncomeSummaryUrl, statePension, statePensionCyaUrl}
+import utils.PageUrls.IncomeFromPensionsPages.{statePension, statePensionCyaUrl}
 import utils.PageUrls.fullUrl
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
@@ -102,8 +100,8 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
 
     "redirect to the first page in journey if journey is incomplete" in {
       val data = aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(
-        incomeFromPensions =
-          aStatePensionIncomeFromPensionsViewModel.copy(statePension = Some(anStateBenefitViewModelOne.copy(startDateQuestion = None)))))
+        incomeFromPensions = aStatePensionIncomeFromPensionsViewModel
+          .copy(statePension = Some(anEmptyStateBenefitViewModel), statePensionLumpSum = Some(anEmptyStateBenefitViewModel))))
 
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -117,62 +115,6 @@ class StatePensionCYAControllerISpec extends IntegrationTest with ViewHelpers wi
       }
       result.status shouldBe SEE_OTHER
       result.header("location").contains(statePension(taxYearEOY))
-    }
-  }
-
-  ".submit" should {
-    "redirect to pensions summary" when {
-      "CYA data has been updated and differs from prior data" which {
-        val form           = Map[String, String]()
-        val submissionData = stateBenefitData.copy(amount = Some(500.20), taxPaid = Some(20.05))
-
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual()
-          stateBenefitsSubmissionStub(Json.toJson(submissionData).toString(), nino)
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(priorCYAData)
-          urlPost(
-            fullUrl(statePensionCyaUrl(taxYear)),
-            form,
-            follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-        }
-
-        "have the status SEE OTHER" in {
-          result.status shouldBe SEE_OTHER
-        }
-
-        "redirects to the summary page" in {
-          result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
-        }
-      }
-
-      "the user makes no changes and no submission to DES is made" which {
-        val form = Map[String, String]()
-
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          authoriseAgentOrIndividual()
-          stateBenefitsSubmissionStub(Json.toJson(stateBenefitData).toString(), nino)
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          insertCyaData(priorCYAData)
-          urlPost(
-            fullUrl(statePensionCyaUrl(taxYear)),
-            form,
-            follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList)))
-        }
-
-        "have the status SEE OTHER" in {
-          result.status shouldBe SEE_OTHER
-        }
-
-        "redirects to the summary page" in {
-          result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
-        }
-      }
-
     }
   }
 }

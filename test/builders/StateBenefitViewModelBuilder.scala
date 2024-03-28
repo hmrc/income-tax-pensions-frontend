@@ -39,6 +39,9 @@ object StateBenefitViewModelBuilder {
     taxPaid = Some(8.99)
   )
 
+  val anStateBenefitViewModel: StateBenefitViewModel =
+    anStateBenefitViewModelOne.copy(benefitId = Some(UUID.fromString("a7e8057e-fbbc-47a8-a8b4-78d9f015c934")))
+
   val anStateBenefitViewModelTwo: StateBenefitViewModel = StateBenefitViewModel(
     benefitId = Some(UUID.fromString("a9e8057e-fbbc-47a8-a8b4-78d9f015c935")),
     startDate = Some(LocalDate.parse("2019-11-14")),
