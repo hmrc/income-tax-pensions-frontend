@@ -20,6 +20,7 @@ import models.pension.AllPensionsData
 import models.pension.statebenefits.AllStateBenefitsData
 import play.api.libs.json.{Json, OFormat}
 
+// TODO: Investigate whether we need state benefits at this level here, can we not use the one sat inside pensions?
 final case class IncomeTaxUserData(pensions: Option[AllPensionsData] = None, stateBenefits: Option[AllStateBenefitsData] = None)
 
 object IncomeTaxUserData {

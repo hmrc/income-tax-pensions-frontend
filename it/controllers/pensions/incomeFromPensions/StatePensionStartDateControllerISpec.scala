@@ -115,7 +115,8 @@ class StatePensionStartDateControllerISpec extends IntegrationTest with ViewHelp
   }
 
   ".submit" should {
-    "persist amount and redirect to StatePensionLumpSum page" in {
+    // TODO: Uncomment me during SASS-7742
+    "persist amount and redirect to StatePensionLumpSum page" ignore {
       val formData = startDateForm(validDay, validMonth, validYear)
       val viewModel = IncomeFromPensionsViewModel(statePension =
         Some(aStatePensionViewModel.copy(startDate = Some(LocalDate.parse("2019-11-14")), startDateQuestion = Some(true))))

@@ -20,7 +20,6 @@ import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.{anIncomeTaxUserData, anIncomeTaxUserDataEmpty}
 import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
 import builders.StateBenefitViewModelBuilder.{anEmptyStateBenefitViewModel, anStateBenefitViewModelOne}
-import models.pension.statebenefits.StateBenefitViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -147,7 +146,10 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
         }
 
         "render page when statePension are not started " which {
-          val viewModel = anIncomeFromPensionsViewModel.copy(statePension = Some(anEmptyStateBenefitViewModel))
+          val viewModel = anIncomeFromPensionsViewModel.copy(
+            statePension = Some(anEmptyStateBenefitViewModel),
+            statePensionLumpSum = Some(anEmptyStateBenefitViewModel))
+
           lazy val result: WSResponse =
             showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
 
@@ -236,8 +238,10 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
 
         "render page when StateBenefitViewModel is None " which {
 
-          val anUpdatedStatePensionModel = StateBenefitViewModel()
-          val viewModel                  = anIncomeFromPensionsViewModel.copy(statePension = Some(anUpdatedStatePensionModel))
+          val viewModel = anIncomeFromPensionsViewModel.copy(
+            statePension = Some(anEmptyStateBenefitViewModel),
+            statePensionLumpSum = Some(anEmptyStateBenefitViewModel))
+
           lazy val result: WSResponse =
             showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
 

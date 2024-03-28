@@ -23,4 +23,12 @@ package object services {
   type ServiceOutcome[A]  = Future[Either[ServiceError, A]]
   type ServiceOutcomeT[A] = EitherT[Future, ServiceError, A]
 
+  def sequence[A, B](s: Seq[Either[A, B]]): Either[A, Seq[B]] =
+    s.foldRight(Right(Nil): Either[A, Seq[B]]) { (e, acc) =>
+      for {
+        xs <- acc
+        x  <- e
+      } yield xs :+ x
+    }
+
 }

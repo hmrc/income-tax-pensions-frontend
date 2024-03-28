@@ -37,7 +37,7 @@ case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewMode
   def nonEmpty: Boolean = !isEmpty
 
   def isStatePensionFinished: Boolean =
-    statePension.exists(_.isFinished) && statePensionLumpSum.exists(_.isFinished)
+    statePension.exists(_.isFinished) || statePensionLumpSum.exists(_.isFinished)
 
   def isUkPensionFinished: Boolean =
     uKPensionIncomesQuestion.exists(x => !x || (uKPensionIncomes.nonEmpty && uKPensionIncomes.forall(_.isFinished)))

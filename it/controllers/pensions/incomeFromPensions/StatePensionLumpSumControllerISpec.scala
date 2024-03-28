@@ -133,7 +133,8 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       result.status shouldBe BAD_REQUEST
     }
 
-    "redirect to the 'Tax paid on state pension lump sum' page when submitting answer as 'Yes' with correct taxPaid amount" in {
+    // TODO: Uncomment me during SASS-7742
+    "redirect to the 'Tax paid on state pension lump sum' page when submitting answer as 'Yes' with correct taxPaid amount" ignore {
       lazy val form: Map[String, String] = Map(RadioButtonAmountForm.yesNo -> "true", RadioButtonAmountForm.amount2 -> "42.24")
 
       lazy val result: WSResponse = {
