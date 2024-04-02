@@ -39,8 +39,7 @@ object StatePensionPages {
         state.statePension.flatMap(_.amount).isDefined &&
         state.statePension.flatMap(_.startDateQuestion).isDefined &&
         state.statePension.flatMap(_.startDate).isDefined
-      else
-        state.statePension.flatMap(_.amountPaidQuestion).isDefined // So to ensure the first question in the journey hasn't been skipped
+      else true
     }
   }
 

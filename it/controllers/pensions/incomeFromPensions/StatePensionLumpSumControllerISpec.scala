@@ -19,7 +19,12 @@ package controllers.pensions.incomeFromPensions
 import builders.IncomeFromPensionsViewModelBuilder.{aStatePensionIncomeFromPensionsViewModel, anIncomeFromPensionsViewModel}
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
-import builders.StateBenefitViewModelBuilder.{aMinimalStatePensionViewModel, aStatePensionNoAddToCalculationViewModel, anStateBenefitViewModelOne}
+import builders.StateBenefitViewModelBuilder.{
+  aMinimalStatePensionViewModel,
+  aStatePensionNoAddToCalculationViewModel,
+  anEmptyStateBenefitViewModel,
+  anStateBenefitViewModelOne
+}
 import builders.UserBuilder.{aUser, aUserRequest}
 import forms.RadioButtonAmountForm
 import models.pension.statebenefits.StateBenefitViewModel
@@ -68,12 +73,9 @@ class StatePensionLumpSumControllerISpec extends IntegrationTest with BeforeAndA
       val data = aPensionsUserData.copy(
         pensions = aPensionsCYAModel.copy(
           incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-            statePension = Some(
-              anStateBenefitViewModelOne.copy(
-                amountPaidQuestion = None,
-                amount = None,
-                startDateQuestion = None
-              ))
+            statePension = Some(anStateBenefitViewModelOne.copy(
+              startDateQuestion = None
+            ))
           )))
 
       lazy implicit val result: WSResponse = {
