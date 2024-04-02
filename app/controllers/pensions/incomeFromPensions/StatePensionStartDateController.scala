@@ -98,7 +98,7 @@ class StatePensionStartDateController @Inject() (actionsProvider: ActionsProvide
   }
 
   private def determineRedirectFrom(journey: IncomeFromPensionsViewModel, taxYear: Int): Result =
-    if (journey.isStatePensionFinished) cyaPageRedirect(taxYear)
+    if (areStatePensionClaimsComplete(journey)) cyaPageRedirect(taxYear)
     else claimLumpSumRedirect(taxYear)
 
 }

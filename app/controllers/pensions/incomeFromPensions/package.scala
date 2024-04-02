@@ -23,6 +23,10 @@ import play.api.mvc.AnyContent
 
 package object incomeFromPensions {
 
+  def areStatePensionClaimsComplete(answers: IncomeFromPensionsViewModel): Boolean =
+    answers.statePension.exists(_.isFinished) &&
+      answers.statePensionLumpSum.exists(_.isFinished)
+
   def refreshSessionModel(updatedJourney: IncomeFromPensionsViewModel)(implicit request: UserSessionDataRequest[AnyContent]): PensionsUserData = {
     val updatedPensions = request.sessionData.pensions.copy(incomeFromPensions = updatedJourney)
     request.sessionData.copy(pensions = updatedPensions)
