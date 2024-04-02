@@ -47,7 +47,7 @@ case class StateBenefitViewModel(benefitId: Option[UUID] = None,
   def isEmpty: Boolean = this.productIterator.forall(_ == None)
 
   def isFinished: Boolean = {
-    val noClaim = amountPaidQuestion.contains(false)
+    val notClaiming = amountPaidQuestion.contains(false)
 
     // Fields common across the state pension and state pension lump sum journeys
     val areCommonAnswered = amount.isDefined &&
@@ -60,7 +60,9 @@ case class StateBenefitViewModel(benefitId: Option[UUID] = None,
       if (areClaimingLumpSum) taxPaid.isDefined
       else true
 
-    noClaim || areCommonAnswered && isLumpSumFinished
+    val claimIsFinished = areCommonAnswered && isLumpSumFinished
+
+    notClaiming || claimIsFinished
   }
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedStateBenefitViewModel =

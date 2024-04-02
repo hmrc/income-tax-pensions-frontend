@@ -92,6 +92,6 @@ class StatePensionLumpSumController @Inject() (actionsProvider: ActionsProvider,
   }
 
   private def determineRedirectFrom(journey: IncomeFromPensionsViewModel, bool: Boolean, taxYear: Int): Result =
-    if (journey.isStatePensionFinished || !bool) cyaPageRedirect(taxYear)
+    if (areStatePensionClaimsComplete(journey) || !bool) cyaPageRedirect(taxYear)
     else taxPaidOnLumpSumRedirect(taxYear)
 }

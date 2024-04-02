@@ -16,15 +16,38 @@
 
 package models.pension.statebenefits
 
-import builders.IncomeFromPensionsViewModelBuilder.{
-  aStatePensionIncomeFromPensionsViewModel,
-  anIncomeFromPensionEmptyViewModel,
-  anIncomeFromPensionsViewModel
-}
-import builders.StateBenefitViewModelBuilder.{aMinimalStatePensionLumpSumViewModel, aMinimalStatePensionViewModel}
+import builders.IncomeFromPensionsViewModelBuilder._
+import builders.StateBenefitViewModelBuilder._
+import cats.implicits.{catsSyntaxOptionId, none}
 import utils.UnitTest
 
+import java.time.LocalDate
+
 class IncomeFromPensionsViewModelSpec extends UnitTest {
+
+  ".isStatePensionFinished" should {
+    "return true" when {
+      "both state pension and lump sum are finished" in {
+        spAndSpLumpSum.isStatePensionFinished shouldBe true
+      }
+      "only one of the journeys has been finished" in {
+        statePensionLumpSumOnly.isStatePensionFinished shouldBe true
+      }
+    }
+    "return false" when {
+      "neither state pension nor lump sum have been started" in {
+        anIncomeFromPensionEmptyViewModel.isStatePensionFinished shouldBe false
+      }
+      "both journeys started but not finished" in {
+        anIncomeFromPensionEmptyViewModel
+          .copy(
+            statePension = aStatePensionViewModel.copy(startDate = none[LocalDate]).some,
+            statePensionLumpSum = aStatePensionLumpSumViewModel.copy(startDate = none[LocalDate]).some
+          )
+          .isStatePensionFinished shouldBe false
+      }
+    }
+  }
 
   ".isEmpty" should {
     "return true when no questions have been answered" in {
