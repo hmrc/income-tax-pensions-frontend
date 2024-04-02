@@ -17,7 +17,10 @@
 package models.pension.statebenefits
 
 import builders.StateBenefitViewModelBuilder.{aStatePensionLumpSumViewModel, aStatePensionViewModel, anEmptyStateBenefitViewModel}
+import cats.implicits.{catsSyntaxOptionId, none}
 import support.UnitTest
+
+import java.time.LocalDate
 
 class StateBenefitViewModelSpec extends UnitTest {
 
@@ -33,23 +36,27 @@ class StateBenefitViewModelSpec extends UnitTest {
 
   ".isFinished" should {
     "return true" when {
-      "all questions are populated" in {
+      "all fields are present (i.e. submission of a full claim)" in {
         aStatePensionViewModel.isFinished shouldBe true
-        aStatePensionLumpSumViewModel.isFinished shouldBe true
       }
-      "all required questions are answered" in {
-        aStatePensionLumpSumViewModel
+      "only the mandatory fields are present (e.g. opting out of the claim)" in {
+        anEmptyStateBenefitViewModel
           .copy(
-            taxPaidQuestion = Some(false),
-            taxPaid = None
+            amountPaidQuestion = false.some
           )
-          .isFinished
+          .isFinished shouldBe true
       }
     }
-
     "return false" when {
-      "not all necessary questions have been populated" in {
-        aStatePensionLumpSumViewModel.copy(taxPaidQuestion = None).isFinished
+      "attempting a claim but not all mandatory questions are answered" in {
+        anEmptyStateBenefitViewModel
+          .copy(
+            amountPaidQuestion = true.some,
+            amount = BigDecimal(123).some,
+            startDateQuestion = true.some,
+            startDate = none[LocalDate]
+          )
+          .isFinished shouldBe false
       }
     }
   }
