@@ -206,6 +206,11 @@ pensions.overseasPensionsSummary.incomeFromOverseasPensions = Income from overse
 pensions.overseasPensionsSummary.overseasTransferCharges = Overseas transfer charges
 pensions.overseasPensionsSummary.shortServiceRefunds = Short service refunds
 
+# Section completed
+sectionCompletedState.title = Have you finished this section?
+sectionCompletedState.hint = You’ll still be able to go back and review the information that you’ve given us.
+sectionCompletedState.error.required = Select yes if you’ve completed this section
+
 ########    PAYMENTS INTO PENSIONS    ########
 pensions.paymentsIntoOverseasPensions.error.agent = Select yes if your client or their employer paid into an overseas pension scheme
 pensions.paymentsIntoOverseasPensions.error.individual = Select yes if you or your employer paid into an overseas pension scheme

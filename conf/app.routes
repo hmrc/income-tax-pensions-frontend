@@ -31,6 +31,8 @@ GET         /:taxYear/pensions-summary                                          
 
 GET         /:taxYear/overseas-pensions                                                                                            controllers.pensions.OverseasPensionsSummaryController.show(taxYear: Int)
 
+GET         /:taxYear/overseas-pensions                                                                                            controllers.pensions.SectionCompletedStateController.show(taxYear: String, businessId: String, journey: String)
+
 ###########################     Payments into Pension pages     ####################################
 
 GET         /:taxYear/payments-into-pensions/payments-into-overseas-pensions/overseas-pension-scheme                               controllers.pensions.paymentsIntoPensions.PaymentsIntoOverseasPensionsGatewayController.show(taxYear:Int)
