@@ -28,7 +28,6 @@ object StatePensionRedirects {
   def statePensionStartDateRedirect(taxYear: Int): Result = Redirect(StatePensionStartDateController.show(taxYear))
   def lumpSumStartDateRedirect(taxYear: Int): Result      = Redirect(StatePensionLumpSumStartDateController.show(taxYear))
   def cyaPageRedirect(taxYear: Int): Result               = Redirect(cyaPageCall(taxYear))
-  def taskListRedirect(taxYear: Int): Result              = Redirect(IncomeFromPensionsSummaryController.show(taxYear))
 
   def cyaPageCall(taxYear: Int): Call = StatePensionCYAController.show(taxYear)
 }

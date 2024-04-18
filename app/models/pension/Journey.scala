@@ -29,6 +29,47 @@ sealed abstract class Journey(override val entryName: String) extends EnumEntry 
 object Journey extends Enum[Journey] with utils.PlayJsonEnum[Journey] {
   val values: IndexedSeq[Journey] = findValues
 
+  private val pensionsSummaryRedirect = (taxYear: Int) => Redirect(pensions.routes.PensionsSummaryController.show(taxYear))
+  private val overseasSummaryRedirect = (taxYear: Int) => Redirect(pensions.routes.OverseasPensionsSummaryController.show(taxYear))
+  private val incomeFromPensionsSummaryRedirect = (taxYear: Int) =>
+    Redirect(pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController.show(taxYear))
+
+  case object AnnualAllowances extends Journey("annual-allowances") {
+    def sectionCompletedRedirect(taxYear: Int): Result = pensionsSummaryRedirect(taxYear)
+  }
+  case object PaymentsIntoPensions extends Journey("payments-into-pensions") {
+    def sectionCompletedRedirect(taxYear: Int): Result = pensionsSummaryRedirect(taxYear)
+  }
+  case object UnauthorisedPayments extends Journey("unauthorised-payments") {
+    def sectionCompletedRedirect(taxYear: Int): Result = pensionsSummaryRedirect(taxYear)
+  }
+
+  case object OverseasPensionsSummary extends Journey("overseas-pensions-summary") {
+    def sectionCompletedRedirect(taxYear: Int): Result = overseasSummaryRedirect(taxYear)
+  }
+  case object IncomeFromOverseasPensions extends Journey("income-from-overseas-pensions") {
+    def sectionCompletedRedirect(taxYear: Int): Result = overseasSummaryRedirect(taxYear)
+  }
+  case object PaymentsIntoOverseasPensions extends Journey("payments-into-overseas-pensions") {
+    def sectionCompletedRedirect(taxYear: Int): Result = overseasSummaryRedirect(taxYear)
+  }
+  case object TransferIntoOverseasPensions extends Journey("transfer-into-overseas-pensions") {
+    def sectionCompletedRedirect(taxYear: Int): Result = overseasSummaryRedirect(taxYear)
+  }
+  case object ShortServiceRefunds extends Journey("short-service-refunds") {
+    def sectionCompletedRedirect(taxYear: Int): Result = overseasSummaryRedirect(taxYear)
+  }
+
+  case object IncomeFromPensionsSummary extends Journey("income-from-pensions-summary") {
+    def sectionCompletedRedirect(taxYear: Int): Result = pensionsSummaryRedirect(taxYear)
+  }
+  case object UkPensionIncome extends Journey("uk-pension-income") {
+    def sectionCompletedRedirect(taxYear: Int): Result = incomeFromPensionsSummaryRedirect(taxYear)
+  }
+  case object StatePension extends Journey("state-pension") {
+    def sectionCompletedRedirect(taxYear: Int): Result = incomeFromPensionsSummaryRedirect(taxYear)
+  }
+
   implicit def pathBindable(implicit strBinder: PathBindable[String]): PathBindable[Journey] = new PathBindable[Journey] {
 
     override def bind(key: String, value: String): Either[String, Journey] =
@@ -41,9 +82,5 @@ object Journey extends Enum[Journey] with utils.PlayJsonEnum[Journey] {
 
     override def unbind(key: String, journeyName: Journey): String =
       strBinder.unbind(key, journeyName.entryName)
-  }
-
-  case object PaymentsIntoPensions extends Journey("payments-into-pensions") {
-    def sectionCompletedRedirect(taxYear: Int): Result = Redirect(pensions.routes.PensionsSummaryController.show(taxYear))
   }
 }

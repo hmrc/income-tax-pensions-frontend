@@ -20,15 +20,16 @@ import cats.data.EitherT
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
+import controllers.redirectToSectionCompletedPage
 import models.IncomeTaxUserData
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
+import models.pension.Journey.StatePension
 import models.requests.UserPriorAndSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.redirects.StatePensionPages.StatePensionsCYAPage
-import services.redirects.StatePensionRedirects.taskListRedirect
 import services.{PensionSessionService, StatePensionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
@@ -66,7 +67,7 @@ class StatePensionCYAController @Inject() (auditProvider: AuditActionsProvider,
           data <- sessionService.loadPriorAndSession(request.user, TaxYear(taxYear))
           (prior, session) = data
           _ <- processSubmission(session, prior, taxYear)
-        } yield taskListRedirect(taxYear)
+        } yield redirectToSectionCompletedPage(taxYear, StatePension)
 
       resultOrError
         .leftMap(_ => errorHandler.internalServerError())

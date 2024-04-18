@@ -1,3 +1,8 @@
+import common.TaxYear
+import models.pension.Journey
+import play.api.mvc.Result
+import play.api.mvc.Results.Redirect
+
 /*
  * Copyright 2023 HM Revenue & Customs
  *
@@ -25,4 +30,8 @@ package object controllers {
       case None                                           => Right(None)
       case _                                              => Left(())
     }
+
+  def redirectToSectionCompletedPage(taxYear: Int, journey: Journey): Result = Redirect(
+    controllers.pensions.routes.SectionCompletedStateController.show(taxYear, journey.entryName)
+  )
 }
