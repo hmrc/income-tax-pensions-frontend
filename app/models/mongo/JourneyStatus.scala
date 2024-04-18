@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package viewModels
+package models.mongo
 
-import play.api.data.Field
-import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
+import enumeratum._
 
-trait ErrorMessageAwareness {
+sealed abstract class JourneyStatus(entryName: String) extends EnumEntry {
+  override def toString: String = entryName
+}
 
-  def errorMessage(field: Field)(implicit messages: Messages): Option[ErrorMessage] =
-    field.error
-      .map { err =>
-        ErrorMessage(content = Text(messages(err.message, err.args: _*)))
-      }
+object JourneyStatus extends Enum[JourneyStatus] with utils.PlayJsonEnum[JourneyStatus] {
+  val values: IndexedSeq[JourneyStatus] = findValues
+  case object NotStarted extends JourneyStatus("notStarted")
+  case object InProgress extends JourneyStatus("inProgress")
+  case object Completed  extends JourneyStatus("completed")
 }

@@ -27,6 +27,9 @@ import javax.inject.Singleton
 @Singleton
 class FormsProvider {
 
+  def sectionCompletedStateForm: Form[Boolean] =
+    YesNoForm.yesNoForm("sectionCompletedState.error.required")
+
   def reducedAnnualAllowanceForm(user: User): Form[Boolean] = {
     val agentOrIndividual = userType(user.isAgent)
     YesNoForm.yesNoForm(missingInputError = s"annualAllowance.reducedAnnualAllowance.error.noEntry.$agentOrIndividual")

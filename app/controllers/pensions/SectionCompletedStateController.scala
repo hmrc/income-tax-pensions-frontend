@@ -16,68 +16,67 @@
 
 package controllers.pensions
 
-import play.api.Logging
+import config.AppConfig
+import controllers.predicates.actions.ActionsProvider
+import forms.FormsProvider
+import models.mongo.JourneyStatus
+import models.mongo.JourneyStatus.{Completed, InProgress, NotStarted}
+import models.pension.Journey
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.FutureUtils.FutureOps
 import views.html.pensions.SectionCompletedStateView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.annotation.unused
+import scala.concurrent.Future
 
 @Singleton
-class SectionCompletedStateController @Inject()(override val messagesApi: MessagesApi,
-                                                service: SelfEmploymentService,
-                                                identify: IdentifierAction,
-                                                getData: DataRetrievalAction,
-                                                formProvider: BooleanFormProvider,
-                                                val controllerComponents: MessagesControllerComponents,
-                                                view: SectionCompletedStateView)(implicit val ec: ExecutionContext)
-    extends FrontendBaseController
-    with I18nSupport
-    with Logging {
+class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvider,
+//                                                 service: PensionSessionService, TODO 7969 GET and PUT journey state
+//                                                 errorHandler: ErrorHandler,
+                                                 formsProvider: FormsProvider,
+                                                 cc: MessagesControllerComponents,
+                                                 view: SectionCompletedStateView)(implicit appConfig: AppConfig)
+    extends FrontendController(cc)
+    with I18nSupport {
 
-  val page = SectionCompletedStatePage
+  val form: Form[Boolean] = formsProvider.sectionCompletedStateForm
 
-  def show(taxYear: String, businessId: String, journey: String, mode: String): Action[AnyContent] = (identify andThen getData) async {
-    implicit request =>
-      val form: Form[Boolean] = formProvider(page, request.userType, userSpecificRequiredError = false)
+  def show(taxYear: Int, journey: String): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) { implicit request =>
+    val existingAnswer: Option[JourneyStatus] = None // TODO 7969 GET and PUT journey state (replace with comments below)
+//    val form: Form[Boolean]             = formsProvider.sectionCompletedStateForm(request.user)
+    val filledForm = existingAnswer.fold(form)(fill(form, _))
 //      val preparedForm = service
 //        .getJourneyStatus(JourneyAnswersContext(taxYear, businessId, request.mtditid, Journey.withName(journey)))
 //        .value
 //        .map(_.fold(_ => form, fill(form, _)))
-//
 //      preparedForm map { form =>
-        Ok(view(form, taxYear, businessId, journey, mode))
+    Ok(view(filledForm, taxYear, journey))
 //      }
   }
 
-//  private def fill(form: Form[Boolean], status: JourneyStatus) =
-//    status match {
-//      case Completed                                     => form.fill(true)
-//      case InProgress                                    => form.fill(false)
-//      case NotStarted | CheckOurRecords | CannotStartYet => form
-//    }
+  def submit(taxYear: Int, journey: String): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, journey))),
+        answer => saveAndRedirect(answer, Journey.withName(journey), taxYear)
+      )
+  }
 
-//  def onSubmit(taxYear: TaxYear, businessId: BusinessId, journey: String, mode: Mode): Action[AnyContent] = (identify andThen getData) async {
-//    implicit request =>
-//      formProvider(page, request.userType, userSpecificRequiredError = false)
-//        .bindFromRequest()
-//        .fold(
-//          formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, businessId, Journey.withName(journey), mode))),
-//          answer =>
-//            handleResultT(
-//              saveAndRedirect(JourneyAnswersContext(taxYear, businessId, request.mtditid, Journey.withName(journey)), answer)
-//            )
-//        )
-//  }
+  private def fill(form: Form[Boolean], status: JourneyStatus): Form[Boolean] =
+    status match {
+      case Completed  => form.fill(true)
+      case InProgress => form.fill(false)
+      case NotStarted => form
+    }
 
-//  private def saveAndRedirect(ctx: JourneyAnswersContext, answer: Boolean)(implicit hc: HeaderCarrier) = {
-//    val status = if (answer) Completed else InProgress
-//    service.setJourneyStatus(ctx, status) map { _ =>
-//      Redirect(page.nextPage(ctx.taxYear))
-//    }
-//  }
+  private def saveAndRedirect(answer: Boolean, journey: Journey, taxYear: Int): Future[Result] = { // TODO 7969 GET and PUT journey state
+    @unused
+    val status = if (answer) Completed else InProgress
+    journey.sectionCompletedRedirect(taxYear).toFuture
+  }
 }

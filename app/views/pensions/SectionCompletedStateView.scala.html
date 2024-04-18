@@ -14,35 +14,34 @@
  * limitations under the License.
  *@
 
+@import models.requests.UserSessionDataRequest
+@import views.html.templates.helpers.{ErrorSummary, Button}
 @import views.html.templates.helpers._
-@import viewModels.govuk.RadiosViewModel
-@import views.ViewUtils
+@import views.ViewUtils.title
 
 @this(layout: templates.Layout,
-        formHelper: FormWithCSRF,
+        formWithCsrf: FormWithCSRF,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         errorSummary: ErrorSummary,
+        inputRadio: InputRadioAlt,
         button: Button
 )
 
-@(form: Form[_], taxYear: String, businessId: String, journey: String, mode: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], taxYear: Int, journey: String)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
-@layout(pageTitle = ViewUtils.title(form, messages("sectionCompletedState.title"))) {
+@layout(title(form, messages("sectionCompletedState.title"))) {
 
-    @formHelper(action = controllers.pensions.routes.SectionCompletedStateController.show(taxYear, businessId, journey, mode), Symbol("autoComplete") -> "off") {
+    @errorSummary(form.errors.distinct)
 
-        @errorSummary(form.errors.distinct)
+    @formWithCsrf(action = controllers.pensions.routes.SectionCompletedStateController.submit(taxYear, journey)) {
 
-        @govukRadios(
-            RadiosViewModel.yesNoWithLabel(
-                field = form("value"),
-                legend = Legend(HtmlContent(<div class="govuk-fieldset__legend--l">
-                <label class="govuk-label govuk-label--@headingSize @extraHeadingClasses">messages("sectionCompletedState.title")</label>
-                <div class="govuk-hint @extraHintClasses">messages("sectionCompletedState.hint")</div>
-                </div>)),
-                inline = true,
-            )
+        @inputRadio(
+            form = form,
+            legendAsHeading = true,
+            legendHeading = Some(Html(messages("sectionCompletedState.title"))),
+            hint = Some(Html(messages("sectionCompletedState.hint"))),
+            inline = true,
         )
 
         @button()

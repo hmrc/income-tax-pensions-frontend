@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package viewModels
+package utils
 
-package object govuk {
+import enumeratum._
+import play.api.libs.json._
 
-  object all
-      extends ImplicitConversions
-      with BackLinkFluency
-      with ButtonFluency
-      with CheckboxFluency
-      with DateFluency
-      with ErrorSummaryFluency
-      with FieldsetFluency
-      with HintFluency
-      with InputFluency
-      with LabelFluency
-      with RadiosFluency
-      with SummaryListFluency
-      with TagFluency
+trait PlayJsonEnum[A <: EnumEntry] { self: Enum[A] =>
+  implicit val keyWrites: KeyWrites[A] = EnumFormats.keyWrites(this)
+
+  implicit def contraKeyWrites[K <: A]: KeyWrites[K] = {
+    val w = this.keyWrites
+
+    (k: K) => w.writeKey(k)
+  }
+
+  implicit val jsonFormat: Format[A]               = EnumFormats.formats(this)
+  implicit def contraJsonWrites[B <: A]: Writes[B] = jsonFormat.contramap[B](b => b: A)
 }

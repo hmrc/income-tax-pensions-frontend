@@ -108,7 +108,8 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "pensions.reducedAnnualAllowanceAmount.reduced.error.noEntry.agent",
     "pensions.aboveReducedAnnualAllowance.error.incorrectFormat.agent",
     "pensions.reducedAnnualAllowanceAmount.reduced.error.incorrectFormat.individual",
-    "pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.agent"
+    "pensions.reducedAnnualAllowanceAmount.reduced.error.overMaximum.agent",
+    "sectionCompletedState.error.required"
   )
 
   lazy val allLanguages: Map[String, Map[String, String]] = app.injector.instanceOf[MessagesApi].messages
