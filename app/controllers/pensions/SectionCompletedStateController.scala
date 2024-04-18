@@ -41,7 +41,7 @@ class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvide
                                                  cc: MessagesControllerComponents,
                                                  view: SectionCompletedStateView)(implicit appConfig: AppConfig)
     extends FrontendController(cc)
-    with I18nSupport {
+    with I18nSupport { // TODO 7969 add Spec for show and submit
 
   val form: Form[Boolean] = formsProvider.sectionCompletedStateForm
 

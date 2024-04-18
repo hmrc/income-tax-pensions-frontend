@@ -206,6 +206,11 @@ pensions.overseasPensionsSummary.incomeFromOverseasPensions = Incwm o bensiynau 
 pensions.overseasPensionsSummary.overseasTransferCharges = Ffioedd ar drosglwyddiadau tramor
 pensions.overseasPensionsSummary.shortServiceRefunds = Ad-daliadau am wasanaeth byr
 
+# Section completed
+sectionCompletedState.title = TODO add welsh translations
+sectionCompletedState.hint = TODO add welsh translationss
+sectionCompletedState.error.required = TODO add welsh translationsss
+
 ########    PAYMENTS INTO PENSIONS    ########
 pensions.paymentsIntoOverseasPensions.error.agent = Dewiswch ‘Iawn’ os talodd eich cleient neu ei gyflogwr i mewn i gynllun pensiwn tramor
 pensions.paymentsIntoOverseasPensions.error.individual = Dewiswch ‘Iawn’ os gwnaethoch chi neu’ch cyflogwr dalu i mewn i gynllun pensiwn tramor

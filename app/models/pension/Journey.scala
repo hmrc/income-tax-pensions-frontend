@@ -43,7 +43,7 @@ object Journey extends Enum[Journey] with utils.PlayJsonEnum[Journey] {
       strBinder.unbind(key, journeyName.entryName)
   }
 
-  case object IncomeFromPensions extends Journey("income-from-pensions") {
+  case object PaymentsIntoPensions extends Journey("payments-into-pensions") {
     def sectionCompletedRedirect(taxYear: Int): Result = Redirect(pensions.routes.PensionsSummaryController.show(taxYear))
   }
 }
