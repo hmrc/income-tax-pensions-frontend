@@ -25,13 +25,14 @@ import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithT
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
+import models.pension.Journey.TransferIntoOverseasPensions
 import models.pension.charges.TransferPensionScheme
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.TransferIntoOverseasPensions._
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl}
+import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl, sectionCompletedUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
@@ -105,7 +106,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         }
 
         "redirects to the overview page" in {
-          result.header("location") shouldBe Some(transferPensionSavingsUrl(taxYearEOY))
+          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, TransferIntoOverseasPensions)
         }
       }
     }
@@ -189,7 +190,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
           body = "")
       }
       result.status shouldBe SEE_OTHER
-      result.header("location") shouldBe Some(transferPensionSavingsUrl(taxYearEOY))
+      result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, TransferIntoOverseasPensions)
     }
 
   }

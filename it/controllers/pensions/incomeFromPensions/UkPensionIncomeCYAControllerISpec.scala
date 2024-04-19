@@ -23,6 +23,7 @@ import builders.PensionsCYAModelBuilder.{aPensionsCYAGeneratedFromPriorEmpty, aP
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithIncomeFromPensions}
 import builders.UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelOne
 import models.IncomeTaxUserData
+import models.pension.Journey.UkPensionIncome
 import models.pension.employmentPensions.{EmploymentPensionModel, EmploymentPensions}
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import org.jsoup.Jsoup
@@ -33,7 +34,7 @@ import play.api.http.Status.{NO_CONTENT, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromPensionsPages._
-import utils.PageUrls.fullUrl
+import utils.PageUrls.{fullUrl, sectionCompletedUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers with BeforeAndAfterEach with PensionsDatabaseHelper {
@@ -234,7 +235,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         }
 
         "redirects to the summary page" in {
-          result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
+          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, UkPensionIncome)
         }
       }
 
@@ -258,7 +259,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           result.status shouldBe SEE_OTHER
         }
         "redirects to the summary page" in {
-          result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
+          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, UkPensionIncome)
         }
       }
 
@@ -304,7 +305,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         }
 
         "redirects to the summary page" in {
-          result.header("location") shouldBe Some(pensionIncomeSummaryUrl(taxYear))
+          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, UkPensionIncome)
         }
       }
     }

@@ -23,8 +23,8 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithIncomeOverseasPension}
 import builders.UserBuilder.aUser
-import controllers.pensions.routes.OverseasPensionsSummaryController
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.Journey.IncomeFromOverseasPensions
 import models.pension.charges.PensionScheme
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.jsoup.Jsoup
@@ -35,7 +35,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.SEE_OTHER
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPensionsCyaUrl, incomeFromOverseasPensionsStatus}
-import utils.PageUrls.fullUrl
+import utils.PageUrls.{fullUrl, sectionCompletedUrl}
 import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // TODO: Controller tests need rewriting. They should be easy to read and easy to refactor when the implementation changes.
@@ -240,7 +240,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec
         }
 
         "redirects to the summary page" in {
-          result.headers("Location").head shouldBe OverseasPensionsSummaryController.show(taxYear).url
+          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, IncomeFromOverseasPensions)
         }
       }
     }

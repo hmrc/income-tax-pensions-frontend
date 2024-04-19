@@ -1,10 +1,5 @@
-import common.TaxYear
-import models.pension.Journey
-import play.api.mvc.Result
-import play.api.mvc.Results.Redirect
-
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +14,10 @@ import play.api.mvc.Results.Redirect
  * limitations under the License.
  */
 
+import models.pension.Journey
+import play.api.mvc.Result
+import play.api.mvc.Results.Redirect
+
 package object controllers {
 
   def validatedIndex(index: Option[Int], collectionSize: Int): Option[Int] =
@@ -32,6 +31,6 @@ package object controllers {
     }
 
   def redirectToSectionCompletedPage(taxYear: Int, journey: Journey): Result = Redirect(
-    controllers.pensions.routes.SectionCompletedStateController.show(taxYear, journey.entryName)
+    controllers.pensions.routes.SectionCompletedStateController.show(taxYear, journey.toString)
   )
 }
