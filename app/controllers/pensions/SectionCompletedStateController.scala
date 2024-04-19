@@ -16,7 +16,7 @@
 
 package controllers.pensions
 
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.JourneyStatus
@@ -24,7 +24,7 @@ import models.mongo.JourneyStatus.{Completed, InProgress, NotStarted}
 import models.pension.Journey
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.FutureUtils.FutureOps
 import views.html.pensions.SectionCompletedStateView
@@ -36,7 +36,7 @@ import scala.concurrent.Future
 @Singleton
 class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvider,
 //                                                 service: PensionSessionService, TODO 7969 GET and PUT journey state
-//                                                 errorHandler: ErrorHandler,
+                                                 errorHandler: ErrorHandler,
                                                  formsProvider: FormsProvider,
                                                  cc: MessagesControllerComponents,
                                                  view: SectionCompletedStateView)(implicit appConfig: AppConfig)
@@ -63,7 +63,7 @@ class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvide
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, journey))),
-        answer => saveAndRedirect(answer, Journey.withName(journey), taxYear)
+        answer => saveAndRedirect(answer, journey, taxYear)
       )
   }
 
@@ -74,9 +74,13 @@ class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvide
       case NotStarted => form
     }
 
-  private def saveAndRedirect(answer: Boolean, journey: Journey, taxYear: Int): Future[Result] = { // TODO 7969 GET and PUT journey state
+  private def saveAndRedirect(answer: Boolean, journey: String, taxYear: Int)(implicit request: Request[_]): Future[Result] = { // TODO 7969 GET and PUT journey state
     @unused
     val status = if (answer) Completed else InProgress
-    journey.sectionCompletedRedirect(taxYear).toFuture
+    Journey.withName(journey) match { // TODO investigate if Journey model can be passed
+      case Right(journey) => journey.sectionCompletedRedirect(taxYear).toFuture
+      case Left(error)    => errorHandler.onClientError(request, NOT_FOUND, error)
+    }
   }
+
 }

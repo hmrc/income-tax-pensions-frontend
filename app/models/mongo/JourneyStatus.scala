@@ -16,14 +16,13 @@
 
 package models.mongo
 
-import enumeratum._
-
-sealed abstract class JourneyStatus(entryName: String) extends EnumEntry {
-  override def toString: String = entryName
+sealed abstract class JourneyStatus(status: String) {
+  override def toString: String = status
 }
 
-object JourneyStatus extends Enum[JourneyStatus] with utils.PlayJsonEnum[JourneyStatus] {
-  val values: IndexedSeq[JourneyStatus] = findValues
+object JourneyStatus {
+  val values = Seq(NotStarted, InProgress, Completed)
+
   case object NotStarted extends JourneyStatus("notStarted")
   case object InProgress extends JourneyStatus("inProgress")
   case object Completed  extends JourneyStatus("completed")

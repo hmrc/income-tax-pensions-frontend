@@ -17,17 +17,25 @@
 package models.pension
 
 import controllers.pensions
-import enumeratum._
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{PathBindable, Result}
 
-sealed abstract class Journey(override val entryName: String) extends EnumEntry {
-  override def toString: String = entryName
+sealed abstract class Journey(name: String) {
+  override def toString: String = name
   def sectionCompletedRedirect(taxYear: Int): Result
 }
 
-object Journey extends Enum[Journey] with utils.PlayJsonEnum[Journey] {
-  val values: IndexedSeq[Journey] = findValues
+object Journey {
+
+  val values: Seq[Journey] = Seq(PaymentsIntoPensions)
+
+  def withName(journey: String): Either[String, Journey] = {
+    val namesToValuesMap = values.map(v => v.toString -> v).toMap
+    namesToValuesMap.get(journey) match {
+      case Some(journeyName) => Right(journeyName)
+      case None              => Left(s"Invalid journey name: $journey")
+    }
+  }
 
   private val pensionsSummaryRedirect = (taxYear: Int) => Redirect(pensions.routes.PensionsSummaryController.show(taxYear))
   private val overseasSummaryRedirect = (taxYear: Int) => Redirect(pensions.routes.OverseasPensionsSummaryController.show(taxYear))
@@ -73,14 +81,9 @@ object Journey extends Enum[Journey] with utils.PlayJsonEnum[Journey] {
   implicit def pathBindable(implicit strBinder: PathBindable[String]): PathBindable[Journey] = new PathBindable[Journey] {
 
     override def bind(key: String, value: String): Either[String, Journey] =
-      strBinder.bind(key, value).flatMap { stringValue =>
-        Journey.withNameOption(stringValue) match {
-          case Some(journeyName) => Right(journeyName)
-          case None              => Left(s"Invalid journey name: $stringValue")
-        }
-      }
+      strBinder.bind(key, value).flatMap(withName)
 
     override def unbind(key: String, journeyName: Journey): String =
-      strBinder.unbind(key, journeyName.entryName)
+      strBinder.unbind(key, journeyName.toString)
   }
 }

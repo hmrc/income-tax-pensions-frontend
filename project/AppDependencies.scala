@@ -18,17 +18,8 @@ import sbt.*
 
 object AppDependencies {
 
-  private val bootstrapVersion  = "8.4.0"
-  private val hmrcMongoVersion  = "1.7.0"
-  private val enumeratumVersion = "1.7.3"
-
-  val jacksonAndPlayExclusions = Seq(
-    ExclusionRule(organization = "com.fasterxml.jackson.core"),
-    ExclusionRule(organization = "com.fasterxml.jackson.datatype"),
-    ExclusionRule(organization = "com.fasterxml.jackson.module"),
-    ExclusionRule(organization = "com.fasterxml.jackson.core:jackson-annotations"),
-    ExclusionRule(organization = "com.typesafe.play")
-  )
+  private val bootstrapVersion = "8.4.0"
+  private val hmrcMongoVersion = "1.7.0"
 
   val compile: Seq[ModuleID] = Seq(
     play.sbt.PlayImport.ws,
@@ -36,8 +27,6 @@ object AppDependencies {
     "uk.gov.hmrc"                  %% "play-conditional-form-mapping-play-30" % "2.0.0",
     "uk.gov.hmrc"                  %% "bootstrap-frontend-play-30"            % bootstrapVersion,
     "uk.gov.hmrc.mongo"            %% "hmrc-mongo-play-30"                    % hmrcMongoVersion,
-    "com.beachape"                 %% "enumeratum"                            % enumeratumVersion,
-    "com.beachape"                 %% "enumeratum-play-json"                  % enumeratumVersion excludeAll (jacksonAndPlayExclusions *),
     "org.typelevel"                %% "cats-core"                             % "2.9.0",
     "com.fasterxml.jackson.module" %% "jackson-module-scala"                  % "2.14.2",
     "org.codehaus.janino"           % "janino"                                % "3.1.11" // it's required by logback for conditional logging
