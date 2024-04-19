@@ -36,6 +36,14 @@ object Journey {
       case None              => Left(s"Invalid journey name: $journey")
     }
   }
+  implicit def pathBindable(implicit strBinder: PathBindable[String]): PathBindable[Journey] = new PathBindable[Journey] {
+
+    override def bind(key: String, value: String): Either[String, Journey] =
+      strBinder.bind(key, value).flatMap(withName)
+
+    override def unbind(key: String, journeyName: Journey): String =
+      strBinder.unbind(key, journeyName.toString)
+  }
 
   private val pensionsSummaryRedirect = (taxYear: Int) => Redirect(pensions.routes.PensionsSummaryController.show(taxYear))
   private val overseasSummaryRedirect = (taxYear: Int) => Redirect(pensions.routes.OverseasPensionsSummaryController.show(taxYear))
@@ -78,12 +86,4 @@ object Journey {
     def sectionCompletedRedirect(taxYear: Int): Result = incomeFromPensionsSummaryRedirect(taxYear)
   }
 
-  implicit def pathBindable(implicit strBinder: PathBindable[String]): PathBindable[Journey] = new PathBindable[Journey] {
-
-    override def bind(key: String, value: String): Either[String, Journey] =
-      strBinder.bind(key, value).flatMap(withName)
-
-    override def unbind(key: String, journeyName: Journey): String =
-      strBinder.unbind(key, journeyName.toString)
-  }
 }
