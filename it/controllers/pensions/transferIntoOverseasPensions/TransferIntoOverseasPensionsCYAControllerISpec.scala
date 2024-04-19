@@ -32,7 +32,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.TransferIntoOverseasPensions._
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl, overviewUrl, sectionCompletedUrl}
+import utils.PageUrls.{fullUrl, overviewUrl, sectionCompletedUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
@@ -106,7 +106,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         }
 
         "redirects to the overview page" in {
-          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, TransferIntoOverseasPensions)
+          result.header("location") shouldBe Some(transferPensionSavingsUrl(taxYearEOY))
         }
       }
     }
@@ -134,7 +134,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         }
 
         "redirects to the overview page" in {
-          result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, TransferIntoOverseasPensions)
         }
       }
 
@@ -159,7 +159,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
         }
 
         "redirects to the overview page" in {
-          result.header("location") shouldBe Some(overseasPensionsSummaryUrl(taxYearEOY))
+          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, TransferIntoOverseasPensions)
         }
       }
     }
@@ -190,7 +190,7 @@ class TransferIntoOverseasPensionsCYAControllerISpec extends IntegrationTest wit
           body = "")
       }
       result.status shouldBe SEE_OTHER
-      result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, TransferIntoOverseasPensions)
+      result.header("location") shouldBe Some(transferPensionSavingsUrl(taxYearEOY))
     }
 
   }

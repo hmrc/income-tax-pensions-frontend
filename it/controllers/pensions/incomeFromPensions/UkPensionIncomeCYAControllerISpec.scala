@@ -235,7 +235,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         }
 
         "redirects to the summary page" in {
-          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, UkPensionIncome)
+          result.headers("Location").head shouldBe sectionCompletedUrl(taxYear, UkPensionIncome)
         }
       }
 
@@ -259,7 +259,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
           result.status shouldBe SEE_OTHER
         }
         "redirects to the summary page" in {
-          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, UkPensionIncome)
+          result.headers("Location").head shouldBe sectionCompletedUrl(taxYear, UkPensionIncome)
         }
       }
 
@@ -305,7 +305,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
         }
 
         "redirects to the summary page" in {
-          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, UkPensionIncome)
+          result.headers("Location").head shouldBe sectionCompletedUrl(taxYear, UkPensionIncome)
         }
       }
     }

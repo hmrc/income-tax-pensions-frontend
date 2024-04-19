@@ -20,7 +20,6 @@ import cats.data.EitherT
 import cats.implicits._
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes
 import controllers.predicates.auditActions.AuditActionsProvider
 import controllers.redirectToSectionCompletedPage
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -119,7 +118,7 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
         Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
     }).flatMap {
       case Right(_) =>
-        Future.successful(Redirect(routes.PensionsSummaryController.show(taxYear)))
+        Future.successful(redirectToSectionCompletedPage(taxYear, UnauthorisedPayments))
       case Left(error) => Future.successful(errorHandler.handleError(error.status))
     }
 

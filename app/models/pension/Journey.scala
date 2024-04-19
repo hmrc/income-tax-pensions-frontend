@@ -45,10 +45,10 @@ object Journey {
       strBinder.unbind(key, journeyName.toString)
   }
 
-  private val pensionsSummaryRedirect = (taxYear: Int) => Redirect(pensions.routes.PensionsSummaryController.show(taxYear))
-  private val overseasSummaryRedirect = (taxYear: Int) => Redirect(pensions.routes.OverseasPensionsSummaryController.show(taxYear))
-  private val incomeFromPensionsSummaryRedirect = (taxYear: Int) =>
-    Redirect(pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController.show(taxYear))
+  private def pensionsSummaryRedirect(taxYear: Int): Result = Redirect(pensions.routes.PensionsSummaryController.show(taxYear))
+  private def overseasSummaryRedirect(taxYear: Int): Result = Redirect(pensions.routes.OverseasPensionsSummaryController.show(taxYear))
+  private def incomeFromPensionsSummaryRedirect(taxYear: Int): Result = Redirect(
+    pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController.show(taxYear))
 
   case object AnnualAllowances extends Journey("annual-allowances") {
     def sectionCompletedRedirect(taxYear: Int): Result = pensionsSummaryRedirect(taxYear)

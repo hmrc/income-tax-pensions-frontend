@@ -31,6 +31,6 @@ package object controllers {
     }
 
   def redirectToSectionCompletedPage(taxYear: Int, journey: Journey): Result = Redirect(
-    controllers.pensions.routes.SectionCompletedStateController.show(taxYear, journey.toString)
+    controllers.pensions.routes.SectionCompletedStateController.show(taxYear, journey)
   )
 }

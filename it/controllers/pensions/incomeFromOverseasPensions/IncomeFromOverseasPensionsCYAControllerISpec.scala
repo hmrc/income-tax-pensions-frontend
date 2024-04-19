@@ -240,7 +240,7 @@ class IncomeFromOverseasPensionsCYAControllerISpec
         }
 
         "redirects to the summary page" in {
-          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, IncomeFromOverseasPensions)
+          result.headers("Location").head shouldBe sectionCompletedUrl(taxYear, IncomeFromOverseasPensions)
         }
       }
     }
