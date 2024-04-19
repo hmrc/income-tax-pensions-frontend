@@ -262,7 +262,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
         }
 
         result.status shouldBe SEE_OTHER
-        result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
+        result.headers("Location").head shouldBe sectionCompletedUrl(taxYear, PaymentsIntoPensions)
       }
     }
   }
