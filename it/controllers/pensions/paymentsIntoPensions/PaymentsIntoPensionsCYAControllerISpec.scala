@@ -28,6 +28,7 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.ReliefsBuilder.aReliefs
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import models.IncomeTaxUserData
+import models.pension.Journey.PaymentsIntoPensions
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.jsoup.Jsoup
@@ -37,7 +38,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PaymentIntoPensions.checkPaymentsIntoPensionCyaUrl
-import utils.PageUrls.fullUrl
+import utils.PageUrls.{fullUrl, sectionCompletedUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 import views.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYASpec.CommonExpectedEN.{no => answerNo, _}
 import views.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYASpec.ExpectedIndividualEN._
@@ -193,7 +194,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
         }
 
         result.status shouldBe SEE_OTHER
-        result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYearEOY).url
+        result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, PaymentsIntoPensions)
       }
 
       "the user makes no changes and no submission to DES is made" in {
@@ -242,7 +243,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
         }
 
         result.status shouldBe SEE_OTHER
-        result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYearEOY).url
+        result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, PaymentsIntoPensions)
       }
 
       "submitting in year" in {
@@ -261,7 +262,7 @@ class PaymentsIntoPensionsCYAControllerISpec extends IntegrationTest with ViewHe
         }
 
         result.status shouldBe SEE_OTHER
-        result.headers("Location").head shouldBe controllers.pensions.routes.PensionsSummaryController.show(taxYear).url
+        result.headers("Location").head shouldBe sectionCompletedUrl(taxYear, PaymentsIntoPensions)
       }
     }
   }

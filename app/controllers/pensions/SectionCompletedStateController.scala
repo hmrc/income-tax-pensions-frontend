@@ -45,7 +45,7 @@ class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvide
 
   val form: Form[Boolean] = formsProvider.sectionCompletedStateForm
 
-  def show(taxYear: Int, journey: String): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) { implicit request =>
+  def show(taxYear: Int, journey: Journey): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) { implicit request =>
     val existingAnswer: Option[JourneyStatus] = None // TODO 7969 GET and PUT journey state (replace with comments below)
 //    val form: Form[Boolean]             = formsProvider.sectionCompletedStateForm(request.user)
     val filledForm = existingAnswer.fold(form)(fill(form, _))
@@ -58,7 +58,7 @@ class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvide
 //      }
   }
 
-  def submit(taxYear: Int, journey: String): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+  def submit(taxYear: Int, journey: Journey): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     form
       .bindFromRequest()
       .fold(
@@ -74,13 +74,10 @@ class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvide
       case NotStarted => form
     }
 
-  private def saveAndRedirect(answer: Boolean, journey: String, taxYear: Int)(implicit request: Request[_]): Future[Result] = { // TODO 7969 GET and PUT journey state
+  private def saveAndRedirect(answer: Boolean, journey: Journey, taxYear: Int): Future[Result] = { // TODO 7969 GET and PUT journey state
     @unused
     val status = if (answer) Completed else InProgress
-    Journey.withName(journey) match { // TODO investigate if Journey model can be passed
-      case Right(journey) => journey.sectionCompletedRedirect(taxYear).toFuture
-      case Left(error)    => errorHandler.onClientError(request, NOT_FOUND, error)
-    }
+    journey.sectionCompletedRedirect(taxYear).toFuture
   }
 
 }

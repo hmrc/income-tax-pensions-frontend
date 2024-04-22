@@ -18,11 +18,12 @@ package controllers.pensions.annualAllowances
 
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.PensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateAnnualAllowanceSessionFromPrior
+import models.pension.Journey.AnnualAllowances
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.AnnualAllowanceService
@@ -57,11 +58,9 @@ class AnnualAllowanceCYAController @Inject() (auditProvider: AuditActionsProvide
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.maybePrior)) {
         service.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
-          case Right(_) => Redirect(PensionsSummaryController.show(taxYear))
+          case Right(_) => Redirect(SECTION_COMPLETED_PAGE(taxYear, AnnualAllowances))
         }
-      } else {
-        Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
-      }
+      } else Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, AnnualAllowances)))
     }
   }
 
