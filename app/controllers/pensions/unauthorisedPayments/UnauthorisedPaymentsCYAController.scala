@@ -94,7 +94,7 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
       val (sessionData, priorData, unauthorisedPaymentModel) = (data, request.maybePrior, data.pensions.unauthorisedPayments)
 
       (for {
-        _      <- maybeExcludePension(unauthorisedPaymentModel, taxYear, request).map(_ => Redirect(SECTION_COMPLETED_PAGE(taxYear, UnauthorisedPayments)))
+        _ <- maybeExcludePension(unauthorisedPaymentModel, taxYear, request).map(_ => Redirect(SECTION_COMPLETED_PAGE(taxYear, UnauthorisedPayments)))
         result <- maybeUpdateAnswers(sessionData, priorData, taxYear)
       } yield result).merge
     }
