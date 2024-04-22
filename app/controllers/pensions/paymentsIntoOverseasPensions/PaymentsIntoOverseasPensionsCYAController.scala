@@ -19,11 +19,11 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
-import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
 import models.pension.Journey.PaymentsIntoOverseasPensions
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PaymentsIntoOverseasPensionsService
@@ -61,9 +61,9 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
 
         service.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
-          case Right(_) => SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoOverseasPensions)
+          case Right(_) => Redirect(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoOverseasPensions))
         }
-      } else Future.successful(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoOverseasPensions))
+      } else Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoOverseasPensions)))
     }
   }
 

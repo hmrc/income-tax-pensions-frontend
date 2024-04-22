@@ -67,9 +67,9 @@ class TransferIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.maybePrior)) {
         chargesService.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
-          case Right(_) => SECTION_COMPLETED_PAGE(taxYear, TransferIntoOverseasPensions)
+          case Right(_) => Redirect(SECTION_COMPLETED_PAGE(taxYear, TransferIntoOverseasPensions))
         }
-      } else Future.successful(SECTION_COMPLETED_PAGE(taxYear, TransferIntoOverseasPensions))
+      } else Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, TransferIntoOverseasPensions)))
     }
   }
 

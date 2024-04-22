@@ -18,8 +18,7 @@ package models.redirects
 
 import controllers.pensions
 import models.pension.Journey
-import play.api.mvc.Results.Redirect
-import play.api.mvc.{Call, Result}
+import play.api.mvc.Call
 
 object AppLocations {
   val HOME: Int => Call =
@@ -31,6 +30,6 @@ object AppLocations {
   val INCOME_FROM_PENSIONS_HOME: Int => Call =
     (taxYear: Int) => pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController.show(taxYear)
 
-  val SECTION_COMPLETED_PAGE: (Int, Journey) => Result =
-    (taxYear: Int, journey: Journey) => Redirect(pensions.routes.SectionCompletedStateController.show(taxYear, journey))
+  val SECTION_COMPLETED_PAGE: (Int, Journey) => Call =
+    (taxYear: Int, journey: Journey) => pensions.routes.SectionCompletedStateController.show(taxYear, journey)
 }

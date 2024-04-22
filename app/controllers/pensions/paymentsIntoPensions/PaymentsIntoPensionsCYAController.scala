@@ -73,7 +73,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
 
     if (isDifferent(modelFromSession, modelFromPriorData)) {
       performSubmission(TaxYear(taxYear), modelFromSession)(hc, request)
-    } else Future.successful(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoPensions))
+    } else Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoPensions)))
   }
 
   private def excludeJourney(taxYear: TaxYear, paymentsIntoPensionFromSession: PaymentsIntoPensionsViewModel)(implicit
@@ -112,7 +112,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
       sessionData,
       request.maybePrior.flatMap(_.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions)))
 
-    res.map(_ => SECTION_COMPLETED_PAGE(taxYear.endYear, PaymentsIntoPensions)).leftMap { err =>
+    res.map(_ => Redirect(SECTION_COMPLETED_PAGE(taxYear.endYear, PaymentsIntoPensions))).leftMap { err =>
       logger.info(s"[PaymentIntoPensionsCYAController][submit] Failed to create or update session: ${err}")
       errorHandler.handleError(err.status)
     }

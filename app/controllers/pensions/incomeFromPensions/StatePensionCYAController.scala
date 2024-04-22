@@ -67,7 +67,7 @@ class StatePensionCYAController @Inject() (auditProvider: AuditActionsProvider,
           data <- sessionService.loadPriorAndSession(request.user, TaxYear(taxYear))
           (prior, session) = data
           _ <- processSubmission(session, prior, taxYear)
-        } yield SECTION_COMPLETED_PAGE(taxYear, StatePension)
+        } yield Redirect(SECTION_COMPLETED_PAGE(taxYear, StatePension))
 
       resultOrError
         .leftMap(_ => errorHandler.internalServerError())

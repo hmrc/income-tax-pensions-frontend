@@ -58,9 +58,9 @@ class AnnualAllowanceCYAController @Inject() (auditProvider: AuditActionsProvide
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.maybePrior)) {
         service.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
-          case Right(_) => SECTION_COMPLETED_PAGE(taxYear, AnnualAllowances)
+          case Right(_) => Redirect(SECTION_COMPLETED_PAGE(taxYear, AnnualAllowances))
         }
-      } else Future.successful(SECTION_COMPLETED_PAGE(taxYear, AnnualAllowances))
+      } else Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, AnnualAllowances)))
     }
   }
 

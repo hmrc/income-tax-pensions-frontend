@@ -67,7 +67,7 @@ class ShortServiceRefundsCYAController @Inject() (auditProvider: AuditActionsPro
           data <- sessionService.loadPriorAndSession(request.user, TaxYear(taxYear))
           (prior, session) = data
           _ <- processSubmission(session, prior, taxYear)
-        } yield SECTION_COMPLETED_PAGE(taxYear, ShortServiceRefunds)
+        } yield Redirect(SECTION_COMPLETED_PAGE(taxYear, ShortServiceRefunds))
 
       resultOrError
         .leftMap(_ => errorHandler.internalServerError())
