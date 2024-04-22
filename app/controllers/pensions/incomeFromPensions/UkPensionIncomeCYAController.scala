@@ -19,7 +19,7 @@ package controllers.pensions.incomeFromPensions
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
-import controllers.redirectToSectionCompletedPage
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import forms.FormUtils
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
@@ -62,9 +62,9 @@ class UkPensionIncomeCYAController @Inject() (mcc: MessagesControllerComponents,
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.maybePrior)) {
         service.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
-          case Right(_) => redirectToSectionCompletedPage(taxYear, UkPensionIncome)
+          case Right(_) => SECTION_COMPLETED_PAGE(taxYear, UkPensionIncome)
         }
-      } else Future.successful(redirectToSectionCompletedPage(taxYear, UkPensionIncome))
+      } else Future.successful(SECTION_COMPLETED_PAGE(taxYear, UkPensionIncome))
     }
   }
 

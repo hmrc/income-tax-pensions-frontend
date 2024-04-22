@@ -21,7 +21,7 @@ import cats.implicits._
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
-import controllers.redirectToSectionCompletedPage
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
@@ -83,7 +83,7 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
   private def maybeUpdateAnswers(cya: PensionsUserData, prior: Option[AllPensionsData], taxYear: Int)(implicit
       priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] =
     if (isEqual(cya.pensions, prior)) {
-      EitherT.rightT[Future, Result](redirectToSectionCompletedPage(taxYear, UnauthorisedPayments))
+      EitherT.rightT[Future, Result](SECTION_COMPLETED_PAGE(taxYear, UnauthorisedPayments))
     } else {
       EitherT.right[Result](performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest))
     }
@@ -94,7 +94,7 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
       val (sessionData, priorData, unauthorisedPaymentModel) = (data, request.maybePrior, data.pensions.unauthorisedPayments)
 
       (for {
-        _ <- maybeExcludePension(unauthorisedPaymentModel, taxYear, request).map(_ => redirectToSectionCompletedPage(taxYear, UnauthorisedPayments))
+        _      <- maybeExcludePension(unauthorisedPaymentModel, taxYear, request).map(_ => SECTION_COMPLETED_PAGE(taxYear, UnauthorisedPayments))
         result <- maybeUpdateAnswers(sessionData, priorData, taxYear)
       } yield result).merge
     }
@@ -118,7 +118,7 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
         Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
     }).flatMap {
       case Right(_) =>
-        Future.successful(redirectToSectionCompletedPage(taxYear, UnauthorisedPayments))
+        Future.successful(SECTION_COMPLETED_PAGE(taxYear, UnauthorisedPayments))
       case Left(error) => Future.successful(errorHandler.handleError(error.status))
     }
 

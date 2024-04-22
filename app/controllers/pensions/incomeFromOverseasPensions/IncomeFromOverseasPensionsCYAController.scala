@@ -19,7 +19,7 @@ package controllers.pensions.incomeFromOverseasPensions
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
-import controllers.redirectToSectionCompletedPage
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateIncomeFromOverseasPensionsCyaFromPrior
@@ -63,9 +63,9 @@ class IncomeFromOverseasPensionsCYAController @Inject() (auditProvider: AuditAct
         if (shouldSaveAnswers(sessionData.pensions, request.maybePrior)) {
           service.saveAnswers(request.user, TaxYear(taxYear)).map {
             case Left(_)  => errorHandler.internalServerError()
-            case Right(_) => redirectToSectionCompletedPage(taxYear, IncomeFromOverseasPensions)
+            case Right(_) => SECTION_COMPLETED_PAGE(taxYear, IncomeFromOverseasPensions)
           }
-        } else Future.successful(redirectToSectionCompletedPage(taxYear, IncomeFromOverseasPensions))
+        } else Future.successful(SECTION_COMPLETED_PAGE(taxYear, IncomeFromOverseasPensions))
     }
   }
 

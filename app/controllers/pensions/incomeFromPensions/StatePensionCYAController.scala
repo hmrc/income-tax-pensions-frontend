@@ -20,7 +20,7 @@ import cats.data.EitherT
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
-import controllers.redirectToSectionCompletedPage
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import models.IncomeTaxUserData
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.AllPensionsData
@@ -67,7 +67,7 @@ class StatePensionCYAController @Inject() (auditProvider: AuditActionsProvider,
           data <- sessionService.loadPriorAndSession(request.user, TaxYear(taxYear))
           (prior, session) = data
           _ <- processSubmission(session, prior, taxYear)
-        } yield redirectToSectionCompletedPage(taxYear, StatePension)
+        } yield SECTION_COMPLETED_PAGE(taxYear, StatePension)
 
       resultOrError
         .leftMap(_ => errorHandler.internalServerError())

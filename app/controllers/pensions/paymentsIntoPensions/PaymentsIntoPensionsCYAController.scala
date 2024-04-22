@@ -21,7 +21,7 @@ import cats.implicits._
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
-import controllers.redirectToSectionCompletedPage
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import models.pension.Journey.PaymentsIntoPensions
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.requests.UserPriorAndSessionDataRequest
@@ -73,7 +73,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
 
     if (isDifferent(modelFromSession, modelFromPriorData)) {
       performSubmission(TaxYear(taxYear), modelFromSession)(hc, request)
-    } else Future.successful(redirectToSectionCompletedPage(taxYear, PaymentsIntoPensions))
+    } else Future.successful(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoPensions))
   }
 
   private def excludeJourney(taxYear: TaxYear, paymentsIntoPensionFromSession: PaymentsIntoPensionsViewModel)(implicit
@@ -112,7 +112,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
       sessionData,
       request.maybePrior.flatMap(_.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions)))
 
-    res.map(_ => redirectToSectionCompletedPage(taxYear.endYear, PaymentsIntoPensions)).leftMap { err =>
+    res.map(_ => SECTION_COMPLETED_PAGE(taxYear.endYear, PaymentsIntoPensions)).leftMap { err =>
       logger.info(s"[PaymentIntoPensionsCYAController][submit] Failed to create or update session: ${err}")
       errorHandler.handleError(err.status)
     }
