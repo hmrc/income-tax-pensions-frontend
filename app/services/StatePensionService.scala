@@ -20,7 +20,6 @@ import cats.data.EitherT
 import cats.implicits.{catsSyntaxList, catsSyntaxSemigroup, toTraverseOps}
 import common.TaxYear
 import connectors._
-import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo._
 import models.pension.statebenefits.ClaimCYAModel
 import models.{APIErrorModel, IncomeTaxUserData, User}
@@ -54,16 +53,13 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
                                      stateBenefitsConnector: StateBenefitsConnector,
                                      submissionsConnector: IncomeTaxUserDataConnector) {
 
-  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] = {
-    val hcWithMtdItId = hc.withMtditId(user.mtditid)
-
+  def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] =
     (for {
       data <- service.loadPriorAndSession(user, taxYear)
       (prior, session) = data
-      _ <- EitherT(processSubmission(session, prior, taxYear.endYear, user)(hcWithMtdItId, ec)).leftAs[ServiceError]
+      _ <- EitherT(processSubmission(session, prior, taxYear.endYear, user)).leftAs[ServiceError]
       _ <- EitherT(clearJourneyFromSession(session)).leftAs[ServiceError]
     } yield ()).value
-  }
 
   private def processSubmission(session: PensionsUserData, prior: IncomeTaxUserData, taxYear: Int, user: User)(implicit
       hc: HeaderCarrier,
@@ -78,11 +74,11 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
   private def runDeleteIfRequired(prior: IncomeTaxUserData, session: PensionsUserData, user: User, taxYear: Int)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): DownstreamOutcomeT[Unit] = {
-    val priorIds   = obtainPriorBenefitIds(prior)
-    val sessionIds = obtainSessionBenefitIds(session)
+    val priorBenefitIds   = obtainPriorBenefitIds(prior)
+    val sessionBenefitIds = obtainSessionBenefitIds(session)
 
-    priorIds
-      .diff(sessionIds)
+    priorBenefitIds
+      .diff(sessionBenefitIds)
       .toNel
       .fold(EitherT.pure[Future, APIErrorModel](())) { ids =>
         for {
