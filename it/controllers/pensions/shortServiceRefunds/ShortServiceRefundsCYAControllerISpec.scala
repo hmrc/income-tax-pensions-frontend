@@ -25,6 +25,7 @@ import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithS
 import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsViewModel
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
+import models.pension.Journey.ShortServiceRefunds
 import models.pension.charges.OverseasRefundPensionScheme
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -32,7 +33,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromOverseasPensionsPages.checkIncomeFromOverseasPensionsCyaUrl
 import utils.PageUrls.ShortServiceRefunds.{shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl}
-import utils.PageUrls.{fullUrl, overseasPensionsSummaryUrl}
+import utils.PageUrls.{fullUrl, sectionCompletedUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
@@ -116,7 +117,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
           body = "")
       }
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overseasPensionsSummaryUrl(taxYearEOY)
+      result.headers("location").head shouldBe sectionCompletedUrl(taxYearEOY, ShortServiceRefunds)
     }
 
     "CYA data is updated and differs from prior data" in {
@@ -133,7 +134,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
           body = "")
       }
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overseasPensionsSummaryUrl(taxYearEOY)
+      result.headers("location").head shouldBe sectionCompletedUrl(taxYearEOY, ShortServiceRefunds)
     }
 
     "the user makes no changes and no submission to DES is made" in {
@@ -150,7 +151,7 @@ class ShortServiceRefundsCYAControllerISpec extends IntegrationTest with ViewHel
           body = "")
       }
       result.status shouldBe SEE_OTHER
-      result.headers("location").head shouldBe overseasPensionsSummaryUrl(taxYearEOY)
+      result.headers("location").head shouldBe sectionCompletedUrl(taxYearEOY, ShortServiceRefunds)
     }
 
     "redirect to the first page in the journey if journey is incomplete" in {

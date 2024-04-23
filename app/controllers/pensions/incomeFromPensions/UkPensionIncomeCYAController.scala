@@ -18,12 +18,13 @@ package controllers.pensions.incomeFromPensions
 
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import forms.FormUtils
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
+import models.pension.Journey.UkPensionIncome
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.EmploymentPensionService
@@ -61,11 +62,9 @@ class UkPensionIncomeCYAController @Inject() (mcc: MessagesControllerComponents,
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.maybePrior)) {
         service.saveAnswers(request.user, TaxYear(taxYear)).map {
           case Left(_)  => errorHandler.internalServerError()
-          case Right(_) => Redirect(IncomeFromPensionsSummaryController.show(taxYear))
+          case Right(_) => Redirect(SECTION_COMPLETED_PAGE(taxYear, UkPensionIncome))
         }
-      } else {
-        Future.successful(Redirect(IncomeFromPensionsSummaryController.show(taxYear)))
-      }
+      } else Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, UkPensionIncome)))
     }
   }
 

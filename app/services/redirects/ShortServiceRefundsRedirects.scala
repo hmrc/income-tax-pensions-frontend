@@ -16,7 +16,6 @@
 
 package services.redirects
 
-import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.pensions.shortServiceRefunds.routes._
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
@@ -24,7 +23,6 @@ import play.api.mvc.{Call, Result}
 object ShortServiceRefundsRedirects {
 
   def firstPageRedirect(taxYear: Int): Result                             = Redirect(TaxableRefundAmountController.show(taxYear))
-  def taskListRedirect(taxYear: Int): Result                              = Redirect(OverseasPensionsSummaryController.show(taxYear))
   def refundSummaryRedirect(taxYear: Int): Result                         = Redirect(refundSummaryCall(taxYear))
   def cyaPageRedirect(taxYear: Int): Result                               = Redirect(cyaPageCall(taxYear))
   def refundSchemeRedirect(taxYear: Int, maybeIndex: Option[Int]): Result = Redirect(ShortServicePensionsSchemeController.show(taxYear, maybeIndex))

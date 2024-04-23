@@ -20,11 +20,12 @@ import cats.data.EitherT
 import cats.implicits._
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes
 import controllers.predicates.auditActions.AuditActionsProvider
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
+import models.pension.Journey.UnauthorisedPayments
 import models.pension.charges.UnauthorisedPaymentsViewModel
 import models.requests.UserPriorAndSessionDataRequest
 import models.{APIErrorBodyModel, APIErrorModel, User}
@@ -68,8 +69,6 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
     }
   }
 
-  private def toSummaryRedirect(taxYear: Int) = Redirect(routes.PensionsSummaryController.show(taxYear))
-
   // TODO: check conditions for excluding Pensions from submission without gateway
   private def maybeExcludePension(unauthorisedPaymentModel: UnauthorisedPaymentsViewModel,
                                   taxYear: Int,
@@ -84,7 +83,7 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
   private def maybeUpdateAnswers(cya: PensionsUserData, prior: Option[AllPensionsData], taxYear: Int)(implicit
       priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] =
     if (isEqual(cya.pensions, prior)) {
-      EitherT.rightT[Future, Result](toSummaryRedirect(taxYear))
+      EitherT.rightT[Future, Result](Redirect(SECTION_COMPLETED_PAGE(taxYear, UnauthorisedPayments)))
     } else {
       EitherT.right[Result](performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest))
     }
@@ -95,7 +94,7 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
       val (sessionData, priorData, unauthorisedPaymentModel) = (data, request.maybePrior, data.pensions.unauthorisedPayments)
 
       (for {
-        _      <- maybeExcludePension(unauthorisedPaymentModel, taxYear, request).map(_ => toSummaryRedirect(taxYear))
+        _ <- maybeExcludePension(unauthorisedPaymentModel, taxYear, request).map(_ => Redirect(SECTION_COMPLETED_PAGE(taxYear, UnauthorisedPayments)))
         result <- maybeUpdateAnswers(sessionData, priorData, taxYear)
       } yield result).merge
     }
@@ -119,7 +118,7 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
         Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
     }).flatMap {
       case Right(_) =>
-        Future.successful(Redirect(routes.PensionsSummaryController.show(taxYear)))
+        Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, UnauthorisedPayments)))
       case Left(error) => Future.successful(errorHandler.handleError(error.status))
     }
 

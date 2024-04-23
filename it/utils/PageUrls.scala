@@ -16,6 +16,8 @@
 
 package utils
 
+import models.pension.Journey
+
 //scalastyle:off number.of.methods
 object PageUrls extends IntegrationTest {
 
@@ -37,6 +39,8 @@ object PageUrls extends IntegrationTest {
   def pensionSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/pensions-summary"
 
   def overseasPensionsSummaryUrl(taxYear: Int): String = s"$appUrl/$taxYear/overseas-pensions"
+
+  def sectionCompletedUrl(taxYear: Int, journey: Journey): String = s"$appUrl/$taxYear/${journey.toString}/section-completed"
 
   //  *****************       payment into pensions pages      ******************************
 

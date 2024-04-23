@@ -18,17 +18,18 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.routes.OverseasPensionsSummaryController
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
+import models.pension.Journey.PaymentsIntoOverseasPensions
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.PaymentsIntoOverseasPensionsService
 import services.redirects.PaymentsIntoOverseasPensionsPages.PaymentsIntoOverseasPensionsCYAPage
 import services.redirects.PaymentsIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.PaymentsIntoOverseasPensionsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAView
@@ -59,13 +60,10 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.maybePrior)) {
 
         service.saveAnswers(request.user, TaxYear(taxYear)).map {
-          case Left(_) => errorHandler.internalServerError()
-          case Right(_) =>
-            Redirect(OverseasPensionsSummaryController.show(taxYear))
+          case Left(_)  => errorHandler.internalServerError()
+          case Right(_) => Redirect(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoOverseasPensions))
         }
-      } else {
-        Future.successful(Redirect(OverseasPensionsSummaryController.show(taxYear)))
-      }
+      } else Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoOverseasPensions)))
     }
   }
 

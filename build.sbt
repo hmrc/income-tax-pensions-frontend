@@ -15,6 +15,7 @@
  */
 
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
+import play.sbt.routes.RoutesKeys
 
 lazy val appName = "income-tax-pensions-frontend"
 
@@ -80,6 +81,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(IntegrationTest / unmanagedResourceDirectories += baseDirectory.value / "it" / "resources")
   .settings(coverageSettings: _*)
+  .settings(RoutesKeys.routesImport ++= Seq("models.pension._"))
   .settings(
     // concatenate js
     Concat.groups := Seq(

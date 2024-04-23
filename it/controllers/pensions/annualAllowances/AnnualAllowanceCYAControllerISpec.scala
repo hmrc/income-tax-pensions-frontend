@@ -25,12 +25,13 @@ import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.pensionsUserDataWithAnnualAllowances
 import builders.UserBuilder.aUser
 import models.mongo.PensionsCYAModel
+import models.pension.Journey.AnnualAllowances
 import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.PensionAnnualAllowancePages.{annualAllowancesCYAUrl, reducedAnnualAllowanceUrl}
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.{fullUrl, sectionCompletedUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers with PensionsDatabaseHelper {
@@ -95,7 +96,7 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
           )
         }
         result.status shouldBe SEE_OTHER
-        result.headers("location").head shouldBe pensionSummaryUrl(taxYearEOY)
+        result.headers("location").head shouldBe sectionCompletedUrl(taxYearEOY, AnnualAllowances)
       }
 
       "the user makes no changes and no API submission is made" in {
@@ -112,7 +113,7 @@ class AnnualAllowanceCYAControllerISpec extends IntegrationTest with ViewHelpers
             body = "")
         }
         result.status shouldBe SEE_OTHER
-        result.headers("location").head shouldBe pensionSummaryUrl(taxYearEOY)
+        result.headers("location").head shouldBe sectionCompletedUrl(taxYearEOY, AnnualAllowances)
       }
     }
 

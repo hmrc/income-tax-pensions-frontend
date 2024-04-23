@@ -20,15 +20,16 @@ import cats.data.EitherT
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import models.IncomeTaxUserData
 import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
+import models.pension.Journey.ShortServiceRefunds
 import models.requests.UserPriorAndSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.redirects.ShortServiceRefundsPages.CYAPage
-import services.redirects.ShortServiceRefundsRedirects.taskListRedirect
 import services.{PensionSessionService, ShortServiceRefundsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
@@ -66,7 +67,7 @@ class ShortServiceRefundsCYAController @Inject() (auditProvider: AuditActionsPro
           data <- sessionService.loadPriorAndSession(request.user, TaxYear(taxYear))
           (prior, session) = data
           _ <- processSubmission(session, prior, taxYear)
-        } yield taskListRedirect(taxYear)
+        } yield Redirect(SECTION_COMPLETED_PAGE(taxYear, ShortServiceRefunds))
 
       resultOrError
         .leftMap(_ => errorHandler.internalServerError())

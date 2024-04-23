@@ -18,12 +18,12 @@ package controllers.pensions.incomeFromOverseasPensions
 
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromOverseasPensions.routes.PensionOverseasIncomeStatus
-import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
 import controllers.predicates.auditActions.AuditActionsProvider
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateIncomeFromOverseasPensionsCyaFromPrior
+import models.pension.Journey.IncomeFromOverseasPensions
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -51,20 +51,21 @@ class IncomeFromOverseasPensionsCYAController @Inject() (auditProvider: AuditAct
   def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsViewAuditing(taxYear) async { implicit request =>
     val cya           = Some(request.sessionData)
     val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, cya, PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) { data =>
+    redirectBasedOnCurrentAnswers(taxYear, cya, routes.PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) { data =>
       Future.successful(Ok(view(taxYear, data.pensions.incomeFromOverseasPensions)))
     }
   }
 
   def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromOverseasPensionsUpdateAuditing(taxYear) async { implicit request =>
     val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) { sessionData =>
-      if (shouldSaveAnswers(sessionData.pensions, request.maybePrior)) {
-        service.saveAnswers(request.user, TaxYear(taxYear)).map {
-          case Left(_)  => errorHandler.internalServerError()
-          case Right(_) => Redirect(OverseasPensionsSummaryController.show(taxYear))
-        }
-      } else Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
+    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), routes.PensionOverseasIncomeStatus.show(taxYear))(checkRedirect) {
+      sessionData =>
+        if (shouldSaveAnswers(sessionData.pensions, request.maybePrior)) {
+          service.saveAnswers(request.user, TaxYear(taxYear)).map {
+            case Left(_)  => errorHandler.internalServerError()
+            case Right(_) => Redirect(SECTION_COMPLETED_PAGE(taxYear, IncomeFromOverseasPensions))
+          }
+        } else Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, IncomeFromOverseasPensions)))
     }
   }
 

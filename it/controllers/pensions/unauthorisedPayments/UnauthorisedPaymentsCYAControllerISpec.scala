@@ -26,6 +26,7 @@ import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmpt
 import builders.UserBuilder.aUser
 import controllers.pensions.unauthorisedPayments.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.pension.Journey.UnauthorisedPayments
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -34,7 +35,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.UnauthorisedPaymentsPages.{checkUnauthorisedPaymentsCyaUrl, unauthorisedPaymentsUrl}
-import utils.PageUrls.{fullUrl, pensionSummaryUrl}
+import utils.PageUrls.{fullUrl, sectionCompletedUrl}
 import utils.{IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 class UnauthorisedPaymentsCYAControllerISpec
@@ -485,7 +486,7 @@ class UnauthorisedPaymentsCYAControllerISpec
           result.status shouldBe SEE_OTHER
         }
         "redirects to the summary page" in {
-          result.headers("Location").head shouldBe pensionSummaryUrl(taxYearEOY)
+          result.headers("Location").head shouldBe sectionCompletedUrl(taxYearEOY, UnauthorisedPayments)
         }
       }
 

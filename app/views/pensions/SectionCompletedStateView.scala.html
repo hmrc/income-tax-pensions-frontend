@@ -29,7 +29,7 @@
         button: Button
 )
 
-@(form: Form[_], taxYear: Int, journey: String)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[_], taxYear: Int, journey: Journey)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
 @layout(title(form, messages("sectionCompletedState.title"))) {
 
