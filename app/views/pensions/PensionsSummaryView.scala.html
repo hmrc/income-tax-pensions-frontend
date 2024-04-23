@@ -14,141 +14,27 @@
  * limitations under the License.
  *@
 
-@import controllers.pensions.{routes => pRoutes}
-@import controllers.pensions.annualAllowances.{routes => aaRoutes}
-@import controllers.pensions.incomeFromPensions.{routes => ifpRoutes}
-@import controllers.pensions.paymentsIntoPensions.{routes => pipRoutes}
-@import controllers.pensions.unauthorisedPayments.{routes => upRoutes}
 @import views.html.templates.Layout
-@import views.html.templates.helpers.Heading
-@import views.html.templates.helpers.Link
-@import models.mongo.PensionsCYAModel
-@import models.pension.AllPensionsData
-@import utils.StatusHelper._
+@import views.html.templates.helpers.{Heading, Link}
 
+@this(layout: Layout,
+        heading: Heading,
+        govUkButton: GovukButton,
+        formWithCSRF: FormWithCSRF,
+        govukSummaryList: GovukSummaryList,
+        link:Link)
 
-@this(layout: Layout, heading: Heading, govUkButton: GovukButton, formWithCSRF: FormWithCSRF, link:Link)
+@(taxYear: Int, pensionsSummary: SummaryList)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
-@(taxYear: Int, cya: Option[PensionsCYAModel], prior: Option[AllPensionsData])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
-
-@headingForUse = @{
-    messages(s"pensions.pensionSummary.heading")
-}
-
-@paymentsIntoPensionUrlRedirect() = @{
-  if(paymentIntoPensionHasPriorData(prior)) {
-    pipRoutes.PaymentsIntoPensionsCYAController.show(taxYear).url
-  } else {
-    pipRoutes.ReliefAtSourcePensionsController.show(taxYear).url
-  }
-}
-
-@unauthorisedPaymentsFromPensionsUrlRedirect() = @{
-  if(unauthorisedPaymentsHasPriorData(prior)) {
-    upRoutes.UnauthorisedPaymentsCYAController.show(taxYear).url  
-  } else {
-    upRoutes.UnauthorisedPaymentsController.show(taxYear).url
-  }
-}
-
-@incomeFromPensionUrlRedirect() = @{
-  ifpRoutes.IncomeFromPensionsSummaryController.show(taxYear).url
-}
-
-@annualAllowanceUrlRedirect() = @{
-  if(annualAllowanceHasPriorData(prior))
-    aaRoutes.AnnualAllowanceCYAController.show(taxYear).url
-  else
-    aaRoutes.ReducedAnnualAllowanceController.show(taxYear).url
-}
-
-@overseasPensionsSummaryUrlRedirect() = @{
-  pRoutes.OverseasPensionsSummaryController.show(taxYear).url
-}
-
-@layout(pageTitle = headingForUse, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
+@layout(pageTitle = messages("journey.pensions-summary"), taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
     @heading(
-        headingForUse,
-        Some(messages(s"common.pensions.caption", (taxYear - 1).toString, taxYear.toString)),
+        messages("journey.pensions-summary"),
+        Some(messages("common.pensions.caption", (taxYear - 1).toString, taxYear.toString)),
         "govuk-!-margin-bottom-3"
     )
 
-    <div id="pensions-Summary">
-        <dl class="govuk-summary-list">
-
-            <div class="govuk-summary-list__row" id="payments-into-Pensions-row">
-                <dt class="govuk-summary-list__key govuk-!-width-two-third">
-              @link(paymentsIntoPensionUrlRedirect(), "pensions.pensionSummary.paymentsToPensions",Some("payments-into-pensions-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-              @if(paymentsIntoPensionsIsUpdated(cya)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-              } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.notStarted")</strong>
-              }
-                </dd>
-
-            </div>
-
-            <div class="govuk-summary-list__row" id="income-from-Pensions-row">
-                <dt class="govuk-summary-list__key govuk-!-width-two-third">
-              @link(incomeFromPensionUrlRedirect(), "pensions.pensionSummary.incomeFromPensions",Some("income-from-pensions-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-              @if(incomeFromPensionsIsUpdated(cya)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-              } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.notStarted")</strong>
-              }
-                </dd>
-
-            </div>
-
-            <div class="govuk-summary-list__row" id="pension-annual-allowance-row">
-                <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(annualAllowanceUrlRedirect(), "pensions.pensionSummary.pensionAnnualAllowance",Some("pension-annual-allowance-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(annualAllowanceIsUpdated(cya)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.notStarted")</strong>
-                }
-                </dd>
-
-            </div>
-
-            <div class="govuk-summary-list__row" id="unauthorised-payments-from-pensions">
-                <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(unauthorisedPaymentsFromPensionsUrlRedirect(), "pensions.pensionSummary.unauthorisedPaymentsFromPensions",Some("unauthorised-payments-from-pensions-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(unauthorisedPaymentsFromPensionsIsUpdated(cya)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.notStarted")</strong>
-                }
-                </dd>
-
-            </div>
-            
-            <div class="govuk-summary-list__row" id="overseas-pensions-summary-row">
-                <dt  class="govuk-summary-list__key govuk-!-width-two-third">
-                    @link(overseasPensionsSummaryUrlRedirect(), "pensions.pensionSummary.overseasPensionsSummary",Some("overseas-pensions-summary-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-                  @if(overseasPensionsIsUpdated(cya)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.notStarted")</strong>
-                }
-                </dd>
-
-            </div>
-
-        </dl>
-    </div>
+    @govukSummaryList(pensionsSummary)
 
     @govUkButton(Button(
         attributes = Map("id" -> "returnToOverviewPageBtn"),

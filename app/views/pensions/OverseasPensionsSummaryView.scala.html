@@ -14,52 +14,15 @@
  * limitations under the License.
  *@
 
-@import controllers.pensions.paymentsIntoOverseasPensions.{routes => piopRoutes}
-@import controllers.pensions.incomeFromOverseasPensions.{routes => ifopRoutes}
-@import controllers.pensions.transferIntoOverseasPensions.{routes => tiopRoutes}
-@import controllers.pensions.shortServiceRefunds.{routes => ssrRoutes}
 @import views.html.templates.Layout
-@import views.html.templates.helpers.Heading
-@import views.html.templates.helpers.Link
-@import models.mongo.PensionsCYAModel
-@import models.pension.AllPensionsData
-@import utils.StatusHelper._
+@import views.html.templates.helpers.{Heading, Link}
 
-@this(layout: Layout, heading: Heading, govUkButton: GovukButton, formWithCSRF: FormWithCSRF, link:Link)
+@this(layout: Layout, heading: Heading, govUkButton: GovukButton, formWithCSRF: FormWithCSRF, link:Link, govukSummaryList: GovukSummaryList)
 
-@(taxYear: Int, cya: Option[PensionsCYAModel], prior: Option[AllPensionsData])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
-
-
-@paymentsOverseasPensionsUrl() = @{
-  if( paymentsIntoOverseasPensionsHasPriorData(prior))
-     piopRoutes.PaymentsIntoOverseasPensionsCYAController.show(taxYear).url
-  else
-     piopRoutes.PaymentIntoPensionSchemeController.show(taxYear).url
-}
-
-@incomeOverseasPensionsUrl() = @{
- if( incomeFromOverseasPensionsHasPriorData(prior) )
-   ifopRoutes.IncomeFromOverseasPensionsCYAController.show(taxYear).url
- else
-   ifopRoutes.PensionOverseasIncomeStatus.show(taxYear).url
-}
-
-@transferIntoOverseasPensionUrl() = @{
- if( transferIntoOverseasPensionHasPriorData(prior))
-  tiopRoutes.TransferIntoOverseasPensionsCYAController.show(taxYear).url
- else
-  tiopRoutes.TransferPensionSavingsController.show(taxYear).url
-}
-
-@shortServiceRefundsUrl() = @{
-  if(shortServiceRefundsHasPriorData(prior))
-    ssrRoutes.ShortServiceRefundsCYAController.show(taxYear).url
-  else
-    ssrRoutes.TaxableRefundAmountController.show(taxYear).url
-}
+@(taxYear: Int, pensionsSummary: SummaryList)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @headingForUse = @{
-    messages(s"pensions.pensionSummary.overseasPensionsSummary")
+    messages("journey.overseas-pensions-summary")
 }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
@@ -71,63 +34,8 @@
     )
 
     <p class="govuk-body">@messages(s"common.sectionsToFill.${if(request.user.isAgent) "agent" else "individual"}")</p>
-    <div id="overseas-pensions-summary">
-        <dl class="govuk-summary-list">
 
-            <div class="govuk-summary-list__row" id="payments-into-overseas-pensions-row">
-                <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(paymentsOverseasPensionsUrl(), "pensions.overseasPensionsSummary.paymentsIntoOverseasPensions",Some("payments-into-overseas-pensions-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(paymentsIntoOverseasPensionsIsUpdated(cya)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.notStarted")</strong>
-                }
-                </dd>
-            </div>
-
-            <div class="govuk-summary-list__row" id="income-from-overseas-pensions-row">
-                <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(incomeOverseasPensionsUrl(), "pensions.overseasPensionsSummary.incomeFromOverseasPensions",Some("income-from-overseas-pensions-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(incomeFromOverseasPensionsIsUpdated(cya)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.notStarted")</strong>
-                }
-                </dd>
-
-            </div>
-
-            <div class="govuk-summary-list__row" id="overseas-transfer-charges-row">
-                <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(transferIntoOverseasPensionUrl(), "pensions.overseasPensionsSummary.overseasTransferCharges",Some("overseas-transfer-charges-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(overseasPensionsTransferChargesIsUpdated(cya)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.notStarted")</strong>
-                }
-                </dd>
-            </div>
-
-            <div class="govuk-summary-list__row" id="short-service-refunds-row">
-                <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                @link(shortServiceRefundsUrl(), "pensions.overseasPensionsSummary.shortServiceRefunds",Some("short-service-refunds-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-                @if(shortServiceRefundsIsUpdated(cya)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.notStarted")</strong>
-                }
-                </dd>
-            </div>
-        </dl>
-    </div>
+    @govukSummaryList(pensionsSummary)
 
     @govUkButton(Button(
         attributes = Map("id" -> "returnToOverviewPageBtn"),

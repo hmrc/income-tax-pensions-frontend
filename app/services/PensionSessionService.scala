@@ -17,24 +17,30 @@
 package services
 
 import cats.data.EitherT
-import cats.implicits.{catsSyntaxApplicativeId, toBifunctorOps}
+import cats.implicits.{catsSyntaxApplicativeId, catsSyntaxOptionId, toBifunctorOps}
 import common.TaxYear
 import config.ErrorHandler
 import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector}
 import models.IncomeTaxUserData.PriorData
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
+import models.mongo.JourneyStatus.NotStarted
 import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
+import models.pension.Journey.PaymentsIntoPensions
+import models.pension.{Journey, JourneyNameAndStatus}
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
 import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
+import play.api.i18n.Messages
 import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
 import repositories.PensionsUserDataRepository.QueryResult
+import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
+import viewmodels.JourneyStatusSummaryViewModel.buildSummaryList
 
 import java.time.{Clock, ZoneOffset}
 import javax.inject.{Inject, Singleton}
@@ -76,21 +82,23 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       case Right(_)                   => Right(())
     }
 
-  def mergePriorDataToSession(
-      taxYear: Int,
-      user: User,
-      renderView: (Int, PensionsCYAModel, Option[PriorPensionsData]) => Result
-  )(implicit request: Request[_], hc: HeaderCarrier): Future[Result] =
-    loadDataAndHandle(taxYear, user) { (sessionData, priorData) =>
-      createOrUpdateSessionIfNeeded(sessionData, priorData, taxYear, user, renderView)
+  def mergePriorDataToSession(summaryPage: Journey, taxYear: Int, user: User, renderView: (Int, SummaryList) => Result)(implicit
+      request: Request[_],
+      messages: Messages,
+      hc: HeaderCarrier): Future[Result] =
+    loadDataAndHandle(taxYear, user) { (sessionData, priorData, journeyStatuses) =>
+      createOrUpdateSessionIfNeeded(summaryPage, sessionData, priorData, taxYear, user, journeyStatuses, renderView)
     }
 
   def loadDataAndHandle(taxYear: Int, user: User)(
-      block: (Option[SessionData], Option[PriorPensionsData]) => Future[Result])(implicit request: Request[_], hc: HeaderCarrier): Future[Result] = {
+      block: (Option[SessionData], Option[PriorPensionsData], Seq[JourneyNameAndStatus]) => Future[Result])(implicit
+      request: Request[_],
+      hc: HeaderCarrier): Future[Result] = {
     val resultT = for {
-      maybeSession <- EitherT(repository.find(taxYear, user)).leftAs[ServiceError]
-      prior        <- EitherT(loadPriorData(taxYear, user)).leftAs[ServiceError]
-    } yield block(maybeSession, prior.pensions)
+      maybeSession    <- EitherT(repository.find(taxYear, user)).leftAs[ServiceError]
+      prior           <- EitherT(loadPriorData(taxYear, user)).leftAs[ServiceError]
+      journeyStatuses <- EitherT(getJourneyStatuses).leftAs[ServiceError]
+    } yield block(maybeSession, prior.pensions, journeyStatuses)
 
     resultT.value.flatMap {
       case Left(error: APIErrorModel) => errorHandler.handleError(error.status).pure[Future]
@@ -100,15 +108,17 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
   }
 
   private def createOrUpdateSessionIfNeeded(
+      summaryPage: Journey,
       sessionData: Option[SessionData],
       priorData: Option[PriorPensionsData],
       taxYear: Int,
       user: User,
-      renderView: (Int, PensionsCYAModel, Option[PriorPensionsData]) => Result
-  )(implicit request: Request[_]): Future[Result] = {
+      journeyStatuses: Seq[JourneyNameAndStatus],
+      renderView: (Int, SummaryList) => Result)(implicit request: Request[_], messages: Messages): Future[Result] = {
     val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
     val updatedSessionPensionCYAModel = updatedSession.newPensionsCYAModel
-    val summaryView                   = renderView(taxYear, updatedSessionPensionCYAModel, priorData)
+    val pensionsSummary               = buildSummaryList(summaryPage, journeyStatuses, priorData, updatedSessionPensionCYAModel.some, taxYear)
+    val summaryView                   = renderView(taxYear, pensionsSummary)
 
     if (updatedSession.newModelChanged) {
       createOrUpdateSessionData(user, updatedSessionPensionCYAModel, taxYear, isPriorSubmission = priorData.isDefined)(
@@ -136,4 +146,10 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       case Left(_)  => onFail
     }
   }
+
+  private def getJourneyStatuses: DownstreamOutcome[Seq[JourneyNameAndStatus]] = // TODO 7969 connector to mongo BE for journeyNameAndStatus list
+    Future(
+      Right[APIErrorModel, Seq[JourneyNameAndStatus]](
+        Seq(JourneyNameAndStatus(PaymentsIntoPensions, NotStarted))
+      ))
 }

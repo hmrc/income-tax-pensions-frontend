@@ -59,7 +59,6 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "overseasPension.untaxedEmployerPayments.title",
     "overseasPension.reliefDetails.amount",
     "overseasPension.reliefDetails.title",
-    "incomeFromPensionsGateway.paragraph.1",
     "incomeFromPensions.incomeFromPensionsSummary.statePensions",
     "incomeFromPensions.stateBenefitStartDate.error.empty.all",
     "incomeFromPensions.stateBenefitStartDate.error.empty.day",

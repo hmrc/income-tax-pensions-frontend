@@ -15,38 +15,13 @@
  *@
 
 @import views.html.templates.Layout
-@import views.html.templates.helpers.Heading
-@import views.html.templates.helpers.Link
-@import models.mongo.PensionsUserData
-@import utils.StatusHelper._
-@import controllers.pensions.routes.PensionsSummaryController
-@import controllers.pensions.incomeFromPensions.routes._
-@import models.mongo.PensionsCYAModel
-@import models.pension.AllPensionsData
-@import views.html.templates.helpers.Button
+@import views.html.templates.helpers.{Button, Heading, Link}
 
-@this(layout: Layout, heading: Heading, button: Button, formWithCSRF: FormWithCSRF, link:Link)
+@this(layout: Layout, heading: Heading, button: Button, formWithCSRF: FormWithCSRF, link:Link, govukSummaryList: GovukSummaryList)
 
-@(taxYear: Int, cya: Option[PensionsCYAModel], prior: Option[AllPensionsData])(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(taxYear: Int, pensionsSummary: SummaryList)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
-
-@statePensionsLink() = @{
-  if(statePensionsHasPriorData(prior))
-     StatePensionCYAController.show(taxYear).url
-  else
-     StatePensionController.show(taxYear).url
-}
-
-@uKPensionslink() = @{
-  if(ukPensionsSchemeHasPriorData(prior) )
-    UkPensionIncomeCYAController.show(taxYear).url
-  else
-    UkPensionSchemePaymentsController.show(taxYear).url
-}
-
-@headingForUse = @{
-    messages(s"pensions.pensionSummary.incomeFromPensions")
-}
+@headingForUse = @{ messages("journey.income-from-pensions-summary") }
 
 @layout(pageTitle = headingForUse, taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
@@ -58,39 +33,7 @@
 
     <p class="govuk-body">@{messages(if(request.user.isAgent) "common.sectionsToFill.agent" else "common.sectionsToFill.individual")}</p>
 
-    <div id="pensions-Summary">
-        <dl class="govuk-summary-list">
-
-            <div class="govuk-summary-list__row" id="state-Pensions-row">
-                <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                  @link(statePensionsLink(), "incomeFromPensions.incomeFromPensionsSummary.statePensions",Some("state-pensions-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-                  @if(statePensionIsUpdated(cya)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                  } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.notStarted")</strong>
-                  }
-                </dd>
-
-            </div>
-
-            <div class="govuk-summary-list__row" id="other-uk-Pensions-row">
-                <dt class="govuk-summary-list__key govuk-!-width-two-third">
-                  @link(uKPensionslink(), "incomeFromPensions.incomeFromPensionsSummary.otherUkPensions",Some("other-uk-pensions-link"))
-                </dt>
-                <dd class="govuk-summary-list__actions govuk-!-two-third">
-                  @if(ukPensionsSchemeIsUpdated(cya)) {
-                    <strong class="govuk-tag">@messages("common.status.updated")</strong>
-                  } else {
-                    <strong class="govuk-tag govuk-tag--grey">@messages("common.status.notStarted")</strong>
-                  }
-                </dd>
-
-            </div>
-
-        </dl>
-    </div>
+    @govukSummaryList(pensionsSummary)
 
 
     @formWithCSRF(controllers.pensions.routes.PensionsSummaryController.show(taxYear)) {

@@ -17,7 +17,6 @@
 package controllers.pensions.unauthorisedPayments
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.unauthorisedPayments.routes.{NoSurchargeAmountController, SurchargeAmountController, UnauthorisedPaymentsCYAController}
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.UnAuthorisedPaymentsForm
@@ -79,11 +78,11 @@ class UnauthorisedPaymentsController @Inject() (mcc: MessagesControllerComponent
               ))
             val redirectLocation =
               if (unauthorisedPaymentsSelection.containsYesSurcharge) {
-                SurchargeAmountController.show(taxYear)
+                routes.SurchargeAmountController.show(taxYear)
               } else if (unauthorisedPaymentsSelection.containsYesNotSurcharge) {
-                NoSurchargeAmountController.show(taxYear)
+                routes.NoSurchargeAmountController.show(taxYear)
               } else {
-                UnauthorisedPaymentsCYAController.show(taxYear)
+                routes.UnauthorisedPaymentsCYAController.show(taxYear)
               }
 
             pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, isPriorSubmission)(
@@ -93,7 +92,7 @@ class UnauthorisedPaymentsController @Inject() (mcc: MessagesControllerComponent
           }
         )
 
-    pensionSessionService.loadDataAndHandle(taxYear, request.user) { (optSessionData, optPriorData) =>
+    pensionSessionService.loadDataAndHandle(taxYear, request.user) { (optSessionData, optPriorData, _) =>
       (optSessionData, optPriorData) match {
         case (Some(sessionData), _) =>
           saveDataAndRedirect(sessionData.pensions, isPriorSubmission = false)

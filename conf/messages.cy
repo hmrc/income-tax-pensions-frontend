@@ -93,6 +93,18 @@ common.aboutGeneralIncreases.agent = y llythyr ’Ynglŷn â’r cynnydd cyffred
 
 common.employerFinancedRetirementScheme.caption = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 
+journey.payments-into-pensions = Taliadau i bensiynau
+journey.income-from-pensions-summary = Incwm o bensiynau
+journey.uk-pension-income = Incwm o bensiynau’r DU
+journey.state-pension = Pensiwn y Wladwriaeth
+journey.annual-allowances = Lwfans blynyddol pensiwn
+journey.unauthorised-payments = Taliadau heb awdurdod o bensiynau
+journey.overseas-pensions-summary = Pensiynau tramor
+journey.payments-into-overseas-pensions = Taliadau i bensiynau tramor
+journey.income-from-overseas-pensions = Incwm o bensiynau tramor
+journey.transfer-into-overseas-pensions = Ffioedd ar drosglwyddiadau tramor
+journey.short-service-refunds = Ad-daliadau am wasanaeth byr
+
 ################# Common lifetime allowance #################
 
 common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Gwiriwch â’ch darparwyr pensiwn os nad ydych yn siŵr.
@@ -122,8 +134,6 @@ common.overseasPensions.findOut.individual = Er mwyn dysgu beth yw hyn, gallwch 
 common.overseasPensions.findOut.agent = Er mwyn dysgu beth yw hyn, gallwch ofyn i’ch cleient wneud y canlynol:
 common.overseasPensions.checkPensionStatement.individual = gwirio’ch datganiad pensiwn
 common.overseasPensions.checkPensionStatement.agent = gwirio’i ddatganiad pensiwn
-
-common.incomeFromPensions.title = Incwm o bensiynau’r DU
 
 
 #################       Common Summary/Remove Pension Scheme    ###########################################
@@ -187,24 +197,6 @@ timeout.button = Mewngofnodi
 
 
 #################       Service pages messages       ########################################
-
-#pension summary
-
-pensions.pensionSummary.heading = Pensiynau
-pensions.pensionSummary.paymentsToPensions = Taliadau i bensiynau
-pensions.pensionSummary.incomeFromPensions = Incwm o bensiynau
-pensions.pensionSummary.pensionAnnualAllowance = Lwfans blynyddol pensiwn
-pensions.pensionSummary.pensionLifetimeAllowance = Lwfans oes pensiwn
-pensions.pensionSummary.unauthorisedPaymentsFromPensions = Taliadau heb awdurdod o bensiynau
-pensions.pensionSummary.overseasPensionsSummary = Pensiynau tramor
-pensions.pensionSummary.paymentsToOverseasPensions = Taliadau i bensiynau tramor
-pensions.pensionSummary.paymentsToOverseasPensions.hidden = Newid taliadau i bensiynau tramor
-
-# overseas pensions summary
-pensions.overseasPensionsSummary.paymentsIntoOverseasPensions = Taliadau i bensiynau tramor
-pensions.overseasPensionsSummary.incomeFromOverseasPensions = Incwm o bensiynau tramor
-pensions.overseasPensionsSummary.overseasTransferCharges = Ffioedd ar drosglwyddiadau tramor
-pensions.overseasPensionsSummary.shortServiceRefunds = Ad-daliadau am wasanaeth byr
 
 # Section completed
 sectionCompletedState.title = TODO add welsh translations
@@ -488,7 +480,6 @@ incomeFromPensionsGateway.statusPage.title.individual = A gawsoch incwm o gynllu
 incomeFromPensionsGateway.statusPage.error.agent = Dewiswch ’Iawn’ os cafodd eich cleient daliadau o gynlluniau pensiwn
 incomeFromPensionsGateway.statusPage.error.individual = Dewiswch ’Iawn’ os cawsoch daliadau o gynlluniau pensiwn
 incomeFromPensionsGateway.paragraph = Mae’r rhain yn cynnwys:
-incomeFromPensionsGateway.paragraph.1 = Pensiwn y Wladwriaeth
 incomeFromPensionsGateway.paragraph.2 = pensiynau gweithle a phreifat
 
 pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.individual = y llythyr ‘Ynglŷn â’r cynnydd cyffredinol mewn budd-daliadau’ a anfonwyd atoch gan y Gwasanaeth Pensiwn
@@ -577,8 +568,6 @@ statePension.cya.paragraph1.agent  = Mae incwm o Bensiwn y Wladwriaeth eich clei
 statePension.cya.paragraph2.agent  = Ni allwch ddiweddaru incwm Pensiwn y Wladwriaeth eich cleient tan 6 Ebrill 2023.
 statePension.cya.paragraph1.individual  = Mae’ch incwm o Bensiwn y Wladwriaeth yn seiliedig ar yr wybodaeth sydd eisoes gennym amdanoch.
 statePension.cya.paragraph2.individual  = Gallwch newid y symiau os nad ydynt yn gywir.
-statePension.cya.statePension.label = Pensiwn y Wladwriaeth
-statePension.cya.statePension.label.hidden = Newid Pensiwn y Wladwriaeth
 statePension.cya.startDate.label = Dyddiad dechrau Pensiwn y Wladwriaeth
 statePension.cya.startDate.label.hidden = Newid dyddiad dechrau Pensiwn y Wladwriaeth
 statePension.cya.lumpSum.label = Cyfandaliad

@@ -19,11 +19,11 @@ package controllers.pensions
 import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
-import models.mongo.PensionsCYAModel
-import models.pension.AllPensionsData
+import models.pension.Journey.OverseasPensionsSummary
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
+import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.OverseasPensionsSummaryView
 
@@ -40,9 +40,8 @@ class OverseasPensionsSummaryController @Inject() (
     with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    def summaryViewResult(taxYear: Int, cyaModel: PensionsCYAModel, priorData: Option[AllPensionsData]) =
-      Ok(overseasPensionsSummaryView(taxYear, Some(cyaModel), priorData))
+    def summaryViewResult(taxYear: Int, pensionsSummary: SummaryList) = Ok(overseasPensionsSummaryView(taxYear, pensionsSummary))
 
-    pensionSessionService.mergePriorDataToSession(taxYear, request.user, summaryViewResult)
+    pensionSessionService.mergePriorDataToSession(OverseasPensionsSummary, taxYear, request.user, summaryViewResult)
   }
 }

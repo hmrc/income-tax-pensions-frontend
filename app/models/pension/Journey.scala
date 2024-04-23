@@ -17,25 +17,51 @@
 package models.pension
 
 import models.redirects.AppLocations.{HOME, INCOME_FROM_PENSIONS_HOME, OVERSEAS_HOME}
+import play.api.libs.json._
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{PathBindable, Result}
 
 sealed abstract class Journey(name: String) {
-  override def toString: String = name
-  def sectionCompletedRedirect(taxYear: Int): Result
+  override def toString: String                      = name
+  def sectionCompletedRedirect(taxYear: Int): Result = ???
 }
 
 object Journey {
+  val values: Seq[Journey] = Seq(
+    AnnualAllowances,
+    PaymentsIntoPensions,
+    UnauthorisedPayments,
+    OverseasPensionsSummary,
+    IncomeFromOverseasPensions,
+    PaymentsIntoOverseasPensions,
+    TransferIntoOverseasPensions,
+    ShortServiceRefunds,
+    IncomeFromPensionsSummary,
+    UkPensionIncome,
+    StatePension
+  )
 
-  val values: Seq[Journey] = Seq(PaymentsIntoPensions)
-
-  def withName(journey: String): Either[String, Journey] = {
+  private def withName(journey: String): Either[String, Journey] = {
     val namesToValuesMap = values.map(v => v.toString -> v).toMap
     namesToValuesMap.get(journey) match {
       case Some(journeyName) => Right(journeyName)
       case None              => Left(s"Invalid journey name: $journey")
     }
   }
+
+  implicit val format: Format[Journey] = new Format[Journey] {
+    override def writes(journey: Journey): JsValue = JsString(journey.toString)
+
+    override def reads(json: JsValue): JsResult[Journey] = json match {
+      case JsString(name) =>
+        withName(name) match {
+          case Right(journey) => JsSuccess(journey)
+          case Left(error)    => JsError(error)
+        }
+      case _ => JsError("String value expected")
+    }
+  }
+
   implicit def pathBindable(implicit strBinder: PathBindable[String]): PathBindable[Journey] = new PathBindable[Journey] {
 
     override def bind(key: String, value: String): Either[String, Journey] =
@@ -45,40 +71,38 @@ object Journey {
       strBinder.unbind(key, journeyName.toString)
   }
 
+  case object PensionsSummary extends Journey("pensions-summary")
+
   case object AnnualAllowances extends Journey("annual-allowances") {
-    def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
+    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
   }
   case object PaymentsIntoPensions extends Journey("payments-into-pensions") {
-    def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
+    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
   }
   case object UnauthorisedPayments extends Journey("unauthorised-payments") {
-    def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
+    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
   }
 
-  case object OverseasPensionsSummary extends Journey("overseas-pensions-summary") {
-    def sectionCompletedRedirect(taxYear: Int): Result = Redirect(INCOME_FROM_PENSIONS_HOME(taxYear))
-  }
+  case object OverseasPensionsSummary extends Journey("overseas-pensions-summary")
   case object IncomeFromOverseasPensions extends Journey("income-from-overseas-pensions") {
-    def sectionCompletedRedirect(taxYear: Int): Result = Redirect(INCOME_FROM_PENSIONS_HOME(taxYear))
+    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(OVERSEAS_HOME(taxYear))
   }
   case object PaymentsIntoOverseasPensions extends Journey("payments-into-overseas-pensions") {
-    def sectionCompletedRedirect(taxYear: Int): Result = Redirect(INCOME_FROM_PENSIONS_HOME(taxYear))
+    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(OVERSEAS_HOME(taxYear))
   }
   case object TransferIntoOverseasPensions extends Journey("transfer-into-overseas-pensions") {
-    def sectionCompletedRedirect(taxYear: Int): Result = Redirect(INCOME_FROM_PENSIONS_HOME(taxYear))
+    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(OVERSEAS_HOME(taxYear))
   }
   case object ShortServiceRefunds extends Journey("short-service-refunds") {
-    def sectionCompletedRedirect(taxYear: Int): Result = Redirect(INCOME_FROM_PENSIONS_HOME(taxYear))
+    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(OVERSEAS_HOME(taxYear))
   }
 
-  case object IncomeFromPensionsSummary extends Journey("income-from-pensions-summary") {
-    def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
-  }
+  case object IncomeFromPensionsSummary extends Journey("income-from-pensions-summary")
   case object UkPensionIncome extends Journey("uk-pension-income") {
-    def sectionCompletedRedirect(taxYear: Int): Result = Redirect(OVERSEAS_HOME(taxYear))
+    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(INCOME_FROM_PENSIONS_HOME(taxYear))
   }
   case object StatePension extends Journey("state-pension") {
-    def sectionCompletedRedirect(taxYear: Int): Result = Redirect(OVERSEAS_HOME(taxYear))
+    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(INCOME_FROM_PENSIONS_HOME(taxYear))
   }
 
 }

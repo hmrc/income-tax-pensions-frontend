@@ -35,7 +35,7 @@ object StatePensionCYAHelper extends CYABaseHelper {
   private def statePensionSR(viewModel: Option[StateBenefitViewModel], taxYear: Int)(implicit messages: Messages): Option[SummaryListRow] =
     Some(
       summaryListRowWithString(
-        "statePension.cya.statePension.label",
+        "journey.state-pension",
         Some(displayedValueForOptionalAmount(viewModel.flatMap(_.amount), messages("common.no"))),
         routes.StatePensionController.show(taxYear)
       ))
