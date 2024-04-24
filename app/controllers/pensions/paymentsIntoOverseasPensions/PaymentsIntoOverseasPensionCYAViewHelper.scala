@@ -36,7 +36,7 @@ object PaymentsIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
       messages: Messages): Option[SummaryListRow] =
     Some(
       summaryListRowWithBooleanValue(
-        "pensions.pensionSummary.paymentsToOverseasPensions",
+        "journey.payments-into-overseas-pensions",
         piopViewModel.paymentsIntoOverseasPensionsQuestions,
         routes.PaymentIntoPensionSchemeController.show(taxYear)
       )(messages)
