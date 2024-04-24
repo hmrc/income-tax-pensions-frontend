@@ -23,7 +23,7 @@ import models.pension.Journey.PensionsSummary
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.PensionsSummaryView
 
@@ -38,7 +38,7 @@ class PensionsSummaryController @Inject() (mcc: MessagesControllerComponents,
     extends FrontendController(mcc)
     with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    def summaryViewResult(taxYear: Int, pensionsSummary: SummaryList) = Ok(pensionsSummaryView(taxYear, pensionsSummary))
+    def summaryViewResult(taxYear: Int, pensionsSummary: HtmlContent) = Ok(pensionsSummaryView(taxYear, pensionsSummary))
 
     pensionSessionService.mergePriorDataToSession(PensionsSummary, taxYear, request.user, summaryViewResult)
   }

@@ -27,7 +27,8 @@ common.opensInNewTab = (yn agor tab newydd)
 common.currency.hint = Er enghraifft, £193.52
 common.currency.hint1 = Er enghraifft, £193.54
 common.help.getHelpWithThisPage = Help gyda’r dudalen hon
-common.status.updated = Wedi diweddaru
+common.status.completed = TODO addStatus
+common.status.inProgress = TODO add status
 common.status.notStarted = Heb ddechrau
 common.pensions.caption = Pensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 common.paymentsIntoPensions.caption = Taliadau i bensiynau ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
@@ -93,6 +94,7 @@ common.aboutGeneralIncreases.agent = y llythyr ’Ynglŷn â’r cynnydd cyffred
 
 common.employerFinancedRetirementScheme.caption = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 
+journey.pensions-summary = Bensiynau
 journey.payments-into-pensions = Taliadau i bensiynau
 journey.income-from-pensions-summary = Incwm o bensiynau
 journey.uk-pension-income = Incwm o bensiynau’r DU

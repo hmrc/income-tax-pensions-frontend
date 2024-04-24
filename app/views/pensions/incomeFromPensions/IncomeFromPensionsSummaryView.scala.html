@@ -17,9 +17,9 @@
 @import views.html.templates.Layout
 @import views.html.templates.helpers.{Button, Heading, Link}
 
-@this(layout: Layout, heading: Heading, button: Button, formWithCSRF: FormWithCSRF, link:Link, govukSummaryList: GovukSummaryList)
+@this(layout: Layout, heading: Heading, button: Button, formWithCSRF: FormWithCSRF, link:Link)
 
-@(taxYear: Int, pensionsSummary: SummaryList)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(taxYear: Int, incomeSummary: HtmlContent)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @headingForUse = @{ messages("journey.income-from-pensions-summary") }
 
@@ -33,11 +33,10 @@
 
     <p class="govuk-body">@{messages(if(request.user.isAgent) "common.sectionsToFill.agent" else "common.sectionsToFill.individual")}</p>
 
-    @govukSummaryList(pensionsSummary)
-
+    @{incomeSummary.value}
 
     @formWithCSRF(controllers.pensions.routes.PensionsSummaryController.show(taxYear)) {
-         @button("common.return.overview.buttonText")
+         @button("common.return.overview.buttonText", Some("govuk-!-margin-top-6"))
     }
 
 }

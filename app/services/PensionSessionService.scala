@@ -23,11 +23,11 @@ import config.ErrorHandler
 import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector}
 import models.IncomeTaxUserData.PriorData
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
-import models.mongo.JourneyStatus.NotStarted
+import models.mongo.JourneyStatus.{Completed, InProgress, NotStarted}
 import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
-import models.pension.Journey.PaymentsIntoPensions
+import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, UnauthorisedPayments}
 import models.pension.{Journey, JourneyNameAndStatus}
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
@@ -37,7 +37,7 @@ import play.api.i18n.Messages
 import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
 import repositories.PensionsUserDataRepository.QueryResult
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
 import viewmodels.JourneyStatusSummaryViewModel.buildSummaryList
@@ -82,7 +82,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       case Right(_)                   => Right(())
     }
 
-  def mergePriorDataToSession(summaryPage: Journey, taxYear: Int, user: User, renderView: (Int, SummaryList) => Result)(implicit
+  def mergePriorDataToSession(summaryPage: Journey, taxYear: Int, user: User, renderView: (Int, HtmlContent) => Result)(implicit
       request: Request[_],
       messages: Messages,
       hc: HeaderCarrier): Future[Result] =
@@ -114,7 +114,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       taxYear: Int,
       user: User,
       journeyStatuses: Seq[JourneyNameAndStatus],
-      renderView: (Int, SummaryList) => Result)(implicit request: Request[_], messages: Messages): Future[Result] = {
+      renderView: (Int, HtmlContent) => Result)(implicit request: Request[_], messages: Messages): Future[Result] = {
     val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
     val updatedSessionPensionCYAModel = updatedSession.newPensionsCYAModel
     val pensionsSummary               = buildSummaryList(summaryPage, journeyStatuses, priorData, updatedSessionPensionCYAModel.some, taxYear)
@@ -150,6 +150,10 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
   private def getJourneyStatuses: DownstreamOutcome[Seq[JourneyNameAndStatus]] = // TODO 7969 connector to mongo BE for journeyNameAndStatus list
     Future(
       Right[APIErrorModel, Seq[JourneyNameAndStatus]](
-        Seq(JourneyNameAndStatus(PaymentsIntoPensions, NotStarted))
+        Seq(
+          JourneyNameAndStatus(PaymentsIntoPensions, Completed),
+          JourneyNameAndStatus(AnnualAllowances, InProgress),
+          JourneyNameAndStatus(UnauthorisedPayments, NotStarted)
+        )
       ))
 }

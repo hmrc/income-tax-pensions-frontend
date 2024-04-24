@@ -62,7 +62,7 @@ class StatePensionCYAViewSpec extends ViewUnitTest { // scalastyle:off magic.num
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String         = (taxYear: Int) => s"Income from pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val statePension: String                   = "State Pension"
+    val statePension: String                   = "State pension"
     val hiddenStatePension                     = "Change state pension"
     val statePensionValue: String              = "£166.88"
     val pensionStartDate: String               = "State Pension start date"

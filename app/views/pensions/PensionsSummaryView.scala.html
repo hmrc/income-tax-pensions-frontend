@@ -21,10 +21,9 @@
         heading: Heading,
         govUkButton: GovukButton,
         formWithCSRF: FormWithCSRF,
-        govukSummaryList: GovukSummaryList,
         link:Link)
 
-@(taxYear: Int, pensionsSummary: SummaryList)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
+@(taxYear: Int, pensionsSummary: HtmlContent)(implicit request: AuthorisationRequest[_], messages: Messages, appConfig: AppConfig)
 
 @layout(pageTitle = messages("journey.pensions-summary"), taxYear = Some(taxYear), isAgent = request.user.isAgent) {
 
@@ -34,7 +33,7 @@
         "govuk-!-margin-bottom-3"
     )
 
-    @govukSummaryList(pensionsSummary)
+    @{pensionsSummary.value}
 
     @govUkButton(Button(
         attributes = Map("id" -> "returnToOverviewPageBtn"),
