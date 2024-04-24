@@ -83,8 +83,10 @@ class JourneyStatusSummaryViewModelSpec extends UnitTest with Injecting with Tab
     // Any other combination => InProgress
     (Seq(ukpiNotStarted, spInProgress), None, None, incomeSummary(InProgress)),
     (Seq(ukpiNotStarted, spCompleted), None, None, incomeSummary(InProgress)),
+    (Seq(ukpiInProgress, spNotStarted), None, None, incomeSummary(InProgress)),
     (Seq(ukpiInProgress, spInProgress), None, None, incomeSummary(InProgress)),
     (Seq(ukpiInProgress, spCompleted), None, None, incomeSummary(InProgress)),
+    (Seq(ukpiCompleted, spNotStarted), None, None, incomeSummary(InProgress)),
     (Seq(ukpiCompleted, spInProgress), None, None, incomeSummary(InProgress)),
     // All are NotStarted but has journey session data and/or completed pior journey answers => InProgress
     (Seq(ukpiNotStarted, spNotStarted), Some(anAllPensionsData), None, incomeSummary(InProgress)),

@@ -28,6 +28,7 @@ sealed abstract class Journey(name: String) {
 
 object Journey {
   val values: Seq[Journey] = Seq(
+    PensionsSummary,
     AnnualAllowances,
     PaymentsIntoPensions,
     UnauthorisedPayments,

@@ -94,7 +94,7 @@ common.aboutGeneralIncreases.agent = y llythyr ’Ynglŷn â’r cynnydd cyffred
 
 common.employerFinancedRetirementScheme.caption = Cynlluniau buddiannau ymddeol a ariannwyd gan gyflogwyr ar gyfer 6 Ebrill {0} i 5 Ebrill {1}
 
-journey.pensions-summary = Bensiynau
+journey.pensions-summary = Pensiynau
 journey.payments-into-pensions = Taliadau i bensiynau
 journey.income-from-pensions-summary = Incwm o bensiynau
 journey.uk-pension-income = Incwm o bensiynau’r DU
