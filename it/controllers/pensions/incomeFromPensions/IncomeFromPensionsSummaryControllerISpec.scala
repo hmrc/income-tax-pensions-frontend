@@ -16,10 +16,12 @@
 
 package controllers.pensions.incomeFromPensions
 
-import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
+import builders.IncomeFromPensionsViewModelBuilder.{aUKIncomeFromPensionsViewModel, anIncomeFromPensionsViewModel}
 import builders.IncomeTaxUserDataBuilder.{anIncomeTaxUserData, anIncomeTaxUserDataEmpty}
 import builders.PensionsUserDataBuilder.pensionsUserDataWithIncomeFromPensions
-import builders.StateBenefitViewModelBuilder.{anEmptyStateBenefitViewModel, anStateBenefitViewModelOne}
+import builders.StateBenefitViewModelBuilder.anStateBenefitViewModelOne
+import models.pension.Journey
+import models.pension.Journey.{StatePension, UkPensionIncome}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -33,7 +35,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val notStartedText: String
-    val updatedText: String
+    val inProgress: String
     val expectedTitle: String
     val statePensionLinkText: String
     val otherUKPensionsLinktext: String
@@ -49,16 +51,16 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
   def otherUkPensionsLink(taxYear: Int = taxYear): String = s"/update-and-submit-income-tax-return/pensions/$taxYear/pension-income/state-pension"
 
   object Selectors {
-    val captionSelector: String             = "#main-content > div > div > header > p"
-    val continueButtonSelector: String      = "#continue"
-    val formSelector: String                = "#main-content > div > div > form"
-    val hintTextSelector                    = "#amount-hint"
-    val statePensionsLinkSelector           = "#state-pensions-link"
-    val statePensionsStatusSelector: String = "#state-Pensions-row > dd > strong"
-    val otherUkPensionsLinkSelector         = "#other-uk-Pensions-row > dd > strong"
-    val poundPrefixSelector                 = ".govuk-input__prefix"
-    val inputSelector                       = "#amount"
-    val expectedErrorHref                   = "#amount"
+    val captionSelector: String        = "#main-content > div > div > header > p"
+    val continueButtonSelector: String = "#continue"
+    val formSelector: String           = "#main-content > div > div > form"
+    val hintTextSelector               = "#amount-hint"
+    val poundPrefixSelector            = ".govuk-input__prefix"
+    val inputSelector                  = "#amount"
+    val expectedErrorHref              = "#amount"
+
+    def summaryListLinkSelector(index: Int): String            = s"#main-content > div > div > div > ul > li:nth-child($index) > span > a"
+    def summaryListStatusTagSelector(journey: Journey): String = s"#journey-${journey.toString}-status"
 
     def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
   }
@@ -67,7 +69,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
     val expectedCaption: Int => String = (taxYear: Int) => s"Pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedTitle                  = "Income from pensions"
     val notStartedText                 = "Not Started"
-    val updatedText                    = "Updated"
+    val inProgress                     = "In Progress"
     val statePensionLinkText           = "State pension"
     val otherUKPensionsLinktext        = "Other UK pensions"
     val expectedHeading                = "Income from pensions"
@@ -78,7 +80,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
     val expectedCaption: Int => String = (taxYear: Int) => s"Pensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedTitle                  = "Incwm o bensiynau"
     val notStartedText                 = "Heb ddechrau"
-    val updatedText                    = "Wedi diweddaru"
+    val inProgress                     = "Ar y gweill"
     val statePensionLinkText           = "State pension"
     val otherUKPensionsLinktext        = "Other UK pensions"
     val expectedHeading                = expectedTitle
@@ -117,7 +119,7 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
       import user.commonExpectedResults._
 
       s"language is ${welshTest(user.isWelsh)} and request is from an ${agentTest(user.isAgent)}" should {
-        "render page when both values are updated " which {
+        "render page when both values are in progress " which {
 
           val viewModel = anIncomeFromPensionsViewModel
           lazy val result: WSResponse =
@@ -137,21 +139,19 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
           welshToggleCheck(user.isWelsh)
 
           "has a State Pension section" which {
-            textOnPageCheck(updatedText, statePensionsStatusSelector)
+            textOnPageCheck(inProgress, summaryListStatusTagSelector(StatePension))
           }
 
           "has a Other UK pensions section" which {
-            textOnPageCheck(updatedText, otherUkPensionsLinkSelector)
+            textOnPageCheck(inProgress, summaryListStatusTagSelector(UkPensionIncome))
           }
         }
 
-        "render page when statePension are not started " which {
-          val viewModel = anIncomeFromPensionsViewModel.copy(
-            statePension = Some(anEmptyStateBenefitViewModel),
-            statePensionLumpSum = Some(anEmptyStateBenefitViewModel))
+        "render page when StatePension is not started " which {
+          val viewModel = aUKIncomeFromPensionsViewModel
 
           lazy val result: WSResponse =
-            showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
+            showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserDataEmpty)
 
           implicit def document: () => Document = () => Jsoup.parse(result.body)
 
@@ -168,11 +168,11 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
           welshToggleCheck(user.isWelsh)
 
           "has a State Pension section" which {
-            textOnPageCheck(notStartedText, statePensionsStatusSelector)
+            textOnPageCheck(notStartedText, summaryListStatusTagSelector(StatePension))
           }
 
           "has a Other UK pensions section" which {
-            textOnPageCheck(updatedText, otherUkPensionsLinkSelector)
+            textOnPageCheck(inProgress, summaryListStatusTagSelector(UkPensionIncome))
           }
         }
 
@@ -198,11 +198,11 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
           welshToggleCheck(user.isWelsh)
 
           "has a State Pension section" which {
-            textOnPageCheck(updatedText, statePensionsStatusSelector)
+            textOnPageCheck(inProgress, summaryListStatusTagSelector(StatePension))
           }
 
           "has a Other UK pensions section" which {
-            textOnPageCheck(notStartedText, otherUkPensionsLinkSelector)
+            textOnPageCheck(notStartedText, summaryListStatusTagSelector(UkPensionIncome))
           }
         }
 
@@ -228,43 +228,11 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
           welshToggleCheck(user.isWelsh)
 
           "has a State Pension section" which {
-            textOnPageCheck(updatedText, statePensionsStatusSelector)
+            textOnPageCheck(inProgress, summaryListStatusTagSelector(StatePension))
           }
 
           "has a Other UK pensions section" which {
-            textOnPageCheck(updatedText, otherUkPensionsLinkSelector)
-          }
-        }
-
-        "render page when StateBenefitViewModel is None " which {
-
-          val viewModel = anIncomeFromPensionsViewModel.copy(
-            statePension = Some(anEmptyStateBenefitViewModel),
-            statePensionLumpSum = Some(anEmptyStateBenefitViewModel))
-
-          lazy val result: WSResponse =
-            showPage(user, pensionsUserDataWithIncomeFromPensions(viewModel, isPriorSubmission = false), anIncomeTaxUserData)
-
-          implicit def document: () => Document = () => Jsoup.parse(result.body)
-
-          "has an OK status" in {
-            result.status shouldBe OK
-          }
-
-          titleCheck(expectedTitle, user.isWelsh)
-          h1Check(expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY), captionSelector)
-          textOnPageCheck(user.specificExpectedResults.get.expectedParagraph, paragraphSelector(1))
-
-          buttonCheck(buttonText, continueButtonSelector)
-          welshToggleCheck(user.isWelsh)
-
-          "has a State Pension section" which {
-            textOnPageCheck(notStartedText, statePensionsStatusSelector)
-          }
-
-          "has a Other UK pensions section" which {
-            textOnPageCheck(updatedText, otherUkPensionsLinkSelector)
+            textOnPageCheck(inProgress, summaryListStatusTagSelector(UkPensionIncome))
           }
         }
 
@@ -286,11 +254,11 @@ class IncomeFromPensionsSummaryControllerISpec extends CommonUtils with BeforeAn
           welshToggleCheck(user.isWelsh)
 
           "has a State Pension section" which {
-            textOnPageCheck(notStartedText, statePensionsStatusSelector)
+            textOnPageCheck(notStartedText, summaryListStatusTagSelector(StatePension))
           }
 
           "has a Other UK pensions section" which {
-            textOnPageCheck(notStartedText, otherUkPensionsLinkSelector)
+            textOnPageCheck(notStartedText, summaryListStatusTagSelector(UkPensionIncome))
           }
         }
       }

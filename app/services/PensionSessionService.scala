@@ -23,11 +23,9 @@ import config.ErrorHandler
 import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector}
 import models.IncomeTaxUserData.PriorData
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
-import models.mongo.JourneyStatus.{Completed, InProgress, NotStarted}
 import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
-import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, UnauthorisedPayments}
 import models.pension.{Journey, JourneyNameAndStatus}
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
@@ -148,12 +146,5 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
   }
 
   private def getJourneyStatuses: DownstreamOutcome[Seq[JourneyNameAndStatus]] = // TODO 7969 connector to mongo BE for journeyNameAndStatus list
-    Future(
-      Right[APIErrorModel, Seq[JourneyNameAndStatus]](
-        Seq(
-          JourneyNameAndStatus(PaymentsIntoPensions, Completed),
-          JourneyNameAndStatus(AnnualAllowances, InProgress),
-          JourneyNameAndStatus(UnauthorisedPayments, NotStarted)
-        )
-      ))
+    Future(Right[APIErrorModel, Seq[JourneyNameAndStatus]](Seq()))
 }
