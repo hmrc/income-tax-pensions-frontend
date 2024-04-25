@@ -268,7 +268,7 @@ class UkPensionIncomeCYAControllerISpec extends IntegrationTest with ViewHelpers
 
         val priorData = anAllPensionDataEmpty.copy(employmentPensions = Some(
           EmploymentPensions(
-            employmentData = Seq(EmploymentPensionModel(
+            employmentData = List(EmploymentPensionModel(
               employmentId = anUkPensionIncomeViewModelOne.employmentId.get,
               pensionSchemeName = anUkPensionIncomeViewModelOne.pensionSchemeName.get,
               pensionId = anUkPensionIncomeViewModelOne.pensionId,

@@ -50,8 +50,11 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
                                        errorHandler: ErrorHandler)(implicit ec: ExecutionContext)
     extends Logging {
 
+  def loadSession(taxYear: Int, user: User): QueryResult[Option[SessionData]] =
+    repository.find(taxYear, user)
+
   def loadSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[SessionData]]] =
-    repository.find(taxYear, user).map(_.leftMap(_ => ()))
+    loadSession(taxYear, user).map(_.leftMap(_ => ()))
 
   def loadPriorAndSession(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcomeT[(PriorData, SessionData)] =
     for {

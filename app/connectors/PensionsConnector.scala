@@ -16,16 +16,19 @@
 
 package connectors
 
+import common.TaxYear
 import config.AppConfig
 import connectors.Connector.hcWithCorrelationId
 import connectors.httpParsers.DeletePensionChargesHttpParser.DeletePensionChargesHttpReads
 import connectors.httpParsers.DeletePensionIncomeHttpParser.DeletePensionIncomeHttpReads
 import connectors.httpParsers.DeletePensionReliefsHttpParser.DeletePensionReliefsHttpReads
+import connectors.httpParsers.LoadPriorEmploymentHttpParser.LoadPriorEmploymentHttpReads
 import connectors.httpParsers.PensionChargesSessionHttpParser.PensionChargesSessionHttpReads
 import connectors.httpParsers.PensionIncomeSessionHttpParser.PensionIncomeSessionHttpReads
 import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionHttpReads
 import models.logging.ConnectorRequestInfo
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
+import models.pension.employmentPensions.EmploymentPensions
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
 import play.api.Logging
@@ -35,6 +38,13 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends Logging {
+
+  def loadPriorEmployment(nino: String, taxYear: TaxYear)(implicit
+      headerCarrier: HeaderCarrier,
+      ec: ExecutionContext): DownstreamOutcome[EmploymentPensions] = {
+    val url = appConfig.pensionBEBaseUrl + s"/employment-pension/nino/$nino/taxYear/${taxYear.endYear}"
+    http.GET[DownstreamErrorOr[EmploymentPensions]](url)
+  }
 
   def savePensionCharges(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)(implicit
       hc: HeaderCarrier,

@@ -30,6 +30,11 @@ trait MockSessionService extends MockFactory {
 
   object MockSessionService {
 
+    def loadSession(taxYear: Int, user: User) =
+      (mockSessionService
+        .loadSession(_: Int, _: User))
+        .expects(*, *)
+
     def loadPriorAndSession(user: User, taxYear: TaxYear) =
       (mockSessionService
         .loadPriorAndSession(_: User, _: TaxYear)(_: HeaderCarrier, _: ExecutionContext))

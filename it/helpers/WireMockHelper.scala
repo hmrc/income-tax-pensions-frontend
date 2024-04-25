@@ -60,11 +60,11 @@ trait WireMockHelper {
   def verifyGet(uri: String): Unit =
     verify(getRequestedFor(urlEqualTo(uri)))
 
-  def stubGet(url: String, status: Int, body: String): StubMapping =
+  def stubGet(url: String, returnedStatus: Int, returnedBody: String): StubMapping =
     stubFor(
       get(urlMatching(url))
         .willReturn(
-          aResponse().withStatus(status).withBody(body)
+          aResponse().withStatus(returnedStatus).withBody(returnedBody)
         ))
 
   def stubGetWithHeadersCheck(url: String, status: Int, body: String, sessionHeader: (String, String), mtdidHeader: (String, String)): StubMapping =
@@ -75,6 +75,7 @@ trait WireMockHelper {
         .willReturn(
           aResponse().withStatus(status).withBody(body)
         ))
+
   def stubPutWithHeadersCheck(url: String, status: Int, body: String, sessionHeader: (String, String), mtdidHeader: (String, String)): StubMapping =
     stubFor(
       put(urlMatching(url))
