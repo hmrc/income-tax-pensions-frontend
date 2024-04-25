@@ -27,7 +27,8 @@ common.opensInNewTab = (opens in new tab)
 common.currency.hint = For example, £193.52
 common.currency.hint1 = For example, £193.54
 common.help.getHelpWithThisPage = Get help with this page
-common.status.updated = Updated
+common.status.completed = Completed
+common.status.inProgress = In Progress
 common.status.notStarted = Not Started
 common.pensions.caption = Pensions for 6 April {0} to 5 April {1}
 common.paymentsIntoPensions.caption = Payments into pensions for 6 April {0} to 5 April {1}
@@ -93,6 +94,19 @@ common.aboutGeneralIncreases.agent = the ’About general increases in benefits�
 
 common.employerFinancedRetirementScheme.caption = Employer-financed retirement benefits schemes for 6 April {0} to 5 April {1}
 
+journey.pensions-summary = Pensions
+journey.payments-into-pensions = Payments into pensions
+journey.income-from-pensions-summary = Income from pensions
+journey.uk-pension-income = UK pension income
+journey.state-pension = State pension
+journey.annual-allowances = Pension annual allowance
+journey.unauthorised-payments = Unauthorised payments from pensions
+journey.overseas-pensions-summary = Overseas pensions
+journey.payments-into-overseas-pensions = Payments into overseas pensions
+journey.income-from-overseas-pensions = Income from overseas pensions
+journey.transfer-into-overseas-pensions = Overseas transfer charges
+journey.short-service-refunds = Short service refunds
+
 ################# Common lifetime allowance #################
 
 common.lifetimeAllowance.Pension.checkWithProvider.Paragraph.individual = Check with your pension providers if you’re unsure.
@@ -122,8 +136,6 @@ common.overseasPensions.findOut.individual = To find out you can:
 common.overseasPensions.findOut.agent = To find out you can ask your client to:
 common.overseasPensions.checkPensionStatement.individual = check your pension statement
 common.overseasPensions.checkPensionStatement.agent = check their pension statement
-
-common.incomeFromPensions.title = UK pension income
 
 
 #################       Common Summary/Remove Pension Scheme    ###########################################
@@ -187,24 +199,6 @@ timeout.button = Sign in
 
 
 #################       Service pages messages       ########################################
-
-#pension summary
-
-pensions.pensionSummary.heading = Pensions
-pensions.pensionSummary.paymentsToPensions = Payments into pensions
-pensions.pensionSummary.incomeFromPensions = Income from pensions
-pensions.pensionSummary.pensionAnnualAllowance = Pension annual allowance
-pensions.pensionSummary.pensionLifetimeAllowance = Pension lifetime allowance
-pensions.pensionSummary.unauthorisedPaymentsFromPensions = Unauthorised payments from pensions
-pensions.pensionSummary.overseasPensionsSummary = Overseas pensions
-pensions.pensionSummary.paymentsToOverseasPensions = Payments into overseas pensions
-pensions.pensionSummary.paymentsToOverseasPensions.hidden = Change payments into overseas pensions
-
-# overseas pensions summary
-pensions.overseasPensionsSummary.paymentsIntoOverseasPensions = Payments into overseas pensions
-pensions.overseasPensionsSummary.incomeFromOverseasPensions = Income from overseas pensions
-pensions.overseasPensionsSummary.overseasTransferCharges = Overseas transfer charges
-pensions.overseasPensionsSummary.shortServiceRefunds = Short service refunds
 
 # Section completed
 sectionCompletedState.title = Have you finished this section?
@@ -488,7 +482,6 @@ incomeFromPensionsGateway.statusPage.title.individual = Did you get income from 
 incomeFromPensionsGateway.statusPage.error.agent = Select yes if your client got payments from pension schemes
 incomeFromPensionsGateway.statusPage.error.individual = Select yes if you got payments from pension schemes
 incomeFromPensionsGateway.paragraph = This includes:
-incomeFromPensionsGateway.paragraph.1 = State Pension
 incomeFromPensionsGateway.paragraph.2 = workplace and private pensions
 
 pensions.incomeFromPensionsDetails.bullet.aboutGeneralIncreases.individual = the ‘About general increases in benefits’ letter the Pension Service sent you
@@ -577,8 +570,6 @@ statePension.cya.paragraph1.agent  = Your client’s State Pension income is bas
 statePension.cya.paragraph2.agent  = You cannot update your client’s State Pension income until 6 April 2023.
 statePension.cya.paragraph1.individual  = Your State Pension income is based on information we already hold about you.
 statePension.cya.paragraph2.individual  = You can change the amounts if they’re not correct.
-statePension.cya.statePension.label = State Pension
-statePension.cya.statePension.label.hidden = Change state pension
 statePension.cya.startDate.label = State Pension start date
 statePension.cya.startDate.label.hidden = Change State Pension start date
 statePension.cya.lumpSum.label = Lump sum

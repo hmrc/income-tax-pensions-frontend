@@ -22,6 +22,8 @@ import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, anPensionsUserDataEmptyCya}
+import models.pension.Journey
+import models.pension.Journey.{IncomeFromOverseasPensions, PaymentsIntoOverseasPensions}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -30,25 +32,21 @@ import play.api.libs.ws.WSResponse
 import utils.CommonUtils
 import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPensionsCyaUrl, incomeFromOverseasPensionsStatus}
 import utils.PageUrls.PaymentIntoOverseasPensions.{paymentsIntoOverseasPensionsCyaUrl, paymentsIntoPensionSchemeUrl}
-import utils.PageUrls._
 import utils.PageUrls.ShortServiceRefunds.{shortServiceRefundsCYAUrl, shortServiceTaxableRefundUrl}
 import utils.PageUrls.TransferIntoOverseasPensions.{checkYourDetailsPensionUrl, transferPensionSavingsUrl}
+import utils.PageUrls._
 
 class OverseasPensionsSummaryControllerISpec extends CommonUtils with BeforeAndAfterEach { // scalastyle:off magic.number
 
   implicit val overseasPensionSummaryUrl: Int => String = overseasPensionsSummaryUrl
 
   object Selectors {
-    val paymentsIntoOverseasPensionsLink = "#payments-into-overseas-pensions-link"
-    val incomeFromOverseasPensionsLink   = "#income-from-overseas-pensions-link"
-    val overseasTransferChargesLink      = "#overseas-transfer-charges-link"
-    val shortServiceRefundsLink          = "#short-service-refunds-link"
-    val insetTextSelector                = "#main-content > div > div > div.govuk-inset-text"
-    val buttonSelector                   = "#returnToOverviewPageBtn"
+    val insetTextSelector = "#main-content > div > div > div.govuk-inset-text"
+    val buttonSelector    = "#returnToOverviewPageBtn"
 
-    def summaryListStatusTagSelector(index: Int): String =
-      s"#overseas-pensions-summary > dl > div:nth-child($index) > dd > strong"
-    def paragraphSelector(index: Int): String = s"#main-content > div > div > p:nth-of-type($index)"
+    def summaryListLinkSelector(index: Int): String            = s"#main-content > div > div > div > ul > li:nth-child($index) > span > a"
+    def summaryListStatusTagSelector(journey: Journey): String = s"#journey-${journey.toString}-status"
+    def paragraphSelector(index: Int): String                  = s"#main-content > div > div > p:nth-of-type($index)"
   }
 
   trait SpecificExpectedResults {
@@ -60,7 +58,7 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with BeforeAndA
   trait CommonExpectedResults {
     val expectedCaption: Int => String
     val buttonText: String
-    val updated: String
+    val inProgress: String
     val notStarted: String
     val paymentsToOverseasPensionsText: String
     val incomeFromOverseasPensionsText: String
@@ -71,7 +69,7 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with BeforeAndA
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val buttonText                     = "Return to overview"
-    val updated                        = "Updated"
+    val inProgress                     = "In Progress"
     val notStarted                     = "Not Started"
     val paymentsToOverseasPensionsText = "Payments into overseas pensions"
     val incomeFromOverseasPensionsText = "Income from overseas pensions"
@@ -82,7 +80,7 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with BeforeAndA
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Pensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val buttonText                     = "Yn ôl i’r trosolwg"
-    val updated                        = "Wedi diweddaru"
+    val inProgress                     = "Ar y gweill"
     val notStarted                     = "Heb ddechrau"
     val paymentsToOverseasPensionsText = "Taliadau i bensiynau tramor"
     val incomeFromOverseasPensionsText = "Incwm o bensiynau tramor"
@@ -135,23 +133,23 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with BeforeAndA
           textOnPageCheck(specific.expectedSectionsToFill, paragraphSelector(1))
 
           "has a payment into overseas pensions section" which {
-            linkCheck(common.paymentsToOverseasPensionsText, paymentsIntoOverseasPensionsLink, paymentsIntoPensionSchemeUrl(taxYearEOY))
-            textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(1))
+            linkCheck(common.paymentsToOverseasPensionsText, summaryListLinkSelector(1), paymentsIntoPensionSchemeUrl(taxYearEOY))
+            textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(PaymentsIntoOverseasPensions))
           }
 
           "has an income from overseas pensions section" which {
-            linkCheck(common.incomeFromOverseasPensionsText, incomeFromOverseasPensionsLink, incomeFromOverseasPensionsStatus(taxYearEOY))
-            textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(2))
+            linkCheck(common.incomeFromOverseasPensionsText, summaryListLinkSelector(2), incomeFromOverseasPensionsStatus(taxYearEOY))
+            textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(IncomeFromOverseasPensions))
           }
 
           "has an overseas transfer charges section" which {
-            linkCheck(common.overseasTransferChargesText, overseasTransferChargesLink, transferPensionSavingsUrl(taxYearEOY))
-            textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(3))
+            linkCheck(common.overseasTransferChargesText, summaryListLinkSelector(3), transferPensionSavingsUrl(taxYearEOY))
+            textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(Journey.TransferIntoOverseasPensions))
           }
 
           "has a short service refunds section" which {
-            linkCheck(common.shortServiceRefundsText, shortServiceRefundsLink, shortServiceTaxableRefundUrl(taxYearEOY))
-            textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(4))
+            linkCheck(common.shortServiceRefundsText, summaryListLinkSelector(4), shortServiceTaxableRefundUrl(taxYearEOY))
+            textOnPageCheck(userScenario.commonExpectedResults.notStarted, summaryListStatusTagSelector(Journey.ShortServiceRefunds))
           }
 
           buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)
@@ -159,7 +157,7 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with BeforeAndA
           welshToggleCheck(userScenario.isWelsh)
         }
 
-        "render the page where data exists for payments into pensions and income for overseas pensions to be 'Updated'" which {
+        "render the page where data exists for payments into pensions and income for overseas pensions to be 'In Progress'" which {
           val userData = aPensionsUserData.copy(
             isPriorSubmission = true,
             pensions = aPensionsCYAModel.copy(
@@ -178,23 +176,23 @@ class OverseasPensionsSummaryControllerISpec extends CommonUtils with BeforeAndA
           textOnPageCheck(specific.expectedSectionsToFill, paragraphSelector(1))
 
           "has a payment into overseas pensions section" which {
-            linkCheck(common.paymentsToOverseasPensionsText, paymentsIntoOverseasPensionsLink, paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
-            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(1))
+            linkCheck(common.paymentsToOverseasPensionsText, summaryListLinkSelector(1), paymentsIntoOverseasPensionsCyaUrl(taxYearEOY))
+            textOnPageCheck(userScenario.commonExpectedResults.inProgress, summaryListStatusTagSelector(PaymentsIntoOverseasPensions))
           }
 
           "has an income from overseas pensions section" which {
-            linkCheck(common.incomeFromOverseasPensionsText, incomeFromOverseasPensionsLink, checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY))
-            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(2))
+            linkCheck(common.incomeFromOverseasPensionsText, summaryListLinkSelector(2), checkIncomeFromOverseasPensionsCyaUrl(taxYearEOY))
+            textOnPageCheck(userScenario.commonExpectedResults.inProgress, summaryListStatusTagSelector(IncomeFromOverseasPensions))
           }
 
           "has an overseas transfer charges section" which {
-            linkCheck(common.overseasTransferChargesText, overseasTransferChargesLink, checkYourDetailsPensionUrl(taxYearEOY))
-            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(3))
+            linkCheck(common.overseasTransferChargesText, summaryListLinkSelector(3), checkYourDetailsPensionUrl(taxYearEOY))
+            textOnPageCheck(userScenario.commonExpectedResults.inProgress, summaryListStatusTagSelector(Journey.TransferIntoOverseasPensions))
           }
 
           "has a short service refunds section" which {
-            linkCheck(common.shortServiceRefundsText, shortServiceRefundsLink, shortServiceRefundsCYAUrl(taxYearEOY))
-            textOnPageCheck(userScenario.commonExpectedResults.updated, summaryListStatusTagSelector(4))
+            linkCheck(common.shortServiceRefundsText, summaryListLinkSelector(4), shortServiceRefundsCYAUrl(taxYearEOY))
+            textOnPageCheck(userScenario.commonExpectedResults.inProgress, summaryListStatusTagSelector(Journey.ShortServiceRefunds))
           }
 
           buttonCheck(userScenario.commonExpectedResults.buttonText, buttonSelector)

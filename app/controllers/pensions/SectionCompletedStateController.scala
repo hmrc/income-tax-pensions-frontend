@@ -16,7 +16,7 @@
 
 package controllers.pensions
 
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.JourneyStatus
@@ -35,8 +35,6 @@ import scala.concurrent.Future
 
 @Singleton
 class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvider,
-//                                                 service: PensionSessionService, TODO 7969 GET and PUT journey state
-                                                 errorHandler: ErrorHandler,
                                                  formsProvider: FormsProvider,
                                                  cc: MessagesControllerComponents,
                                                  view: SectionCompletedStateView)(implicit appConfig: AppConfig)
@@ -46,16 +44,9 @@ class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvide
   val form: Form[Boolean] = formsProvider.sectionCompletedStateForm
 
   def show(taxYear: Int, journey: Journey): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) { implicit request =>
-    val existingAnswer: Option[JourneyStatus] = None // TODO 7969 GET and PUT journey state (replace with comments below)
-//    val form: Form[Boolean]             = formsProvider.sectionCompletedStateForm(request.user)
-    val filledForm = existingAnswer.fold(form)(fill(form, _))
-//      val preparedForm = service
-//        .getJourneyStatus(JourneyAnswersContext(taxYear, businessId, request.mtditid, Journey.withName(journey)))
-//        .value
-//        .map(_.fold(_ => form, fill(form, _)))
-//      preparedForm map { form =>
+    val existingAnswer: Option[JourneyStatus] = None // TODO 7969 GET journey state
+    val filledForm                            = existingAnswer.fold(form)(fill(form, _))
     Ok(view(filledForm, taxYear, journey))
-//      }
   }
 
   def submit(taxYear: Int, journey: Journey): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
@@ -74,7 +65,7 @@ class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvide
       case NotStarted => form
     }
 
-  private def saveAndRedirect(answer: Boolean, journey: Journey, taxYear: Int): Future[Result] = { // TODO 7969 GET and PUT journey state
+  private def saveAndRedirect(answer: Boolean, journey: Journey, taxYear: Int): Future[Result] = { // TODO 7969 POST journey state
     @unused
     val status = if (answer) Completed else InProgress
     journey.sectionCompletedRedirect(taxYear).toFuture

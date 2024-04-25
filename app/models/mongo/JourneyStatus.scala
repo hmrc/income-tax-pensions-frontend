@@ -16,14 +16,27 @@
 
 package models.mongo
 
+import play.api.libs.json._
+
 sealed abstract class JourneyStatus(status: String) {
   override def toString: String = status
 }
 
 object JourneyStatus {
-  val values = Seq(NotStarted, InProgress, Completed)
+  val values: Seq[JourneyStatus] = Seq(NotStarted, InProgress, Completed)
 
   case object NotStarted extends JourneyStatus("notStarted")
   case object InProgress extends JourneyStatus("inProgress")
   case object Completed  extends JourneyStatus("completed")
+
+  implicit val format: Format[JourneyStatus] = new Format[JourneyStatus] {
+    override def writes(js: JourneyStatus): JsValue = JsString(js.toString)
+
+    override def reads(json: JsValue): JsResult[JourneyStatus] = json match {
+      case JsString("notStarted") => JsSuccess(NotStarted)
+      case JsString("inProgress") => JsSuccess(InProgress)
+      case JsString("completed")  => JsSuccess(Completed)
+      case error                  => JsError(s"Unable to read JourneyStatus: $error")
+    }
+  }
 }

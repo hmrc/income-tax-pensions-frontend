@@ -25,17 +25,24 @@ import config._
 import models.IncomeTaxUserData
 import models.mongo._
 import models.pension.AllPensionsData.generateSessionModelFromPrior
+import models.pension.Journey.PensionsSummary
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.i18n.MessagesApi
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Result
 import play.api.mvc.Results.{Ok, Redirect}
+import play.api.test.Injecting
 import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 
 import scala.concurrent.Future
 
-class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataRepository with MockIncomeTaxUserDataConnector with ScalaFutures {
+class PensionSessionServiceSpec
+    extends UnitTest
+    with MockPensionUserDataRepository
+    with MockIncomeTaxUserDataConnector
+    with ScalaFutures
+    with Injecting {
 
   val serviceUnavailableTemplate: ServiceUnavailableTemplate   = app.injector.instanceOf[ServiceUnavailableTemplate]
   val notFoundTemplate: NotFoundTemplate                       = app.injector.instanceOf[NotFoundTemplate]
@@ -46,7 +53,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
   val errorHandler = new ErrorHandler(internalServerErrorTemplate, serviceUnavailableTemplate, mockMessagesApi, notFoundTemplate)(
     mockFrontendAppConfig)
 
-  val messages: MessagesApi = app.injector.instanceOf[MessagesApi]
+  implicit val messages: Messages = inject[MessagesApi].preferred(fakeRequest.withHeaders())
 
   val service: PensionSessionService =
     new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, errorHandler)(mockExecutionContext)
@@ -56,7 +63,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
       mockFind(taxYear, user, Right(None))
       mockFindNoContent(nino, taxYear)
 
-      val response = service.loadDataAndHandle(taxYear, user)(block = (_, _) => Future(Ok))
+      val response = service.loadDataAndHandle(taxYear, user)(block = (_, _, _) => Future(Ok))
 
       status(response) shouldBe OK
     }
@@ -64,7 +71,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
       mockFind(taxYear, user, Right(None))
       mockFindFail(nino, taxYear)
 
-      val response = service.loadDataAndHandle(taxYear, user)((_, _) => Future(Ok))
+      val response = service.loadDataAndHandle(taxYear, user)((_, _, _) => Future(Ok))
 
       status(response) shouldBe INTERNAL_SERVER_ERROR
     }
@@ -73,7 +80,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
       mockFind(taxYear, user, Left(DataNotFound))
       mockFindNoContent(nino, taxYear)
 
-      val response = service.loadDataAndHandle(taxYear, user)((_, _) => Future(Ok))
+      val response = service.loadDataAndHandle(taxYear, user)((_, _, _) => Future(Ok))
 
       status(response) shouldBe INTERNAL_SERVER_ERROR
     }
@@ -170,7 +177,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
       super[MockPensionUserDataRepository].mockFind(taxYear, user, Right(None))
       mockCreateOrUpdate(Right(()))
 
-      val response = service.mergePriorDataToSession(taxYear, user, (_, _, _) => Ok)
+      val response = service.mergePriorDataToSession(PensionsSummary, taxYear, user, (_, _) => Ok)
 
       assert(status(response) === OK)
     }
@@ -181,7 +188,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
       super[MockPensionUserDataRepository].mockFind(taxYear, user, Right(Some(sessionWithEmptyModel)))
       mockCreateOrUpdate(Right(()))
 
-      val response = service.mergePriorDataToSession(taxYear, user, (_, _, _) => Ok)
+      val response = service.mergePriorDataToSession(PensionsSummary, taxYear, user, (_, _) => Ok)
 
       assert(status(response) === OK)
     }
@@ -190,7 +197,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
       super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, noPriorData)
       super[MockPensionUserDataRepository].mockFind(taxYear, user, Left(DataNotFound))
 
-      val response = service.mergePriorDataToSession(taxYear, user, (_, _, _) => Ok)
+      val response = service.mergePriorDataToSession(PensionsSummary, taxYear, user, (_, _) => Ok)
 
       assert(status(response) === INTERNAL_SERVER_ERROR)
     }
@@ -200,7 +207,7 @@ class PensionSessionServiceSpec extends UnitTest with MockPensionUserDataReposit
       super[MockPensionUserDataRepository].mockFind(taxYear, user, Right(None))
       mockCreateOrUpdate(Left(DataNotUpdated))
 
-      val response = service.mergePriorDataToSession(taxYear, user, (_, _, _) => Ok)
+      val response = service.mergePriorDataToSession(PensionsSummary, taxYear, user, (_, _) => Ok)
 
       assert(status(response) === INTERNAL_SERVER_ERROR)
     }

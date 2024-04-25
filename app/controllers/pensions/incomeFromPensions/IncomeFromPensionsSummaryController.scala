@@ -19,11 +19,11 @@ package controllers.pensions.incomeFromPensions
 import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
-import models.mongo.PensionsCYAModel
-import models.pension.AllPensionsData
+import models.pension.Journey.IncomeFromPensionsSummary
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsSummaryView
 
@@ -39,9 +39,8 @@ class IncomeFromPensionsSummaryController @Inject() (mcc: MessagesControllerComp
     with I18nSupport {
 
   def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    def summaryViewResult(taxYear: Int, cyaModel: PensionsCYAModel, priorData: Option[AllPensionsData]) =
-      Ok(view(taxYear, Some(cyaModel), priorData))
+    def summaryViewResult(taxYear: Int, pensionsSummary: HtmlContent) = Ok(view(taxYear, pensionsSummary))
 
-    pensionSessionService.mergePriorDataToSession(taxYear, request.user, summaryViewResult)
+    pensionSessionService.mergePriorDataToSession(IncomeFromPensionsSummary, taxYear, request.user, summaryViewResult)
   }
 }
