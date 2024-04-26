@@ -20,7 +20,6 @@ import builders.AllPensionsDataBuilder.{anAllPensionDataEmpty, anAllPensionsData
 import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId}
-import common.TaxYear
 import config._
 import models.IncomeTaxUserData
 import models.mongo._
@@ -41,6 +40,7 @@ class PensionSessionServiceSpec
     extends UnitTest
     with MockPensionUserDataRepository
     with MockIncomeTaxUserDataConnector
+    with MockPensionsConnector
     with ScalaFutures
     with Injecting {
 
@@ -56,11 +56,12 @@ class PensionSessionServiceSpec
   implicit val messages: Messages = inject[MessagesApi].preferred(fakeRequest.withHeaders())
 
   val service: PensionSessionService =
-    new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, errorHandler)(mockExecutionContext)
+    new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, mockPensionsConnector, errorHandler)(mockExecutionContext)
 
   "loadDataAndHandle" should {
     "invoke block if no errors retrieving session and prior data" in {
       mockFind(taxYear, user, Right(None))
+      mockGetAllJourneyStatuses(currentTaxYear, Right(List.empty))
       mockFindNoContent(nino, taxYear)
 
       val response = service.loadDataAndHandle(taxYear, user)(block = (_, _, _) => Future(Ok))
@@ -93,7 +94,7 @@ class PensionSessionServiceSpec
       super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, prior)
       super[MockPensionUserDataRepository].mockFind(taxYear, user, session.some.asRight)
 
-      val result = service.loadPriorAndSession(user, TaxYear(taxYear)).value.futureValue
+      val result = service.loadPriorAndSession(user, currentTaxYear).value.futureValue
 
       result shouldBe (prior, session).asRight
     }
@@ -104,7 +105,7 @@ class PensionSessionServiceSpec
       super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, IncomeTaxUserData(None))
       super[MockPensionUserDataRepository].mockFind(taxYear, user, mongoError.asLeft)
 
-      val result = service.loadPriorAndSession(user, TaxYear(taxYear)).value.futureValue
+      val result = service.loadPriorAndSession(user, currentTaxYear).value.futureValue
 
       result shouldBe mongoError.asLeft
     }
@@ -113,7 +114,7 @@ class PensionSessionServiceSpec
       super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, IncomeTaxUserData(None))
       super[MockPensionUserDataRepository].mockFind(taxYear, user, Right(None))
 
-      val result = service.loadPriorAndSession(user, TaxYear(taxYear)).value.futureValue
+      val result = service.loadPriorAndSession(user, currentTaxYear).value.futureValue
 
       result shouldBe SessionNotFound.asLeft
     }
@@ -121,7 +122,7 @@ class PensionSessionServiceSpec
     "return an APIErrorModel when there's an error loading prior data from downstream" in {
       super[MockIncomeTaxUserDataConnector].mockFindFail(nino, taxYear)
 
-      val result = service.loadPriorAndSession(user, TaxYear(taxYear)).value.futureValue
+      val result = service.loadPriorAndSession(user, currentTaxYear).value.futureValue
 
       result shouldBe apiError.asLeft
     }
@@ -175,6 +176,7 @@ class PensionSessionServiceSpec
     "return a successful result if the model required updating (session != prior)" in {
       super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, noPriorData)
       super[MockPensionUserDataRepository].mockFind(taxYear, user, Right(None))
+      mockGetAllJourneyStatuses(currentTaxYear, Right(List.empty))
       mockCreateOrUpdate(Right(()))
 
       val response = service.mergePriorDataToSession(PensionsSummary, taxYear, user, (_, _) => Ok)
@@ -186,6 +188,7 @@ class PensionSessionServiceSpec
       val sessionWithEmptyModel = aPensionsUserData.copy(pensions = PensionsCYAModel.emptyModels)
       super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, noPriorData)
       super[MockPensionUserDataRepository].mockFind(taxYear, user, Right(Some(sessionWithEmptyModel)))
+      mockGetAllJourneyStatuses(currentTaxYear, Right(List.empty))
       mockCreateOrUpdate(Right(()))
 
       val response = service.mergePriorDataToSession(PensionsSummary, taxYear, user, (_, _) => Ok)
@@ -205,6 +208,7 @@ class PensionSessionServiceSpec
     "return an internal server error if data not updated" in {
       super[MockIncomeTaxUserDataConnector].mockFind(nino, taxYear, noPriorData)
       super[MockPensionUserDataRepository].mockFind(taxYear, user, Right(None))
+      mockGetAllJourneyStatuses(currentTaxYear, Right(List.empty))
       mockCreateOrUpdate(Left(DataNotUpdated))
 
       val response = service.mergePriorDataToSession(PensionsSummary, taxYear, user, (_, _) => Ok)
