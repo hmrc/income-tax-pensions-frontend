@@ -148,6 +148,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
             implicit lazy val result: WSResponse = {
               authoriseAgentOrIndividual(user.isAgent)
               dropPensionsDB()
+              getAllJourneyStatusesStub(taxYearEOY)
 
               val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
 
@@ -189,6 +190,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
             implicit lazy val result: WSResponse = {
               authoriseAgentOrIndividual(user.isAgent)
               dropPensionsDB()
+              getAllJourneyStatusesStub(taxYearEOY)
 
               val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true))
 
@@ -230,6 +232,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
             implicit lazy val result: WSResponse = {
               authoriseAgentOrIndividual(user.isAgent)
               dropPensionsDB()
+              getAllJourneyStatusesStub(taxYearEOY)
 
               val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(noSurchargeQuestion = Some(true))
 
@@ -271,6 +274,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
             implicit lazy val result: WSResponse = {
               authoriseAgentOrIndividual(user.isAgent)
               dropPensionsDB()
+              getAllJourneyStatusesStub(taxYearEOY)
 
               val pensionsViewModel: UnauthorisedPaymentsViewModel =
                 UnauthorisedPaymentsViewModel().copy(surchargeQuestion = Some(true), noSurchargeQuestion = Some(true))
@@ -313,6 +317,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
             implicit lazy val result: WSResponse = {
               authoriseAgentOrIndividual(user.isAgent)
               dropPensionsDB()
+              getAllJourneyStatusesStub(taxYearEOY)
 
               val pensionsViewModel: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel().copy(
                 surchargeQuestion = Some(false),
@@ -374,6 +379,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
             dropPensionsDB()
             insertCyaData(pensionsUserDataWithUnauthorisedPayments(anUnauthorisedPaymentsViewModel, isPriorSubmission = false))
             userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYearEOY)
+            getAllJourneyStatusesStub(taxYearEOY)
 
             val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
@@ -426,6 +432,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
+            getAllJourneyStatusesStub(taxYearEOY)
 
             val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
 
@@ -454,6 +461,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
+            getAllJourneyStatusesStub(taxYearEOY)
 
             val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
 
@@ -482,6 +490,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
+            getAllJourneyStatusesStub(taxYearEOY)
 
             val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
 
@@ -510,6 +519,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
             authoriseAgentOrIndividual(user.isAgent)
             dropPensionsDB()
+            getAllJourneyStatusesStub(taxYearEOY)
 
             val pensionsViewModel = anUnauthorisedPaymentsEmptyViewModel.copy()
 
@@ -538,6 +548,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
         authoriseAgentOrIndividual()
         dropPensionsDB()
+        getAllJourneyStatusesStub(taxYearEOY)
 
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
@@ -565,6 +576,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
         authoriseAgentOrIndividual()
         dropPensionsDB()
+        getAllJourneyStatusesStub(taxYearEOY)
 
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 
@@ -592,6 +604,7 @@ class UnauthorisedPaymentsControllerISpec extends IntegrationTest with BeforeAnd
 
         authoriseAgentOrIndividual()
         dropPensionsDB()
+        getAllJourneyStatusesStub(taxYearEOY)
 
         val pensionsViewModel = anUnauthorisedPaymentsViewModel.copy()
 

@@ -16,7 +16,7 @@
 
 package utils
 
-import common.SessionValues
+import common.{SessionValues, TaxYear}
 import play.api.mvc.Request
 
 import java.time.LocalDate
@@ -26,7 +26,8 @@ trait TaxYearHelper extends SessionHelper {
   private val dateNow: LocalDate           = LocalDate.now()
   private val taxYearCutoffDate: LocalDate = LocalDate.parse(s"${dateNow.getYear}-04-05")
 
-  val taxYear: Int = if (dateNow.isAfter(taxYearCutoffDate)) LocalDate.now().getYear + 1 else LocalDate.now().getYear
+  val taxYear: Int     = if (dateNow.isAfter(taxYearCutoffDate)) LocalDate.now().getYear + 1 else LocalDate.now().getYear
+  val taxyear: TaxYear = TaxYear(taxYear)
 
   val taxYearEOY: Int = taxYear - 1
 

@@ -20,7 +20,7 @@ import cats.data.EitherT
 import cats.implicits.{catsSyntaxApplicativeId, catsSyntaxOptionId, toBifunctorOps}
 import common.TaxYear
 import config.ErrorHandler
-import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector}
+import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector, PensionsConnector}
 import models.IncomeTaxUserData.PriorData
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo.PensionsUserData.SessionData
@@ -47,6 +47,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
                                        submissionsConnector: IncomeTaxUserDataConnector,
+                                       pensionsConnector: PensionsConnector,
                                        errorHandler: ErrorHandler)(implicit ec: ExecutionContext)
     extends Logging {
 
@@ -96,9 +97,10 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       request: Request[_],
       hc: HeaderCarrier): Future[Result] = {
     val resultT = for {
-      maybeSession    <- EitherT(repository.find(taxYear, user)).leftAs[ServiceError]
-      prior           <- EitherT(loadPriorData(taxYear, user)).leftAs[ServiceError]
-      journeyStatuses <- EitherT(getJourneyStatuses).leftAs[ServiceError]
+      maybeSession <- EitherT(repository.find(taxYear, user)).leftAs[ServiceError]
+      prior        <- EitherT(loadPriorData(taxYear, user)).leftAs[ServiceError]
+      journeyStatuses <- EitherT(pensionsConnector.getAllJourneyStatuses(TaxYear(taxYear))(hc.withMtditId(user.mtditid), ec))
+        .leftAs[ServiceError]
     } yield block(maybeSession, prior.pensions, journeyStatuses)
 
     resultT.value.flatMap {
@@ -147,7 +149,4 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       case Left(_)  => onFail
     }
   }
-
-  private def getJourneyStatuses: DownstreamOutcome[Seq[JourneyNameAndStatus]] = // TODO 7969 connector to mongo BE for journeyNameAndStatus list
-    Future(Right[APIErrorModel, Seq[JourneyNameAndStatus]](Seq()))
 }

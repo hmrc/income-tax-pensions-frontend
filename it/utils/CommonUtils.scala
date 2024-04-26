@@ -45,6 +45,7 @@ trait CommonUtils extends IntegrationTest with ViewHelpers with PensionsDatabase
       url: Int => String): WSResponse = {
     lazy val result: WSResponse = {
       dropPensionsDB()
+      getAllJourneyStatusesStub(taxYearEOY)
       authoriseAgentOrIndividual(user.isAgent)
       insertCyaData(pensionsUserData)
       userDataStub(userData, nino, taxYearEOY)

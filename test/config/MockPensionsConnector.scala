@@ -16,12 +16,14 @@
 
 package config
 
+import common.TaxYear
 import connectors.{DownstreamOutcome, PensionsConnector}
 import models.APIErrorModel
+import models.pension.JourneyNameAndStatus
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
-import org.scalamock.handlers.{CallHandler4, CallHandler5}
+import org.scalamock.handlers.{CallHandler3, CallHandler4, CallHandler5}
 import org.scalamock.scalatest.MockFactory
 import services.{PensionChargesConnectorHelper, PensionIncomeConnectorHelper, PensionReliefsConnectorHelper}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -82,6 +84,14 @@ trait MockPensionsConnector extends MockFactory {
     (mockPensionsConnector
       .deletePensionReliefData(_: String, _: Int)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, *, *)
+      .returns(Future.successful(response))
+      .anyNumberOfTimes()
+
+  def mockGetAllJourneyStatuses(taxYear: TaxYear, response: Either[APIErrorModel, List[JourneyNameAndStatus]])
+      : CallHandler3[TaxYear, HeaderCarrier, ExecutionContext, DownstreamOutcome[List[JourneyNameAndStatus]]] =
+    (mockPensionsConnector
+      .getAllJourneyStatuses(_: TaxYear)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(taxYear, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
 }
