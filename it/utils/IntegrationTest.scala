@@ -25,6 +25,7 @@ import controllers.predicates.actions.AuthorisedAction
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.IncomeTaxUserData
 import models.mongo.PensionsUserData
+import models.pension.JourneyNameAndStatus
 import org.apache.pekko.actor.ActorSystem
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
@@ -278,6 +279,14 @@ trait IntegrationTest
       sessionHeader = "X-Session-ID" -> defaultUser.sessionId,
       mtdidHeader = "mtditid"        -> defaultUser.mtdItId
     )
+
+  def getAllJourneyStatusesStub(taxYear: Int, jsonBody: String = Json.toJson(List[JourneyNameAndStatus]()).toString()): StubMapping =
+    stubGetWithHeadersCheck(
+      s"/income-tax-pensions/journey-statuses/taxYear/$taxYear",
+      OK,
+      jsonBody,
+      "X-Session-ID" -> sessionId,
+      "mtditid"      -> mtditid)
 
   def userData: IncomeTaxUserData = IncomeTaxUserData(
     Some(PensionDataStubs.fullPensionsModel),
