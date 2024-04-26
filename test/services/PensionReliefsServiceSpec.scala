@@ -31,7 +31,7 @@ import utils.CommonData._
 
 class PensionReliefsServiceSpec extends AnyWordSpecLike with MockPensionUserDataRepository with MockPensionsConnector with ScalaFutures {
 
-  val pensionReliefsService = new PensionReliefsService(mockPensionUserDataRepository, mockPensionReliefsConnectorHelper)
+  val pensionReliefsService = new PensionReliefsService(mockPensionUserDataRepository, mockPensionReliefsConnectorHelper, mockPensionsConnector)
 
   "persistPaymentIntoPensionViewModel" should {
     "return Right when model is saved successfully and payment into pensions cya is cleared from DB" in {
