@@ -109,6 +109,7 @@ trait APIParser extends Logging {
 }
 
 object APIParser {
+  // TODO Once we finish all journeys: add test, and make sure that's what we want
   def handleError(response: HttpResponse, statusOverride: Option[Int] = None): APIErrorModel = {
     val status    = statusOverride.getOrElse(response.status)
     val maybeJson = Try(response.json)
@@ -132,8 +133,9 @@ object APIParser {
     )
   }
 
-  def logMessage(response: HttpResponse): String = s"Received ${response.status}. Body:${response.body} ${getCorrelationId(response)}"
+  private def logMessage(response: HttpResponse): String = s"Received ${response.status}. Body:${response.body} ${getCorrelationId(response)}"
 
+  // TODO Once we finish all journeys: add test, and make sure that's what we want
   def unsafePagerDutyError(method: String, url: String, response: HttpResponse): APIErrorModel =
     response.status match {
       case NO_CONTENT =>
