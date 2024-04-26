@@ -62,28 +62,6 @@ trait APIParser extends Logging {
     }
   }
 
-  def handleError[Response](response: HttpResponse, statusOverride: Option[Int] = None): APIErrorModel = {
-
-    val status = statusOverride.getOrElse(response.status)
-
-    try {
-      val json = response.json
-
-      lazy val apiError  = json.asOpt[APIErrorBodyModel]
-      lazy val apiErrors = json.asOpt[APIErrorsBodyModel]
-
-      (apiError, apiErrors) match {
-        case (Some(apiError), _)  => APIErrorModel(status, apiError)
-        case (_, Some(apiErrors)) => APIErrorModel(status, apiErrors)
-        case _ =>
-          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, s"[$parserName][read] Unexpected Json from $service API.")
-          APIErrorModel(status, APIErrorBodyModel.parsingError)
-      }
-    } catch {
-      case _: Exception => APIErrorModel(status, APIErrorBodyModel.parsingError)
-    }
-  }
-
   implicit object SessionHttpReads extends HttpReads[DownstreamErrorOr[Unit]] {
     override def read(method: String, url: String, response: HttpResponse): DownstreamErrorOr[Unit] =
       response.status match {
