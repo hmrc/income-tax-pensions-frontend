@@ -28,6 +28,7 @@ trait PensionConnectorHelper[SubRequestModel <: PensionSubRequestModel, RequestM
 
   def deleteData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[APIErrorModel, Unit]]
 
+  // @deprecated("It is a bit overcomplicated what is going on here. It's better to start over", "2024-04-26")
   def sendDownstream(nino: String,
                      taxYear: Int,
                      subRequestModel: Option[SubRequestModel],
