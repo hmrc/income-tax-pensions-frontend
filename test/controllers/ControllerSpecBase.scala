@@ -43,7 +43,7 @@ trait ControllerSpecBase extends PlaySpec with AnyWordSpecLike with MockitoSugar
   val pensionSessionService = mock[PensionSessionService]
   val errorHandler          = mock[ErrorHandler]
   val mcc                   = stubMessagesControllerComponents()
-  implicit val appConfig    = mock[AppConfig]
+  implicit val appConfig: AppConfig = mock[AppConfig]
 
   val fakeRequest       = FakeRequest("GET", "/")
   val mockActionBuilder = mock[ActionBuilder[UserSessionDataRequest, AnyContent]]

@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext
 
 final case class PensionsServiceStub(
-    paymentsIntoPensionsResult: Either[ServiceError, Unit] = Right(),
+    paymentsIntoPensionsResult: Either[ServiceError, Unit] = Right(()),
     var paymentsIntoPensionsList: List[PaymentsIntoPensionsViewModel] = Nil
 ) extends PensionsService {
 
