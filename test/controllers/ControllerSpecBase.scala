@@ -38,12 +38,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpecBase extends PlaySpec with AnyWordSpecLike with MockitoSugar {
+  implicit val appConfig: AppConfig = mock[AppConfig]
+
   val auditProvider         = mock[AuditActionsProvider]
   val pensionsService       = PensionsServiceStub()
   val pensionSessionService = mock[PensionSessionService]
   val errorHandler          = mock[ErrorHandler]
   val mcc                   = stubMessagesControllerComponents()
-  implicit val appConfig: AppConfig = mock[AppConfig]
 
   val fakeRequest       = FakeRequest("GET", "/")
   val mockActionBuilder = mock[ActionBuilder[UserSessionDataRequest, AnyContent]]
