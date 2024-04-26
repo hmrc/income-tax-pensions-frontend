@@ -23,6 +23,7 @@
 @import utils.ViewUtils.summaryListRow
 @import models.pension.AllPensionsData
 @import models.requests.UserSessionDataRequest
+@import common.TaxYear
 
 
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
@@ -71,7 +72,7 @@
 
     @summaryList(summaryRows.flatten)
 
-    @csrfForm(controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.submit(taxYear)) {
+    @csrfForm(controllers.pensions.paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.submit(TaxYear(taxYear))) {
         @button("common.saveAndContinue")
     }
 }

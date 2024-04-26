@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package config
+package utils
 
-import com.google.inject.AbstractModule
-import common.UUID
-import repositories.{PensionsUserDataRepository, PensionsUserDataRepositoryImpl}
-import services.{PensionsService, PensionsServiceImpl}
+import play.api.Logger
 
-class Modules extends AbstractModule {
-
-  override def configure(): Unit = {
-    bind(classOf[AppConfig]).asEagerSingleton()
-    bind(classOf[UUID]).toInstance(UUID)
-    bind(classOf[PensionsUserDataRepository]).to(classOf[PensionsUserDataRepositoryImpl]).asEagerSingleton()
-    bind(classOf[PensionsService]).to(classOf[PensionsServiceImpl]).asEagerSingleton()
-  }
-
+trait Logging {
+  implicit lazy val logger: Logger = Logger(this.getClass)
 }

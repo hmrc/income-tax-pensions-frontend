@@ -81,7 +81,10 @@ lazy val microservice = Project(appName, file("."))
   .settings(resolvers += Resolver.jcenterRepo)
   .settings(IntegrationTest / unmanagedResourceDirectories += baseDirectory.value / "it" / "resources")
   .settings(coverageSettings: _*)
-  .settings(RoutesKeys.routesImport ++= Seq("models.pension._"))
+  .settings(RoutesKeys.routesImport ++= Seq(
+    "models.pension._",
+    "common._"
+  ))
   .settings(
     // concatenate js
     Concat.groups := Seq(

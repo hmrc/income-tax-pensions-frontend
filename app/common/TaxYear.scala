@@ -16,8 +16,23 @@
 
 package common
 
+import play.api.mvc.PathBindable
+
+
 /** Represents a tax year in the format yyyy - yyyy+1, e.g. 2023-2024. We keep only the last part (2024) which is the end of the tax year.
   */
 final case class TaxYear(endYear: Int) extends AnyVal {
   override def toString: String = endYear.toString
+}
+
+object TaxYear {
+  implicit def pathBindable(implicit intBinder: PathBindable[Int]): PathBindable[TaxYear] = new PathBindable[TaxYear] {
+
+    override def bind(key: String, value: String): Either[String, TaxYear] =
+      intBinder.bind(key, value).map(TaxYear.apply)
+
+    override def unbind(key: String, taxYear: TaxYear): String =
+      intBinder.unbind(key, taxYear.endYear)
+
+  }
 }
