@@ -18,11 +18,13 @@ package services
 
 import cats.data.EitherT
 import common.TaxYear
+import connectors.PensionsConnector
 import models.User
 import models.error.ApiError
 import models.error.ApiError.CreateOrUpdateError
-import models.mongo.{PensionsUserData, ServiceError}
-import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
+import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
+import models.mongo.PensionsUserData
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import repositories.PensionsUserDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -30,33 +32,22 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PensionReliefsService @Inject() (pensionUserDataRepository: PensionsUserDataRepository,
-                                       pensionReliefsConnectorHelper: PensionReliefsConnectorHelper) {
+                                       pensionReliefsConnectorHelper: PensionReliefsConnectorHelper,
+                                       pensionsConnector: PensionsConnector) {
 
   def persistPaymentIntoPensionViewModel(user: User,
                                          taxYear: TaxYear,
                                          paymentsIntoPensions: PaymentsIntoPensionsViewModel,
                                          existingOverseasPensionSchemeContributions: Option[BigDecimal])(implicit
       hc: HeaderCarrier,
-      ec: ExecutionContext): EitherT[Future, ApiError, Unit] = {
-    val reliefs            = paymentsIntoPensions.toReliefs(existingOverseasPensionSchemeContributions)
-    val updatedReliefsData = CreateUpdatePensionReliefsModel(pensionReliefs = reliefs)
-
+      ec: ExecutionContext): EitherT[Future, ApiError, Unit] =
     (for {
-      allSessionData <- EitherT(pensionUserDataRepository.find(taxYear.endYear, user))
-      _ <- EitherT(
-        pensionReliefsConnectorHelper
-          .sendDownstream(
-            user.nino,
-            taxYear.endYear,
-            subRequestModel = None,
-            journeyAnswers = Some(paymentsIntoPensions),
-            requestModel = updatedReliefsData)(hc.withExtraHeaders("mtditid" -> user.mtditid), ec))
-      updatedCYA = removeSubmittedData(taxYear, allSessionData, user)
-      result <- EitherT[Future, ServiceError, Unit](pensionUserDataRepository.createOrUpdate(updatedCYA))
-    } yield result).leftMap { err =>
+      _ <- pensionsConnector.savePaymentsIntoPensions(user.getNino, taxYear, paymentsIntoPensions)(hc.withMtditId(user.mtditid), ec).leftMap { err =>
+        CreateOrUpdateError(err.toString)
+      }
+    } yield ()).leftMap { err =>
       CreateOrUpdateError(err.toString)
     }
-  }
 
   private def removeSubmittedData(taxYear: TaxYear, userData: Option[PensionsUserData], user: User): PensionsUserData =
     userData

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-import cats.data.EitherT
-import models.APIErrorModel
+package connectors
 
-import scala.concurrent.Future
+import cats.implicits.catsSyntaxEitherId
+import connectors.httpParsers.ExcludeJourneyHttpParser.unsafePagerDutyError
+import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
-package object connectors {
-  type DownstreamErrorOr[A] = Either[APIErrorModel, A]
-
-  type DownstreamOutcome[A]  = Future[Either[APIErrorModel, A]]
-  type DownstreamOutcomeT[A] = EitherT[Future, APIErrorModel, A]
-
-  type ServiceError       = APIErrorModel
-  type ContentResponse[A] = Either[ServiceError, A]
-  type NoContentResponse  = ContentResponse[Unit]
-
-  def isSuccess(status: Int): Boolean = status >= 200 && status <= 299
+object NoContentHttpReads extends HttpReads[NoContentResponse] {
+  override def read(method: String, url: String, response: HttpResponse): NoContentResponse =
+    if (isSuccess(response.status)) ().asRight else unsafePagerDutyError(method, url, response).asLeft
 }

@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
+package models
+
 import cats.data.EitherT
-import models.APIErrorModel
+import connectors.ServiceError
 
 import scala.concurrent.Future
 
-package object connectors {
-  type DownstreamErrorOr[A] = Either[APIErrorModel, A]
-
-  type DownstreamOutcome[A]  = Future[Either[APIErrorModel, A]]
-  type DownstreamOutcomeT[A] = EitherT[Future, APIErrorModel, A]
-
-  type ServiceError       = APIErrorModel
-  type ContentResponse[A] = Either[ServiceError, A]
-  type NoContentResponse  = ContentResponse[Unit]
-
-  def isSuccess(status: Int): Boolean = status >= 200 && status <= 299
+package object domain {
+  type ApiResultT[A] = EitherT[Future, ServiceError, A]
 }

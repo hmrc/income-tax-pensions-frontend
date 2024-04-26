@@ -16,6 +16,9 @@
 
 package models
 
+import common.Nino
+
 case class User(mtditid: String, arn: Option[String], nino: String, sessionId: String, affinityGroup: String) {
   def isAgent: Boolean = arn.nonEmpty
+  def getNino: Nino = Nino(nino)
 }

@@ -17,6 +17,8 @@
 package connectors
 
 import common.TaxYear
+import cats.data.EitherT
+import common.{Nino, TaxYear}
 import config.AppConfig
 import connectors.Connector.hcWithCorrelationId
 import connectors.httpParsers.DeletePensionChargesHttpParser.DeletePensionChargesHttpReads
@@ -26,11 +28,12 @@ import connectors.httpParsers.GetAllJourneyStatusesHttpParser.GetAllJourneyStatu
 import connectors.httpParsers.PensionChargesSessionHttpParser.PensionChargesSessionHttpReads
 import connectors.httpParsers.PensionIncomeSessionHttpParser.PensionIncomeSessionHttpReads
 import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionHttpReads
+import models.domain.ApiResultT
 import models.logging.ConnectorRequestInfo
 import models.pension.JourneyNameAndStatus
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
-import models.pension.reliefs.CreateUpdatePensionReliefsModel
+import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -39,6 +42,21 @@ import scala.concurrent.ExecutionContext
 
 class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends Logging {
   private def buildUrl(url: String) = s"${appConfig.pensionBEBaseUrl}$url"
+
+  def savePaymentsIntoPensions(nino: Nino, taxYear: TaxYear, answers: PaymentsIntoPensionsViewModel)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    val url = appConfig.pensionBEBaseUrl + s"/${taxYear.endYear}/payments-into-pensions/${nino.value}/answers"
+    ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, answers)
+
+    val res = http.PUT[PaymentsIntoPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(
+      PaymentsIntoPensionsViewModel.format,
+      NoContentHttpReads,
+      hcWithCorrelationId(hc),
+      ec)
+
+    EitherT(res)
+  }
 
   def savePensionCharges(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)(implicit
       hc: HeaderCarrier,

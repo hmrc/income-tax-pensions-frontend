@@ -23,7 +23,9 @@ import play.api.Logging
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
-import utils.PagerDutyHelper.pagerDutyLog
+import utils.PagerDutyHelper.{getCorrelationId, pagerDutyLog}
+
+import scala.util.Try
 
 trait APIParser extends Logging {
 
@@ -31,7 +33,7 @@ trait APIParser extends Logging {
   val service: String
 
   def logMessage(response: HttpResponse): String =
-    s"[$parserName][read] Received ${response.status} from $service API. Body:${response.body}"
+    s"[$parserName][read] Received ${response.status} from $parserName. Body:${response.body} ${getCorrelationId(response)}"
 
   def badSuccessJsonFromAPI[Response]: Either[APIErrorModel, Response] = {
     pagerDutyLog(BAD_SUCCESS_JSON_FROM_API, s"[$parserName][read] Invalid Json from $service API.")
@@ -60,6 +62,28 @@ trait APIParser extends Logging {
     }
   }
 
+  def handleError[Response](response: HttpResponse, statusOverride: Option[Int] = None): APIErrorModel = {
+
+    val status = statusOverride.getOrElse(response.status)
+
+    try {
+      val json = response.json
+
+      lazy val apiError  = json.asOpt[APIErrorBodyModel]
+      lazy val apiErrors = json.asOpt[APIErrorsBodyModel]
+
+      (apiError, apiErrors) match {
+        case (Some(apiError), _)  => APIErrorModel(status, apiError)
+        case (_, Some(apiErrors)) => APIErrorModel(status, apiErrors)
+        case _ =>
+          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, s"[$parserName][read] Unexpected Json from $service API.")
+          APIErrorModel(status, APIErrorBodyModel.parsingError)
+      }
+    } catch {
+      case _: Exception => APIErrorModel(status, APIErrorBodyModel.parsingError)
+    }
+  }
+
   implicit object SessionHttpReads extends HttpReads[DownstreamErrorOr[Unit]] {
     override def read(method: String, url: String, response: HttpResponse): DownstreamErrorOr[Unit] =
       response.status match {
@@ -82,4 +106,27 @@ trait APIParser extends Logging {
           handleAPIError(response, Some(INTERNAL_SERVER_ERROR))
       }
   }
+
+  def unsafePagerDutyError(method: String, url: String, response: HttpResponse): APIErrorModel =
+    response.status match {
+      case NO_CONTENT =>
+        ()
+        handleError(response)
+      case BAD_REQUEST =>
+        pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
+        handleError(response)
+
+      case INTERNAL_SERVER_ERROR =>
+        pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
+        handleError(response)
+
+      case SERVICE_UNAVAILABLE =>
+        pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
+        handleError(response)
+
+      case _ =>
+        pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
+        handleError(response, Some(INTERNAL_SERVER_ERROR))
+    }
+
 }
