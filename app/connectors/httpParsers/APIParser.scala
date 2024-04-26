@@ -106,6 +106,33 @@ trait APIParser extends Logging {
           handleAPIError(response, Some(INTERNAL_SERVER_ERROR))
       }
   }
+}
+
+object APIParser {
+  def handleError(response: HttpResponse, statusOverride: Option[Int] = None): APIErrorModel = {
+    val status    = statusOverride.getOrElse(response.status)
+    val maybeJson = Try(response.json)
+    val maybeApiJsonError = maybeJson.map { json =>
+      lazy val apiError  = json.asOpt[APIErrorBodyModel]
+      lazy val apiErrors = json.asOpt[APIErrorsBodyModel]
+
+      val errorModel = (apiError, apiErrors) match {
+        case (Some(apiError), _)  => APIErrorModel(status, apiError)
+        case (_, Some(apiErrors)) => APIErrorModel(status, apiErrors)
+        case _ =>
+          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, s"Unexpected Json from API")
+          APIErrorModel(status, APIErrorBodyModel.parsingError)
+      }
+
+      errorModel
+    }
+
+    maybeApiJsonError.getOrElse(
+      APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("PARSING_ERROR", s"Error parsing response from API: ${response.body}"))
+    )
+  }
+
+  def logMessage(response: HttpResponse): String = s"Received ${response.status}. Body:${response.body} ${getCorrelationId(response)}"
 
   def unsafePagerDutyError(method: String, url: String, response: HttpResponse): APIErrorModel =
     response.status match {
@@ -115,18 +142,14 @@ trait APIParser extends Logging {
       case BAD_REQUEST =>
         pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
         handleError(response)
-
       case INTERNAL_SERVER_ERROR =>
         pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
         handleError(response)
-
       case SERVICE_UNAVAILABLE =>
         pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
         handleError(response)
-
       case _ =>
         pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
         handleError(response, Some(INTERNAL_SERVER_ERROR))
     }
-
 }

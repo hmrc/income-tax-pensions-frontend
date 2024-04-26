@@ -22,23 +22,15 @@ import uk.gov.hmrc.http.HttpResponse
 object PagerDutyHelper extends Logging {
 
   object PagerDutyKeys extends Enumeration {
-    val BAD_SUCCESS_JSON_FROM_API: PagerDutyKeys.Value                    = Value
-    val SERVICE_UNAVAILABLE_FROM_API: PagerDutyKeys.Value                 = Value
-    val INTERNAL_SERVER_ERROR_FROM_API: PagerDutyKeys.Value               = Value
-    val UNEXPECTED_RESPONSE_FROM_API: PagerDutyKeys.Value                 = Value
-    val FOURXX_RESPONSE_FROM_API: PagerDutyKeys.Value                     = Value
-    val FAILED_TO_CREATE_UPDATE_PENSIONS_DATA: PagerDutyKeys.Value        = Value
-    val FAILED_TO_FIND_PENSIONS_DATA: PagerDutyKeys.Value                 = Value
-    val FAILED_TO_ClEAR_PENSIONS_DATA: PagerDutyKeys.Value                = Value
-    val BAD_SUCCESS_JSON_FROM_CONNECTOR: PagerDutyKeys.Value              = Value
-    val SERVICE_UNAVAILABLE_FROM_CONNECTOR: PagerDutyKeys.Value           = Value
-    val INTERNAL_SERVER_ERROR_FROM_CONNECTOR: PagerDutyKeys.Value         = Value
-    val UNEXPECTED_RESPONSE_FROM_CONNECTOR: PagerDutyKeys.Value           = Value
-    val FOURXX_RESPONSE_FROM_CONNECTOR: PagerDutyKeys.Value               = Value
-    val FAILED_TO_CREATE_UPDATE_SELF_EMPLOYMENT_DATA: PagerDutyKeys.Value = Value // TODO Something not used here. why, should we remove it or use it/
-    val FAILED_TO_FIND_SELF_EMPLOYMENT_DATA: PagerDutyKeys.Value          = Value
-    val FAILED_TO_ClEAR_SELF_EMPLOYMENT_DATA: PagerDutyKeys.Value         = Value
-    val ENCRYPTION_DECRYPTION_ERROR: PagerDutyKeys.Value                  = Value
+    val BAD_SUCCESS_JSON_FROM_API: PagerDutyKeys.Value             = Value
+    val SERVICE_UNAVAILABLE_FROM_API: PagerDutyKeys.Value          = Value
+    val INTERNAL_SERVER_ERROR_FROM_API: PagerDutyKeys.Value        = Value
+    val UNEXPECTED_RESPONSE_FROM_API: PagerDutyKeys.Value          = Value
+    val FOURXX_RESPONSE_FROM_API: PagerDutyKeys.Value              = Value
+    val FAILED_TO_CREATE_UPDATE_PENSIONS_DATA: PagerDutyKeys.Value = Value
+    val FAILED_TO_FIND_PENSIONS_DATA: PagerDutyKeys.Value          = Value
+    val FAILED_TO_ClEAR_PENSIONS_DATA: PagerDutyKeys.Value         = Value
+    val ENCRYPTION_DECRYPTION_ERROR: PagerDutyKeys.Value           = Value
   }
 
   def pagerDutyLog(pagerDutyKey: PagerDutyKeys.Value, otherDetail: String): Unit =

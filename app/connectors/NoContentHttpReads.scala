@@ -17,7 +17,7 @@
 package connectors
 
 import cats.implicits.catsSyntaxEitherId
-import connectors.httpParsers.ExcludeJourneyHttpParser.unsafePagerDutyError
+import connectors.httpParsers.APIParser.unsafePagerDutyError
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object NoContentHttpReads extends HttpReads[NoContentResponse] {

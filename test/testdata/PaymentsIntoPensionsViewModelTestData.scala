@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,23 @@
  * limitations under the License.
  */
 
-package common
+package testdata
 
-final case class Mtditid(value: String) extends AnyVal
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
+
+object PaymentsIntoPensionsViewModelTestData {
+
+  val answers = PaymentsIntoPensionsViewModel(
+    Some(true),
+    Some(1.0),
+    Some(true),
+    Some(2.0),
+    Some(true),
+    Some(true),
+    Some(true),
+    Some(3.0),
+    Some(true),
+    Some(4.0)
+  )
+
+}
