@@ -42,11 +42,9 @@ import scala.concurrent.ExecutionContext
 class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends Logging {
   private def buildUrl(url: String) = s"${appConfig.pensionBEBaseUrl}$url"
 
-  def loadPriorEmployment(nino: String, taxYear: TaxYear)(implicit
-      headerCarrier: HeaderCarrier,
-      ec: ExecutionContext): DownstreamOutcome[EmploymentPensions] = {
+  def loadPriorEmployment(nino: String, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[EmploymentPensions] = {
     val url = appConfig.pensionBEBaseUrl + s"/employment-pension/nino/$nino/taxYear/${taxYear.endYear}"
-    http.GET[DownstreamErrorOr[EmploymentPensions]](url)
+    http.GET[DownstreamErrorOr[EmploymentPensions]](url)(LoadPriorEmploymentHttpReads, hcWithCorrelationId(hc), ec)
   }
 
   def savePensionCharges(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)(implicit

@@ -41,7 +41,7 @@ class EmploymentPensionService @Inject() (sessionService: PensionSessionService,
                                           pensionsConnector: PensionsConnector) {
 
   def loadPriorEmployment(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcomeT[EmploymentPensions] =
-    EitherT(pensionsConnector.loadPriorEmployment(user.nino, taxYear))
+    EitherT(pensionsConnector.loadPriorEmployment(user.nino, taxYear)(hc.withMtditId(user.mtditid), ec))
       .leftAs[ServiceError]
 
   def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] =
