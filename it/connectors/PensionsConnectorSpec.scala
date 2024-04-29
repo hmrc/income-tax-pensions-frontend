@@ -40,48 +40,50 @@ class PensionsConnectorSpec extends IntegrationTest {
           result shouldBe EmploymentPensions.empty.asRight
         }
       }
+      "downstream returns a 200" should {
+        "return a populated EmploymentPensions model" in new Test with EmploymentTest {
+          stubDownstreamSuccessResponse(withStatus = OK)
+
+          val result = connector.loadPriorEmployment(nino, TaxYear(taxYear)).futureValue
+
+          result shouldBe anEmploymentPensions.asRight
+        }
+      }
+      "return an APIErrorModel when downstream calls are unsuccessful" in new Test with EmploymentTest {
+        stubDownstreamFailureResponse()
+
+        val result = connector.loadPriorEmployment(nino, TaxYear(taxYear)).futureValue
+
+        result shouldBe downstreamError.asLeft
+      }
     }
-    "return an EmploymentPensions model when downstream calls are successful" in new Test with EmploymentTest {
-      stubDownstreamSuccessResponse(withStatus = OK)
 
-      val result = connector.loadPriorEmployment(nino, TaxYear(taxYear)).futureValue
+    trait Test {
+      val connector: PensionsConnector =
+        new PensionsConnector(httpClient, appConfig)
 
-      result shouldBe anEmploymentPensions.asRight
+      val downstreamError: APIErrorModel =
+        APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError)
     }
-    "return an APIErrorModel when downstream calls are unsuccessful" in new Test with EmploymentTest {
-      stubDownstreamFailureResponse()
 
-      val result = connector.loadPriorEmployment(nino, TaxYear(taxYear)).futureValue
+    trait EmploymentTest {
+      _: Test =>
+      val downstreamUrl: String =
+        s"/income-tax-pensions/employment-pension/nino/$nino/taxYear/$taxYear"
 
-      result shouldBe downstreamError.asLeft
+      def stubDownstreamSuccessResponse(withStatus: Int): StubMapping =
+        stubGet(
+          url = downstreamUrl,
+          returnedStatus = withStatus,
+          returnedBody = Json.stringify(Json.toJson(anEmploymentPensions))
+        )
+
+      def stubDownstreamFailureResponse(): StubMapping =
+        stubGet(
+          url = downstreamUrl,
+          returnedStatus = INTERNAL_SERVER_ERROR,
+          returnedBody = Json.stringify(JsObject.empty)
+        )
     }
   }
-
-  trait Test {
-    val connector: PensionsConnector =
-      new PensionsConnector(httpClient, appConfig)
-
-    val downstreamError: APIErrorModel =
-      APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError)
-  }
-
-  trait EmploymentTest { _: Test =>
-    val downstreamUrl: String =
-      s"/income-tax-pensions/employment-pension/nino/$nino/taxYear/$taxYear"
-
-    def stubDownstreamSuccessResponse(withStatus: Int): StubMapping =
-      stubGet(
-        url = downstreamUrl,
-        returnedStatus = withStatus,
-        returnedBody = Json.stringify(Json.toJson(anEmploymentPensions))
-      )
-
-    def stubDownstreamFailureResponse(): StubMapping =
-      stubGet(
-        url = downstreamUrl,
-        returnedStatus = INTERNAL_SERVER_ERROR,
-        returnedBody = Json.stringify(JsObject.empty)
-      )
-  }
-
 }
