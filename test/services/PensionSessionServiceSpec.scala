@@ -21,10 +21,12 @@ import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId}
 import config._
-import models.IncomeTaxUserData
+import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
+import models.mongo.JourneyStatus.Completed
 import models.mongo._
 import models.pension.AllPensionsData.generateSessionModelFromPrior
-import models.pension.Journey.PensionsSummary
+import models.pension.Journey.{PaymentsIntoPensions, PensionsSummary}
+import models.pension.JourneyNameAndStatus
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
@@ -34,7 +36,8 @@ import play.api.test.Injecting
 import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.Duration
 
 class PensionSessionServiceSpec
     extends UnitTest
@@ -216,5 +219,41 @@ class PensionSessionServiceSpec
       assert(status(response) === INTERNAL_SERVER_ERROR)
     }
 
+  }
+
+  "getJourneyStatus" should {
+    "return a successful result" which {
+      "contains a None when an empty list is returned from the database" in {
+        mockGetJourneyStatus(PaymentsIntoPensions, currentTaxYear, Mtditid(mtditid), Right(List()))
+
+        val response = service.getJourneyStatus(JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions))
+
+        await(response) shouldBe Right(None)
+      }
+
+      "contains a Some(JourneyStatus) when a status is returned from the database" in {
+        mockGetJourneyStatus(
+          PaymentsIntoPensions,
+          currentTaxYear,
+          Mtditid(mtditid),
+          Right(List(JourneyNameAndStatus(PaymentsIntoPensions, Completed))))
+
+        val response = service.getJourneyStatus(JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions))
+
+        await(response) shouldBe Right(Some(Completed))
+      }
+    }
+
+    "return an error result when connector returns an error" in {
+      mockGetJourneyStatus(
+        PaymentsIntoPensions,
+        currentTaxYear,
+        Mtditid(mtditid),
+        Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError)))
+
+      val response = service.getJourneyStatus(JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions))
+
+      await(response) shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
+    }
   }
 }

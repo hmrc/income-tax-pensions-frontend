@@ -19,10 +19,11 @@ package config
 import common.TaxYear
 import connectors.{DownstreamOutcome, PensionsConnector}
 import models.APIErrorModel
-import models.pension.JourneyNameAndStatus
+import models.mongo.Mtditid
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
+import models.pension.{Journey, JourneyNameAndStatus}
 import org.scalamock.handlers.{CallHandler3, CallHandler4, CallHandler5}
 import org.scalamock.scalatest.MockFactory
 import services.{PensionChargesConnectorHelper, PensionIncomeConnectorHelper, PensionReliefsConnectorHelper}
@@ -92,6 +93,14 @@ trait MockPensionsConnector extends MockFactory {
     (mockPensionsConnector
       .getAllJourneyStatuses(_: TaxYear)(_: HeaderCarrier, _: ExecutionContext))
       .expects(taxYear, *, *)
+      .returns(Future.successful(response))
+      .anyNumberOfTimes()
+
+  def mockGetJourneyStatus(journey: Journey, taxYear: TaxYear, mtditid: Mtditid, response: Either[APIErrorModel, List[JourneyNameAndStatus]])
+      : CallHandler5[Journey, TaxYear, Mtditid, HeaderCarrier, ExecutionContext, DownstreamOutcome[List[JourneyNameAndStatus]]] =
+    (mockPensionsConnector
+      .getJourneyState(_: Journey, _: TaxYear, _: Mtditid)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(journey, taxYear, mtditid, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
 }

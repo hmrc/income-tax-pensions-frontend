@@ -20,6 +20,7 @@ import builders.PensionChargesBuilder.anPensionCharges
 import builders.PensionIncomeBuilder.aCreateUpdatePensionIncomeModel
 import builders.PensionReliefsBuilder.anPensionReliefs
 import models.mongo.JourneyStatus.{Completed, InProgress}
+import models.mongo.Mtditid
 import models.pension.Journey.{PaymentsIntoPensions, UnauthorisedPayments}
 import models.pension.JourneyNameAndStatus
 import common.Nino
@@ -383,6 +384,75 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
       "submission returns an unexpected result" in {
         stubGetWithHeadersCheck(url, BAD_REQUEST, """{"code": "FAILED", "reason": "failed"}""", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
         val result = Await.result(connector.getAllJourneyStatuses(taxyear), Duration.Inf)
+
+        result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
+      }
+    }
+  }
+
+  "getJourneyStatus" should {
+    val url               = s"/income-tax-pensions/journey-status/$PaymentsIntoPensions/taxYear/$taxYear"
+    val journeyStatusList = List(JourneyNameAndStatus(PaymentsIntoPensions, Completed))
+
+    "Return a success 204 result" when {
+      "there are no statuses saved in the backend database and an empty List is returned" in {
+        stubGetWithHeadersCheck(url, OK, Json.toJson(List[JourneyNameAndStatus]()).toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid)), Duration.Inf)
+
+        result shouldBe Right(List())
+      }
+
+      "there is a valid status saved in the backend database and they are returned in the response body" in {
+        stubGetWithHeadersCheck(url, OK, Json.toJson(journeyStatusList).toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid)), Duration.Inf)
+
+        result shouldBe Right(journeyStatusList)
+      }
+    }
+
+    "Return an error result" when {
+      "the stub isn't matched due to the call being external as the headers won't be passed along" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue"))).withExtraHeaders("mtditid" -> mtditid)
+        stubGetWithHeadersCheck(url, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid))(hc, ec), Duration.Inf)
+
+        result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
+      }
+
+      "submission returns a 200 but invalid json" in {
+        stubGetWithHeadersCheck(url, OK, Json.toJson("""{"invalid": true}""").toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid)), Duration.Inf)
+
+        result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
+      }
+
+      "submission returns a 500" in {
+        stubGetWithHeadersCheck(
+          url,
+          INTERNAL_SERVER_ERROR,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
+        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid)), Duration.Inf)
+
+        result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
+      }
+
+      "submission returns a 503" in {
+        stubGetWithHeadersCheck(
+          url,
+          SERVICE_UNAVAILABLE,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
+        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid)), Duration.Inf)
+
+        result shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))
+      }
+
+      "submission returns an unexpected result" in {
+        stubGetWithHeadersCheck(url, BAD_REQUEST, """{"code": "FAILED", "reason": "failed"}""", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid)), Duration.Inf)
 
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
       }

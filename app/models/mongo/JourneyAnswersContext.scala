@@ -16,12 +16,12 @@
 
 package models.mongo
 
-import play.api.libs.json.{Format, Json}
+import common.TaxYear
+import models.pension.Journey
+import uk.gov.hmrc.auth.core.Nino
 
-final case class Mtditid(value: String) extends AnyVal {
-  override def toString: String = value
+case class JourneyContextWithNino(taxYear: TaxYear, mtditid: Mtditid, nino: Nino) {
+  def toJourneyContext(Journey: Journey): JourneyContext = JourneyContext(taxYear, mtditid, Journey)
 }
 
-object Mtditid {
-  implicit val format: Format[Mtditid] = Json.valueFormat[Mtditid]
-}
+case class JourneyContext(taxYear: TaxYear, mtditid: Mtditid, journey: Journey)

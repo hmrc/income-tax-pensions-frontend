@@ -146,4 +146,13 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       case Left(_)  => onFail
     }
   }
+
+  private def getAllJourneyStatuses: DownstreamOutcome[Seq[JourneyNameAndStatus]] = // TODO 7969 connector to mongo BE for journeyNameAndStatus list
+    Future(Right[APIErrorModel, Seq[JourneyNameAndStatus]](Seq()))
+
+  // TODO: Migrate to PensionService once created
+  def getJourneyStatus(ctx: JourneyContext)(implicit hc: HeaderCarrier): DownstreamOutcome[Option[JourneyStatus]] =
+    pensionsConnector
+      .getJourneyState(ctx.journey, ctx.taxYear, ctx.mtditid)
+      .map(_.map(_.headOption.map(_.journeyStatus)))
 }
