@@ -35,10 +35,10 @@ case class APIErrorModel(status: Int, body: APIErrorBody) extends ServiceError {
 case class APIErrorBodyModel(code: String, reason: String) extends APIErrorBody
 
 object APIErrorBodyModel {
-  implicit val formats: OFormat[APIErrorBodyModel] = Json.format[APIErrorBodyModel]
-  val parsingError: APIErrorBodyModel              = APIErrorBodyModel("PARSING_ERROR", "Error parsing response from API")
-  def dbError(details: String): APIErrorBodyModel  = APIErrorBodyModel("DB_ERROR", s"Error parsing data from database: $details")
-  def genericError(details: String): APIErrorBodyModel  = APIErrorBodyModel("GENERIC_ERROR", s"Error: $details")
+  implicit val formats: OFormat[APIErrorBodyModel]     = Json.format[APIErrorBodyModel]
+  val parsingError: APIErrorBodyModel                  = APIErrorBodyModel("PARSING_ERROR", "Error parsing response from API")
+  def dbError(details: String): APIErrorBodyModel      = APIErrorBodyModel("DB_ERROR", s"Error parsing data from database: $details")
+  def genericError(details: String): APIErrorBodyModel = APIErrorBodyModel("GENERIC_ERROR", s"Error: $details")
 }
 
 /** Multiple API Errors * */
