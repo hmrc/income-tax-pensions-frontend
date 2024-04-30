@@ -18,6 +18,9 @@ package models.mongo
 
 import common.TaxYear
 import models.User
+import models.pension.Journey
+import models.pension.Journey.PaymentsIntoPensions
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
@@ -27,9 +30,18 @@ case class PensionsUserData(sessionId: String,
                             mtdItId: String,
                             nino: String,
                             taxYear: Int,
-                            isPriorSubmission: Boolean,
+                            isPriorSubmission: Boolean, // TODO Where do we use that? Prior submission for which journey?
                             pensions: PensionsCYAModel,
-                            lastUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC))
+                            lastUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC)) {
+  private def now = ZonedDateTime.now(ZoneOffset.UTC)
+
+  def removeJourneyAnswers(journey: Journey): PensionsUserData =
+    journey match {
+      case PaymentsIntoPensions =>
+        copy(lastUpdated = now, pensions = pensions.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel.empty))
+      case _ => ??? // TODO will be done when other journeys are implemented
+    }
+}
 
 object PensionsUserData extends MongoJavatimeFormats {
   type SessionData = PensionsUserData

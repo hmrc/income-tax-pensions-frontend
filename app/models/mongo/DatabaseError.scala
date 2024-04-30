@@ -21,12 +21,15 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 
 trait ServiceError {
   val message: String
+
+  def toAPIErrorModel: APIErrorModel =
+    APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.genericError(message))
 }
 
 trait DatabaseError extends ServiceError {
   override val message: String
 
-  def toAPIErrorModel: APIErrorModel =
+  override def toAPIErrorModel: APIErrorModel =
     APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.dbError(message))
 
 }

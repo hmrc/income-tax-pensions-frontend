@@ -21,6 +21,7 @@ import common.TaxYear
 import connectors.ServiceError
 import models.User
 import models.domain.ApiResultT
+import models.mongo.PensionsUserData
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import services.PensionsService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,10 +33,10 @@ final case class PensionsServiceStub(
     var paymentsIntoPensionsList: List[PaymentsIntoPensionsViewModel] = Nil
 ) extends PensionsService {
 
-  def upsertPaymentsIntoPensions(user: User, taxYear: TaxYear, paymentsIntoPensions: PaymentsIntoPensionsViewModel)(implicit
+  def upsertPaymentsIntoPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
-    paymentsIntoPensionsList ::= paymentsIntoPensions
+    paymentsIntoPensionsList ::= sessionData.pensions.paymentsIntoPension
     EitherT.fromEither(paymentsIntoPensionsResult)
   }
 }
