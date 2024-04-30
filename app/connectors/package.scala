@@ -25,4 +25,9 @@ package object connectors {
   type DownstreamOutcome[A]  = Future[Either[APIErrorModel, A]]
   type DownstreamOutcomeT[A] = EitherT[Future, APIErrorModel, A]
 
+  type ServiceError       = APIErrorModel
+  type ContentResponse[A] = Either[ServiceError, A]
+  type NoContentResponse  = ContentResponse[Unit]
+
+  def isSuccess(status: Int): Boolean = status >= 200 && status <= 299
 }

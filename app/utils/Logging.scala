@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package models
+package utils
 
-import common.Nino
+import play.api.Logger
 
-case class User(mtditid: String, arn: Option[String], nino: String, sessionId: String, affinityGroup: String) {
-  def isAgent: Boolean = arn.nonEmpty
-  def getNino: Nino    = Nino(nino)
+trait Logging {
+  implicit lazy val logger: Logger = Logger(this.getClass)
 }

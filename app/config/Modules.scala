@@ -19,6 +19,7 @@ package config
 import com.google.inject.AbstractModule
 import common.UUID
 import repositories.{PensionsUserDataRepository, PensionsUserDataRepositoryImpl}
+import services.{PensionsService, PensionsServiceImpl}
 
 class Modules extends AbstractModule {
 
@@ -26,6 +27,7 @@ class Modules extends AbstractModule {
     bind(classOf[AppConfig]).asEagerSingleton()
     bind(classOf[UUID]).toInstance(UUID)
     bind(classOf[PensionsUserDataRepository]).to(classOf[PensionsUserDataRepositoryImpl]).asEagerSingleton()
+    bind(classOf[PensionsService]).to(classOf[PensionsServiceImpl]).asEagerSingleton()
   }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,11 @@
 
 package models
 
-import common.Nino
+import cats.data.EitherT
+import connectors.ServiceError
 
-case class User(mtditid: String, arn: Option[String], nino: String, sessionId: String, affinityGroup: String) {
-  def isAgent: Boolean = arn.nonEmpty
-  def getNino: Nino    = Nino(nino)
+import scala.concurrent.Future
+
+package object domain {
+  type ApiResultT[A] = EitherT[Future, ServiceError, A]
 }

@@ -18,17 +18,17 @@ package models.logging
 
 import models.logging.HeaderCarrierExtensions.{CorrelationIdHeaderKey, HeaderCarrierOps}
 import play.api.Logger
-import play.api.libs.json.Writes
+import play.api.libs.json.{Json, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 
 final case class ConnectorRequestInfo(method: String, url: String, apiId: String)(implicit hc: HeaderCarrier) {
-  private def apiIdStr = s"Request to API#${apiId}"
+  private def apiIdStr = s"Sending request to API#${apiId}"
 
   private def connectorMessage: String =
-    s"Connector [$CorrelationIdHeaderKey=${hc.maybeCorrelationId}]: $apiIdStr $method $url"
+    s"$apiIdStr $method $url with CorrelationId=[$CorrelationIdHeaderKey=${hc.maybeCorrelationId}]:"
 
   def logRequestWithBody[A: Writes](logger: Logger, body: A): Unit =
-    logger.debug(s"$connectorMessage\nRequest Body: ${implicitly[Writes[A]].writes(body)}")
+    logger.debug(s"$connectorMessage\n${Json.prettyPrint(implicitly[Writes[A]].writes(body))}")
 
   def logRequest(logger: Logger): Unit =
     logger.debug(connectorMessage)

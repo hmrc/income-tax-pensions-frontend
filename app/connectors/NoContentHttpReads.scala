@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package connectors
 
-import common.Nino
+import cats.implicits.catsSyntaxEitherId
+import connectors.httpParsers.APIParser.unsafePagerDutyError
+import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
-case class User(mtditid: String, arn: Option[String], nino: String, sessionId: String, affinityGroup: String) {
-  def isAgent: Boolean = arn.nonEmpty
-  def getNino: Nino    = Nino(nino)
+object NoContentHttpReads extends HttpReads[NoContentResponse] {
+  override def read(method: String, url: String, response: HttpResponse): NoContentResponse =
+    if (isSuccess(response.status)) ().asRight else unsafePagerDutyError(method, url, response).asLeft
 }

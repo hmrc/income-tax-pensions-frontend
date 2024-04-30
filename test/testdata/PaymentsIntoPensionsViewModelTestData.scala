@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-package models
+package testdata
 
-import common.Nino
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 
-case class User(mtditid: String, arn: Option[String], nino: String, sessionId: String, affinityGroup: String) {
-  def isAgent: Boolean = arn.nonEmpty
-  def getNino: Nino    = Nino(nino)
+object PaymentsIntoPensionsViewModelTestData {
+
+  val answers = PaymentsIntoPensionsViewModel(
+    Some(true),
+    Some(1.0),
+    Some(true),
+    Some(2.0),
+    Some(true),
+    Some(true),
+    Some(true),
+    Some(3.0),
+    Some(true),
+    Some(4.0)
+  )
+
 }

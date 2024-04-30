@@ -57,8 +57,8 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
     (for {
       data <- service.loadPriorAndSession(user, taxYear)
       (prior, session) = data
-      _ <- EitherT(processSubmission(session, prior, taxYear.endYear, user)).leftAs[ServiceError]
-      _ <- EitherT(clearJourneyFromSession(session)).leftAs[ServiceError]
+      _ <- EitherT(processSubmission(session, prior, taxYear.endYear, user)).leftAs[connectors.ServiceError]
+      _ <- EitherT(clearJourneyFromSession(session)).leftAs[connectors.ServiceError]
     } yield ()).value
 
   private def processSubmission(session: PensionsUserData, prior: IncomeTaxUserData, taxYear: Int, user: User)(implicit
