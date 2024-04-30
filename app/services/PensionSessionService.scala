@@ -28,6 +28,7 @@ import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
 import models.pension.Journey._
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.{Journey, JourneyNameAndStatus}
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
@@ -60,8 +61,11 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
     */
   def loadOneJourneyPriorData(taxYear: TaxYear, user: User, journey: Journey)(implicit hc: HeaderCarrier): ApiResultT[PensionsCYAModel] =
     journey match {
-      case PaymentsIntoPensions => pensionsConnector.getPaymentsIntoPensions(user.getNino, taxYear).map(_.toPensionsCYAModel)
-      case _                    => ??? // TODO We'll be adding gradually journey by journey here
+      case PaymentsIntoPensions =>
+        pensionsConnector
+          .getPaymentsIntoPensions(user.getNino, taxYear)
+          .map(_.map(_.toPensionsCYAModel).getOrElse(PensionsCYAModel.emptyModels))
+      case _ => ??? // TODO We'll be adding gradually journey by journey here
     }
 
   def loadPriorAndSession(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcomeT[(PriorData, SessionData)] =

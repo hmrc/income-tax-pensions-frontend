@@ -57,11 +57,10 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
 
   def getPaymentsIntoPensions(nino: Nino, taxYear: TaxYear)(implicit
       hc: HeaderCarrier,
-      ec: ExecutionContext): ApiResultT[PaymentsIntoPensionsViewModel] = {
+      ec: ExecutionContext): ApiResultT[Option[PaymentsIntoPensionsViewModel]] = {
     val url = appConfig.paymentsIntoPensionsAnswersUrl(taxYear, nino)
     ConnectorRequestInfo("GET", url, "income-tax-pensions").logRequest(logger)
-
-    val res = http.GET[DownstreamErrorOr[PaymentsIntoPensionsViewModel]](url)
+    val res = http.GET[DownstreamErrorOr[Option[PaymentsIntoPensionsViewModel]]](url)
     EitherT(res)
   }
 

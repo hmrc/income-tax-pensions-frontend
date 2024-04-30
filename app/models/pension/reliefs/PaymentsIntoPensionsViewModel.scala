@@ -20,7 +20,7 @@ import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 import cats.implicits._
-import connectors.ContentHttpReads
+import connectors.{ContentHttpReads, OptionalContentHttpReads}
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData.{Zero, isNotZero}
 
@@ -116,7 +116,7 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
 
 object PaymentsIntoPensionsViewModel {
   implicit val format: OFormat[PaymentsIntoPensionsViewModel] = Json.format[PaymentsIntoPensionsViewModel]
-  implicit val httpReads                                      = new ContentHttpReads[PaymentsIntoPensionsViewModel]
+  implicit val optRds                                         = new OptionalContentHttpReads[PaymentsIntoPensionsViewModel]
 
   def empty: PaymentsIntoPensionsViewModel =
     PaymentsIntoPensionsViewModel(None, None, None, None, None, None, None, None, None, None)
@@ -174,4 +174,5 @@ case class EncryptedPaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Opti
 
 object EncryptedPaymentsIntoPensionViewModel {
   implicit val format: OFormat[EncryptedPaymentsIntoPensionViewModel] = Json.format[EncryptedPaymentsIntoPensionViewModel]
+
 }

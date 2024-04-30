@@ -47,7 +47,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
-  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoPensionsViewAuditing(taxYear) async { implicit request =>
+  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoPensionsViewAuditing(taxYear.endYear) async { implicit request =>
     val cyaData    = request.sessionData
     val taxYearInt = taxYear.endYear
 

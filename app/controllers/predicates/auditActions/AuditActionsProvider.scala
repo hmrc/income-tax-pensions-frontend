@@ -37,8 +37,8 @@ class AuditActionsProvider @Inject() (authAction: AuthorisedAction,
                                       auditService: AuditService)(implicit ec: ExecutionContext, messagesApi: MessagesApi)
     extends ActionsProvider(authAction, pensionSessionService, errorHandler, appConfig) {
 
-  def paymentsIntoPensionsViewAuditing(taxYear: TaxYear): ActionBuilder[UserSessionDataRequest, AnyContent] =
-    authoriseWithSessionAndPrior(taxYear, Journey.PaymentsIntoPensions)
+  def paymentsIntoPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
+    authoriseWithSessionAndPrior(TaxYear(taxYear), Journey.PaymentsIntoPensions)
       .andThen(PaymentsIntoPensionsViewAuditAction(auditService))
 
   def paymentsIntoPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =

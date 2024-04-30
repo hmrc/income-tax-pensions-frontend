@@ -26,6 +26,7 @@ import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsEmptySch
 import builders.TransfersIntoOverseasPensionsViewModelBuilder._
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsEmptySchemesViewModel
 import cats.implicits.catsSyntaxOptionId
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel, UkPensionIncomeViewModel}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -56,7 +57,7 @@ class PensionsCYAModelSpec extends AnyWordSpecLike with Matchers {
     }
 
     "favors overridden values" in {
-      assert(sourceModel.merge(Some(userSession)) === userSession)
+      assert(sourceModel.merge(Some(userSession)) === userSession.copy(paymentsIntoPension = sourceModel.paymentsIntoPension))
     }
 
     "ensure state and uk pension overrides are independent of eachother" in {

@@ -18,11 +18,8 @@ package services.redirects
 
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
-import controllers.pensions.paymentsIntoPensions.routes.{
-  PaymentsIntoPensionsCYAController,
-  ReliefAtSourcePensionsController,
-  TotalPaymentsIntoRASController
-}
+import common.TaxYear
+import controllers.pensions.paymentsIntoPensions
 import controllers.pensions.unauthorisedPayments.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import play.api.http.Status.SEE_OTHER
@@ -35,12 +32,13 @@ import scala.concurrent.Future
 
 class SimpleRedirectServiceSpec extends UnitTest {
 
-  val contextualRedirect: Call                                         = TotalPaymentsIntoRASController.show(taxYear)
-  val cyaRedirect: Call                                                = PaymentsIntoPensionsCYAController.show(taxYear)
-  val noneRedirect: PensionsCYAModel => Option[Result]                 = _ => None
-  val someRedirect: PensionsCYAModel => Option[Result]                 = _ => Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
+  val contextualRedirect: Call                         = paymentsIntoPensions.routes.TotalPaymentsIntoRASController.show(taxYear)
+  val cyaRedirect: Call                                = paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(TaxYear(taxYear))
+  val noneRedirect: PensionsCYAModel => Option[Result] = _ => None
+  val someRedirect: PensionsCYAModel => Option[Result] = _ =>
+    Some(Redirect(paymentsIntoPensions.routes.ReliefAtSourcePensionsController.show(taxYear)))
   val continueToContextualRedirect: PensionsUserData => Future[Result] = _ => Future.successful(Redirect(contextualRedirect))
-  val pIPCyaPageCall                                                   = PaymentsIntoPensionsCYAController.show(taxYear)
+  val pIPCyaPageCall = paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(TaxYear(taxYear))
 
   ".redirectBasedOnCurrentAnswers" should {
 
@@ -68,7 +66,7 @@ class SimpleRedirectServiceSpec extends UnitTest {
         statusHeader shouldBe SEE_OTHER
       }
       "location header is first page of journey" in {
-        locationHeader shouldBe Some(ReliefAtSourcePensionsController.show(taxYear).url)
+        locationHeader shouldBe Some(paymentsIntoPensions.routes.ReliefAtSourcePensionsController.show(taxYear).url)
       }
     }
 

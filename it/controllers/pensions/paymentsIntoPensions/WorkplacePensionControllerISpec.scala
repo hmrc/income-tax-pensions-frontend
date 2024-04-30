@@ -237,7 +237,7 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(PaymentsIntoPensionsCYAController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(PaymentsIntoPensionsCYAController.show(TaxYear(taxYearEOY)).url)
       }
 
       "updates workplacePensionPayments question to Some(false) and remove totalWorkplacePensionPayments amount" in {

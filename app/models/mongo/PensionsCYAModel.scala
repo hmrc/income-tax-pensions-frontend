@@ -39,8 +39,8 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
     }
 
   /* It merges the current model with the overrides. It favors the overrides over the current model fields if they exists.
-   * It means that the user has changed the data but not yet submitted
-   * @deprecated - we will have a new way of loading prior data using Controller action just like in self-employment */
+   * It means that the user has changed the data but not yet submitted */
+  @deprecated("we will have a new way of loading prior data using Controller action just like in self-employment", "30/04/2024")
   def merge(overrides: Option[PensionsCYAModel]): PensionsCYAModel = {
     val overridesPensionsAnnualAllowances      = overrides.map(_.pensionsAnnualAllowances).getOrElse(PensionAnnualAllowancesViewModel())
     val overridesIncomeFromPensions            = overrides.map(_.incomeFromPensions).getOrElse(IncomeFromPensionsViewModel())
