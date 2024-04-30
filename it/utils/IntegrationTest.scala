@@ -58,6 +58,7 @@ trait IntegrationTest
     with BeforeAndAfterAll
     with TaxYearHelper {
   val nino          = "AA123456A"
+  val currNino      = common.Nino(nino)
   val mtditid       = "1234567890"
   val sessionId     = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
   val affinityGroup = "affinityGroup"
