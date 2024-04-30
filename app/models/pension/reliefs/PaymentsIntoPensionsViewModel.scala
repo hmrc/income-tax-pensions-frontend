@@ -20,6 +20,8 @@ import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 import cats.implicits._
+import connectors.ContentHttpReads
+import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData.{Zero, isNotZero}
 
 case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boolean] = None,
@@ -109,10 +111,12 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
     )
   }
 
+  def toPensionsCYAModel: PensionsCYAModel = PensionsCYAModel.emptyModels.copy(paymentsIntoPension = this)
 }
 
 object PaymentsIntoPensionsViewModel {
   implicit val format: OFormat[PaymentsIntoPensionsViewModel] = Json.format[PaymentsIntoPensionsViewModel]
+  implicit val httpReads                                      = new ContentHttpReads[PaymentsIntoPensionsViewModel]
 
   def empty: PaymentsIntoPensionsViewModel =
     PaymentsIntoPensionsViewModel(None, None, None, None, None, None, None, None, None, None)

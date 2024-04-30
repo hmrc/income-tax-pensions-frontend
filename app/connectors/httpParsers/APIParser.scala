@@ -35,10 +35,8 @@ trait APIParser extends Logging {
   def logMessage(response: HttpResponse): String =
     s"[$parserName][read] Received ${response.status} from $parserName. Body:${response.body} ${getCorrelationId(response)}"
 
-  def badSuccessJsonFromAPI[Response]: Either[APIErrorModel, Response] = {
-    pagerDutyLog(BAD_SUCCESS_JSON_FROM_API, s"[$parserName][read] Invalid Json from $service API.")
-    Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
-  }
+  def badSuccessJsonFromAPI[Response]: Either[APIErrorModel, Response] =
+    APIParser.badSuccessJsonFromAPI(parserName, service)
 
   def handleAPIError[Response](response: HttpResponse, statusOverride: Option[Int] = None): DownstreamErrorOr[Response] = {
 
@@ -132,4 +130,9 @@ object APIParser {
         pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
         handleError(response, Some(INTERNAL_SERVER_ERROR))
     }
+
+  def badSuccessJsonFromAPI[Response](parserName: String, service: String): Either[APIErrorModel, Response] = {
+    pagerDutyLog(BAD_SUCCESS_JSON_FROM_API, s"[$parserName][read] Invalid Json from $service API.")
+    Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
+  }
 }

@@ -20,6 +20,7 @@ import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder._
+import common.TaxYear
 import controllers.pensions.paymentsIntoPensions.routes._
 import forms.YesNoForm
 import models.mongo.PensionsUserData
@@ -152,7 +153,7 @@ class WorkplacePensionControllerISpec extends IntegrationTest with ViewHelpers w
 
       "has an 303 SEE_OTHER status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(PaymentsIntoPensionsCYAController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(PaymentsIntoPensionsCYAController.show(TaxYear(taxYearEOY)).url)
       }
     }
   }

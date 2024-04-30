@@ -47,17 +47,17 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
-  // TODO it will be refactored in the next PRs
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsViewAuditing(taxYear) async { implicit request =>
-    val cyaData = request.sessionData
-    if (!cyaData.pensions.paymentsIntoPension.isFinished) {
-      val checkRedirect = journeyCheck(CheckYourAnswersPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(cyaData), cyaPageCall(taxYear))(checkRedirect) { data =>
-        Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
-      }
+  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoPensionsViewAuditing(taxYear) async { implicit request =>
+    val cyaData    = request.sessionData
+    val taxYearInt = taxYear.endYear
+
+    if (cyaData.pensions.paymentsIntoPension.isFinished) {
+      Future.successful(Ok(view(taxYear.endYear, cyaData.pensions.paymentsIntoPension)))
     } else {
-      pensionSessionService.createOrUpdateSessionData(request.user, cyaData.pensions, taxYear, isPriorSubmission = false)(
-        errorHandler.internalServerError())(Ok(view(taxYear, cyaData.pensions.paymentsIntoPension)))
+      val checkRedirect = journeyCheck(CheckYourAnswersPage, _, taxYearInt)
+      redirectBasedOnCurrentAnswers(taxYearInt, Some(cyaData), cyaPageCall(taxYearInt))(checkRedirect) { data =>
+        Future.successful(Ok(view(taxYearInt, data.pensions.paymentsIntoPension)))
+      }
     }
   }
 
@@ -69,7 +69,7 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
       request.user,
       taxYear,
       answersFromSession
-    )
+    )(request.user.withDownstreamHc(hc), executionContext)
 
     handleResult(errorHandler, taxYear, Journey.PaymentsIntoPensions, res)
   }

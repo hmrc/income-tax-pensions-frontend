@@ -16,6 +16,7 @@
 
 package models.logging
 
+import connectors.Connector.hcWithCorrelationId
 import uk.gov.hmrc.http.HeaderCarrier
 
 object HeaderCarrierExtensions {
@@ -42,5 +43,8 @@ object HeaderCarrierExtensions {
         headerCarrier.withExtraHeaders(updatedExtraHeaders: _*)
       }
     }
+
+    def withDownstreamHeaders(mtditid: String): HeaderCarrier =
+      hcWithCorrelationId(withMtditId(mtditid))
   }
 }

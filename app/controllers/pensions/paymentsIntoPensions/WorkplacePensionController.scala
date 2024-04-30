@@ -16,6 +16,7 @@
 
 package controllers.pensions.paymentsIntoPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, WorkplaceAmountController}
 import controllers.predicates.actions.AuthorisedAction
@@ -75,7 +76,7 @@ class WorkplacePensionController @Inject() (authAction: AuthorisedAction,
                   workplacePensionPaymentsQuestion = Some(yesNo),
                   totalWorkplacePensionPayments = if (yesNo) viewModel.totalWorkplacePensionPayments else None))
               val redirectLocation =
-                if (yesNo) WorkplaceAmountController.show(taxYear) else PaymentsIntoPensionsCYAController.show(taxYear)
+                if (yesNo) WorkplaceAmountController.show(taxYear) else PaymentsIntoPensionsCYAController.show(TaxYear(taxYear))
 
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                 errorHandler.internalServerError()) {

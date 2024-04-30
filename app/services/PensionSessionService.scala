@@ -22,10 +22,12 @@ import common.TaxYear
 import config.ErrorHandler
 import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector, PensionsConnector}
 import models.IncomeTaxUserData.PriorData
+import models.domain.ApiResultT
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
+import models.pension.Journey._
 import models.pension.{Journey, JourneyNameAndStatus}
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
@@ -53,6 +55,14 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
 
   def loadSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[SessionData]]] =
     repository.find(taxYear, user).map(_.leftMap(_ => ()))
+
+  /** It loads only provided journey (if exist in the Backend). All other Journeys are empty.
+    */
+  def loadOneJourneyPriorData(taxYear: TaxYear, user: User, journey: Journey)(implicit hc: HeaderCarrier): ApiResultT[PensionsCYAModel] =
+    journey match {
+      case PaymentsIntoPensions => pensionsConnector.getPaymentsIntoPensions(user.getNino, taxYear).map(_.toPensionsCYAModel)
+      case _                    => ??? // TODO We'll be adding gradually journey by journey here
+    }
 
   def loadPriorAndSession(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcomeT[(PriorData, SessionData)] =
     for {
@@ -146,4 +156,29 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       case Left(_)  => onFail
     }
   }
+
+  def updateSessionData(user: User, taxYear: TaxYear, sessionData: PensionsUserData, priorData: PensionsCYAModel): ApiResultT[PensionsUserData] = {
+    val updatedSessionData = priorData.merge(Some(sessionData.pensions))
+
+    if (updatedSessionData == sessionData.pensions) {
+      EitherT.rightT[Future, APIErrorModel](sessionData)
+    } else {
+      val userData = PensionsUserData(
+        user.sessionId,
+        user.mtditid,
+        user.nino,
+        taxYear.endYear,
+        true,
+        updatedSessionData,
+        Clock.systemUTC().instant().atZone(ZoneOffset.UTC)
+      )
+
+      EitherT(repository.createOrUpdate(userData))
+        .bimap(
+          _.toAPIErrorModel,
+          _ => userData
+        )
+    }
+  }
+
 }

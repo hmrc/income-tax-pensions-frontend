@@ -16,6 +16,8 @@
 
 package models.mongo
 
+import models.pension.Journey
+import models.pension.Journey.PaymentsIntoPensions
 import models.pension.charges._
 import models.pension.reliefs.{EncryptedPaymentsIntoPensionViewModel, PaymentsIntoPensionsViewModel}
 import models.pension.statebenefits.{EncryptedIncomeFromPensionsViewModel, IncomeFromPensionsViewModel}
@@ -30,10 +32,16 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
                             transfersIntoOverseasPensions: TransfersIntoOverseasPensionsViewModel,
                             shortServiceRefunds: ShortServiceRefundsViewModel) {
 
+  def hasSessionData(journey: Journey): Boolean =
+    journey match {
+      case PaymentsIntoPensions => paymentsIntoPension.nonEmpty
+      case _                    => ??? // TODO Will be done in next PRs
+    }
+
   /* It merges the current model with the overrides. It favors the overrides over the current model fields if they exists.
-   * It means that the user has changed the data but not yet submitted */
+   * It means that the user has changed the data but not yet submitted
+   * @deprecated - we will have a new way of loading prior data using Controller action just like in self-employment */
   def merge(overrides: Option[PensionsCYAModel]): PensionsCYAModel = {
-    val overridesPaymentsIntoPension           = overrides.map(_.paymentsIntoPension).getOrElse(PaymentsIntoPensionsViewModel())
     val overridesPensionsAnnualAllowances      = overrides.map(_.pensionsAnnualAllowances).getOrElse(PensionAnnualAllowancesViewModel())
     val overridesIncomeFromPensions            = overrides.map(_.incomeFromPensions).getOrElse(IncomeFromPensionsViewModel())
     val overridesUnauthorisedPayments          = overrides.map(_.unauthorisedPayments).getOrElse(UnauthorisedPaymentsViewModel())
@@ -43,7 +51,6 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
     val overridesShortServiceRefunds           = overrides.map(_.shortServiceRefunds).getOrElse(ShortServiceRefundsViewModel())
 
     copy(
-      paymentsIntoPension = if (overridesPaymentsIntoPension.nonEmpty) overridesPaymentsIntoPension else paymentsIntoPension,
       pensionsAnnualAllowances = if (overridesPensionsAnnualAllowances.nonEmpty) overridesPensionsAnnualAllowances else pensionsAnnualAllowances,
       incomeFromPensions = updateIncomeFromPensions(overridesIncomeFromPensions),
       unauthorisedPayments = if (overridesUnauthorisedPayments.nonEmpty) overridesUnauthorisedPayments else unauthorisedPayments,

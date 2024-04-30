@@ -16,8 +16,10 @@
 
 package controllers.predicates.actions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import models.AuthorisationRequest
+import models.pension.Journey
 import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionBuilder, AnyContent}
@@ -44,5 +46,9 @@ class ActionsProvider @Inject() (authAction: AuthorisedAction,
   def authoriseWithSessionAndPrior(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
     authoriseWithSession(taxYear)
       .andThen(UserPriorAndSessionDataRequestRefinerAction(taxYear, pensionSessionService, errorHandler))
+
+  def authoriseWithSessionAndPrior(taxYear: TaxYear, journey: Journey): ActionBuilder[UserSessionDataRequest, AnyContent] =
+    authoriseWithSession(taxYear.endYear)
+      .andThen(LoadPriorDataToSessionAction(taxYear, journey, pensionSessionService, errorHandler))
 
 }

@@ -149,7 +149,7 @@ object JourneyStatusSummaryViewModel {
       case PaymentsIntoPensions =>
         determineJourneyStartOrCyaUrl(
           pipRoutes.ReliefAtSourcePensionsController.show(taxYear.endYear).url,
-          pipRoutes.PaymentsIntoPensionsCYAController.show(taxYear.endYear).url
+          pipRoutes.PaymentsIntoPensionsCYAController.show(taxYear).url
         )
       case AnnualAllowances =>
         determineJourneyStartOrCyaUrl(

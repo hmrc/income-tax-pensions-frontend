@@ -17,8 +17,13 @@
 package models
 
 import common.Nino
+import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
+import uk.gov.hmrc.http.HeaderCarrier
 
 case class User(mtditid: String, arn: Option[String], nino: String, sessionId: String, affinityGroup: String) {
   def isAgent: Boolean = arn.nonEmpty
   def getNino: Nino    = Nino(nino)
+
+  def withDownstreamHc(implicit hc: HeaderCarrier): HeaderCarrier =
+    hc.withDownstreamHeaders(mtditid)
 }

@@ -16,6 +16,7 @@
 
 package controllers.pensions.paymentsIntoPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoPensions.routes._
 import controllers.predicates.actions.AuthorisedAction
@@ -74,7 +75,7 @@ class WorkplaceAmountController @Inject() (authAction: AuthorisedAction,
                 pensionsCYAModel.copy(paymentsIntoPension = viewModel.copy(totalWorkplacePensionPayments = Some(amount)))
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                 errorHandler.internalServerError()) {
-                isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, PaymentsIntoPensionsCYAController.show(taxYear), cyaPageCall)
+                isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, PaymentsIntoPensionsCYAController.show(TaxYear(taxYear)), cyaPageCall)
               }
             }
           }

@@ -37,6 +37,7 @@ case class APIErrorBodyModel(code: String, reason: String) extends APIErrorBody
 object APIErrorBodyModel {
   implicit val formats: OFormat[APIErrorBodyModel] = Json.format[APIErrorBodyModel]
   val parsingError: APIErrorBodyModel              = APIErrorBodyModel("PARSING_ERROR", "Error parsing response from API")
+  def dbError(details: String): APIErrorBodyModel  = APIErrorBodyModel("DB_ERROR", s"Error parsing data from database: $details")
 }
 
 /** Multiple API Errors * */

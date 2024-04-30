@@ -16,8 +16,8 @@
 
 package controllers.pensions.paymentsIntoPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, RetirementAnnuityController}
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import models.mongo.PensionsCYAModel
@@ -70,7 +70,7 @@ class PensionsTaxReliefNotClaimedController @Inject() (authAction: AuthorisedAct
                 paymentsIntoPension = data.pensions.paymentsIntoPension.updatePensionTaxReliefNotClaimedQuestion(yesNo)
               )
               val redirectLocation =
-                if (yesNo) RetirementAnnuityController.show(taxYear) else PaymentsIntoPensionsCYAController.show(taxYear)
+                if (yesNo) routes.RetirementAnnuityController.show(taxYear) else routes.PaymentsIntoPensionsCYAController.show(TaxYear(taxYear))
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                 errorHandler.internalServerError()) {
                 isFinishedCheck(updatedCyaModel.paymentsIntoPension, taxYear, redirectLocation, cyaPageCall)

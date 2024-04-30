@@ -16,6 +16,7 @@
 
 package config
 
+import common.{Nino, TaxYear}
 import play.api.Logging
 import play.api.i18n.Lang
 import play.api.mvc.{Call, RequestHeader}
@@ -39,7 +40,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
 
   lazy val incomeTaxSubmissionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionUrl) + "/income-tax-submission-service"
 
-  lazy val pensionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxPensionsUrl) + "/income-tax-pensions"
+  val pensionBEBaseUrl: String                             = servicesConfig.getString(ConfigKeys.incomeTaxPensionsUrl) + "/income-tax-pensions"
+  def paymentsIntoPensionsAnswersUrl(taxYear: TaxYear, nino: Nino) = pensionBEBaseUrl + s"/${taxYear.endYear}/payments-into-pensions/${nino.value}/answers"
 
   lazy val employmentBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxEmploymentUrl) + "/income-tax-employment"
 

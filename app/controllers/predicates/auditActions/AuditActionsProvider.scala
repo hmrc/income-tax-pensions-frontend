@@ -16,9 +16,11 @@
 
 package controllers.predicates.auditActions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.{ActionsProvider, AuthorisedAction}
 import controllers.predicates.auditActions.PensionsAuditAction._
+import models.pension.Journey
 import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{ActionBuilder, AnyContent}
@@ -35,8 +37,8 @@ class AuditActionsProvider @Inject() (authAction: AuthorisedAction,
                                       auditService: AuditService)(implicit ec: ExecutionContext, messagesApi: MessagesApi)
     extends ActionsProvider(authAction, pensionSessionService, errorHandler, appConfig) {
 
-  def paymentsIntoPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
-    authoriseWithSession(taxYear)
+  def paymentsIntoPensionsViewAuditing(taxYear: TaxYear): ActionBuilder[UserSessionDataRequest, AnyContent] =
+    authoriseWithSessionAndPrior(taxYear, Journey.PaymentsIntoPensions)
       .andThen(PaymentsIntoPensionsViewAuditAction(auditService))
 
   def paymentsIntoPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =

@@ -20,7 +20,6 @@ import common.TaxYear
 import connectors.PensionsConnector
 import models.User
 import models.domain.ApiResultT
-import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -38,6 +37,5 @@ class PensionsServiceImpl @Inject() (pensionsConnector: PensionsConnector) exten
   def upsertPaymentsIntoPensions(user: User, taxYear: TaxYear, paymentsIntoPensions: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] =
-    pensionsConnector.savePaymentsIntoPensions(user.getNino, taxYear, paymentsIntoPensions)(hc.withMtditId(user.mtditid), ec)
-
+    pensionsConnector.savePaymentsIntoPensions(user.getNino, taxYear, paymentsIntoPensions)
 }
