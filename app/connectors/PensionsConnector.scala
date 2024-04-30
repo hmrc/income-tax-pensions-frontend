@@ -16,7 +16,6 @@
 
 package connectors
 
-import common.TaxYear
 import cats.data.EitherT
 import common.{Nino, TaxYear}
 import config.AppConfig
