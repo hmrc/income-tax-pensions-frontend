@@ -56,7 +56,7 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
     val isDone_workplacePensionPaymentsQuestion =
       pensionTaxReliefNotClaimedQuestion.exists(q =>
         if (q) yesNoAndAmountPopulated(workplacePensionPaymentsQuestion, totalWorkplacePensionPayments) else true)
-        
+
     Seq(
       isDone_rasPensionPaymentQuestion,
       isDone_oneOffRASPaymentsQuestion,
