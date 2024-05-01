@@ -44,7 +44,11 @@ object JourneyStatusSummaryViewModel {
     implicit val impTaxYear: TaxYear                           = TaxYear(taxYear)
     implicit val impJourneyStatuses: Seq[JourneyNameAndStatus] = journeyStatuses
 
-    val paymentsIntoPensionsRow = buildRow(PaymentsIntoPensions, paymentIntoPensionHasPriorData(priorData), paymentsIntoPensionsIsUpdated(cya))
+    val paymentsIntoPensionsRow = buildRow(
+      PaymentsIntoPensions,
+      paymentIntoPensionHasPriorData(priorData),
+      paymentsIntoPensionsIsUpdated(cya),
+      cya.exists(_.paymentsIntoPension.isFinished))
 
     val incomeFromPensionsHasPriorData = ukPensionsSchemeHasPriorData(priorData) | statePensionsHasPriorData(priorData)
     val incomeFromPensionsIsUpdated    = ukPensionsSchemeIsUpdated(cya) | statePensionIsUpdated(cya)
@@ -99,12 +103,13 @@ object JourneyStatusSummaryViewModel {
        |  </div>
        |""".stripMargin
 
-  private def buildRow(journey: Journey, hasPriorJourneyAnswers: Boolean, journeyIsStarted: Boolean)(implicit
+  // TODO Remove default false once all journeys are added
+  private def buildRow(journey: Journey, hasPriorJourneyAnswers: Boolean, journeyIsStarted: Boolean, journeyIsComplete: Boolean = false)(implicit
       messages: Messages,
       taxYear: TaxYear,
       journeyStatuses: Seq[JourneyNameAndStatus]): String = {
     val status = getJourneyStatus(journey, journeyStatuses, hasPriorJourneyAnswers, journeyIsStarted)
-    val href   = getUrl(journey, taxYear, hasPriorJourneyAnswers)
+    val href   = getUrl(journey, taxYear, journeyIsComplete)
     val id     = s"journey-${journey.toString}-status"
     val statusTag =
       if (status == Completed) messages(s"common.status.$status")

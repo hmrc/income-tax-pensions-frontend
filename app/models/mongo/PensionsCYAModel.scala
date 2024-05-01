@@ -17,7 +17,7 @@
 package models.mongo
 
 import models.pension.Journey
-import models.pension.Journey.PaymentsIntoPensions
+import models.pension.Journey._
 import models.pension.charges._
 import models.pension.reliefs.{EncryptedPaymentsIntoPensionViewModel, PaymentsIntoPensionsViewModel}
 import models.pension.statebenefits.{EncryptedIncomeFromPensionsViewModel, IncomeFromPensionsViewModel}
@@ -32,16 +32,28 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
                             transfersIntoOverseasPensions: TransfersIntoOverseasPensionsViewModel,
                             shortServiceRefunds: ShortServiceRefundsViewModel) {
 
+  // TODO Change once a new journey is added
   def hasSessionData(journey: Journey): Boolean =
     journey match {
-      case PaymentsIntoPensions => paymentsIntoPension.nonEmpty
-      case _                    => ??? // TODO Will be done in next PRs
+      case PensionsSummary              => true // Pension Summary is a special case
+      case PaymentsIntoPensions         => paymentsIntoPension.nonEmpty
+      case AnnualAllowances             => false
+      case UnauthorisedPayments         => false
+      case OverseasPensionsSummary      => false
+      case IncomeFromOverseasPensions   => false
+      case PaymentsIntoOverseasPensions => false
+      case TransferIntoOverseasPensions => false
+      case ShortServiceRefunds          => false
+      case IncomeFromPensionsSummary    => false
+      case UkPensionIncome              => false
+      case StatePension                 => false
     }
 
   /* It merges the current model with the overrides. It favors the overrides over the current model fields if they exists.
    * It means that the user has changed the data but not yet submitted */
   @deprecated("we will have a new way of loading prior data using Controller action just like in self-employment", "30/04/2024")
   def merge(overrides: Option[PensionsCYAModel]): PensionsCYAModel = {
+    val overridesPaymentsIntoPension           = overrides.map(_.paymentsIntoPension).getOrElse(PaymentsIntoPensionsViewModel())
     val overridesPensionsAnnualAllowances      = overrides.map(_.pensionsAnnualAllowances).getOrElse(PensionAnnualAllowancesViewModel())
     val overridesIncomeFromPensions            = overrides.map(_.incomeFromPensions).getOrElse(IncomeFromPensionsViewModel())
     val overridesUnauthorisedPayments          = overrides.map(_.unauthorisedPayments).getOrElse(UnauthorisedPaymentsViewModel())
@@ -51,6 +63,7 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
     val overridesShortServiceRefunds           = overrides.map(_.shortServiceRefunds).getOrElse(ShortServiceRefundsViewModel())
 
     copy(
+      paymentsIntoPension = if (overridesPaymentsIntoPension.nonEmpty) overridesPaymentsIntoPension else paymentsIntoPension,
       pensionsAnnualAllowances = if (overridesPensionsAnnualAllowances.nonEmpty) overridesPensionsAnnualAllowances else pensionsAnnualAllowances,
       incomeFromPensions = updateIncomeFromPensions(overridesIncomeFromPensions),
       unauthorisedPayments = if (overridesUnauthorisedPayments.nonEmpty) overridesUnauthorisedPayments else unauthorisedPayments,

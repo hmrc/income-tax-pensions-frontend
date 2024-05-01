@@ -16,9 +16,13 @@
 
 package controllers.predicates.actions
 
+import cats.data.EitherT
+import cats.implicits._
 import common.TaxYear
 import config.ErrorHandler
+import connectors.ServiceError
 import models.pension.Journey
+import models.pension.Journey.PensionsSummary
 import models.requests.UserSessionDataRequest
 import play.api.mvc.{ActionRefiner, Result}
 import services.PensionSessionService
@@ -43,6 +47,26 @@ case class LoadPriorDataToSessionAction(
   override protected[predicates] def refine[A](input: UserSessionDataRequest[A]): Future[Either[Result, UserSessionDataRequest[A]]] = {
     implicit val headerCarrier: HeaderCarrier = input.user.withDownstreamHc(hc(input.request))
 
+    journey match {
+      case PensionsSummary =>
+        val journeys = Journey.values
+          .filterNot(_ == PensionsSummary)
+          .toList
+
+        val res = journeys.foldLeft(EitherT.rightT[Future, Result](input)) { (acc, journey) =>
+          acc.flatMap { newInput =>
+            val loadedAnswers = loadJourneyAnswersIfDoesNotExist(newInput, journey)
+            EitherT(loadedAnswers)
+          }
+        }
+
+        res.value
+      case _ => loadJourneyAnswersIfDoesNotExist(input, journey)
+    }
+  }
+
+  private def loadJourneyAnswersIfDoesNotExist[A](input: UserSessionDataRequest[A], journey: Journey)(implicit
+      hc: HeaderCarrier): Future[Either[Result, UserSessionDataRequest[A]]] =
     if (input.sessionData.pensions.hasSessionData(journey)) {
       logger.debug(s"Session data for $journey exists")
       Future.successful(Right(input))
@@ -58,5 +82,4 @@ case class LoadPriorDataToSessionAction(
         .leftMap(error => errorHandler.handleError(error.status)(input.request))
         .value
     }
-  }
 }

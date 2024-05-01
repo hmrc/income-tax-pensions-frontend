@@ -22,11 +22,11 @@ import models.AuthorisationRequest
 import models.pension.Journey
 import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
 import play.api.i18n.MessagesApi
-import play.api.mvc.{ActionBuilder, AnyContent}
+import play.api.mvc.{ActionBuilder, ActionFunction, AnyContent, Result}
 import services.PensionSessionService
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ActionsProvider @Inject() (authAction: AuthorisedAction,
@@ -50,5 +50,18 @@ class ActionsProvider @Inject() (authAction: AuthorisedAction,
   def authoriseWithSessionAndPrior(taxYear: TaxYear, journey: Journey): ActionBuilder[UserSessionDataRequest, AnyContent] =
     authoriseWithSession(taxYear.endYear)
       .andThen(LoadPriorDataToSessionAction(taxYear, journey, pensionSessionService, errorHandler))
+
+  def authoriseWithSessionAndPriorAuthRequest(taxYear: TaxYear, journey: Journey): ActionBuilder[AuthorisationRequest, AnyContent] = {
+    val toAuthRequestAction = new ActionFunction[UserSessionDataRequest, AuthorisationRequest] {
+      def invokeBlock[A](request: UserSessionDataRequest[A], block: AuthorisationRequest[A] => Future[Result]): Future[Result] =
+        block(request.toAuthorisationRequest)
+
+      protected def executionContext: ExecutionContext = ec
+    }
+
+    authoriseWithSession(taxYear.endYear)
+      .andThen(LoadPriorDataToSessionAction(taxYear, journey, pensionSessionService, errorHandler))
+      .andThen(toAuthRequestAction)
+  }
 
 }

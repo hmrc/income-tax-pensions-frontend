@@ -16,8 +16,10 @@
 
 package models.requests
 
-import models.User
+import models.{AuthorisationRequest, User}
 import models.mongo.PensionsUserData
 import play.api.mvc.{Request, WrappedRequest}
 
-case class UserSessionDataRequest[T](sessionData: PensionsUserData, user: User, request: Request[T]) extends WrappedRequest[T](request)
+case class UserSessionDataRequest[T](sessionData: PensionsUserData, user: User, request: Request[T]) extends WrappedRequest[T](request) {
+  def toAuthorisationRequest: AuthorisationRequest[T] = AuthorisationRequest[T](user, request)
+}

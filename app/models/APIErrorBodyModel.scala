@@ -17,6 +17,7 @@
 package models
 
 import models.mongo.ServiceError
+import play.api.http.Status.NOT_FOUND
 import play.api.libs.json.{JsValue, Json, OFormat}
 
 sealed trait APIErrorBody
@@ -29,6 +30,8 @@ case class APIErrorModel(status: Int, body: APIErrorBody) extends ServiceError {
     }
 
   override val message: String = toJson.toString()
+
+  def notFound: Boolean = status == NOT_FOUND
 }
 
 /** Single API Error * */

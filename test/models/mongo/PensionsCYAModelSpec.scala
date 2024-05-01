@@ -57,7 +57,7 @@ class PensionsCYAModelSpec extends AnyWordSpecLike with Matchers {
     }
 
     "favors overridden values" in {
-      assert(sourceModel.merge(Some(userSession)) === userSession.copy(paymentsIntoPension = sourceModel.paymentsIntoPension))
+      assert(sourceModel.merge(Some(userSession)) === userSession)
     }
 
     "ensure state and uk pension overrides are independent of eachother" in {
