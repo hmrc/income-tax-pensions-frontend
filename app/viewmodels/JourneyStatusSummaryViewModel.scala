@@ -112,7 +112,7 @@ object JourneyStatusSummaryViewModel {
 
     s"""
        |  <span class="app-task-list__task-name">
-       |    <a class="govuk-link govuk-task-list__link" href=$href aria-describedby=$id> ${messages(s"journey.${journey.toString}")} </a>
+       |    <a id="${journey.toString}-link" class="govuk-link govuk-task-list__link" href=$href aria-describedby=$id> ${messages(s"journey.${journey.toString}")} </a>
        |  </span>
        |  <div class="right-float" id=$id> $statusTag </div>
        |""".stripMargin
