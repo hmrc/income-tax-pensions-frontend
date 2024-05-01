@@ -20,9 +20,8 @@ import cats.data.EitherT
 import cats.implicits._
 import common.TaxYear
 import config.ErrorHandler
-import connectors.ServiceError
 import models.pension.Journey
-import models.pension.Journey.PensionsSummary
+import models.pension.Journey.{IncomeFromPensionsSummary, OverseasPensionsSummary, PensionsSummary}
 import models.requests.UserSessionDataRequest
 import play.api.mvc.{ActionRefiner, Result}
 import services.PensionSessionService
@@ -48,9 +47,9 @@ case class LoadPriorDataToSessionAction(
     implicit val headerCarrier: HeaderCarrier = input.user.withDownstreamHc(hc(input.request))
 
     journey match {
-      case PensionsSummary =>
+      case PensionsSummary | OverseasPensionsSummary | IncomeFromPensionsSummary =>
         val journeys = Journey.values
-          .filterNot(_ == PensionsSummary)
+          .filterNot(j => j == PensionsSummary || j == OverseasPensionsSummary || j == IncomeFromPensionsSummary)
           .toList
 
         val res = journeys.foldLeft(EitherT.rightT[Future, Result](input)) { (acc, journey) =>

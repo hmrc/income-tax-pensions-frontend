@@ -16,13 +16,13 @@
 
 package models.pension.reliefs
 
+import cats.implicits._
+import connectors.OptionalContentHttpReads
+import models.mongo.PensionsCYAModel
+import models.pension.AllPensionsData.{Zero, isNotZero}
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
-import cats.implicits._
-import connectors.{ContentHttpReads, OptionalContentHttpReads}
-import models.mongo.PensionsCYAModel
-import models.pension.AllPensionsData.{Zero, isNotZero}
 
 case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boolean] = None,
                                          totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
@@ -56,7 +56,7 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
     val isDone_workplacePensionPaymentsQuestion =
       pensionTaxReliefNotClaimedQuestion.exists(q =>
         if (q) yesNoAndAmountPopulated(workplacePensionPaymentsQuestion, totalWorkplacePensionPayments) else true)
-
+        
     Seq(
       isDone_rasPensionPaymentQuestion,
       isDone_oneOffRASPaymentsQuestion,
@@ -111,12 +111,14 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
     )
   }
 
-  def toPensionsCYAModel: PensionsCYAModel = PensionsCYAModel.emptyModels.copy(paymentsIntoPension = this)
+  // We mark the helper question (totalPaymentsIntoRASQuestion) as true (as it must have been correct to reach CYA)
+  def toPensionsCYAModel: PensionsCYAModel =
+    PensionsCYAModel.emptyModels.copy(paymentsIntoPension = this.copy(totalPaymentsIntoRASQuestion = Some(true)))
 }
 
 object PaymentsIntoPensionsViewModel {
-  implicit val format: OFormat[PaymentsIntoPensionsViewModel] = Json.format[PaymentsIntoPensionsViewModel]
-  implicit val optRds                                         = new OptionalContentHttpReads[PaymentsIntoPensionsViewModel]
+  implicit val format: OFormat[PaymentsIntoPensionsViewModel]                  = Json.format[PaymentsIntoPensionsViewModel]
+  implicit val optRds: OptionalContentHttpReads[PaymentsIntoPensionsViewModel] = new OptionalContentHttpReads[PaymentsIntoPensionsViewModel]
 
   def empty: PaymentsIntoPensionsViewModel =
     PaymentsIntoPensionsViewModel(None, None, None, None, None, None, None, None, None, None)

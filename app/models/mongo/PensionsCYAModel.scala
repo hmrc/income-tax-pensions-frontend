@@ -39,12 +39,12 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
       case PaymentsIntoPensions         => paymentsIntoPension.nonEmpty
       case AnnualAllowances             => false
       case UnauthorisedPayments         => false
-      case OverseasPensionsSummary      => false
+      case OverseasPensionsSummary      => true // it is a special case
       case IncomeFromOverseasPensions   => false
       case PaymentsIntoOverseasPensions => false
       case TransferIntoOverseasPensions => false
       case ShortServiceRefunds          => false
-      case IncomeFromPensionsSummary    => false
+      case IncomeFromPensionsSummary    => true // it is a special case
       case UkPensionIncome              => false
       case StatePension                 => false
     }
