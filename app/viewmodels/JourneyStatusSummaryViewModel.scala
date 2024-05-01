@@ -110,9 +110,10 @@ object JourneyStatusSummaryViewModel {
       if (status == Completed) messages(s"common.status.$status")
       else s"""<strong class="govuk-tag govuk-tag--blue">${messages(s"common.status.$status")}</strong>"""
 
+    val journeyId = "${journey.toString}-link"
     s"""
        |  <span class="app-task-list__task-name">
-       |    <a id="${journey.toString}-link" class="govuk-link govuk-task-list__link" href=$href aria-describedby=$id> ${messages(s"journey.${journey.toString}")} </a>
+       |    <a id="$journeyId class="govuk-link govuk-task-list__link" href=$href aria-describedby=$id> ${messages(s"journey.${journey.toString}")} </a>
        |  </span>
        |  <div class="right-float" id=$id> $statusTag </div>
        |""".stripMargin
