@@ -56,8 +56,11 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
                                        errorHandler: ErrorHandler)(implicit ec: ExecutionContext)
     extends Logging {
 
+  def loadSession(taxYear: Int, user: User): QueryResult[Option[SessionData]] =
+    repository.find(taxYear, user)
+
   def loadSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[SessionData]]] =
-    repository.find(taxYear, user).map(_.leftMap(_ => ()))
+    loadSession(taxYear, user).map(_.leftMap(_ => ()))
 
   /** It loads only provided journey (if exist in the Backend). All other Journeys are empty.
     */

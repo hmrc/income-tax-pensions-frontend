@@ -17,14 +17,14 @@
 package services
 
 import cats.data.EitherT
-import cats.implicits.{catsSyntaxEitherId, catsSyntaxTuple2Semigroupal, toTraverseOps}
+import cats.implicits._
 import common.TaxYear
-import connectors.{DownstreamErrorOr, DownstreamOutcome, EmploymentConnector, IncomeTaxUserDataConnector}
-import models.IncomeTaxUserData.PriorData
+import connectors.{DownstreamErrorOr, DownstreamOutcomeT, EmploymentConnector, PensionsConnector}
 import models.User
 import models.logging.HeaderCarrierExtensions._
 import models.mongo.PensionsUserData.SessionData
 import models.mongo._
+import models.pension.employmentPensions.EmploymentPensions
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncomeViewModel}
 import repositories.PensionsUserDataRepository
 import repositories.PensionsUserDataRepository.QueryResultT
@@ -38,77 +38,69 @@ import scala.concurrent.{ExecutionContext, Future}
 class EmploymentPensionService @Inject() (sessionService: PensionSessionService,
                                           repository: PensionsUserDataRepository,
                                           employmentConnector: EmploymentConnector,
-                                          submissionsConnector: IncomeTaxUserDataConnector) {
+                                          pensionsConnector: PensionsConnector) {
+
+  def loadPriorEmployment(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcomeT[EmploymentPensions] =
+    EitherT(pensionsConnector.loadPriorEmployment(user.nino, taxYear)(hc.withMtditId(user.mtditid), ec))
+      .leftAs[ServiceError]
 
   def saveAnswers(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcome[Unit] =
     (for {
-      data <- sessionService.loadPriorAndSession(user, taxYear)
-      (prior, session) = data
-      answers          = session.pensions.incomeFromPensions
-      _ <- processSubmission(prior, answers, user, taxYear.endYear)
-      _ <- clearJourneyFromSession(session).leftAs[ServiceError]
+      maybeSession    <- EitherT(sessionService.loadSession(taxYear.endYear, user))
+      session         <- EitherT.fromOption[Future](maybeSession, SessionNotFound)
+      priorEmployment <- loadPriorEmployment(user, taxYear)
+      _               <- processSubmission(priorEmployment, session.pensions.incomeFromPensions, user, taxYear.endYear)
+      _               <- clearJourneyFromSession(session).leftAs[ServiceError]
     } yield ()).value
 
-  private def processSubmission(prior: PriorData, answers: IncomeFromPensionsViewModel, user: User, taxYear: Int)(implicit
+  private def processSubmission(prior: EmploymentPensions, answers: IncomeFromPensionsViewModel, user: User, taxYear: Int)(implicit
       ec: ExecutionContext,
-      hc: HeaderCarrier): ServiceOutcomeT[Seq[Unit]] = {
-    val priorEmployment = prior.pensions.flatMap(_.employmentPensions)
-    val maybePriorIds   = priorEmployment.map(_.employmentData.map(_.employmentId))
-
+      hc: HeaderCarrier): ServiceOutcomeT[Unit] = {
+    val priorIds = prior.employmentData.map(_.employmentId)
     for {
-      _   <- runDeleteIfRequired(maybePriorIds, answers.uKPensionIncomes, user, taxYear)
+      _   <- runDeleteIfRequired(priorIds, answers.uKPensionIncomes, user, taxYear)
       res <- runSaveIfRequired(answers, user, taxYear)
     } yield res
-
   }
 
-  private def runDeleteIfRequired(maybePriorIds: Option[Seq[String]], answers: Seq[UkPensionIncomeViewModel], user: User, taxYear: Int)(implicit
+  private def runDeleteIfRequired(priorIds: List[String], answers: Seq[UkPensionIncomeViewModel], user: User, taxYear: Int)(implicit
       hc: HeaderCarrier,
-      ec: ExecutionContext): ServiceOutcomeT[Seq[Unit]] =
-    (maybePriorIds, answers.traverse(_.employmentId))
-      .mapN { (priorIds, sessionIds) =>
-        val idsToDelete = priorIds.diff(sessionIds)
-        for {
-          res <- EitherT(doDelete(idsToDelete, user, taxYear)).leftAs[ServiceError]
-          _   <- EitherT(refreshSubmissionsCache(user, taxYear)).leftAs[ServiceError]
-        } yield res
+      ec: ExecutionContext): ServiceOutcomeT[Unit] =
+    (priorIds.toNel, answers.traverse(_.employmentId))
+      .mapN { (pIds, sIds) =>
+        val idsToDelete = pIds.toList.diff(sIds)
+        doDelete(idsToDelete, user, taxYear).leftAs[ServiceError]
       }
-      .getOrElse(EitherT(Seq.empty[Unit].asRight.toFuture))
+      .getOrElse(EitherT(().asRight.toFuture))
 
   private def runSaveIfRequired(answers: IncomeFromPensionsViewModel, user: User, taxYear: Int)(implicit
       hc: HeaderCarrier,
-      ec: ExecutionContext): ServiceOutcomeT[Seq[Unit]] = {
+      ec: ExecutionContext): ServiceOutcomeT[Unit] = {
     val isClaimingEmployment = answers.uKPensionIncomesQuestion.exists(_ => answers.uKPensionIncomes.nonEmpty)
 
-    if (isClaimingEmployment) {
-      for {
-        res <- EitherT(doSave(answers, user, taxYear)).leftAs[ServiceError]
-        _   <- EitherT(refreshSubmissionsCache(user, taxYear)).leftAs[ServiceError]
-      } yield res
-
-    } else EitherT(Seq.empty[Unit].asRight.toFuture)
+    if (isClaimingEmployment) doSave(answers, user, taxYear).leftAs[ServiceError]
+    else EitherT(().asRight.toFuture)
   }
-
-  private def refreshSubmissionsCache(user: User, taxYear: Int)(implicit hc: HeaderCarrier): DownstreamOutcome[Unit] =
-    submissionsConnector.refreshPensionsResponse(user.nino, user.mtditid, taxYear)
 
   private def doDelete(employmentIds: Seq[String], user: User, taxYear: Int)(implicit
       hc: HeaderCarrier,
-      ec: ExecutionContext): DownstreamOutcome[Seq[Unit]] =
-    employmentIds
-      .traverse[Future, DownstreamErrorOr[Unit]] { id =>
-        employmentConnector.deleteEmployment(user.nino, taxYear, id)(hc.withMtditId(user.mtditid), ec)
-      }
-      .map(sequence)
+      ec: ExecutionContext): DownstreamOutcomeT[Unit] =
+    EitherT(
+      employmentIds
+        .traverse[Future, DownstreamErrorOr[Unit]] { id =>
+          employmentConnector.deleteEmployment(user.nino, taxYear, id)(hc.withMtditId(user.mtditid), ec)
+        }
+        .map(sequence)).collapse
 
   private def doSave(answers: IncomeFromPensionsViewModel, user: User, taxYear: Int)(implicit
       hc: HeaderCarrier,
-      ec: ExecutionContext): DownstreamOutcome[Seq[Unit]] =
-    answers.uKPensionIncomes
-      .traverse[Future, DownstreamErrorOr[Unit]] { e =>
-        employmentConnector.saveEmployment(user.nino, taxYear, e.toDownstreamModel)(hc.withMtditId(user.mtditid), ec)
-      }
-      .map(sequence)
+      ec: ExecutionContext): DownstreamOutcomeT[Unit] =
+    EitherT(
+      answers.uKPensionIncomes
+        .traverse[Future, DownstreamErrorOr[Unit]] { e =>
+          employmentConnector.saveEmployment(user.nino, taxYear, e.toDownstreamModel)(hc.withMtditId(user.mtditid), ec)
+        }
+        .map(sequence)).collapse
 
   private def clearJourneyFromSession(session: SessionData): QueryResultT[Unit] = {
     val clearedJourneyModel =
