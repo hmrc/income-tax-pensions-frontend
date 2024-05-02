@@ -2,7 +2,22 @@
 <configuration>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="uk.gov.hmrc.play.logging.JsonEncoder"/>
+        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+            <evaluator>
+                <expression>
+                    // Define a condition to filter out static assets based on the message content
+                    return (
+                    message.contains("/assets/")
+                    );
+                </expression>
+            </evaluator>
+            <OnMismatch>NEUTRAL</OnMismatch>
+            <OnMatch>DENY</OnMatch>
+        </filter>
+
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date{ISO8601} level=[%level] logger=[%logger] thread=[%thread] rid=[%X{X-Request-ID}] user=[%X{Authorization}] status=[%X{httpStatus}] responseTime=[%X{responseTime}ms] message=[%message] %replace(exception=[%xException]){'^exception=\[\]$',''}%n</pattern>
+        </encoder>
     </appender>
 
     <logger name="uk.gov" level="${logger.uk.gov:-WARN}"/>
@@ -20,7 +35,8 @@
     <logger name="views" level="DEBUG"/>
     <logger name="viewsupport" level="DEBUG"/>
 
-    <root level="${logger.application:-WARN}">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
+
 </configuration>

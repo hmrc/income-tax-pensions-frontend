@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package models
+package common
 
-import common.Nino
-
-case class User(mtditid: String, arn: Option[String], nino: String, sessionId: String, affinityGroup: String) {
-  def isAgent: Boolean = arn.nonEmpty
-  def getNino: Nino    = Nino(nino)
+final case class Nino(value: String) extends AnyVal {
+  override def toString: String = value
 }

@@ -266,3 +266,5 @@ trait WireMockHelper {
     )
 
 }
+
+object WireMockHelper extends WireMockHelper

@@ -16,25 +16,19 @@
 
 package controllers.pensions.paymentsIntoPensions
 
-import cats.data.EitherT
-import cats.implicits._
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
+import controllers.handleResult
 import controllers.predicates.auditActions.AuditActionsProvider
-import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
-import models.pension.Journey.PaymentsIntoPensions
-import models.pension.reliefs.PaymentsIntoPensionsViewModel
-import models.requests.UserPriorAndSessionDataRequest
-import play.api.Logger
+import models.pension.Journey
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.redirects.PaymentsIntoPensionPages.CheckYourAnswersPage
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.{ExcludeJourneyService, PensionReliefsService, PensionSessionService}
-import uk.gov.hmrc.http.HeaderCarrier
+import services.{PensionSessionService, PensionsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.EqualsHelper.isDifferent
+import utils.Logging
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -42,18 +36,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsProvider,
+                                                   pensionsService: PensionsService,
                                                    view: PaymentsIntoPensionsCYAView,
                                                    pensionSessionService: PensionSessionService,
-                                                   pensionReliefsService: PensionReliefsService,
                                                    errorHandler: ErrorHandler,
-                                                   excludeJourneyService: ExcludeJourneyService,
                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
-  lazy val logger: Logger                         = Logger(this.getClass.getName)
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
+  // TODO it will be refactored in the next PRs
   def show(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsViewAuditing(taxYear) async { implicit request =>
     val cyaData = request.sessionData
     if (!cyaData.pensions.paymentsIntoPension.isFinished) {
@@ -67,54 +61,16 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsUpdateAuditing(taxYear) async { implicit request =>
-    val modelFromSession   = request.sessionData.pensions.paymentsIntoPension
-    val modelFromPriorData = request.maybePrior.map(_.getPaymentsIntoPensionsCyaFromPrior)
+  // TODO Business Question: Do we need to exclude the journey if answers NOs to some of the questions?
+  def submit(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoPensionsUpdateAuditing(taxYear.endYear) async { implicit request =>
+    val answersFromSession = request.sessionData.pensions.paymentsIntoPension
 
-    if (isDifferent(modelFromSession, modelFromPriorData)) {
-      performSubmission(TaxYear(taxYear), modelFromSession)(hc, request)
-    } else Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoPensions)))
-  }
-
-  private def excludeJourney(taxYear: TaxYear, paymentsIntoPensionFromSession: PaymentsIntoPensionsViewModel)(implicit
-      hc: HeaderCarrier,
-      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Unit] = {
-    val user = request.user
-    val res =
-      if (!paymentsIntoPensionFromSession.rasPensionPaymentQuestion.exists(x =>
-          x) && !paymentsIntoPensionFromSession.pensionTaxReliefNotClaimedQuestion
-          .exists(x => x)) {
-        // TODO: check conditions for excluding Pensions from submission without gateway
-        excludeJourneyService.excludeJourney("pensions", taxYear.endYear, user.nino)(user, hc).map(_ => ())
-      } else {
-        Future.successful(())
-      }
-
-    EitherT
-      .right[Result](res)
-      .leftMap(_ => errorHandler.internalServerError())
-  }
-
-  private def performSubmission(taxYear: TaxYear, sessionData: PaymentsIntoPensionsViewModel)(implicit
-      hc: HeaderCarrier,
-      request: UserPriorAndSessionDataRequest[AnyContent]): Future[Result] =
-    (for {
-      _      <- excludeJourney(taxYear, sessionData)
-      result <- persist(taxYear, sessionData)
-    } yield result).merge
-
-  private def persist(taxYear: TaxYear, sessionData: PaymentsIntoPensionsViewModel)(implicit
-      hc: HeaderCarrier,
-      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] = {
-    val res = pensionReliefsService.persistPaymentIntoPensionViewModel(
+    val res = pensionsService.upsertPaymentsIntoPensions(
       request.user,
       taxYear,
-      sessionData,
-      request.maybePrior.flatMap(_.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions)))
+      answersFromSession
+    )
 
-    res.map(_ => Redirect(SECTION_COMPLETED_PAGE(taxYear.endYear, PaymentsIntoPensions))).leftMap { err =>
-      logger.info(s"[PaymentIntoPensionsCYAController][submit] Failed to create or update session: ${err}")
-      errorHandler.handleError(err.status)
-    }
+    handleResult(errorHandler, taxYear, Journey.PaymentsIntoPensions, res)
   }
 }

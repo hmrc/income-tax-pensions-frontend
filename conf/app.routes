@@ -39,9 +39,6 @@ POST        /:taxYear/:journey/section-completed                                
 GET         /:taxYear/payments-into-pensions/payments-into-overseas-pensions/overseas-pension-scheme                               controllers.pensions.paymentsIntoPensions.PaymentsIntoOverseasPensionsGatewayController.show(taxYear:Int)
 POST        /:taxYear/payments-into-pensions/payments-into-overseas-pensions/overseas-pension-scheme                               controllers.pensions.paymentsIntoPensions.PaymentsIntoOverseasPensionsGatewayController.submit(taxYear:Int)
 
-GET         /:taxYear/payments-into-pensions/check-payments-into-pensions                                                          controllers.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAController.show(taxYear:Int)
-POST        /:taxYear/payments-into-pensions/check-payments-into-pensions                                                          controllers.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAController.submit(taxYear:Int)
-
 GET         /:taxYear/payments-into-pensions/relief-at-source                                                                      controllers.pensions.paymentsIntoPensions.ReliefAtSourcePensionsController.show(taxYear: Int)
 POST        /:taxYear/payments-into-pensions/relief-at-source                                                                      controllers.pensions.paymentsIntoPensions.ReliefAtSourcePensionsController.submit(taxYear: Int)
 
@@ -71,6 +68,9 @@ POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace            
 
 GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                                                        controllers.pensions.paymentsIntoPensions.WorkplaceAmountController.show(taxYear: Int)
 POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                                                        controllers.pensions.paymentsIntoPensions.WorkplaceAmountController.submit(taxYear: Int)
+
+GET         /:taxYear/payments-into-pensions/check-payments-into-pensions                                                          controllers.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAController.show(taxYear:Int)
+POST        /:taxYear/payments-into-pensions/check-payments-into-pensions                                                          controllers.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAController.submit(taxYear: TaxYear)
 
 ###########################     Income from Pension pages     ####################################
 

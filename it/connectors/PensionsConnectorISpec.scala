@@ -22,10 +22,12 @@ import builders.PensionReliefsBuilder.anPensionReliefs
 import models.mongo.JourneyStatus.{Completed, InProgress}
 import models.pension.Journey.{PaymentsIntoPensions, UnauthorisedPayments}
 import models.pension.JourneyNameAndStatus
+import common.Nino
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
 import models.{APIErrorBodyModel, APIErrorModel}
+import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
@@ -33,13 +35,24 @@ import utils.IntegrationTest
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import testdata.PaymentsIntoPensionsViewModelTestData
 
-class PensionsConnectorISpec extends IntegrationTest {
+class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
 
   lazy val connector: PensionsConnector         = app.injector.instanceOf[PensionsConnector]
   lazy val externalConnector: PensionsConnector = appWithFakeExternalCall.injector.instanceOf[PensionsConnector]
 
   implicit override val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders("mtditid" -> mtditid, "X-Session-ID" -> sessionId)
+
+  "savePaymentsIntoPensions" should {
+    val url = s"/income-tax-pensions/$currTaxYear/payments-into-pensions/$nino/answers"
+
+    "successfully submit answers" in {
+      stubPutWithHeadersCheck(url, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+      val result = connector.savePaymentsIntoPensions(Nino(nino), currTaxYear, PaymentsIntoPensionsViewModelTestData.answers).value.futureValue
+      result shouldBe Right(())
+    }
+  }
 
   "PensionsConnector .savePensionChargesSessionData" should {
 

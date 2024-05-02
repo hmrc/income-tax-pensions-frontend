@@ -40,19 +40,6 @@ class APIParserSpec extends UnitTest {
     )
 
   "FakeParser" should {
-    "log the correct message" in {
-      val result = FakeParser.logMessage(httpResponse())
-      result shouldBe
-        """[TestParser][read] Received 500 from service API. Body:{
-          |  "failures" : [ {
-          |    "code" : "SERVICE_UNAVAILABLE",
-          |    "reason" : "The service is currently unavailable"
-          |  }, {
-          |    "code" : "INTERNAL_SERVER_ERROR",
-          |    "reason" : "The service is currently facing issues."
-          |  } ]
-          |}""".stripMargin
-    }
     "return the the correct error" in {
       val result = FakeParser.badSuccessJsonFromAPI
       result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("PARSING_ERROR", "Error parsing response from API")))

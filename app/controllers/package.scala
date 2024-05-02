@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 
+import common.TaxYear
+import config.ErrorHandler
+import models.domain.ApiResultT
+import models.pension.Journey
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
+import play.api.Logger
+import play.api.mvc.Results.Redirect
+import cats.implicits._
+import play.api.mvc.Request
+
+import scala.concurrent.ExecutionContext
+
 package object controllers {
 
   def validatedIndex(index: Option[Int], collectionSize: Int): Option[Int] =
@@ -25,4 +37,16 @@ package object controllers {
       case None                                           => Right(None)
       case _                                              => Left(())
     }
+
+  def handleResult(errorHandler: ErrorHandler, taxYear: TaxYear, journey: Journey, res: ApiResultT[Unit])(implicit
+      logger: Logger,
+      request: Request[_],
+      ec: ExecutionContext) = {
+    val result = res.map(_ => Redirect(SECTION_COMPLETED_PAGE(taxYear.endYear, journey))).leftMap { err =>
+      logger.info(s"[PaymentIntoPensionsCYAController][submit] Failed to create or update session: ${err}")
+      errorHandler.handleError(err.status)
+    }
+
+    result.merge
+  }
 }

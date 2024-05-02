@@ -23,7 +23,9 @@ import play.api.Logging
 import play.api.http.Status._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys._
-import utils.PagerDutyHelper.pagerDutyLog
+import utils.PagerDutyHelper.{getCorrelationId, pagerDutyLog}
+
+import scala.util.Try
 
 trait APIParser extends Logging {
 
@@ -31,7 +33,7 @@ trait APIParser extends Logging {
   val service: String
 
   def logMessage(response: HttpResponse): String =
-    s"[$parserName][read] Received ${response.status} from $service API. Body:${response.body}"
+    s"[$parserName][read] Received ${response.status} from $parserName. Body:${response.body} ${getCorrelationId(response)}"
 
   def badSuccessJsonFromAPI[Response]: Either[APIErrorModel, Response] = {
     pagerDutyLog(BAD_SUCCESS_JSON_FROM_API, s"[$parserName][read] Invalid Json from $service API.")
@@ -82,4 +84,52 @@ trait APIParser extends Logging {
           handleAPIError(response, Some(INTERNAL_SERVER_ERROR))
       }
   }
+}
+
+object APIParser {
+  // TODO Once we finish all journeys: add test, and make sure that's what we want
+  def handleError(response: HttpResponse, statusOverride: Option[Int] = None): APIErrorModel = {
+    val status    = statusOverride.getOrElse(response.status)
+    val maybeJson = Try(response.json)
+    val maybeApiJsonError = maybeJson.map { json =>
+      lazy val apiError  = json.asOpt[APIErrorBodyModel]
+      lazy val apiErrors = json.asOpt[APIErrorsBodyModel]
+
+      val errorModel = (apiError, apiErrors) match {
+        case (Some(apiError), _)  => APIErrorModel(status, apiError)
+        case (_, Some(apiErrors)) => APIErrorModel(status, apiErrors)
+        case _ =>
+          pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, s"Unexpected Json from API")
+          APIErrorModel(status, APIErrorBodyModel.parsingError)
+      }
+
+      errorModel
+    }
+
+    maybeApiJsonError.getOrElse(
+      APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("PARSING_ERROR", s"Error parsing response from API: ${response.body}"))
+    )
+  }
+
+  private def logMessage(response: HttpResponse): String = s"Received ${response.status}. Body:${response.body} ${getCorrelationId(response)}"
+
+  // TODO Once we finish all journeys: add test, and make sure that's what we want
+  def unsafePagerDutyError(method: String, url: String, response: HttpResponse): APIErrorModel =
+    response.status match {
+      case NO_CONTENT =>
+        ()
+        handleError(response)
+      case BAD_REQUEST =>
+        pagerDutyLog(FOURXX_RESPONSE_FROM_API, logMessage(response))
+        handleError(response)
+      case INTERNAL_SERVER_ERROR =>
+        pagerDutyLog(INTERNAL_SERVER_ERROR_FROM_API, logMessage(response))
+        handleError(response)
+      case SERVICE_UNAVAILABLE =>
+        pagerDutyLog(SERVICE_UNAVAILABLE_FROM_API, logMessage(response))
+        handleError(response)
+      case _ =>
+        pagerDutyLog(UNEXPECTED_RESPONSE_FROM_API, logMessage(response))
+        handleError(response, Some(INTERNAL_SERVER_ERROR))
+    }
 }
