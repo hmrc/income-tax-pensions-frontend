@@ -26,6 +26,9 @@ import org.mockito.Mockito._
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.{Application, Environment, Mode}
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -40,15 +43,25 @@ import scala.concurrent.{ExecutionContext, Future}
 trait ControllerSpecBase extends PlaySpec with AnyWordSpecLike with MockitoSugar {
   implicit val appConfig: AppConfig = mock[AppConfig]
 
+  lazy val app: Application = new GuiceApplicationBuilder()
+    .in(Environment.simple(mode = Mode.Dev))
+    .build()
+
   val auditProvider         = mock[AuditActionsProvider]
   val pensionsService       = PensionsServiceStub()
   val pensionSessionService = mock[PensionSessionService]
   val errorHandler          = mock[ErrorHandler]
   val mcc                   = stubMessagesControllerComponents()
+  val user                  = UserBuilder.aUser
 
   val fakeRequest       = FakeRequest("GET", "/")
   val mockActionBuilder = mock[ActionBuilder[UserSessionDataRequest, AnyContent]]
+
+  implicit val messages: Messages     = mcc.messagesApi.preferred(FakeRequest())
+  implicit val userSessionDataRequest = UserSessionDataRequest(PensionsUserData.empty(user, currTaxYear), user, fakeRequest)
+
   when(auditProvider.paymentsIntoPensionsUpdateAuditing(any[Int])).thenReturn(mkAction(allData))
+  when(auditProvider.paymentsIntoPensionsViewAuditing(any[Int])).thenReturn(mkUserSessionDataRequest(allData))
 
   def mkAction(existingData: PensionsCYAModel) =
     new ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] {
@@ -57,7 +70,22 @@ trait ControllerSpecBase extends PlaySpec with AnyWordSpecLike with MockitoSugar
           UserPriorAndSessionDataRequest(
             PensionsUserData("sessionId", "mtditid", nino, currTaxYear.endYear, false, existingData),
             None,
-            UserBuilder.aUser,
+            user,
+            request
+          )
+        )
+
+      def parser: BodyParser[AnyContent]               = mcc.parsers.default
+      protected def executionContext: ExecutionContext = global
+    }
+
+  def mkUserSessionDataRequest(existingData: PensionsCYAModel) =
+    new ActionBuilder[UserSessionDataRequest, AnyContent] {
+      def invokeBlock[A](request: Request[A], block: UserSessionDataRequest[A] => Future[Result]): Future[Result] =
+        block(
+          UserSessionDataRequest(
+            PensionsUserData("sessionId", "mtditid", nino, currTaxYear.endYear, false, existingData),
+            user,
             request
           )
         )

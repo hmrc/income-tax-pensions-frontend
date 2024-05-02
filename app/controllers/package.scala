@@ -22,9 +22,9 @@ import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import cats.implicits._
-import play.api.mvc.Request
+import play.api.mvc.{Request, Result}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 package object controllers {
 
@@ -41,9 +41,9 @@ package object controllers {
   def handleResult(errorHandler: ErrorHandler, taxYear: TaxYear, journey: Journey, res: ApiResultT[Unit])(implicit
       logger: Logger,
       request: Request[_],
-      ec: ExecutionContext) = {
+      ec: ExecutionContext): Future[Result] = {
     val result = res.map(_ => Redirect(SECTION_COMPLETED_PAGE(taxYear.endYear, journey))).leftMap { err =>
-      logger.info(s"[PaymentIntoPensionsCYAController][submit] Failed to create or update session: ${err}")
+      logger.info(s"Failure in $journey: $err")
       errorHandler.handleError(err.status)
     }
 

@@ -22,16 +22,21 @@ import common.TaxYear
 import config.ErrorHandler
 import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector, PensionsConnector}
 import models.IncomeTaxUserData.PriorData
+import models.domain.ApiResultT
 import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
+import models.pension.Journey._
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.{Journey, JourneyNameAndStatus}
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
 import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.i18n.Messages
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
 import repositories.PensionsUserDataRepository.QueryResult
@@ -54,6 +59,22 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
   def loadSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[SessionData]]] =
     repository.find(taxYear, user).map(_.leftMap(_ => ()))
 
+  /** It loads only provided journey (if exist in the Backend). All other Journeys are empty.
+    */
+  def loadOneJourneyPriorData(taxYear: TaxYear, user: User, journey: Journey)(implicit hc: HeaderCarrier): ApiResultT[PensionsCYAModel] =
+    journey match {
+      case PaymentsIntoPensions =>
+        pensionsConnector
+          .getPaymentsIntoPensions(user.getNino, taxYear)
+          .transform {
+            case result @ Left(err) => if (err.notFound) Right(None) else result
+            case result             => result
+          }
+          .map(_.map(_.toPensionsCYAModel).getOrElse(PensionsCYAModel.emptyModels))
+      case _ =>
+        EitherT.rightT[Future, APIErrorModel](PensionsCYAModel.emptyModels) // TODO We'll be added gradually journey by journey here
+    }
+
   def loadPriorAndSession(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcomeT[(PriorData, SessionData)] =
     for {
       prior        <- EitherT(loadPriorData(taxYear.endYear, user)).leftAs[ServiceError]
@@ -72,8 +93,10 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
     }
 
   def upsertSession(session: PensionsUserData)(implicit ec: ExecutionContext, request: Request[_]): EitherT[Future, Result, Unit] =
+    upsertSessionT(session).leftMap(_ => errorHandler.internalServerError())
+
+  def upsertSessionT(session: PensionsUserData)(implicit ec: ExecutionContext): EitherT[Future, ServiceError, Unit] =
     EitherT(repository.createOrUpdate(session))
-      .leftMap(_ => errorHandler.internalServerError())
 
   def createOrUpdateSession(pensionsUserData: SessionData): QueryResult[Unit] =
     repository.createOrUpdate(pensionsUserData).map {
@@ -146,4 +169,35 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       case Left(_)  => onFail
     }
   }
+
+  def updateSessionData(user: User, taxYear: TaxYear, sessionData: PensionsUserData, priorData: PensionsCYAModel): ApiResultT[PensionsUserData] = {
+    val updatedSessionData = priorData.merge(Some(sessionData.pensions))
+
+    if (updatedSessionData == sessionData.pensions) {
+      EitherT.rightT[Future, APIErrorModel](sessionData)
+    } else {
+      val userData = PensionsUserData(
+        user.sessionId,
+        user.mtditid,
+        user.nino,
+        taxYear.endYear,
+        true,
+        updatedSessionData,
+        Clock.systemUTC().instant().atZone(ZoneOffset.UTC)
+      )
+
+      EitherT(repository.createOrUpdate(userData))
+        .bimap(
+          _.toAPIErrorModel,
+          _ => userData
+        )
+    }
+  }
+
+  def clearSessionOnSuccess(journey: Journey, existingSessionData: PensionsUserData): ApiResultT[Unit] = {
+    def updatedSession = existingSessionData.removeJourneyAnswers(journey)
+
+    upsertSessionT(updatedSession).leftMap(_.toAPIErrorModel)
+  }
+
 }

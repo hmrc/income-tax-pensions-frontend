@@ -16,19 +16,22 @@
 
 package config
 
-import common.TaxYear
+import cats.data.EitherT
+import common.{Nino, TaxYear}
 import connectors.{DownstreamOutcome, PensionsConnector}
 import models.APIErrorModel
+import models.domain.ApiResultT
 import models.pension.JourneyNameAndStatus
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
-import models.pension.reliefs.CreateUpdatePensionReliefsModel
+import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
 import org.scalamock.handlers.{CallHandler3, CallHandler4, CallHandler5}
 import org.scalamock.scalatest.MockFactory
 import services.{PensionChargesConnectorHelper, PensionIncomeConnectorHelper, PensionReliefsConnectorHelper}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
+import ExecutionContext.Implicits.global
 
 trait MockPensionsConnector extends MockFactory {
 
@@ -94,4 +97,12 @@ trait MockPensionsConnector extends MockFactory {
       .expects(taxYear, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
+
+  def mockSavePaymentsIntoPensions(): CallHandler5[Nino, TaxYear, PaymentsIntoPensionsViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
+    (mockPensionsConnector
+      .savePaymentsIntoPensions(_: Nino, _: TaxYear, _: PaymentsIntoPensionsViewModel)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(*, *, *, *, *)
+      .returns(EitherT.rightT[Future, APIErrorModel](()))
+      .anyNumberOfTimes()
+
 }

@@ -16,7 +16,6 @@
 
 package connectors
 
-import common.TaxYear
 import cats.data.EitherT
 import common.{Nino, TaxYear}
 import config.AppConfig
@@ -46,15 +45,21 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def savePaymentsIntoPensions(nino: Nino, taxYear: TaxYear, answers: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
-    val url = appConfig.pensionBEBaseUrl + s"/${taxYear.endYear}/payments-into-pensions/${nino.value}/answers"
+    val url = appConfig.paymentsIntoPensionsAnswersUrl(taxYear, nino)
     ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, answers)
 
-    val res = http.PUT[PaymentsIntoPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(
-      PaymentsIntoPensionsViewModel.format,
-      NoContentHttpReads,
-      hcWithCorrelationId(hc),
-      ec)
+    val res =
+      http.PUT[PaymentsIntoPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(PaymentsIntoPensionsViewModel.format, NoContentHttpReads, hc, ec)
 
+    EitherT(res)
+  }
+
+  def getPaymentsIntoPensions(nino: Nino, taxYear: TaxYear)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Option[PaymentsIntoPensionsViewModel]] = {
+    val url = appConfig.paymentsIntoPensionsAnswersUrl(taxYear, nino)
+    ConnectorRequestInfo("GET", url, "income-tax-pensions").logRequest(logger)
+    val res = http.GET[DownstreamErrorOr[Option[PaymentsIntoPensionsViewModel]]](url)
     EitherT(res)
   }
 

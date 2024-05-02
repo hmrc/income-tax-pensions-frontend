@@ -44,7 +44,11 @@ object JourneyStatusSummaryViewModel {
     implicit val impTaxYear: TaxYear                           = TaxYear(taxYear)
     implicit val impJourneyStatuses: Seq[JourneyNameAndStatus] = journeyStatuses
 
-    val paymentsIntoPensionsRow = buildRow(PaymentsIntoPensions, paymentIntoPensionHasPriorData(priorData), paymentsIntoPensionsIsUpdated(cya))
+    val paymentsIntoPensionsRow = buildRow(
+      PaymentsIntoPensions,
+      paymentIntoPensionHasPriorData(priorData),
+      paymentsIntoPensionsIsUpdated(cya),
+      cya.exists(_.paymentsIntoPension.isFinished))
 
     val incomeFromPensionsHasPriorData = ukPensionsSchemeHasPriorData(priorData) | statePensionsHasPriorData(priorData)
     val incomeFromPensionsIsUpdated    = ukPensionsSchemeIsUpdated(cya) | statePensionIsUpdated(cya)
@@ -99,22 +103,25 @@ object JourneyStatusSummaryViewModel {
        |  </div>
        |""".stripMargin
 
-  private def buildRow(journey: Journey, hasPriorJourneyAnswers: Boolean, journeyIsStarted: Boolean)(implicit
+  // TODO Remove default false once all journeys are added
+  private def buildRow(journey: Journey, hasPriorJourneyAnswers: Boolean, journeyIsStarted: Boolean, journeyIsComplete: Boolean = false)(implicit
       messages: Messages,
       taxYear: TaxYear,
       journeyStatuses: Seq[JourneyNameAndStatus]): String = {
-    val status = getJourneyStatus(journey, journeyStatuses, hasPriorJourneyAnswers, journeyIsStarted)
-    val href   = getUrl(journey, taxYear, hasPriorJourneyAnswers)
-    val id     = s"journey-${journey.toString}-status"
+    val status   = getJourneyStatus(journey, journeyStatuses, hasPriorJourneyAnswers, journeyIsStarted)
+    val href     = getUrl(journey, taxYear, journeyIsComplete)
+    val statusId = s"journey-${journey.toString}-status"
     val statusTag =
       if (status == Completed) messages(s"common.status.$status")
       else s"""<strong class="govuk-tag govuk-tag--blue">${messages(s"common.status.$status")}</strong>"""
 
+    val journeyId = s"${journey.toString}-link"
     s"""
        |  <span class="app-task-list__task-name">
-       |    <a class="govuk-link govuk-task-list__link" href=$href aria-describedby=$id> ${messages(s"journey.${journey.toString}")} </a>
+       |    <a id="$journeyId" class="govuk-link govuk-task-list__link"
+       |       href=$href aria-describedby=$statusId> ${messages(s"journey.${journey.toString}")}</a>
        |  </span>
-       |  <div class="right-float" id=$id> $statusTag </div>
+       |  <div class="right-float" id=$statusId> $statusTag </div>
        |""".stripMargin
   }
 
@@ -149,7 +156,7 @@ object JourneyStatusSummaryViewModel {
       case PaymentsIntoPensions =>
         determineJourneyStartOrCyaUrl(
           pipRoutes.ReliefAtSourcePensionsController.show(taxYear.endYear).url,
-          pipRoutes.PaymentsIntoPensionsCYAController.show(taxYear.endYear).url
+          pipRoutes.PaymentsIntoPensionsCYAController.show(taxYear).url
         )
       case AnnualAllowances =>
         determineJourneyStartOrCyaUrl(

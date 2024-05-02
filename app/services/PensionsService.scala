@@ -20,24 +20,26 @@ import common.TaxYear
 import connectors.PensionsConnector
 import models.User
 import models.domain.ApiResultT
-import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
-import models.pension.reliefs.PaymentsIntoPensionsViewModel
+import models.mongo.PensionsUserData
+import models.pension.Journey
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 trait PensionsService {
-  def upsertPaymentsIntoPensions(user: User, taxYear: TaxYear, paymentsIntoPensions: PaymentsIntoPensionsViewModel)(implicit
+  def upsertPaymentsIntoPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit]
 }
 
 @Singleton
-class PensionsServiceImpl @Inject() (pensionsConnector: PensionsConnector) extends PensionsService {
-  def upsertPaymentsIntoPensions(user: User, taxYear: TaxYear, paymentsIntoPensions: PaymentsIntoPensionsViewModel)(implicit
+class PensionsServiceImpl @Inject() (pensionsConnector: PensionsConnector, sessionService: PensionSessionService) extends PensionsService {
+  def upsertPaymentsIntoPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] =
-    pensionsConnector.savePaymentsIntoPensions(user.getNino, taxYear, paymentsIntoPensions)(hc.withMtditId(user.mtditid), ec)
-
+    for {
+      _ <- pensionsConnector.savePaymentsIntoPensions(user.getNino, taxYear, sessionData.pensions.paymentsIntoPension)
+      _ <- sessionService.clearSessionOnSuccess(Journey.PaymentsIntoPensions, sessionData)
+    } yield ()
 }

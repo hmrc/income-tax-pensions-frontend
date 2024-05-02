@@ -16,6 +16,7 @@
 
 package controllers.pensions.paymentsIntoPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoPensions.routes._
 import controllers.predicates.actions.AuthorisedAction
@@ -90,7 +91,7 @@ class ReliefAtSourceOneOffPaymentsController @Inject() (authAction: AuthorisedAc
                   }
                 }
               )
-          case _ => Future.successful(Redirect(PaymentsIntoPensionsCYAController.show(taxYear)))
+          case _ => Future.successful(Redirect(PaymentsIntoPensionsCYAController.show(TaxYear(taxYear))))
         }
       }
     }

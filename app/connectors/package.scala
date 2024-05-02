@@ -30,4 +30,7 @@ package object connectors {
   type NoContentResponse  = ContentResponse[Unit]
 
   def isSuccess(status: Int): Boolean = status >= 200 && status <= 299
+
+  def isNoContent(status: Int): Boolean = status == 204
+
 }

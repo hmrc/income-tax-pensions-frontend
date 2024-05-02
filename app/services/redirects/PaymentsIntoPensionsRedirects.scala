@@ -16,6 +16,7 @@
 
 package services.redirects
 
+import common.TaxYear
 import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController}
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
@@ -24,7 +25,7 @@ import play.api.mvc.{Call, Result}
 
 object PaymentsIntoPensionsRedirects { // scalastyle:off magic.number
 
-  def cyaPageCall(taxYear: Int): Call = PaymentsIntoPensionsCYAController.show(taxYear)
+  def cyaPageCall(taxYear: Int): Call = PaymentsIntoPensionsCYAController.show(TaxYear(taxYear))
 
   def journeyCheck(currentPage: PaymentsIntoPensionPages, cya: PensionsCYAModel, taxYear: Int): Option[Result] = {
     val pIP = cya.paymentsIntoPension

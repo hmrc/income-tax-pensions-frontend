@@ -19,6 +19,7 @@ package controllers.pensions.paymentsIntoPensions
 import builders.PaymentsIntoPensionVewModelBuilder.aPaymentsIntoPensionViewModel
 import builders.PensionsUserDataBuilder.{anPensionsUserDataEmptyCya, pensionsUserDataWithPaymentsIntoPensions}
 import builders.UserBuilder.aUserRequest
+import common.TaxYear
 import controllers.pensions.paymentsIntoPensions.routes._
 import forms.YesNoForm
 import org.jsoup.Jsoup
@@ -281,7 +282,7 @@ class ReliefAtSourcePensionsControllerISpec extends IntegrationTest with BeforeA
 
       "has a SEE_OTHER(303) status" in {
         result.status shouldBe SEE_OTHER
-        result.header("location") shouldBe Some(PaymentsIntoPensionsCYAController.show(taxYearEOY).url)
+        result.header("location") shouldBe Some(PaymentsIntoPensionsCYAController.show(TaxYear(taxYearEOY)).url)
       }
 
       "updates rasPensionPaymentQuestion to Some(false) and remove totalRASPaymentsAndTaxRelief" in {

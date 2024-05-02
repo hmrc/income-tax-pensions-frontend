@@ -22,11 +22,12 @@ import models.logging.HeaderCarrierExtensions.CorrelationIdHeaderKey
 import play.api.Logger
 import uk.gov.hmrc.http.HttpResponse
 
+// TODO This class is only temporarily when we're working on integration. It is important to not log response body and probably we just need WARN level on PROD
 final case class ConnectorResponseInfo(method: String, url: String, response: HttpResponse) {
-  private def logMessage: String = {
-    val nonSuccessBody = if (response.status < 200 || response.status >= 300) s" Body: ${response.body}" else ""
-    s"Connector [$CorrelationIdHeaderKey=${response.maybeCorrelationId}]: Response Received for $method $url. Response status: ${response.status}" + nonSuccessBody
-  }
+  private def logMessage: String =
+    s"Connector [$CorrelationIdHeaderKey=${response.maybeCorrelationId}]: Response Received for $method $url. " +
+      s"Response status: ${response.status}\n" +
+      s"===Body:===\n${response.body}\n===\n"
 
   private[logging] def logResponseWarnOn4xx: ConnectorResponseInfo.LevelLogging = {
     val msg = PIIMaskingConverter.mask(logMessage)

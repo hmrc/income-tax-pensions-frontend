@@ -16,6 +16,7 @@
 
 package config
 
+import common.{Nino, TaxYear}
 import play.api.Logging
 import play.api.i18n.Lang
 import play.api.mvc.{Call, RequestHeader}
@@ -25,6 +26,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
 
+// TODO The lazy here are risky, you realize they are not set in PROD only when you'll receive the first request. Change them to not be lazy
 @Singleton
 class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
 
@@ -40,6 +42,9 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   lazy val incomeTaxSubmissionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionUrl) + "/income-tax-submission-service"
 
   lazy val pensionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxPensionsUrl) + "/income-tax-pensions"
+
+  def paymentsIntoPensionsAnswersUrl(taxYear: TaxYear, nino: Nino): String =
+    pensionBEBaseUrl + s"/${taxYear.endYear}/payments-into-pensions/${nino.value}/answers"
 
   lazy val employmentBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxEmploymentUrl) + "/income-tax-employment"
 
