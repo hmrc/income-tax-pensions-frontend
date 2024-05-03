@@ -90,7 +90,20 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
       case _ => false
     }
 
-  def updatePensionTaxReliefNotClaimedQuestion(yesAnswer: Boolean) =
+  def updateRasPensionPaymentQuestion(yesAnswer: Boolean): PaymentsIntoPensionsViewModel =
+    if (yesAnswer) {
+      copy(rasPensionPaymentQuestion = Some(true))
+    } else {
+      copy(
+        rasPensionPaymentQuestion = Some(false),
+        totalRASPaymentsAndTaxRelief = None,
+        oneOffRasPaymentPlusTaxReliefQuestion = None,
+        totalOneOffRasPaymentPlusTaxRelief = None,
+        totalPaymentsIntoRASQuestion = None
+      )
+    }
+
+  def updatePensionTaxReliefNotClaimedQuestion(yesAnswer: Boolean): PaymentsIntoPensionsViewModel =
     if (yesAnswer) {
       copy(pensionTaxReliefNotClaimedQuestion = Some(true))
     } else {
@@ -107,18 +120,6 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
   def toPensionsCYAModel: PensionsCYAModel =
     PensionsCYAModel.emptyModels.copy(paymentsIntoPension = this.copy(totalPaymentsIntoRASQuestion = Some(true)))
 
-  def updateRasPensionPaymentQuestion(yesAnswer: Boolean): PaymentsIntoPensionsViewModel =
-    if (yesAnswer) {
-      copy(rasPensionPaymentQuestion = Some(true))
-    } else {
-      copy(
-        rasPensionPaymentQuestion = Some(false),
-        totalRASPaymentsAndTaxRelief = None,
-        oneOffRasPaymentPlusTaxReliefQuestion = None,
-        totalOneOffRasPaymentPlusTaxRelief = None,
-        totalPaymentsIntoRASQuestion = None
-      )
-    }
 }
 
 object PaymentsIntoPensionsViewModel {

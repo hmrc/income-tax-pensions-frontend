@@ -37,12 +37,9 @@ trait PensionsService {
 class PensionsServiceImpl @Inject() (pensionsConnector: PensionsConnector, sessionService: PensionSessionService) extends PensionsService {
   def upsertPaymentsIntoPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
-      ec: ExecutionContext): ApiResultT[Unit] = {
-
-    val answers = sessionData.pensions.paymentsIntoPension
+      ec: ExecutionContext): ApiResultT[Unit] =
     for {
-      _ <- pensionsConnector.savePaymentsIntoPensions(user.getNino, taxYear, answers)
+      _ <- pensionsConnector.savePaymentsIntoPensions(user.getNino, taxYear, sessionData.pensions.paymentsIntoPension)
       _ <- sessionService.clearSessionOnSuccess(Journey.PaymentsIntoPensions, sessionData)
     } yield ()
-  }
 }

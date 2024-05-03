@@ -17,10 +17,11 @@
 package models.pension.reliefs
 
 import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
+import cats.implicits._
 import models.pension.AllPensionsData.Zero
 import org.scalatest.prop.TableDrivenPropertyChecks
 import support.UnitTest
-import cats.implicits._
+import testdata.PaymentsIntoPensionsViewModelTestData
 
 class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropertyChecks {
 
@@ -67,29 +68,6 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropert
       aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(true)).journeyIsNo shouldBe false
       aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(false)).journeyIsNo shouldBe false
     }
-  }
-
-  "toReliefs" should {
-    "set BigDecimal values to 0.0 if None" in {
-      assert(aPaymentsIntoPensionsEmptyViewModel.toReliefs(None) === Reliefs(Zero.some, Zero.some, Zero.some, Zero.some, None))
-    }
-
-    "set BigDecimal values if defined" in {
-      assert(
-        PaymentsIntoPensionsViewModel(
-          Some(true),
-          Some(1.0),
-          Some(true),
-          Some(2.0),
-          Some(true),
-          Some(true),
-          Some(true),
-          Some(3.0),
-          Some(true),
-          Some(4.0)
-        ).toReliefs(None) === Reliefs(Some(1.0), Some(2.0), Some(3.0), Some(4.0), None))
-    }
-
   }
 
   "fromSubmittedReliefs" should {
@@ -166,4 +144,47 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropert
       assert(actualModel === expectedModel)
     }
   }
+
+  "updateRasPensionPaymentQuestion" should {
+    val answers = PaymentsIntoPensionsViewModelTestData.answers
+
+    "update answers on true" in {
+      val newAnswers = answers.updateRasPensionPaymentQuestion(true)
+      assert(newAnswers == answers)
+    }
+
+    "should clear dependent answers on false" in {
+      val newAnswers = answers.updateRasPensionPaymentQuestion(false)
+      assert(
+        newAnswers == answers.copy(
+          rasPensionPaymentQuestion = Some(false),
+          totalRASPaymentsAndTaxRelief = None,
+          oneOffRasPaymentPlusTaxReliefQuestion = None,
+          totalOneOffRasPaymentPlusTaxRelief = None,
+          totalPaymentsIntoRASQuestion = None
+        ))
+    }
+  }
+
+  "updatePensionTaxReliefNotClaimedQuestion" should {
+    val answers = PaymentsIntoPensionsViewModelTestData.answers
+
+    "update answers on true" in {
+      val newAnswers = answers.updatePensionTaxReliefNotClaimedQuestion(true)
+      assert(newAnswers == answers)
+    }
+
+    "should clear dependent answers on false" in {
+      val newAnswers = answers.updatePensionTaxReliefNotClaimedQuestion(false)
+      assert(
+        newAnswers == answers.copy(
+          pensionTaxReliefNotClaimedQuestion = Some(false),
+          retirementAnnuityContractPaymentsQuestion = None,
+          totalRetirementAnnuityContractPayments = None,
+          workplacePensionPaymentsQuestion = None,
+          totalWorkplacePensionPayments = None
+        ))
+    }
+  }
+
 }
