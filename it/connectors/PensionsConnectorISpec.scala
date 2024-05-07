@@ -525,25 +525,25 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
       }
     }
 
-  "getPaymentsIntoPensions" should {
-    val url = s"/income-tax-pensions/$taxYear/payments-into-pensions/$nino/answers"
+    "getPaymentsIntoPensions" should {
+      val url = s"/income-tax-pensions/$taxYear/payments-into-pensions/$nino/answers"
 
-    "return None if no data is found" in {
-      stubGetWithHeadersCheck(url, OK, Json.obj().toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
-      val result = connector.getPaymentsIntoPensions(currNino, taxyear).value.futureValue
-      assert(result.value === Some(PaymentsIntoPensionsViewModel.empty))
+      "return None if no data is found" in {
+        stubGetWithHeadersCheck(url, OK, Json.obj().toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        val result = connector.getPaymentsIntoPensions(currNino, taxyear).value.futureValue
+        assert(result.value === Some(PaymentsIntoPensionsViewModel.empty))
+      }
+
+      "return answers" in {
+        stubGetWithHeadersCheck(
+          url,
+          OK,
+          Json.toJson(PaymentsIntoPensionsViewModelTestData.answers).toString(),
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
+        val result = connector.getPaymentsIntoPensions(currNino, taxyear).value.futureValue
+        assert(result.value === Some(PaymentsIntoPensionsViewModelTestData.answers))
+      }
     }
-
-    "return answers" in {
-      stubGetWithHeadersCheck(
-        url,
-        OK,
-        Json.toJson(PaymentsIntoPensionsViewModelTestData.answers).toString(),
-        "X-Session-ID" -> sessionId,
-        "mtditid"      -> mtditid)
-      val result = connector.getPaymentsIntoPensions(currNino, taxyear).value.futureValue
-      assert(result.value === Some(PaymentsIntoPensionsViewModelTestData.answers))
-    }
-
   }
 }

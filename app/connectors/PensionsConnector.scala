@@ -24,19 +24,18 @@ import connectors.httpParsers.DeletePensionChargesHttpParser.DeletePensionCharge
 import connectors.httpParsers.DeletePensionIncomeHttpParser.DeletePensionIncomeHttpReads
 import connectors.httpParsers.DeletePensionReliefsHttpParser.DeletePensionReliefsHttpReads
 import connectors.httpParsers.GetJourneyStatusesHttpParser.GetJourneyStatusesHttpReads
-import connectors.httpParsers.GetAllJourneyStatusesHttpParser.GetAllJourneyStatusesHttpReads
 import connectors.httpParsers.LoadPriorEmploymentHttpParser.LoadPriorEmploymentHttpReads
 import connectors.httpParsers.PensionChargesSessionHttpParser.PensionChargesSessionHttpReads
 import connectors.httpParsers.PensionIncomeSessionHttpParser.PensionIncomeSessionHttpReads
 import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionHttpReads
 import models.domain.ApiResultT
 import models.logging.ConnectorRequestInfo
-import models.mongo.{JourneyContext, JourneyStatus, Mtditid}
+import models.mongo.{JourneyContext, JourneyStatus}
+import models.pension.JourneyNameAndStatus
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
-import models.pension.{Journey, JourneyNameAndStatus}
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
