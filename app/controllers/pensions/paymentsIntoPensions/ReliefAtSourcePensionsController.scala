@@ -68,19 +68,9 @@ class ReliefAtSourcePensionsController @Inject() (authAction: AuthorisedAction,
         yesNo =>
           pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
             case Right(optData) =>
-              val pensionsCya = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
-              val viewModel   = pensionsCya.paymentsIntoPension
-              val updatedCyaModel = pensionsCya.copy(paymentsIntoPension = if (yesNo) {
-                viewModel.copy(rasPensionPaymentQuestion = Some(true))
-              } else {
-                viewModel.copy(
-                  rasPensionPaymentQuestion = Some(false),
-                  totalRASPaymentsAndTaxRelief = None,
-                  oneOffRasPaymentPlusTaxReliefQuestion = None,
-                  totalOneOffRasPaymentPlusTaxRelief = None,
-                  totalPaymentsIntoRASQuestion = None
-                )
-              })
+              val pensionsCya         = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
+              val paymentsIntoPension = pensionsCya.paymentsIntoPension
+              val updatedCyaModel     = pensionsCya.copy(paymentsIntoPension = paymentsIntoPension.updateRasPensionPaymentQuestion(yesNo))
 
               val redirectLocation =
                 if (yesNo) ReliefAtSourcePaymentsAndTaxReliefAmountController.show(taxYear) else PensionsTaxReliefNotClaimedController.show(taxYear)

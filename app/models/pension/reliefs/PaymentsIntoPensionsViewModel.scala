@@ -90,30 +90,36 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
       case _ => false
     }
 
-  def toReliefs(overseasPensionSchemeContributions: Option[BigDecimal]): Reliefs =
-    Reliefs(
-      regularPensionContributions = totalRASPaymentsAndTaxRelief.getOrElse(Zero).some,
-      oneOffPensionContributionsPaid = totalOneOffRasPaymentPlusTaxRelief.getOrElse(Zero).some,
-      retirementAnnuityPayments = totalRetirementAnnuityContractPayments.getOrElse(Zero).some,
-      paymentToEmployersSchemeNoTaxRelief = totalWorkplacePensionPayments.getOrElse(Zero).some,
-      overseasPensionSchemeContributions = overseasPensionSchemeContributions // not part of this journey, but if we set None it will be wiped out
-    )
+  def updateRasPensionPaymentQuestion(yesAnswer: Boolean): PaymentsIntoPensionsViewModel =
+    if (yesAnswer) {
+      copy(rasPensionPaymentQuestion = Some(true))
+    } else {
+      copy(
+        rasPensionPaymentQuestion = Some(false),
+        totalRASPaymentsAndTaxRelief = None,
+        oneOffRasPaymentPlusTaxReliefQuestion = None,
+        totalOneOffRasPaymentPlusTaxRelief = None,
+        totalPaymentsIntoRASQuestion = None
+      )
+    }
 
-  def updatePensionTaxReliefNotClaimedQuestion(newValue: Boolean) = {
-    val valueNotChanged = pensionTaxReliefNotClaimedQuestion.contains(newValue)
-
-    copy(
-      pensionTaxReliefNotClaimedQuestion = Some(newValue),
-      retirementAnnuityContractPaymentsQuestion = if (valueNotChanged) retirementAnnuityContractPaymentsQuestion else None,
-      totalRetirementAnnuityContractPayments = if (valueNotChanged) totalRetirementAnnuityContractPayments else None,
-      workplacePensionPaymentsQuestion = if (valueNotChanged) workplacePensionPaymentsQuestion else None,
-      totalWorkplacePensionPayments = if (valueNotChanged) totalWorkplacePensionPayments else None
-    )
-  }
+  def updatePensionTaxReliefNotClaimedQuestion(yesAnswer: Boolean): PaymentsIntoPensionsViewModel =
+    if (yesAnswer) {
+      copy(pensionTaxReliefNotClaimedQuestion = Some(true))
+    } else {
+      copy(
+        pensionTaxReliefNotClaimedQuestion = Some(false),
+        retirementAnnuityContractPaymentsQuestion = None,
+        totalRetirementAnnuityContractPayments = None,
+        workplacePensionPaymentsQuestion = None,
+        totalWorkplacePensionPayments = None
+      )
+    }
 
   // We mark the helper question (totalPaymentsIntoRASQuestion) as true (as it must have been correct to reach CYA)
   def toPensionsCYAModel: PensionsCYAModel =
     PensionsCYAModel.emptyModels.copy(paymentsIntoPension = this.copy(totalPaymentsIntoRASQuestion = Some(true)))
+
 }
 
 object PaymentsIntoPensionsViewModel {

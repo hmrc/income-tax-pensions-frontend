@@ -184,36 +184,9 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest { // scalastyle
           .copy(pensionTaxReliefNotClaimedQuestion = Some(false))
           .updatePensionTaxReliefNotClaimedQuestion(true) ===
           model.copy(
-            pensionTaxReliefNotClaimedQuestion = Some(true),
-            retirementAnnuityContractPaymentsQuestion = None,
-            totalRetirementAnnuityContractPayments = None,
-            workplacePensionPaymentsQuestion = None,
-            totalWorkplacePensionPayments = None
-          )
-      )
-    }
-
-    "do nothing when updating to Some(false) wit previous value Some(false)" in {
-      assert(
-        model
-          .copy(pensionTaxReliefNotClaimedQuestion = Some(false))
-          .updatePensionTaxReliefNotClaimedQuestion(false) ===
-          model.copy(
-            pensionTaxReliefNotClaimedQuestion = Some(false)
-          )
-      )
-    }
-
-    "do nothing when updating to Some(true) wit previous value Some(true)" in {
-      assert(
-        model
-          .copy(pensionTaxReliefNotClaimedQuestion = Some(true))
-          .updatePensionTaxReliefNotClaimedQuestion(true) ===
-          model.copy(
             pensionTaxReliefNotClaimedQuestion = Some(true)
           )
       )
     }
-
   }
 }
