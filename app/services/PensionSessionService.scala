@@ -173,6 +173,17 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
     }
   }
 
+  private def getAllJourneyStatuses: DownstreamOutcome[Seq[JourneyNameAndStatus]] = // TODO 7969 connector to mongo BE for journeyNameAndStatus list
+    Future(Right[APIErrorModel, Seq[JourneyNameAndStatus]](Seq()))
+
+  def getJourneyStatus(ctx: JourneyContext)(implicit hc: HeaderCarrier): DownstreamOutcome[Option[JourneyStatus]] =
+    pensionsConnector
+      .getJourneyStatus(ctx)
+      .map(_.map(_.headOption.map(_.journeyStatus)))
+
+  def saveJourneyStatus(ctx: JourneyContext, status: JourneyStatus)(implicit hc: HeaderCarrier): DownstreamOutcome[Unit] =
+    pensionsConnector.saveJourneyStatus(ctx, status)
+
   def updateSessionData(user: User, taxYear: TaxYear, sessionData: PensionsUserData, priorData: PensionsCYAModel): ApiResultT[PensionsUserData] = {
     val updatedSessionData = priorData.merge(Some(sessionData.pensions))
 

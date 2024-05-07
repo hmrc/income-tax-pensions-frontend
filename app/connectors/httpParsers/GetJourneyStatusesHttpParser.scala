@@ -24,11 +24,11 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.PagerDutyHelper.PagerDutyKeys.{INTERNAL_SERVER_ERROR_FROM_API, SERVICE_UNAVAILABLE_FROM_API, UNEXPECTED_RESPONSE_FROM_API}
 import utils.PagerDutyHelper.pagerDutyLog
 
-object GetAllJourneyStatusesHttpParser extends APIParser {
-  override val parserName: String = "GetAllJourneyStatusesHttpParser"
+object GetJourneyStatusesHttpParser extends APIParser {
+  override val parserName: String = "GetJourneyStatusesHttpParser"
   override val service: String    = "income-tax-pensions-frontend"
 
-  implicit object GetAllJourneyStatusesHttpReads extends HttpReads[DownstreamErrorOr[List[JourneyNameAndStatus]]] {
+  implicit object GetJourneyStatusesHttpReads extends HttpReads[DownstreamErrorOr[List[JourneyNameAndStatus]]] {
 
     override def read(method: String, url: String, response: HttpResponse): DownstreamErrorOr[List[JourneyNameAndStatus]] = {
       ConnectorResponseInfo(method, url, response).logResponseWarnOn4xx(logger)

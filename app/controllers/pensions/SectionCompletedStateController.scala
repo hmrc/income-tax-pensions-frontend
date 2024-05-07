@@ -16,37 +16,43 @@
 
 package controllers.pensions
 
+import common.TaxYear
 import config.AppConfig
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
-import models.mongo.JourneyStatus
-import models.mongo.JourneyStatus.{Completed, InProgress, NotStarted}
+import models.mongo.JourneyStatus.{Completed, InProgress}
+import models.mongo.{JourneyContext, JourneyStatus, Mtditid}
 import models.pension.Journey
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.PensionSessionService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.FutureUtils.FutureOps
 import views.html.pensions.SectionCompletedStateView
 
 import javax.inject.{Inject, Singleton}
-import scala.annotation.unused
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvider,
                                                  formsProvider: FormsProvider,
+                                                 sessionService: PensionSessionService,
                                                  cc: MessagesControllerComponents,
-                                                 view: SectionCompletedStateView)(implicit appConfig: AppConfig)
+                                                 view: SectionCompletedStateView)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport { // TODO 7969 add Spec for show and submit
 
   val form: Form[Boolean] = formsProvider.sectionCompletedStateForm
 
-  def show(taxYear: Int, journey: Journey): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) { implicit request =>
-    val existingAnswer: Option[JourneyStatus] = None // TODO 7969 GET journey state
-    val filledForm                            = existingAnswer.fold(form)(fill(form, _))
-    Ok(view(filledForm, taxYear, journey))
+  def show(taxYear: Int, journey: Journey): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
+    val filledForm = sessionService
+      .getJourneyStatus(JourneyContext(TaxYear(taxYear), Mtditid(request.user.mtditid), journey))
+      .map(_.fold(_ => form, fill(form, _)))
+
+    filledForm map { form =>
+      Ok(view(form, taxYear, journey))
+    }
   }
 
   def submit(taxYear: Int, journey: Journey): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
@@ -54,21 +60,23 @@ class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvide
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, journey))),
-        answer => saveAndRedirect(answer, journey, taxYear)
+        answer => saveAndRedirect(answer, JourneyContext(TaxYear(taxYear), Mtditid(request.user.mtditid), journey))
       )
   }
 
-  private def fill(form: Form[Boolean], status: JourneyStatus): Form[Boolean] =
+  private def fill(form: Form[Boolean], status: Option[JourneyStatus]): Form[Boolean] =
     status match {
-      case Completed  => form.fill(true)
-      case InProgress => form.fill(false)
-      case NotStarted => form
+      case Some(Completed)  => form.fill(true)
+      case Some(InProgress) => form.fill(false)
+      case _                => form
     }
 
-  private def saveAndRedirect(answer: Boolean, journey: Journey, taxYear: Int): Future[Result] = { // TODO 7969 POST journey state
-    @unused
+  private def saveAndRedirect(answer: Boolean, ctx: JourneyContext)(implicit hc: HeaderCarrier): Future[Result] = { // TODO 7969 POST journey state
     val status = if (answer) Completed else InProgress
-    journey.sectionCompletedRedirect(taxYear).toFuture
+
+    sessionService.saveJourneyStatus(ctx, status) map { _ =>
+      ctx.journey.sectionCompletedRedirect(ctx.taxYear.endYear)
+    }
   }
 
 }

@@ -29,13 +29,12 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.PensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 
 @Singleton
 class PensionsSummaryController @Inject() (mcc: MessagesControllerComponents,
                                            actionProvider: ActionsProvider,
                                            pensionSessionService: PensionSessionService,
-                                           pensionsSummaryView: PensionsSummaryView)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                           pensionsSummaryView: PensionsSummaryView)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport {
   def show(taxYear: Int): Action[AnyContent] =
