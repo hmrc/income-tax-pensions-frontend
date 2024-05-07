@@ -153,6 +153,9 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
   // TODO: Migrate to PensionService once created
   def getJourneyStatus(ctx: JourneyContext)(implicit hc: HeaderCarrier): DownstreamOutcome[Option[JourneyStatus]] =
     pensionsConnector
-      .getJourneyState(ctx.journey, ctx.taxYear, ctx.mtditid)
+      .getJourneyStatus(ctx)
       .map(_.map(_.headOption.map(_.journeyStatus)))
+
+  def saveJourneyStatus(ctx: JourneyContext, status: JourneyStatus)(implicit hc: HeaderCarrier): DownstreamOutcome[Unit] =
+    pensionsConnector.saveJourneyStatus(ctx, status)
 }

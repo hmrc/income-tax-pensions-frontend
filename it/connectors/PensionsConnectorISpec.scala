@@ -19,24 +19,25 @@ package connectors
 import builders.PensionChargesBuilder.anPensionCharges
 import builders.PensionIncomeBuilder.aCreateUpdatePensionIncomeModel
 import builders.PensionReliefsBuilder.anPensionReliefs
+import common.Nino
 import models.mongo.JourneyStatus.{Completed, InProgress}
-import models.mongo.Mtditid
+import models.mongo.{JourneyContext, JourneyStatus, Mtditid}
 import models.pension.Journey.{PaymentsIntoPensions, UnauthorisedPayments}
 import models.pension.JourneyNameAndStatus
-import common.Nino
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
 import models.{APIErrorBodyModel, APIErrorModel}
+import org.scalatest.Inside.inside
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status._
 import play.api.libs.json.Json
+import testdata.PaymentsIntoPensionsViewModelTestData
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import utils.IntegrationTest
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import testdata.PaymentsIntoPensionsViewModelTestData
 
 class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
 
@@ -393,18 +394,19 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
   "getJourneyStatus" should {
     val url               = s"/income-tax-pensions/journey-status/$PaymentsIntoPensions/taxYear/$taxYear"
     val journeyStatusList = List(JourneyNameAndStatus(PaymentsIntoPensions, Completed))
+    val ctx               = JourneyContext(taxyear, Mtditid(mtditid), PaymentsIntoPensions)
 
     "Return a success 204 result" when {
       "there are no statuses saved in the backend database and an empty List is returned" in {
         stubGetWithHeadersCheck(url, OK, Json.toJson(List[JourneyNameAndStatus]()).toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
-        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid)), Duration.Inf)
+        val result = Await.result(connector.getJourneyStatus(ctx), Duration.Inf)
 
         result shouldBe Right(List())
       }
 
       "there is a valid status saved in the backend database and they are returned in the response body" in {
         stubGetWithHeadersCheck(url, OK, Json.toJson(journeyStatusList).toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
-        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid)), Duration.Inf)
+        val result = Await.result(connector.getJourneyStatus(ctx), Duration.Inf)
 
         result shouldBe Right(journeyStatusList)
       }
@@ -414,14 +416,14 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
       "the stub isn't matched due to the call being external as the headers won't be passed along" in {
         implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue"))).withExtraHeaders("mtditid" -> mtditid)
         stubGetWithHeadersCheck(url, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
-        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid))(hc, ec), Duration.Inf)
+        val result = Await.result(connector.getJourneyStatus(ctx)(hc, ec), Duration.Inf)
 
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
       }
 
       "submission returns a 200 but invalid json" in {
         stubGetWithHeadersCheck(url, OK, Json.toJson("""{"invalid": true}""").toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
-        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid)), Duration.Inf)
+        val result = Await.result(connector.getJourneyStatus(ctx), Duration.Inf)
 
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
       }
@@ -433,7 +435,7 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
           """{"code": "FAILED", "reason": "failed"}""",
           "X-Session-ID" -> sessionId,
           "mtditid"      -> mtditid)
-        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid)), Duration.Inf)
+        val result = Await.result(connector.getJourneyStatus(ctx), Duration.Inf)
 
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
       }
@@ -445,16 +447,71 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
           """{"code": "FAILED", "reason": "failed"}""",
           "X-Session-ID" -> sessionId,
           "mtditid"      -> mtditid)
-        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid)), Duration.Inf)
+        val result = Await.result(connector.getJourneyStatus(ctx), Duration.Inf)
 
         result shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))
       }
 
       "submission returns an unexpected result" in {
         stubGetWithHeadersCheck(url, BAD_REQUEST, """{"code": "FAILED", "reason": "failed"}""", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
-        val result = Await.result(connector.getJourneyState(PaymentsIntoPensions, taxyear, Mtditid(mtditid)), Duration.Inf)
+        val result = Await.result(connector.getJourneyStatus(ctx), Duration.Inf)
 
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
+      }
+    }
+  }
+
+  "saveJourneyStatus" should {
+    val url               = s"/income-tax-pensions/journey-status/$PaymentsIntoPensions/taxYear/$taxYear"
+    val ctx               = JourneyContext(taxyear, Mtditid(mtditid), PaymentsIntoPensions)
+
+    "Return a success 204 result" when {
+      "a status is updated and nothing is returned" in {
+        stubPutWithHeadersCheck(url, NO_CONTENT, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        val result = Await.result(connector.saveJourneyStatus(ctx, Completed), Duration.Inf)
+
+        result shouldBe Right(())
+      }
+    }
+
+    "Return an error result" when {
+      "the stub isn't matched due to the call being external as the headers won't be passed along" in {
+        implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionIdValue")))
+
+        stubPutWithHeadersCheck(url, INTERNAL_SERVER_ERROR, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        val result = Await.result(connector.saveJourneyStatus(ctx, Completed)(hc, ec), Duration.Inf)
+
+        result should be (Symbol("left"))
+        inside(result) { case Left(error) =>
+          error.status shouldBe INTERNAL_SERVER_ERROR
+          error.body shouldBe an[APIErrorBodyModel]
+          error.toJson.as[APIErrorBodyModel].code shouldBe "PARSING_ERROR"
+          error.toJson.as[APIErrorBodyModel].reason should include("Error parsing response from API:")
+          error.toJson.as[APIErrorBodyModel].reason should include("Header does not match")
+        }
+      }
+
+
+      "submission returns a 500" in {
+        stubPutWithHeadersCheck(url, INTERNAL_SERVER_ERROR, """{"code": "FAILED", "reason": "failed"}""", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        val result = Await.result(connector.saveJourneyStatus(ctx, Completed), Duration.Inf)
+
+
+        result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
+      }
+
+      "submission returns a 503" in {
+        stubPutWithHeadersCheck(url, SERVICE_UNAVAILABLE, """{"code": "FAILED", "reason": "failed"}""", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        val result = Await.result(connector.saveJourneyStatus(ctx, Completed), Duration.Inf)
+
+        result shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))
+      }
+
+      "submission returns an unexpected result" in {
+        stubPutWithHeadersCheck(url, BAD_REQUEST, """{"code": "FAILED", "reason": "failed"}""", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        val result = Await.result(connector.saveJourneyStatus(ctx, Completed), Duration.Inf)
+
+        result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
       }
     }
   }

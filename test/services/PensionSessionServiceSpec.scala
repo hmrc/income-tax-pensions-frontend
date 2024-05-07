@@ -21,14 +21,14 @@ import builders.PensionsCYAModelBuilder._
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import cats.implicits.{catsSyntaxEitherId, catsSyntaxOptionId}
 import config._
-import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import models.mongo.JourneyStatus.Completed
 import models.mongo._
 import models.pension.AllPensionsData.generateSessionModelFromPrior
 import models.pension.Journey.{PaymentsIntoPensions, PensionsSummary}
 import models.pension.JourneyNameAndStatus
+import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Result
 import play.api.mvc.Results.{Ok, Redirect}
@@ -36,8 +36,7 @@ import play.api.test.Injecting
 import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration.Duration
+import scala.concurrent.Future
 
 class PensionSessionServiceSpec
     extends UnitTest
@@ -222,9 +221,11 @@ class PensionSessionServiceSpec
   }
 
   "getJourneyStatus" should {
+    val ctx = JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions)
+
     "return a successful result" which {
       "contains a None when an empty list is returned from the database" in {
-        mockGetJourneyStatus(PaymentsIntoPensions, currentTaxYear, Mtditid(mtditid), Right(List()))
+        mockGetJourneyStatus(ctx, Right(List()))
 
         val response = service.getJourneyStatus(JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions))
 
@@ -232,11 +233,7 @@ class PensionSessionServiceSpec
       }
 
       "contains a Some(JourneyStatus) when a status is returned from the database" in {
-        mockGetJourneyStatus(
-          PaymentsIntoPensions,
-          currentTaxYear,
-          Mtditid(mtditid),
-          Right(List(JourneyNameAndStatus(PaymentsIntoPensions, Completed))))
+        mockGetJourneyStatus(ctx, Right(List(JourneyNameAndStatus(PaymentsIntoPensions, Completed))))
 
         val response = service.getJourneyStatus(JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions))
 
@@ -245,15 +242,43 @@ class PensionSessionServiceSpec
     }
 
     "return an error result when connector returns an error" in {
-      mockGetJourneyStatus(
-        PaymentsIntoPensions,
-        currentTaxYear,
-        Mtditid(mtditid),
-        Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError)))
+      mockGetJourneyStatus(ctx, Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError)))
 
       val response = service.getJourneyStatus(JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions))
 
       await(response) shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError))
+    }
+  }
+
+  "saveJourneyStatus" should {
+
+    "return a Right Unit when a journey's status is changed successfully" in {
+      val ctx = JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions)
+      mockSaveJourneyStatus(ctx, Completed, Right(()))
+
+      val response = service.saveJourneyStatus(JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions), Completed)
+
+      await(response) shouldBe Right(())
+    }
+
+    "return an error" when {
+      "the connector returns an Internal Server error" in {
+        val ctx = JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions)
+        mockSaveJourneyStatus(ctx, Completed, Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel(INTERNAL_SERVER_ERROR.toString, "Internal Server Error"))))
+
+        val response = service.saveJourneyStatus(JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions), Completed)
+
+        await(response) shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel(INTERNAL_SERVER_ERROR.toString, "Internal Server Error")))
+      }
+
+      "the connector returns a Bad Request if journey status is parsed incorrectly" in {
+        val ctx = JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions)
+        mockSaveJourneyStatus(ctx, Completed, Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel.parsingError)))
+
+        val response = service.saveJourneyStatus(JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions), Completed)
+
+        await(response) shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel.parsingError))
+      }
     }
   }
 }

@@ -16,7 +16,6 @@
 
 package connectors
 
-import common.TaxYear
 import cats.data.EitherT
 import common.{Nino, TaxYear}
 import config.AppConfig
@@ -30,12 +29,11 @@ import connectors.httpParsers.PensionIncomeSessionHttpParser.PensionIncomeSessio
 import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionHttpReads
 import models.domain.ApiResultT
 import models.logging.ConnectorRequestInfo
-import models.mongo.Mtditid
+import models.mongo.{JourneyContext, JourneyStatus, Mtditid}
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
-import models.pension.reliefs.CreateUpdatePensionReliefsModel
-import models.pension.{Journey, JourneyNameAndStatus}
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
+import models.pension.{Journey, JourneyNameAndStatus}
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -121,16 +119,25 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     http.GET[DownstreamErrorOr[List[JourneyNameAndStatus]]](url)
   }
 
-  def getJourneyState(journey: Journey, taxYear: TaxYear, mtditid: Mtditid)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext): DownstreamOutcome[List[JourneyNameAndStatus]] = {
+  def getJourneyStatus(ctx: JourneyContext)
+                     (implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[List[JourneyNameAndStatus]] = {
 
-    val url = buildUrl(s"/journey-status/$journey/taxYear/$taxYear")
+    val url = buildUrl(s"/journey-status/${ctx.journey}/taxYear/${ctx.taxYear}")
     ConnectorRequestInfo("GET", url, "income-tax-pensions").logRequest(logger)
     http.GET[DownstreamErrorOr[List[JourneyNameAndStatus]]](url)(
       GetJourneyStatusesHttpReads,
-      hc.withExtraHeaders(("mtditid", mtditid.value)),
+      hc.withExtraHeaders(("mtditid", ctx.mtditid.value)),
       ec
     )
+  }
+
+  def saveJourneyStatus(ctx: JourneyContext, status: JourneyStatus)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
+    val url = buildUrl(s"/journey-status/${ctx.journey}/taxYear/${ctx.taxYear}")
+    ConnectorRequestInfo("POST", url, "income-tax-pensions").logRequest(logger)
+    http.PUT[JourneyStatus, DownstreamErrorOr[Unit]](url, status)(
+      JourneyStatus.format,
+      NoContentHttpReads,
+      hcWithCorrelationId(hc).withExtraHeaders(("mtditid", ctx.mtditid.value)),
+      ec)
   }
 }

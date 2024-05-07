@@ -19,11 +19,11 @@ package config
 import common.TaxYear
 import connectors.{DownstreamOutcome, PensionsConnector}
 import models.APIErrorModel
-import models.mongo.Mtditid
+import models.mongo.{JourneyContext, JourneyStatus}
+import models.pension.JourneyNameAndStatus
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.CreateUpdatePensionReliefsModel
-import models.pension.{Journey, JourneyNameAndStatus}
 import org.scalamock.handlers.{CallHandler3, CallHandler4, CallHandler5}
 import org.scalamock.scalatest.MockFactory
 import services.{PensionChargesConnectorHelper, PensionIncomeConnectorHelper, PensionReliefsConnectorHelper}
@@ -96,11 +96,19 @@ trait MockPensionsConnector extends MockFactory {
       .returns(Future.successful(response))
       .anyNumberOfTimes()
 
-  def mockGetJourneyStatus(journey: Journey, taxYear: TaxYear, mtditid: Mtditid, response: Either[APIErrorModel, List[JourneyNameAndStatus]])
-      : CallHandler5[Journey, TaxYear, Mtditid, HeaderCarrier, ExecutionContext, DownstreamOutcome[List[JourneyNameAndStatus]]] =
+  def mockGetJourneyStatus(ctx: JourneyContext, response: Either[APIErrorModel, List[JourneyNameAndStatus]])
+      : CallHandler3[JourneyContext, HeaderCarrier, ExecutionContext, DownstreamOutcome[List[JourneyNameAndStatus]]] =
     (mockPensionsConnector
-      .getJourneyState(_: Journey, _: TaxYear, _: Mtditid)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(journey, taxYear, mtditid, *, *)
+      .getJourneyStatus(_: JourneyContext)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(ctx, *, *)
+      .returns(Future.successful(response))
+      .anyNumberOfTimes()
+
+  def mockSaveJourneyStatus(ctx: JourneyContext, status: JourneyStatus, response: Either[APIErrorModel, Unit])
+      : CallHandler4[JourneyContext, JourneyStatus, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
+    (mockPensionsConnector
+      .saveJourneyStatus(_: JourneyContext, _: JourneyStatus)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(ctx, status, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
 }

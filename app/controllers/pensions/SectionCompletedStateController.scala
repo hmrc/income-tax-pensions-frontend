@@ -27,12 +27,11 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PensionSessionService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.FutureUtils.FutureOps
 import views.html.pensions.SectionCompletedStateView
 
 import javax.inject.{Inject, Singleton}
-import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -61,7 +60,7 @@ class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvide
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, journey))),
-        answer => saveAndRedirect(answer, journey, taxYear)
+        answer => saveAndRedirect(answer, JourneyContext(TaxYear(taxYear), Mtditid(request.user.mtditid), journey))
       )
   }
 
@@ -72,10 +71,12 @@ class SectionCompletedStateController @Inject() (actionsProvider: ActionsProvide
       case _                => form
     }
 
-  private def saveAndRedirect(answer: Boolean, journey: Journey, taxYear: Int): Future[Result] = { // TODO 7969 POST journey state
-    @unused
+  private def saveAndRedirect(answer: Boolean, ctx: JourneyContext)(implicit hc: HeaderCarrier): Future[Result] = { // TODO 7969 POST journey state
     val status = if (answer) Completed else InProgress
-    journey.sectionCompletedRedirect(taxYear).toFuture
+
+    sessionService.saveJourneyStatus(ctx, status) map { _ =>
+      ctx.journey.sectionCompletedRedirect(ctx.taxYear.endYear)
+    }
   }
 
 }
