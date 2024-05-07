@@ -464,8 +464,8 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
   }
 
   "saveJourneyStatus" should {
-    val url               = s"/income-tax-pensions/journey-status/$PaymentsIntoPensions/taxYear/$taxYear"
-    val ctx               = JourneyContext(taxyear, Mtditid(mtditid), PaymentsIntoPensions)
+    val url = s"/income-tax-pensions/journey-status/$PaymentsIntoPensions/taxYear/$taxYear"
+    val ctx = JourneyContext(taxyear, Mtditid(mtditid), PaymentsIntoPensions)
 
     "Return a success 204 result" when {
       "a status is updated and nothing is returned" in {
@@ -483,7 +483,7 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
         stubPutWithHeadersCheck(url, INTERNAL_SERVER_ERROR, "{}", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
         val result = Await.result(connector.saveJourneyStatus(ctx, Completed)(hc, ec), Duration.Inf)
 
-        result should be (Symbol("left"))
+        result should be(Symbol("left"))
         inside(result) { case Left(error) =>
           error.status shouldBe INTERNAL_SERVER_ERROR
           error.body shouldBe an[APIErrorBodyModel]
@@ -493,17 +493,25 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
         }
       }
 
-
       "submission returns a 500" in {
-        stubPutWithHeadersCheck(url, INTERNAL_SERVER_ERROR, """{"code": "FAILED", "reason": "failed"}""", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(
+          url,
+          INTERNAL_SERVER_ERROR,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
         val result = Await.result(connector.saveJourneyStatus(ctx, Completed), Duration.Inf)
-
 
         result shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("FAILED", "failed")))
       }
 
       "submission returns a 503" in {
-        stubPutWithHeadersCheck(url, SERVICE_UNAVAILABLE, """{"code": "FAILED", "reason": "failed"}""", "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+        stubPutWithHeadersCheck(
+          url,
+          SERVICE_UNAVAILABLE,
+          """{"code": "FAILED", "reason": "failed"}""",
+          "X-Session-ID" -> sessionId,
+          "mtditid"      -> mtditid)
         val result = Await.result(connector.saveJourneyStatus(ctx, Completed), Duration.Inf)
 
         result shouldBe Left(APIErrorModel(SERVICE_UNAVAILABLE, APIErrorBodyModel("FAILED", "failed")))

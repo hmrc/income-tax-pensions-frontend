@@ -266,11 +266,15 @@ class PensionSessionServiceSpec
     "return an error" when {
       "the connector returns an Internal Server error" in {
         val ctx = JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions)
-        mockSaveJourneyStatus(ctx, Completed, Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel(INTERNAL_SERVER_ERROR.toString, "Internal Server Error"))))
+        mockSaveJourneyStatus(
+          ctx,
+          Completed,
+          Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel(INTERNAL_SERVER_ERROR.toString, "Internal Server Error"))))
 
         val response = service.saveJourneyStatus(JourneyContext(currentTaxYear, Mtditid(mtditid), PaymentsIntoPensions), Completed)
 
-        await(response) shouldBe Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel(INTERNAL_SERVER_ERROR.toString, "Internal Server Error")))
+        await(response) shouldBe Left(
+          APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel(INTERNAL_SERVER_ERROR.toString, "Internal Server Error")))
       }
 
       "the connector returns a Bad Request if journey status is parsed incorrectly" in {

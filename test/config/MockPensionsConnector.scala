@@ -107,8 +107,10 @@ trait MockPensionsConnector extends MockFactory {
       .returns(Future.successful(response))
       .anyNumberOfTimes()
 
-  def mockSaveJourneyStatus(ctx: JourneyContext, status: JourneyStatus, response: Either[APIErrorModel, Unit])
-      : CallHandler4[JourneyContext, JourneyStatus, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
+  def mockSaveJourneyStatus(
+      ctx: JourneyContext,
+      status: JourneyStatus,
+      response: Either[APIErrorModel, Unit]): CallHandler4[JourneyContext, JourneyStatus, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
     (mockPensionsConnector
       .saveJourneyStatus(_: JourneyContext, _: JourneyStatus)(_: HeaderCarrier, _: ExecutionContext))
       .expects(ctx, status, *, *)

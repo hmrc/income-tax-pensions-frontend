@@ -133,8 +133,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     http.GET[DownstreamErrorOr[List[JourneyNameAndStatus]]](url)
   }
 
-  def getJourneyStatus(ctx: JourneyContext)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[List[JourneyNameAndStatus]] = {
+  def getJourneyStatus(ctx: JourneyContext)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[List[JourneyNameAndStatus]] = {
 
     val url = buildUrl(s"/journey-status/${ctx.journey}/taxYear/${ctx.taxYear}")
     ConnectorRequestInfo("GET", url, "income-tax-pensions").logRequest(logger)
