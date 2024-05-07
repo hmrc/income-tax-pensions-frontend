@@ -26,7 +26,7 @@ import models.pension.Journey.{PaymentsIntoPensions, UnauthorisedPayments}
 import models.pension.JourneyNameAndStatus
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
-import models.pension.reliefs.CreateUpdatePensionReliefsModel
+import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
 import models.{APIErrorBodyModel, APIErrorModel}
 import org.scalatest.Inside.inside
 import org.scalatest.concurrent.ScalaFutures
@@ -38,6 +38,8 @@ import utils.IntegrationTest
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import testdata.PaymentsIntoPensionsViewModelTestData
+import org.scalatest.EitherValues._
 
 class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
 
@@ -514,5 +516,26 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
         result shouldBe Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("FAILED", "failed")))
       }
     }
+
+  "getPaymentsIntoPensions" should {
+    val url = s"/income-tax-pensions/$taxYear/payments-into-pensions/$nino/answers"
+
+    "return None if no data is found" in {
+      stubGetWithHeadersCheck(url, OK, Json.obj().toString(), "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
+      val result = connector.getPaymentsIntoPensions(currNino, taxyear).value.futureValue
+      assert(result.value === Some(PaymentsIntoPensionsViewModel.empty))
+    }
+
+    "return answers" in {
+      stubGetWithHeadersCheck(
+        url,
+        OK,
+        Json.toJson(PaymentsIntoPensionsViewModelTestData.answers).toString(),
+        "X-Session-ID" -> sessionId,
+        "mtditid"      -> mtditid)
+      val result = connector.getPaymentsIntoPensions(currNino, taxyear).value.futureValue
+      assert(result.value === Some(PaymentsIntoPensionsViewModelTestData.answers))
+    }
+
   }
 }

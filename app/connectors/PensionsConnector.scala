@@ -24,6 +24,8 @@ import connectors.httpParsers.DeletePensionChargesHttpParser.DeletePensionCharge
 import connectors.httpParsers.DeletePensionIncomeHttpParser.DeletePensionIncomeHttpReads
 import connectors.httpParsers.DeletePensionReliefsHttpParser.DeletePensionReliefsHttpReads
 import connectors.httpParsers.GetJourneyStatusesHttpParser.GetJourneyStatusesHttpReads
+import connectors.httpParsers.GetAllJourneyStatusesHttpParser.GetAllJourneyStatusesHttpReads
+import connectors.httpParsers.LoadPriorEmploymentHttpParser.LoadPriorEmploymentHttpReads
 import connectors.httpParsers.PensionChargesSessionHttpParser.PensionChargesSessionHttpReads
 import connectors.httpParsers.PensionIncomeSessionHttpParser.PensionIncomeSessionHttpReads
 import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionHttpReads
@@ -31,6 +33,7 @@ import models.domain.ApiResultT
 import models.logging.ConnectorRequestInfo
 import models.mongo.{JourneyContext, JourneyStatus, Mtditid}
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
+import models.pension.employmentPensions.EmploymentPensions
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
 import models.pension.{Journey, JourneyNameAndStatus}
@@ -43,18 +46,29 @@ import scala.concurrent.ExecutionContext
 class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends Logging {
   private def buildUrl(url: String) = s"${appConfig.pensionBEBaseUrl}$url"
 
+  def loadPriorEmployment(nino: String, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[EmploymentPensions] = {
+    val url = buildUrl(s"/employment-pension/nino/$nino/taxYear/${taxYear.endYear}")
+    http.GET[DownstreamErrorOr[EmploymentPensions]](url)(LoadPriorEmploymentHttpReads, hcWithCorrelationId(hc), ec)
+  }
+
   def savePaymentsIntoPensions(nino: Nino, taxYear: TaxYear, answers: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
-    val url = appConfig.pensionBEBaseUrl + s"/${taxYear.endYear}/payments-into-pensions/${nino.value}/answers"
+    val url = appConfig.paymentsIntoPensionsAnswersUrl(taxYear, nino)
     ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, answers)
 
-    val res = http.PUT[PaymentsIntoPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(
-      PaymentsIntoPensionsViewModel.format,
-      NoContentHttpReads,
-      hcWithCorrelationId(hc),
-      ec)
+    val res =
+      http.PUT[PaymentsIntoPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(PaymentsIntoPensionsViewModel.format, NoContentHttpReads, hc, ec)
 
+    EitherT(res)
+  }
+
+  def getPaymentsIntoPensions(nino: Nino, taxYear: TaxYear)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Option[PaymentsIntoPensionsViewModel]] = {
+    val url = appConfig.paymentsIntoPensionsAnswersUrl(taxYear, nino)
+    ConnectorRequestInfo("GET", url, "income-tax-pensions").logRequest(logger)
+    val res = http.GET[DownstreamErrorOr[Option[PaymentsIntoPensionsViewModel]]](url)
     EitherT(res)
   }
 

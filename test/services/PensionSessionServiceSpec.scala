@@ -27,6 +27,8 @@ import models.pension.AllPensionsData.generateSessionModelFromPrior
 import models.pension.Journey.{PaymentsIntoPensions, PensionsSummary}
 import models.pension.JourneyNameAndStatus
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
+import models.pension.Journey.PensionsSummary
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}
@@ -154,7 +156,7 @@ class PensionSessionServiceSpec
     "generate a PensionsCYAModel from prior AllPensionsData" in {
       mockCreateOrUpdate(emptySessionData, Right(()))
       val response = generateSessionModelFromPrior(anAllPensionDataEmpty)
-      response shouldBe aPensionsCYAGeneratedFromPriorEmpty
+      response shouldBe aPensionsCYAGeneratedFromPriorEmpty.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel.empty)
     }
   }
 

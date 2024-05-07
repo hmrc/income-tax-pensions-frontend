@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+import cats.Functor
 import cats.data.EitherT
+import cats.implicits.{catsSyntaxSemigroup, toFunctorOps}
 import models.mongo.ServiceError
 
 import scala.concurrent.Future
@@ -30,5 +32,11 @@ package object services {
         x  <- e
       } yield xs :+ x
     }
+
+  implicit class FCollapser[F[_]: Functor](outcome: F[Seq[Unit]]) {
+    def collapse: F[Unit] =
+      outcome.map(_.reduce(_ |+| _))
+
+  }
 
 }

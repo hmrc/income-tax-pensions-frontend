@@ -16,12 +16,22 @@
 
 package models.mongo
 
+import models.{APIErrorBodyModel, APIErrorModel}
+import play.api.http.Status.INTERNAL_SERVER_ERROR
+
 trait ServiceError {
   val message: String
+
+  def toAPIErrorModel: APIErrorModel =
+    APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.genericError(message))
 }
 
 trait DatabaseError extends ServiceError {
   override val message: String
+
+  override def toAPIErrorModel: APIErrorModel =
+    APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.dbError(message))
+
 }
 
 case object DataNotUpdated extends DatabaseError {

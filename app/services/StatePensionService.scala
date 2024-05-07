@@ -17,7 +17,7 @@
 package services
 
 import cats.data.EitherT
-import cats.implicits.{catsSyntaxList, catsSyntaxSemigroup, toTraverseOps}
+import cats.implicits.{catsSyntaxList, toTraverseOps}
 import common.TaxYear
 import connectors._
 import models.mongo._
@@ -64,11 +64,11 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
   private def processSubmission(session: PensionsUserData, prior: IncomeTaxUserData, taxYear: Int, user: User)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): DownstreamOutcome[Unit] = {
-    val reqModels = List(StatePension, StatePensionLumpSum).map(buildDownstreamRequestModel(_, session, taxYear))
+    val reqModels = Seq(StatePension, StatePensionLumpSum).map(buildDownstreamRequestModel(_, session, taxYear))
     (for {
       _   <- runDeleteIfRequired(prior, session, user, taxYear)
       res <- reqModels.traverse(runSaveIfRequired(_, user, taxYear))
-    } yield res).value.collapse
+    } yield res).collapse.value
   }
 
   private def runDeleteIfRequired(prior: IncomeTaxUserData, session: PensionsUserData, user: User, taxYear: Int)(implicit
@@ -92,7 +92,7 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
     ids
       .traverse[Future, DownstreamErrorOr[Unit]](id => stateBenefitsConnector.deleteClaim(nino, taxYear, id))
       .map(sequence)
-      .collapse
+      .map(_.collapse)
 
   private def runSaveIfRequired(answers: StateBenefitsUserData, user: User, taxYear: Int)(implicit
       hc: HeaderCarrier,
@@ -163,12 +163,5 @@ class StatePensionService @Inject() (repository: PensionsUserDataRepository,
       claim = Some(claimModel),
       lastUpdated = Instant.parse(session.lastUpdated.toLocalDateTime.toString + "Z")
     )
-  }
-
-  private implicit class DownstreamOutcomeOps(value: DownstreamOutcome[Seq[Unit]]) {
-    def collapse(implicit ec: ExecutionContext): DownstreamOutcome[Unit] =
-      EitherT(value)
-        .map(_.reduce(_ |+| _))
-        .value
   }
 }

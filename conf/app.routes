@@ -69,7 +69,7 @@ POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace            
 GET         /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                                                        controllers.pensions.paymentsIntoPensions.WorkplaceAmountController.show(taxYear: Int)
 POST        /:taxYear/payments-into-pensions/no-tax-relief/workplace-amount                                                        controllers.pensions.paymentsIntoPensions.WorkplaceAmountController.submit(taxYear: Int)
 
-GET         /:taxYear/payments-into-pensions/check-payments-into-pensions                                                          controllers.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAController.show(taxYear:Int)
+GET         /:taxYear/payments-into-pensions/check-payments-into-pensions                                                          controllers.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAController.show(taxYear: TaxYear)
 POST        /:taxYear/payments-into-pensions/check-payments-into-pensions                                                          controllers.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAController.submit(taxYear: TaxYear)
 
 ###########################     Income from Pension pages     ####################################

@@ -16,11 +16,13 @@
 
 package models.pension.reliefs
 
+import cats.implicits._
+import connectors.OptionalContentHttpReads
+import models.mongo.PensionsCYAModel
+import models.pension.AllPensionsData.{Zero, isNotZero}
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
-import cats.implicits._
-import models.pension.AllPensionsData.{Zero, isNotZero}
 
 case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boolean] = None,
                                          totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
@@ -109,10 +111,14 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
     )
   }
 
+  // We mark the helper question (totalPaymentsIntoRASQuestion) as true (as it must have been correct to reach CYA)
+  def toPensionsCYAModel: PensionsCYAModel =
+    PensionsCYAModel.emptyModels.copy(paymentsIntoPension = this.copy(totalPaymentsIntoRASQuestion = Some(true)))
 }
 
 object PaymentsIntoPensionsViewModel {
-  implicit val format: OFormat[PaymentsIntoPensionsViewModel] = Json.format[PaymentsIntoPensionsViewModel]
+  implicit val format: OFormat[PaymentsIntoPensionsViewModel]                  = Json.format[PaymentsIntoPensionsViewModel]
+  implicit val optRds: OptionalContentHttpReads[PaymentsIntoPensionsViewModel] = new OptionalContentHttpReads[PaymentsIntoPensionsViewModel]
 
   def empty: PaymentsIntoPensionsViewModel =
     PaymentsIntoPensionsViewModel(None, None, None, None, None, None, None, None, None, None)
@@ -170,4 +176,5 @@ case class EncryptedPaymentsIntoPensionViewModel(rasPensionPaymentQuestion: Opti
 
 object EncryptedPaymentsIntoPensionViewModel {
   implicit val format: OFormat[EncryptedPaymentsIntoPensionViewModel] = Json.format[EncryptedPaymentsIntoPensionViewModel]
+
 }

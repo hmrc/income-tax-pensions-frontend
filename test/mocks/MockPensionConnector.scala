@@ -16,6 +16,7 @@
 
 package mocks
 
+import common.TaxYear
 import connectors.PensionsConnector
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
@@ -30,6 +31,11 @@ trait MockPensionConnector extends MockFactory {
   val mockPensionsConnector: PensionsConnector = mock[PensionsConnector]
 
   object MockPensionConnector {
+
+    def loadPriorData(nino: String, taxYear: TaxYear) =
+      (mockPensionsConnector
+        .loadPriorEmployment(_: String, _: TaxYear)(_: HeaderCarrier, _: ExecutionContext))
+        .expects(nino, taxYear, *, *)
 
     def savePensionCharges(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel) =
       (mockPensionsConnector

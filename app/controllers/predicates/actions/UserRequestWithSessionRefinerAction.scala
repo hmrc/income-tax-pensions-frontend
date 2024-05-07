@@ -17,8 +17,10 @@
 package controllers.predicates.actions
 
 import cats.implicits.catsSyntaxEitherId
+import common.TaxYear
 import config.ErrorHandler
 import models.AuthorisationRequest
+import models.mongo.PensionsUserData
 import models.requests.UserSessionDataRequest
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.mvc.{ActionRefiner, Result}
@@ -41,6 +43,7 @@ case class UserRequestWithSessionRefinerAction(taxYear: Int, service: PensionSes
       .loadSessionData(taxYear, input.user)
       .map {
         case Right(Some(data)) => UserSessionDataRequest(data, input.user, input.request).asRight
+        case Right(None)       => UserSessionDataRequest(PensionsUserData.empty(input.user, TaxYear(taxYear)), input.user, input.request).asRight
         // A top-level session collection is always created on the entry point to the application. This will never be empty.
         case _ => handleInternalError.asLeft
       }

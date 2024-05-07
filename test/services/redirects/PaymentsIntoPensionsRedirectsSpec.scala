@@ -16,18 +16,18 @@
 
 package services.redirects
 
-import controllers.pensions.paymentsIntoPensions.routes.{PaymentsIntoPensionsCYAController, ReliefAtSourcePensionsController}
 import models.mongo.PensionsCYAModel
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.mvc.Results.Redirect
 import services.redirects.PaymentsIntoPensionPages._
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import utils.UnitTest
+import controllers.pensions.paymentsIntoPensions
 
 class PaymentsIntoPensionsRedirectsSpec extends UnitTest { // scalatest:off magic.number
 
   private val cyaData: PensionsCYAModel = PensionsCYAModel.emptyModels
-  private val someRedirect              = Some(Redirect(ReliefAtSourcePensionsController.show(taxYear)))
+  private val someRedirect              = Some(Redirect(paymentsIntoPensions.routes.ReliefAtSourcePensionsController.show(taxYear)))
 
   ".journeyCheck" should {
     "return None if page is valid and all previous questions have been answered" when {
@@ -141,7 +141,7 @@ class PaymentsIntoPensionsRedirectsSpec extends UnitTest { // scalatest:off magi
 
   ".cyaPageCall" should {
     "return a redirect call to the cya page" in {
-      cyaPageCall(taxYear) shouldBe PaymentsIntoPensionsCYAController.show(taxYear)
+      cyaPageCall(taxYear) shouldBe paymentsIntoPensions.routes.PaymentsIntoPensionsCYAController.show(currentTaxYear)
     }
   }
 }

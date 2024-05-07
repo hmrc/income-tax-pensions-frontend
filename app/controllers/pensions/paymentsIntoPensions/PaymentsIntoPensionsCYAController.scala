@@ -23,10 +23,10 @@ import controllers.predicates.auditActions.AuditActionsProvider
 import models.pension.Journey
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.PensionsService
 import services.redirects.PaymentsIntoPensionPages.CheckYourAnswersPage
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
-import services.{PensionSessionService, PensionsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Logging
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
@@ -38,7 +38,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsProvider,
                                                    pensionsService: PensionsService,
                                                    view: PaymentsIntoPensionsCYAView,
-                                                   pensionSessionService: PensionSessionService,
                                                    errorHandler: ErrorHandler,
                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
@@ -47,29 +46,27 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
-  // TODO it will be refactored in the next PRs
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoPensionsViewAuditing(taxYear) async { implicit request =>
-    val cyaData = request.sessionData
-    if (!cyaData.pensions.paymentsIntoPension.isFinished) {
-      val checkRedirect = journeyCheck(CheckYourAnswersPage, _, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(cyaData), cyaPageCall(taxYear))(checkRedirect) { data =>
-        Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoPension)))
-      }
+  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoPensionsViewAuditing(taxYear.endYear) async { implicit request =>
+    val cyaData    = request.sessionData
+    val taxYearInt = taxYear.endYear
+
+    if (cyaData.pensions.paymentsIntoPension.isFinished) {
+      Future.successful(Ok(view(taxYearInt, cyaData.pensions.paymentsIntoPension)))
     } else {
-      pensionSessionService.createOrUpdateSessionData(request.user, cyaData.pensions, taxYear, isPriorSubmission = false)(
-        errorHandler.internalServerError())(Ok(view(taxYear, cyaData.pensions.paymentsIntoPension)))
+      val checkRedirect = journeyCheck(CheckYourAnswersPage, _, taxYearInt)
+      redirectBasedOnCurrentAnswers(taxYearInt, Some(cyaData), cyaPageCall(taxYearInt))(checkRedirect) { data =>
+        Future.successful(Ok(view(taxYearInt, data.pensions.paymentsIntoPension)))
+      }
     }
   }
 
   // TODO Business Question: Do we need to exclude the journey if answers NOs to some of the questions?
   def submit(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoPensionsUpdateAuditing(taxYear.endYear) async { implicit request =>
-    val answersFromSession = request.sessionData.pensions.paymentsIntoPension
-
     val res = pensionsService.upsertPaymentsIntoPensions(
       request.user,
       taxYear,
-      answersFromSession
-    )
+      request.sessionData
+    )(request.user.withDownstreamHc(hc), executionContext)
 
     handleResult(errorHandler, taxYear, Journey.PaymentsIntoPensions, res)
   }

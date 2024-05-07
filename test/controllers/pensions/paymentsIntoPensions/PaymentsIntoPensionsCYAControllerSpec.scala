@@ -18,20 +18,28 @@ package controllers.pensions.paymentsIntoPensions
 
 import controllers.ControllerSpecBase
 import play.api.test.Helpers._
+import testdata.PaymentsIntoPensionsViewModelTestData._
 import utils.CommonData.currTaxYear
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
-import testdata.PaymentsIntoPensionsViewModelTestData._
 
 class PaymentsIntoPensionsCYAControllerSpec extends ControllerSpecBase {
-  val view = mock[PaymentsIntoPensionsCYAView]
+  val view = app.injector.instanceOf[PaymentsIntoPensionsCYAView]
   val controller = new PaymentsIntoPensionsCYAController(
     auditProvider,
     pensionsService,
     view,
-    pensionSessionService,
     errorHandler,
     mcc
   )(appConfig)
+
+  "show" should {
+    "return OK and the correct view for a GET" in {
+      val result = controller.show(currTaxYear)(fakeRequest)
+
+      assert(status(result) === OK)
+      assert(contentAsString(result) === view(currTaxYear.endYear, answers).toString())
+    }
+  }
 
   "submit" should {
     "upsert answers and return a redirect to the next page" in {
