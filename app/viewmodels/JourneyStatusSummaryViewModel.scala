@@ -54,7 +54,11 @@ object JourneyStatusSummaryViewModel {
     val incomeFromPensionsIsUpdated    = ukPensionsSchemeIsUpdated(cya) | statePensionIsUpdated(cya)
     val incomeFromPensionsRow          = buildRow(IncomeFromPensionsSummary, incomeFromPensionsHasPriorData, incomeFromPensionsIsUpdated)
 
-    val annualAllowancesRow = buildRow(AnnualAllowances, annualAllowanceHasPriorData(priorData), annualAllowanceIsUpdated(cya))
+    val annualAllowancesRow = buildRow(
+      AnnualAllowances,
+      annualAllowanceHasPriorData(priorData),
+      annualAllowanceIsUpdated(cya),
+      cya.exists(_.pensionsAnnualAllowances.isFinished))
 
     val unauthorisedPaymentsRow =
       buildRow(UnauthorisedPayments, unauthorisedPaymentsHasPriorData(priorData), unauthorisedPaymentsFromPensionsIsUpdated(cya))
@@ -127,7 +131,7 @@ object JourneyStatusSummaryViewModel {
 
   private def getJourneyStatus(journey: Journey,
                                journeyStatuses: Seq[JourneyNameAndStatus],
-                               hasPriorJourneyAnswers: Boolean,
+                               hasPriorJourneyAnswers: Boolean, // TODO remove hasPriorJourneyAnswers check from all uses
                                journeyIsStarted: Boolean): JourneyStatus = {
     def getStatus(journey: Journey) =
       journeyStatuses.find(_.name == journey).map(_.journeyStatus).getOrElse(NotStarted)
@@ -161,7 +165,7 @@ object JourneyStatusSummaryViewModel {
       case AnnualAllowances =>
         determineJourneyStartOrCyaUrl(
           aaRoutes.ReducedAnnualAllowanceController.show(taxYear.endYear).url,
-          aaRoutes.AnnualAllowanceCYAController.show(taxYear.endYear).url
+          aaRoutes.AnnualAllowanceCYAController.show(taxYear).url
         )
       case UnauthorisedPayments =>
         determineJourneyStartOrCyaUrl(

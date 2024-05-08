@@ -19,7 +19,8 @@ package models.mongo
 import common.TaxYear
 import models.User
 import models.pension.Journey
-import models.pension.Journey.PaymentsIntoPensions
+import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions}
+import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -39,6 +40,8 @@ case class PensionsUserData(sessionId: String,
     journey match {
       case PaymentsIntoPensions =>
         copy(lastUpdated = now, pensions = pensions.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel.empty))
+      case AnnualAllowances =>
+        copy(lastUpdated = now, pensions = pensions.copy(pensionsAnnualAllowances = PensionAnnualAllowancesViewModel.empty))
       case _ => ??? // TODO will be done when other journeys are implemented
     }
 }

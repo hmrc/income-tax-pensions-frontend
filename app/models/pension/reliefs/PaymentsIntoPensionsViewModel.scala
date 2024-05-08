@@ -24,16 +24,18 @@ import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
-case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boolean] = None,
-                                         totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
-                                         oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,
-                                         totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = None,
-                                         totalPaymentsIntoRASQuestion: Option[Boolean] = None, // This field represents 'Is this correct page'
-                                         pensionTaxReliefNotClaimedQuestion: Option[Boolean] = None,
-                                         retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
-                                         totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
-                                         workplacePensionPaymentsQuestion: Option[Boolean] = None,
-                                         totalWorkplacePensionPayments: Option[BigDecimal] = None)
+case class PaymentsIntoPensionsViewModel(
+    rasPensionPaymentQuestion: Option[Boolean] = None,
+    totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
+    oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,
+    totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = None,
+    totalPaymentsIntoRASQuestion: Option[Boolean] =
+      None, // This field represents 'Is this correct page'. When Redirect service is overhauled we can remove this question data
+    pensionTaxReliefNotClaimedQuestion: Option[Boolean] = None,
+    retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
+    totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
+    workplacePensionPaymentsQuestion: Option[Boolean] = None,
+    totalWorkplacePensionPayments: Option[BigDecimal] = None)
     extends PensionCYABaseModel {
 
   private def yesNoAndAmountPopulated(boolField: Option[Boolean], amountField: Option[BigDecimal]): Boolean =

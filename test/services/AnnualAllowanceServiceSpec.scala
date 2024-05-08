@@ -136,7 +136,7 @@ class AnnualAllowanceServiceSpec extends UnitTest with MockPensionConnector with
       )
     }
 
-    val service = new AnnualAllowanceService(mockSessionRepository, mockSessionService, mockPensionsConnector)
+    val service = new AnnualAllowanceService(mockSessionService, mockPensionsConnector)
   }
 
 }

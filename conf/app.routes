@@ -179,8 +179,8 @@ POST        /:taxYear/annual-allowance/remove-pension-scheme-tax-reference      
 
 GET         /:taxYear/annual-allowance/pension-schemes-paying-annual-allowance-tax                                                 controllers.pensions.annualAllowances.PstrSummaryController.show(taxYear: Int)
 
-GET         /:taxYear/annual-allowance/check-annual-allowance                                                                      controllers.pensions.annualAllowances.AnnualAllowanceCYAController.show(taxYear:Int)
-POST        /:taxYear/annual-allowance/check-annual-allowance                                                                      controllers.pensions.annualAllowances.AnnualAllowanceCYAController.submit(taxYear:Int)
+GET         /:taxYear/annual-allowance/check-annual-allowance                                                                      controllers.pensions.annualAllowances.AnnualAllowanceCYAController.show(taxYear: TaxYear)
+POST        /:taxYear/annual-allowance/check-annual-allowance                                                                      controllers.pensions.annualAllowances.AnnualAllowanceCYAController.submit(taxYear: TaxYear)
 
 ###########################     Payment into overseas pension Pages     ####################################
 

@@ -16,8 +16,8 @@
 
 package controllers.pensions.annualAllowances
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.annualAllowances.routes.{AnnualAllowanceCYAController, ReducedAnnualAllowanceTypeController}
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -84,9 +84,9 @@ class ReducedAnnualAllowanceController @Inject() (cc: MessagesControllerComponen
       errorHandler.internalServerError()) {
       Redirect(
         if (reducedAnnualAllowanceQ) {
-          ReducedAnnualAllowanceTypeController.show(taxYear)
+          routes.ReducedAnnualAllowanceTypeController.show(taxYear)
         } else {
-          AnnualAllowanceCYAController.show(taxYear)
+          routes.AnnualAllowanceCYAController.show(TaxYear(taxYear))
         }
       )
     }
