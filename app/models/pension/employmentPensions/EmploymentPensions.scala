@@ -18,14 +18,19 @@ package models.pension.employmentPensions
 
 import play.api.libs.json.{Json, OFormat}
 
-case class EmploymentPensions(employmentData: Seq[EmploymentPensionModel])
+case class EmploymentPensions(employmentData: List[EmploymentPensionModel])
 
 object EmploymentPensions {
-  implicit val format: OFormat[EmploymentPensions] = Json.format[EmploymentPensions]
+  implicit val format: OFormat[EmploymentPensions] =
+    Json.format[EmploymentPensions]
+
+  val empty: EmploymentPensions =
+    EmploymentPensions(List.empty[EmploymentPensionModel])
 }
 
-case class EncryptedEmploymentPensions(employmentData: Seq[EncryptedEmploymentPensionModel])
+case class EncryptedEmploymentPensions(employmentData: List[EncryptedEmploymentPensionModel])
 
 object EncryptedEmploymentPensions {
-  implicit val format: OFormat[EncryptedEmploymentPensions] = Json.format[EncryptedEmploymentPensions]
+  implicit val format: OFormat[EncryptedEmploymentPensions] =
+    Json.format[EncryptedEmploymentPensions]
 }

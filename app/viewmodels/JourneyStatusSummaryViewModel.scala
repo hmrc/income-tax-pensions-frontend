@@ -48,11 +48,13 @@ object JourneyStatusSummaryViewModel {
       PaymentsIntoPensions,
       paymentIntoPensionHasPriorData(priorData),
       paymentsIntoPensionsIsUpdated(cya),
-      cya.exists(_.paymentsIntoPension.isFinished))
+      cya.exists(_.paymentsIntoPension.isFinished)
+    )
 
     val incomeFromPensionsHasPriorData = ukPensionsSchemeHasPriorData(priorData) | statePensionsHasPriorData(priorData)
     val incomeFromPensionsIsUpdated    = ukPensionsSchemeIsUpdated(cya) | statePensionIsUpdated(cya)
-    val incomeFromPensionsRow          = buildRow(IncomeFromPensionsSummary, incomeFromPensionsHasPriorData, incomeFromPensionsIsUpdated)
+    val incomeFromPensionsRow =
+      buildRow(IncomeFromPensionsSummary, incomeFromPensionsHasPriorData, incomeFromPensionsIsUpdated, cya.exists(_.incomeFromPensions.isFinished))
 
     val annualAllowancesRow = buildRow(
       AnnualAllowances,
@@ -61,25 +63,59 @@ object JourneyStatusSummaryViewModel {
       cya.exists(_.pensionsAnnualAllowances.isFinished))
 
     val unauthorisedPaymentsRow =
-      buildRow(UnauthorisedPayments, unauthorisedPaymentsHasPriorData(priorData), unauthorisedPaymentsFromPensionsIsUpdated(cya))
+      buildRow(
+        UnauthorisedPayments,
+        unauthorisedPaymentsHasPriorData(priorData),
+        unauthorisedPaymentsFromPensionsIsUpdated(cya),
+        cya.exists(_.unauthorisedPayments.isFinished)
+      )
 
     val overseasPensionsHasPriorData = paymentsIntoOverseasPensionsHasPriorData(priorData) | incomeFromOverseasPensionsHasPriorData(
       priorData) | transferIntoOverseasPensionHasPriorData(priorData) | shortServiceRefundsHasPriorData(priorData)
     val overseasPensionsIsUpdated =
       paymentsIntoOverseasPensionsIsUpdated(cya) | incomeFromOverseasPensionsIsUpdated(cya) | overseasPensionsTransferChargesIsUpdated(
         cya) | shortServiceRefundsIsUpdated(cya)
-    val overseasPensionsRow = buildRow(OverseasPensionsSummary, overseasPensionsHasPriorData, overseasPensionsIsUpdated)
+    val overseasPensionsRow = buildRow(OverseasPensionsSummary, overseasPensionsHasPriorData, overseasPensionsIsUpdated, journeyIsComplete = false)
 
-    val ukPensionsIncomeRow = buildRow(UkPensionIncome, ukPensionsSchemeHasPriorData(priorData), ukPensionsSchemeIsUpdated(cya))
-    val statePensionRow     = buildRow(StatePension, statePensionsHasPriorData(priorData), statePensionIsUpdated(cya))
+    val ukPensionsIncomeRow =
+      buildRow(
+        UkPensionIncome,
+        ukPensionsSchemeHasPriorData(priorData),
+        ukPensionsSchemeIsUpdated(cya),
+        cya.exists(_.incomeFromPensions.isUkPensionFinished))
+    val statePensionRow = buildRow(
+      StatePension,
+      statePensionsHasPriorData(priorData),
+      statePensionIsUpdated(cya),
+      statePensionsHasPriorData(priorData)
+    ) // TODO right now we assume prior data == isFinished
 
     val paymentsIntoOverseasPensionsRow =
-      buildRow(PaymentsIntoOverseasPensions, paymentsIntoOverseasPensionsHasPriorData(priorData), paymentsIntoOverseasPensionsIsUpdated(cya))
+      buildRow(
+        PaymentsIntoOverseasPensions,
+        paymentsIntoOverseasPensionsHasPriorData(priorData),
+        paymentsIntoOverseasPensionsIsUpdated(cya),
+        cya.exists(_.paymentsIntoOverseasPensions.isFinished)
+      )
     val incomeFromOverseasPensionsRow =
-      buildRow(IncomeFromOverseasPensions, incomeFromOverseasPensionsHasPriorData(priorData), incomeFromOverseasPensionsIsUpdated(cya))
+      buildRow(
+        IncomeFromOverseasPensions,
+        incomeFromOverseasPensionsHasPriorData(priorData),
+        incomeFromOverseasPensionsIsUpdated(cya),
+        cya.exists(_.incomeFromOverseasPensions.isFinished)
+      )
     val transferIntoOverseasPensionsRow =
-      buildRow(TransferIntoOverseasPensions, transferIntoOverseasPensionHasPriorData(priorData), overseasPensionsTransferChargesIsUpdated(cya))
-    val shortServiceRefundsRow = buildRow(ShortServiceRefunds, shortServiceRefundsHasPriorData(priorData), shortServiceRefundsIsUpdated(cya))
+      buildRow(
+        TransferIntoOverseasPensions,
+        transferIntoOverseasPensionHasPriorData(priorData),
+        overseasPensionsTransferChargesIsUpdated(cya),
+        cya.exists(_.transfersIntoOverseasPensions.isFinished)
+      )
+    val shortServiceRefundsRow = buildRow(
+      ShortServiceRefunds,
+      shortServiceRefundsHasPriorData(priorData),
+      shortServiceRefundsIsUpdated(cya),
+      cya.exists(_.shortServiceRefunds.isFinished))
 
     HtmlContent(summaryPage match {
       case PensionsSummary =>
@@ -108,7 +144,7 @@ object JourneyStatusSummaryViewModel {
        |""".stripMargin
 
   // TODO Remove default false once all journeys are added
-  private def buildRow(journey: Journey, hasPriorJourneyAnswers: Boolean, journeyIsStarted: Boolean, journeyIsComplete: Boolean = false)(implicit
+  private def buildRow(journey: Journey, hasPriorJourneyAnswers: Boolean, journeyIsStarted: Boolean, journeyIsComplete: Boolean)(implicit
       messages: Messages,
       taxYear: TaxYear,
       journeyStatuses: Seq[JourneyNameAndStatus]): String = {

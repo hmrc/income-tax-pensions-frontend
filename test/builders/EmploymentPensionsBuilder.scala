@@ -21,7 +21,7 @@ import models.pension.employmentPensions.EmploymentPensions
 object EmploymentPensionsBuilder {
 
   val anEmploymentPensions: EmploymentPensions = EmploymentPensions(
-    employmentData = Seq(
+    employmentData = List(
       EmploymentPensionModelBuilder.anEmploymentPensionModel,
       EmploymentPensionModelBuilder.anotherEmploymentPensionModel
     )

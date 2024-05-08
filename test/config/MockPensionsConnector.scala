@@ -21,6 +21,7 @@ import common.{Nino, TaxYear}
 import connectors.{DownstreamOutcome, PensionsConnector}
 import models.APIErrorModel
 import models.domain.ApiResultT
+import models.mongo.{JourneyContext, JourneyStatus}
 import models.pension.JourneyNameAndStatus
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionAnnualAllowancesViewModel}
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
@@ -95,6 +96,24 @@ trait MockPensionsConnector extends MockFactory {
     (mockPensionsConnector
       .getAllJourneyStatuses(_: TaxYear)(_: HeaderCarrier, _: ExecutionContext))
       .expects(taxYear, *, *)
+      .returns(Future.successful(response))
+      .anyNumberOfTimes()
+
+  def mockGetJourneyStatus(ctx: JourneyContext, response: Either[APIErrorModel, List[JourneyNameAndStatus]])
+      : CallHandler3[JourneyContext, HeaderCarrier, ExecutionContext, DownstreamOutcome[List[JourneyNameAndStatus]]] =
+    (mockPensionsConnector
+      .getJourneyStatus(_: JourneyContext)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(ctx, *, *)
+      .returns(Future.successful(response))
+      .anyNumberOfTimes()
+
+  def mockSaveJourneyStatus(
+      ctx: JourneyContext,
+      status: JourneyStatus,
+      response: Either[APIErrorModel, Unit]): CallHandler4[JourneyContext, JourneyStatus, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
+    (mockPensionsConnector
+      .saveJourneyStatus(_: JourneyContext, _: JourneyStatus)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(ctx, status, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()
 

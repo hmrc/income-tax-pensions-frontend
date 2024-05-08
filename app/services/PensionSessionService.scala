@@ -53,8 +53,11 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
                                        errorHandler: ErrorHandler)(implicit ec: ExecutionContext)
     extends Logging {
 
+  def loadSession(taxYear: Int, user: User): QueryResult[Option[SessionData]] =
+    repository.find(taxYear, user)
+
   def loadSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[SessionData]]] =
-    repository.find(taxYear, user).map(_.leftMap(_ => ()))
+    loadSession(taxYear, user).map(_.leftMap(_ => ()))
 
   /** It loads only provided journey (if exist in the Backend). All other Journeys are empty.
     */
@@ -174,6 +177,17 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       case Left(_)  => onFail
     }
   }
+
+  private def getAllJourneyStatuses: DownstreamOutcome[Seq[JourneyNameAndStatus]] = // TODO 7969 connector to mongo BE for journeyNameAndStatus list
+    Future(Right[APIErrorModel, Seq[JourneyNameAndStatus]](Seq()))
+
+  def getJourneyStatus(ctx: JourneyContext)(implicit hc: HeaderCarrier): DownstreamOutcome[Option[JourneyStatus]] =
+    pensionsConnector
+      .getJourneyStatus(ctx)
+      .map(_.map(_.headOption.map(_.journeyStatus)))
+
+  def saveJourneyStatus(ctx: JourneyContext, status: JourneyStatus)(implicit hc: HeaderCarrier): DownstreamOutcome[Unit] =
+    pensionsConnector.saveJourneyStatus(ctx, status)
 
   def updateSessionData(user: User, taxYear: TaxYear, sessionData: PensionsUserData, priorData: PensionsCYAModel): ApiResultT[PensionsUserData] = {
     val updatedSessionData = priorData.merge(Some(sessionData.pensions))

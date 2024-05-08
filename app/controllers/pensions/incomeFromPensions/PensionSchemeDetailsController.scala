@@ -18,7 +18,7 @@ package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes._
-import controllers.pensions.routes.PensionsSummaryController
+import controllers.pensions.routes._
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
 import forms.PensionSchemeDetailsForm.PensionSchemeDetailsModel
