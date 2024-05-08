@@ -28,8 +28,6 @@ import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
 import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions}
-import models.pension.charges.PensionAnnualAllowancesViewModel
-import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.{Journey, JourneyNameAndStatus}
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
@@ -38,7 +36,7 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.i18n.Messages
 import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
-import repositories.PensionsUserDataRepository.{QueryResult, QueryResultT}
+import repositories.PensionsUserDataRepository.QueryResult
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
