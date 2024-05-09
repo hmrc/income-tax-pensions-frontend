@@ -29,7 +29,8 @@ case class PaymentsIntoPensionsViewModel(
     totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
     oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,
     totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = None,
-    totalPaymentsIntoRASQuestion: Option[Boolean] = None, // This field represents 'Is this correct page'
+    totalPaymentsIntoRASQuestion: Option[Boolean] =
+      None, // This field represents 'Is this correct page'. When Redirect service is overhauled we can remove this question data
     pensionTaxReliefNotClaimedQuestion: Option[Boolean] = None,
     retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
     totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,

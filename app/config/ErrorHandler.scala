@@ -95,7 +95,7 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
           case _                => ""
         },
         CorrelationIdHeaderKey,
-        CorrelationIdMdc.maybeCorrelationIdFromMdc,
+        CorrelationIdMdc.maybeCorrelationIdFromMdc(),
         request.method,
         request.uri),
       ex

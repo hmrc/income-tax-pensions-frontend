@@ -37,4 +37,15 @@ class PensionsServiceImplSpec extends AnyWordSpecLike with MockPensionsConnector
       assert(result.isRight === true)
     }
   }
+
+  "upsertAnnualAllowances" should {
+    "remove answers after submission" in {
+      val session = aPensionsUserData
+      mockSaveAnnualAllowances()
+      mockClearSessionOnSuccess(Journey.AnnualAllowances)
+      val result = service.upsertAnnualAllowances(user, currTaxYear, session).value.futureValue
+
+      assert(result.isRight === true)
+    }
+  }
 }

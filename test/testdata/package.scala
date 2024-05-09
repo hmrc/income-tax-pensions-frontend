@@ -17,7 +17,6 @@
 import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsEmptyViewModel
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceEmptyViewModel
 import builders.ShortServiceRefundsViewModelBuilder.emptyShortServiceRefundsViewModel
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.emptyTransfersIntoOverseasPensionsViewModel
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
@@ -26,7 +25,7 @@ import models.mongo.PensionsCYAModel
 package object testdata {
   val allData = PensionsCYAModel(
     PaymentsIntoPensionsViewModelTestData.answers,
-    aPensionAnnualAllowanceEmptyViewModel,
+    AnnualAllowancesViewModelTestData.answers,
     anIncomeFromPensionEmptyViewModel,
     anUnauthorisedPaymentsViewModel,
     aPaymentsIntoOverseasPensionsViewModel,

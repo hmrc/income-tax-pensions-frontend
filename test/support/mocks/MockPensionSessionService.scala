@@ -67,7 +67,7 @@ trait MockPensionSessionService extends MockFactory {
       .returns(Future.successful(result))
       .anyNumberOfTimes()
 
-  def mockClearSessionOnSuccess(expectedJourney: Journey, result: Either[APIErrorModel, Unit] = Right()): Unit =
+  def mockClearSessionOnSuccess(expectedJourney: Journey, result: Either[APIErrorModel, Unit] = Right(())): Unit =
     (mockPensionSessionService
       .clearSessionOnSuccess(_: Journey, _: PensionsUserData))
       .expects(expectedJourney, *)

@@ -41,7 +41,7 @@ class AnnualAllowancesRedirectsSpec extends UnitTest {
 
   ".cyaPageCall" should {
     "return a redirect call to the cya page" in {
-      cyaPageCall(taxYear) shouldBe AnnualAllowanceCYAController.show(taxYear)
+      cyaPageCall(taxYear) shouldBe AnnualAllowanceCYAController.show(currentTaxYear)
     }
   }
 

@@ -23,7 +23,7 @@ import utils.UnitTest
 
 import java.time.LocalDate
 
-class incomeFromPensionsSpec extends UnitTest {
+class IncomeFromPensionsSpec extends UnitTest {
 
   "checking whether state pension claims are complete" should {
     "return true" when {

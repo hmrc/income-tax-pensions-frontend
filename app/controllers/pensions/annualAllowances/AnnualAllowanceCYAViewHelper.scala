@@ -16,6 +16,7 @@
 
 package controllers.pensions.annualAllowances
 
+import common.TaxYear
 import controllers.pensions.annualAllowances.{routes => annualRoutes}
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import play.api.i18n.Messages
@@ -24,7 +25,8 @@ import utils.CYABaseHelper
 
 object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
 
-  def summaryListRows(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit messages: Messages): Seq[SummaryListRow] =
+  def summaryListRows(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: TaxYear)(implicit
+      messages: Messages): Seq[SummaryListRow] =
     Seq(
       summaryRowForReducedAnnualAllowanceQuestion(annualAllowancesViewModel, taxYear),
       summaryRowTypeOfReducedAnnualAllowanceQuestion(annualAllowancesViewModel, taxYear),
@@ -34,17 +36,17 @@ object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
       summaryRowForAnnualAllowanceSchemeTaxReferences(annualAllowancesViewModel, taxYear)
     ).flatten
 
-  private def summaryRowForReducedAnnualAllowanceQuestion(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit
+  private def summaryRowForReducedAnnualAllowanceQuestion(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: TaxYear)(implicit
       messages: Messages): Option[SummaryListRow] =
     annualAllowancesViewModel.reducedAnnualAllowanceQuestion
       .map(_ =>
         summaryListRowWithBooleanValue(
           "lifetimeAllowance.cya.reducedAnnualAllowance",
           annualAllowancesViewModel.reducedAnnualAllowanceQuestion,
-          annualRoutes.ReducedAnnualAllowanceController.show(taxYear)
+          annualRoutes.ReducedAnnualAllowanceController.show(taxYear.endYear)
         )(messages))
 
-  private def summaryRowTypeOfReducedAnnualAllowanceQuestion(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit
+  private def summaryRowTypeOfReducedAnnualAllowanceQuestion(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: TaxYear)(implicit
       messages: Messages): Option[SummaryListRow] =
     annualAllowancesViewModel.reducedAnnualAllowanceQuestion
       .filter(x => x)
@@ -52,11 +54,11 @@ object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
         summaryListRowWithStrings(
           "lifetimeAllowance.cya.typeOfReducedAnnualAllowance",
           annualAllowancesViewModel.typeOfAllowance,
-          annualRoutes.ReducedAnnualAllowanceTypeController.show(taxYear)
+          annualRoutes.ReducedAnnualAllowanceTypeController.show(taxYear.endYear)
         )(messages)
       }
 
-  private def summaryRowForAboveAnnualAllowance(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit
+  private def summaryRowForAboveAnnualAllowance(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: TaxYear)(implicit
       messages: Messages): Option[SummaryListRow] =
     annualAllowancesViewModel.reducedAnnualAllowanceQuestion
       .filter(x => x)
@@ -64,10 +66,10 @@ object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
         summaryListRowWithBooleanValue(
           "lifetimeAllowance.cya.aboveAnnualAllowance",
           annualAllowancesViewModel.aboveAnnualAllowanceQuestion,
-          annualRoutes.AboveReducedAnnualAllowanceController.show(taxYear)
+          annualRoutes.AboveReducedAnnualAllowanceController.show(taxYear.endYear)
         )(messages))
 
-  private def summaryRowForAmountAboveAnnualAllowance(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit
+  private def summaryRowForAmountAboveAnnualAllowance(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: TaxYear)(implicit
       messages: Messages): Option[SummaryListRow] =
     annualAllowancesViewModel.reducedAnnualAllowanceQuestion
       .filter(x => x)
@@ -78,10 +80,10 @@ object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
             summaryListRowWithOptionalAmountValue(
               "annualAllowance.cya.amountAboveAnnualAllowance",
               annualAllowancesViewModel.aboveAnnualAllowance,
-              annualRoutes.AboveReducedAnnualAllowanceController.show(taxYear)
+              annualRoutes.AboveReducedAnnualAllowanceController.show(taxYear.endYear)
             )(messages)))
 
-  private def summaryRowForAnnualAllowanceTax(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit
+  private def summaryRowForAnnualAllowanceTax(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: TaxYear)(implicit
       messages: Messages): Option[SummaryListRow] =
     annualAllowancesViewModel.reducedAnnualAllowanceQuestion
       .filter(x => x)
@@ -94,16 +96,17 @@ object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
                 summaryListRowWithOptionalAmountValue(
                   "lifetimeAllowance.cya.annualAllowanceTax",
                   annualAllowancesViewModel.taxPaidByPensionProvider,
-                  routes.PensionProviderPaidTaxController.show(taxYear))(messages)
+                  routes.PensionProviderPaidTaxController.show(taxYear.endYear)
+                )(messages)
               case _ =>
                 summaryListRowWithBooleanValue(
                   "lifetimeAllowance.cya.annualAllowanceTax",
                   annualAllowancesViewModel.pensionProvidePaidAnnualAllowanceQuestion,
-                  routes.PensionProviderPaidTaxController.show(taxYear)
+                  routes.PensionProviderPaidTaxController.show(taxYear.endYear)
                 )(messages)
             }))
 
-  private def summaryRowForAnnualAllowanceSchemeTaxReferences(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: Int)(implicit
+  private def summaryRowForAnnualAllowanceSchemeTaxReferences(annualAllowancesViewModel: PensionAnnualAllowancesViewModel, taxYear: TaxYear)(implicit
       messages: Messages): Option[SummaryListRow] =
     annualAllowancesViewModel.reducedAnnualAllowanceQuestion
       .filter(x => x)
@@ -117,6 +120,6 @@ object AnnualAllowanceCYAViewHelper extends CYABaseHelper {
                 summaryListRowWithStrings(
                   "lifetimeAllowance.cya.annualPensionSchemeTaxReferences",
                   annualAllowancesViewModel.pensionSchemeTaxReferences,
-                  annualRoutes.PstrSummaryController.show(taxYear)
+                  annualRoutes.PstrSummaryController.show(taxYear.endYear)
                 )(messages))))
 }

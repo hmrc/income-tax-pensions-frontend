@@ -46,6 +46,9 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   def paymentsIntoPensionsAnswersUrl(taxYear: TaxYear, nino: Nino): String =
     pensionBEBaseUrl + s"/${taxYear.endYear}/payments-into-pensions/${nino.value}/answers"
 
+  def annualAllowancesAnswersUrl(taxYear: TaxYear, nino: Nino): String =
+    pensionBEBaseUrl + s"/${taxYear.endYear}/annual-allowances/${nino.value}/answers"
+
   lazy val employmentBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxEmploymentUrl) + "/income-tax-employment"
 
   lazy val statePensionBEBaseUrl: String = servicesConfig.getString(incomeTaxStateBenefitsUrl)

@@ -37,7 +37,7 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
     journey match {
       case PensionsSummary              => true // Pension Summary is a special case
       case PaymentsIntoPensions         => paymentsIntoPension.nonEmpty
-      case AnnualAllowances             => false
+      case AnnualAllowances             => pensionsAnnualAllowances.nonEmpty
       case UnauthorisedPayments         => false
       case OverseasPensionsSummary      => true // it is a special case
       case IncomeFromOverseasPensions   => false
