@@ -21,13 +21,14 @@ import builders.PensionIncomeBuilder.aCreateUpdatePensionIncomeModel
 import builders.PensionReliefsBuilder.anPensionReliefs
 import common.Nino
 import models.mongo.JourneyStatus.{Completed, InProgress}
-import models.mongo.{JourneyContext, JourneyStatus, Mtditid}
+import models.mongo.{JourneyContext, Mtditid}
 import models.pension.Journey.{PaymentsIntoPensions, UnauthorisedPayments}
 import models.pension.JourneyNameAndStatus
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
 import models.{APIErrorBodyModel, APIErrorModel}
+import org.scalatest.EitherValues._
 import org.scalatest.Inside.inside
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status._
@@ -38,8 +39,6 @@ import utils.IntegrationTest
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import testdata.PaymentsIntoPensionsViewModelTestData
-import org.scalatest.EitherValues._
 
 class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
 

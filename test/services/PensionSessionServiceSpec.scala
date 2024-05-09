@@ -26,9 +26,8 @@ import models.mongo._
 import models.pension.AllPensionsData.generateSessionModelFromPrior
 import models.pension.Journey.{PaymentsIntoPensions, PensionsSummary}
 import models.pension.JourneyNameAndStatus
-import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
-import models.pension.Journey.PensionsSummary
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
+import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.{Messages, MessagesApi}

@@ -27,7 +27,7 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropert
 
   "isEmpty" should {
     "return true when no questions have been answered" in {
-      aPaymentsIntoPensionsEmptyViewModel.isEmpty
+      assert(aPaymentsIntoPensionsEmptyViewModel.isEmpty)
     }
     "return false when any questions have been answered" in {
       aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(true)).isEmpty shouldBe false
@@ -36,32 +36,40 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropert
   }
 
   "isFinished" should {
-    "return true" when {
-      "all questions are populated" in {
-        aPaymentsIntoPensionViewModel.isFinished
-      }
-      "all required questions are answered" in {
-        aPaymentsIntoPensionViewModel
-          .copy(
-            retirementAnnuityContractPaymentsQuestion = Some(false),
-            totalRetirementAnnuityContractPayments = None,
-            workplacePensionPaymentsQuestion = Some(false),
-            totalWorkplacePensionPayments = None
-          )
-          .isFinished
-      }
-    }
+    val cases = Table(
+      ("model", "expected"),
+      (PaymentsIntoPensionsViewModelTestData.answers, true),
+      (PaymentsIntoPensionsViewModel(Some(false), None, None, None, None, Some(false), None, None, None, None), true),
+      (PaymentsIntoPensionsViewModel(Some(true), None, None, None, None, Some(false), None, None, None, None), false),
+      (PaymentsIntoPensionsViewModel(Some(true), Some(1.0), None, None, None, Some(false), None, None, None, None), false),
+      (PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), None, Some(true), None, None, None, None, None), false),
+      // Even though we seem to have all answers here, we did not have "Is this correct" - helper question answered
+      (PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), None, None, Some(true), Some(false), None, None, None), false),
+      (PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), None, Some(false), Some(true), Some(false), None, None, None), false),
+      (PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), None, Some(true), Some(false), None, None, None, None), true),
+      (PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), None, Some(true), Some(true), Some(false), None, Some(false), None), true),
+      (PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), None, Some(true), Some(true), Some(false), None, Some(true), None), false),
+      (
+        PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), None, Some(true), Some(true), Some(false), None, Some(true), Some(3.0)),
+        true),
+      (PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), None, Some(true), Some(true), Some(true), None, Some(false), None), false),
+      (
+        PaymentsIntoPensionsViewModel(Some(true), Some(1.0), Some(false), None, Some(true), Some(true), Some(true), Some(2.0), Some(false), None),
+        true),
+      (PaymentsIntoPensionsViewModel(Some(false), None, None, None, None, Some(true), None, None, None, None), false),
+      (PaymentsIntoPensionsViewModel(Some(false), None, None, None, None, Some(true), Some(true), None, None, None), false),
+      // It's a bit strange case because user selects Retirement Annuity Yes, but then does not provide any source of it (No for rest of the questions)
+      (PaymentsIntoPensionsViewModel(Some(false), None, None, None, None, Some(true), Some(true), None, Some(false), None), false)
+    )
 
-    "return false" when {
-      "not all necessary questions have been populated" in {
-        !aPaymentsIntoPensionViewModel.copy(totalWorkplacePensionPayments = None).isFinished
-      }
+    "correctly calculate isFinished" in forAll(cases) { case (model, expected) =>
+      assert(model.isFinished == expected)
     }
   }
 
   "journeyIsNo" should {
     "return true when rasPensionPaymentQuestion is 'false' and no others have been answered" in {
-      aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(false)).journeyIsNo
+      assert(aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(false)).journeyIsNo)
     }
     "return false in any other case" in {
       aPaymentsIntoPensionsEmptyViewModel.journeyIsNo shouldBe false

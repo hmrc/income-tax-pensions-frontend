@@ -26,12 +26,12 @@ import org.mockito.Mockito._
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.{Application, Environment, Mode}
+import play.api.i18n.Messages
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.api.{Application, Environment, Mode}
 import services.PensionSessionService
 import stubs.services.PensionsServiceStub
 import testdata.allData
@@ -57,8 +57,9 @@ trait ControllerSpecBase extends PlaySpec with AnyWordSpecLike with MockitoSugar
   val fakeRequest       = FakeRequest("GET", "/")
   val mockActionBuilder = mock[ActionBuilder[UserSessionDataRequest, AnyContent]]
 
-  implicit val messages: Messages     = mcc.messagesApi.preferred(FakeRequest())
-  implicit val userSessionDataRequest = UserSessionDataRequest(PensionsUserData.empty(user, currTaxYear), user, fakeRequest)
+  implicit val messages: Messages = mcc.messagesApi.preferred(FakeRequest())
+  implicit val userSessionDataRequest: UserSessionDataRequest[_] =
+    UserSessionDataRequest(PensionsUserData.empty(user, currTaxYear), user, fakeRequest)
 
   when(auditProvider.paymentsIntoPensionsUpdateAuditing(any[Int])).thenReturn(mkAction(allData))
   when(auditProvider.paymentsIntoPensionsViewAuditing(any[Int])).thenReturn(mkUserSessionDataRequest(allData))

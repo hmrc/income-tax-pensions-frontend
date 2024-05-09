@@ -24,17 +24,18 @@ import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
-case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boolean] = None,
-                                         totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
-                                         oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,
-                                         totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = None,
-                                         totalPaymentsIntoRASQuestion: Option[Boolean] = None, // This field represents 'Is this correct page'
-                                         pensionTaxReliefNotClaimedQuestion: Option[Boolean] = None,
-                                         retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
-                                         totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
-                                         workplacePensionPaymentsQuestion: Option[Boolean] = None,
-                                         totalWorkplacePensionPayments: Option[BigDecimal] = None)
-    extends PensionCYABaseModel {
+case class PaymentsIntoPensionsViewModel(
+    rasPensionPaymentQuestion: Option[Boolean] = None,
+    totalRASPaymentsAndTaxRelief: Option[BigDecimal] = None,
+    oneOffRasPaymentPlusTaxReliefQuestion: Option[Boolean] = None,
+    totalOneOffRasPaymentPlusTaxRelief: Option[BigDecimal] = None,
+    totalPaymentsIntoRASQuestion: Option[Boolean] = None, // This field represents 'Is this correct page'
+    pensionTaxReliefNotClaimedQuestion: Option[Boolean] = None,
+    retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
+    totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
+    workplacePensionPaymentsQuestion: Option[Boolean] = None,
+    totalWorkplacePensionPayments: Option[BigDecimal] = None
+) extends PensionCYABaseModel {
 
   private def yesNoAndAmountPopulated(boolField: Option[Boolean], amountField: Option[BigDecimal]): Boolean =
     boolField.exists(value => !value || (value && amountField.nonEmpty))
@@ -84,7 +85,7 @@ case class PaymentsIntoPensionsViewModel(rasPensionPaymentQuestion: Option[Boole
   private def taxReliefNotClaimedQuestionCompleted: Boolean =
     pensionTaxReliefNotClaimedQuestion match {
       case Some(true) =>
-        retirementAnnuityContractPaymentsQuestion.exists(x => x) || workplacePensionPaymentsQuestion.exists(x => x)
+        retirementAnnuityContractPaymentsQuestion.isDefined || workplacePensionPaymentsQuestion.isDefined
       case Some(false) =>
         true
       case _ => false
