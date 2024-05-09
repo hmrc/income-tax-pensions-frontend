@@ -35,8 +35,8 @@ case class PaymentsIntoPensionsViewModel(
     retirementAnnuityContractPaymentsQuestion: Option[Boolean] = None,
     totalRetirementAnnuityContractPayments: Option[BigDecimal] = None,
     workplacePensionPaymentsQuestion: Option[Boolean] = None,
-    totalWorkplacePensionPayments: Option[BigDecimal] = None)
-    extends PensionCYABaseModel {
+    totalWorkplacePensionPayments: Option[BigDecimal] = None
+) extends PensionCYABaseModel {
 
   private def yesNoAndAmountPopulated(boolField: Option[Boolean], amountField: Option[BigDecimal]): Boolean =
     boolField.exists(value => !value || (value && amountField.nonEmpty))
@@ -47,26 +47,28 @@ case class PaymentsIntoPensionsViewModel(
 
   def isFinished: Boolean = {
     val isDone_rasPensionPaymentQuestion = yesNoAndAmountPopulated(rasPensionPaymentQuestion, totalRASPaymentsAndTaxRelief)
-    val isDone_oneOffRASPaymentsQuestion =
-      rasPensionPaymentQuestion.exists(q =>
-        if (q) yesNoAndAmountPopulated(oneOffRasPaymentPlusTaxReliefQuestion, totalOneOffRasPaymentPlusTaxRelief) else true)
-    val isDone_totalPaymentsIntoRASQuestion = rasPensionPaymentQuestion.exists(q => if (q) totalPaymentsIntoRASQuestion.contains(true) else true)
-    val isDone_taxReliefNotClaimedCompleted = taxReliefNotClaimedQuestionCompleted
+    val isDone_oneOffRASPaymentsQuestion = rasPensionPaymentQuestion.exists(rasPensionAnswer =>
+      if (rasPensionAnswer) yesNoAndAmountPopulated(oneOffRasPaymentPlusTaxReliefQuestion, totalOneOffRasPaymentPlusTaxRelief) else true)
+    val isDone_totalPaymentsIntoRASQuestion =
+      rasPensionPaymentQuestion.exists(rasPensionAnswer => if (rasPensionAnswer) totalPaymentsIntoRASQuestion.contains(true) else true)
+    val isDone_taxReliefNotClaimedCompleted =
+      pensionTaxReliefNotClaimedQuestion.isDefined // a helper question, even if it's Done, we need to check following questions
     val isDone_retirementAnnuityContractPaymentsQuestion =
-      pensionTaxReliefNotClaimedQuestion.exists(q =>
-        if (q) yesNoAndAmountPopulated(retirementAnnuityContractPaymentsQuestion, totalRetirementAnnuityContractPayments) else true)
+      pensionTaxReliefNotClaimedQuestion.exists(reliefNotClaimedAnswer =>
+        if (reliefNotClaimedAnswer) yesNoAndAmountPopulated(retirementAnnuityContractPaymentsQuestion, totalRetirementAnnuityContractPayments)
+        else true)
     val isDone_workplacePensionPaymentsQuestion =
-      pensionTaxReliefNotClaimedQuestion.exists(q =>
-        if (q) yesNoAndAmountPopulated(workplacePensionPaymentsQuestion, totalWorkplacePensionPayments) else true)
+      pensionTaxReliefNotClaimedQuestion.exists(reliefNotClaimedAnswer =>
+        if (reliefNotClaimedAnswer) yesNoAndAmountPopulated(workplacePensionPaymentsQuestion, totalWorkplacePensionPayments) else true)
 
-    Seq(
+    List(
       isDone_rasPensionPaymentQuestion,
       isDone_oneOffRASPaymentsQuestion,
       isDone_totalPaymentsIntoRASQuestion,
+      isDone_taxReliefNotClaimedCompleted,
       isDone_retirementAnnuityContractPaymentsQuestion,
-      isDone_workplacePensionPaymentsQuestion,
-      isDone_taxReliefNotClaimedCompleted
-    ).forall(x => x)
+      isDone_workplacePensionPaymentsQuestion
+    ).forall(identity)
   }
 
   def journeyIsNo: Boolean =
@@ -82,15 +84,6 @@ case class PaymentsIntoPensionsViewModel(
       && totalWorkplacePensionPayments.isEmpty)
 
   def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
-
-  private def taxReliefNotClaimedQuestionCompleted: Boolean =
-    pensionTaxReliefNotClaimedQuestion match {
-      case Some(true) =>
-        retirementAnnuityContractPaymentsQuestion.exists(x => x) || workplacePensionPaymentsQuestion.exists(x => x)
-      case Some(false) =>
-        true
-      case _ => false
-    }
 
   def updateRasPensionPaymentQuestion(yesAnswer: Boolean): PaymentsIntoPensionsViewModel =
     if (yesAnswer) {

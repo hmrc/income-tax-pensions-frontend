@@ -57,8 +57,9 @@ trait ControllerSpecBase extends PlaySpec with AnyWordSpecLike with MockitoSugar
   val fakeRequest       = FakeRequest("GET", "/")
   val mockActionBuilder = mock[ActionBuilder[UserSessionDataRequest, AnyContent]]
 
-  implicit val messages: Messages     = mcc.messagesApi.preferred(FakeRequest())
-  implicit val userSessionDataRequest = UserSessionDataRequest(PensionsUserData.empty(user, currTaxYear), user, fakeRequest)
+  implicit val messages: Messages = mcc.messagesApi.preferred(FakeRequest())
+  implicit val userSessionDataRequest: UserSessionDataRequest[_] =
+    UserSessionDataRequest(PensionsUserData.empty(user, currTaxYear), user, fakeRequest)
 
   when(auditProvider.paymentsIntoPensionsUpdateAuditing(any[Int])).thenReturn(mkAction(allData))
   when(auditProvider.paymentsIntoPensionsViewAuditing(any[Int])).thenReturn(mkUserSessionDataRequest(allData))
