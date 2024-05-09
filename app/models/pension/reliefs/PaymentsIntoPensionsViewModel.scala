@@ -64,9 +64,9 @@ case class PaymentsIntoPensionsViewModel(
       isDone_rasPensionPaymentQuestion,
       isDone_oneOffRASPaymentsQuestion,
       isDone_totalPaymentsIntoRASQuestion,
+      isDone_taxReliefNotClaimedCompleted,
       isDone_retirementAnnuityContractPaymentsQuestion,
       isDone_workplacePensionPaymentsQuestion,
-      isDone_taxReliefNotClaimedCompleted
     ).forall(identity)
   }
 
