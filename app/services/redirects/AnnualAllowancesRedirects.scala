@@ -16,7 +16,8 @@
 
 package services.redirects
 
-import controllers.pensions.annualAllowances.routes._
+import common.TaxYear
+import controllers.pensions.annualAllowances.routes
 import models.mongo.PensionsCYAModel
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import play.api.mvc.Results.Redirect
@@ -26,13 +27,13 @@ import services.redirects.SimpleRedirectService.checkForExistingSchemes
 
 object AnnualAllowancesRedirects {
 
-  def cyaPageCall(taxYear: Int): Call = AnnualAllowanceCYAController.show(taxYear)
+  def cyaPageCall(taxYear: Int): Call = routes.AnnualAllowanceCYAController.show(TaxYear(taxYear))
 
   def redirectForSchemeLoop(schemes: Seq[String], taxYear: Int): Call = {
     val filteredSchemes: Seq[String] = schemes.filter(_.trim.nonEmpty)
     checkForExistingSchemes(
-      nextPage = PensionSchemeTaxReferenceController.show(taxYear, None),
-      summaryPage = PstrSummaryController.show(taxYear),
+      nextPage = routes.PensionSchemeTaxReferenceController.show(taxYear, None),
+      summaryPage = routes.PstrSummaryController.show(taxYear),
       schemes = filteredSchemes
     )
   }
@@ -43,7 +44,7 @@ object AnnualAllowancesRedirects {
     if (!previousQuestionIsAnswered(currentPage.journeyNo, annualAllowanceData) || !isPageValidInJourney(
         currentPage.journeyNo,
         annualAllowanceData)) {
-      Some(Redirect(ReducedAnnualAllowanceController.show(taxYear)))
+      Some(Redirect(routes.ReducedAnnualAllowanceController.show(taxYear)))
     } else if (currentPage.equals(RemovePSTRPage)) {
       removePstrPageCheck(cya, taxYear, optIndex)
     } else if (currentPage.equals(PSTRPage)) {
@@ -59,7 +60,7 @@ object AnnualAllowancesRedirects {
     val index: Option[Int]                          = optIndex.filter(i => i >= 0 && i < optSchemes.size)
     val schemeIsValid: Boolean                      = if (index.isEmpty) false else optSchemes(index.getOrElse(0)).nonEmpty
 
-    if (schemeIsValid) None else Some(Redirect(PstrSummaryController.show(taxYear)))
+    if (schemeIsValid) None else Some(Redirect(routes.PstrSummaryController.show(taxYear)))
   }
 
   private def pstrPageCheck(cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int]): Option[Result] = {

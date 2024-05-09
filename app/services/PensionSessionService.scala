@@ -27,16 +27,13 @@ import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
-import models.pension.Journey._
-import models.pension.reliefs.PaymentsIntoPensionsViewModel
+import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions}
 import models.pension.{Journey, JourneyNameAndStatus}
-import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
 import play.api.Logging
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.i18n.Messages
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import repositories.PensionsUserDataRepository
 import repositories.PensionsUserDataRepository.QueryResult
@@ -74,6 +71,14 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
             case result             => result
           }
           .map(_.map(_.toPensionsCYAModel).getOrElse(PensionsCYAModel.emptyModels))
+      case AnnualAllowances =>
+        pensionsConnector
+          .getAnnualAllowances(user.getNino, taxYear)
+          .transform {
+            case result @ Left(err) => if (err.notFound) Right(None) else result
+            case result             => result
+          }
+          .map(_.map(a => PensionsCYAModel.emptyModels.copy(pensionsAnnualAllowances = a)).getOrElse(PensionsCYAModel.emptyModels))
       case _ =>
         EitherT.rightT[Future, APIErrorModel](PensionsCYAModel.emptyModels) // TODO We'll be added gradually journey by journey here
     }
@@ -98,7 +103,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
   def upsertSession(session: PensionsUserData)(implicit ec: ExecutionContext, request: Request[_]): EitherT[Future, Result, Unit] =
     upsertSessionT(session).leftMap(_ => errorHandler.internalServerError())
 
-  def upsertSessionT(session: PensionsUserData)(implicit ec: ExecutionContext): EitherT[Future, ServiceError, Unit] =
+  def upsertSessionT(session: PensionsUserData): EitherT[Future, ServiceError, Unit] =
     EitherT(repository.createOrUpdate(session))
 
   def createOrUpdateSession(pensionsUserData: SessionData): QueryResult[Unit] =
@@ -213,5 +218,4 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
 
     upsertSessionT(updatedSession).leftMap(_.toAPIErrorModel)
   }
-
 }

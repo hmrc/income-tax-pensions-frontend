@@ -22,6 +22,7 @@ import play.api.mvc.PathBindable
   */
 final case class TaxYear(endYear: Int) extends AnyVal {
   override def toString: String = endYear.toString
+  def startYear: String         = (endYear - 1).toString
 }
 
 object TaxYear {

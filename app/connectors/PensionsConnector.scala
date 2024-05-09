@@ -32,7 +32,7 @@ import models.domain.ApiResultT
 import models.logging.ConnectorRequestInfo
 import models.mongo.{JourneyContext, JourneyStatus}
 import models.pension.JourneyNameAndStatus
-import models.pension.charges.CreateUpdatePensionChargesRequestModel
+import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionAnnualAllowancesViewModel}
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
@@ -68,6 +68,30 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     val url = appConfig.paymentsIntoPensionsAnswersUrl(taxYear, nino)
     ConnectorRequestInfo("GET", url, "income-tax-pensions").logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[PaymentsIntoPensionsViewModel]]](url)
+    EitherT(res)
+  }
+
+  def saveAnnualAllowances(nino: Nino, taxYear: TaxYear, answers: PensionAnnualAllowancesViewModel)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    val url = appConfig.annualAllowancesAnswersUrl(taxYear, nino)
+    ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, answers)
+
+    val res =
+      http.PUT[PensionAnnualAllowancesViewModel, DownstreamErrorOr[Unit]](url, answers)(
+        PensionAnnualAllowancesViewModel.format,
+        NoContentHttpReads,
+        hc,
+        ec)
+    EitherT(res)
+  }
+
+  def getAnnualAllowances(nino: Nino, taxYear: TaxYear)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Option[PensionAnnualAllowancesViewModel]] = {
+    val url = appConfig.annualAllowancesAnswersUrl(taxYear, nino)
+    ConnectorRequestInfo("GET", url, "income-tax-pensions").logRequest(logger)
+    val res = http.GET[DownstreamErrorOr[Option[PensionAnnualAllowancesViewModel]]](url)
     EitherT(res)
   }
 

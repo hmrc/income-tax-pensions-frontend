@@ -17,7 +17,6 @@
 package support.mocks
 
 import cats.data.EitherT
-import common.TaxYear
 import connectors.{DownstreamErrorOr, DownstreamOutcome}
 import models._
 import models.mongo.{DatabaseError, PensionsUserData}
@@ -27,6 +26,7 @@ import org.scalamock.scalatest.MockFactory
 import play.api.mvc.{Request, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.http.HeaderCarrier
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -67,7 +67,7 @@ trait MockPensionSessionService extends MockFactory {
       .returns(Future.successful(result))
       .anyNumberOfTimes()
 
-  def mockClearSessionOnSuccess(expectedJourney: Journey, result: Either[APIErrorModel, Unit] = Right()): Unit =
+  def mockClearSessionOnSuccess(expectedJourney: Journey, result: Either[APIErrorModel, Unit] = Right(())): Unit =
     (mockPensionSessionService
       .clearSessionOnSuccess(_: Journey, _: PensionsUserData))
       .expects(expectedJourney, *)

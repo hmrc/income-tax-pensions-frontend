@@ -26,7 +26,6 @@ import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsEmptySch
 import builders.TransfersIntoOverseasPensionsViewModelBuilder._
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsEmptySchemesViewModel
 import cats.implicits.catsSyntaxOptionId
-import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, StateBenefitViewModel, UkPensionIncomeViewModel}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike

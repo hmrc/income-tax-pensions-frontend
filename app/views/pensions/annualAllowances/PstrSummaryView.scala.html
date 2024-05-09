@@ -18,6 +18,7 @@
 @import views.html.templates.helpers.SummaryList
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Link
+@import common.TaxYear
 @import controllers.pensions.annualAllowances.routes.{AnnualAllowanceCYAController,PensionSchemeTaxReferenceController,RemoveAnnualAllowancePstrController}
 @import controllers.pensions.routes.PensionsSummaryController
 
@@ -77,7 +78,7 @@
                 preventDoubleClick = Some(true),
                 content = Text(messages("common.continue")),
                 classes = "govuk-button govuk-!-margin-top-2",
-                href = Some(AnnualAllowanceCYAController.show(taxYear).url)
+                href = Some(AnnualAllowanceCYAController.show(TaxYear(taxYear)).url)
             ))
 
         } else {

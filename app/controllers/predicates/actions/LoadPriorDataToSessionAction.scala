@@ -70,7 +70,7 @@ case class LoadPriorDataToSessionAction(
       logger.debug(s"Session data for $journey exists")
       Future.successful(Right(input))
     } else {
-      logger.debug(s"Session data for $journey DOES NOT exist. Loading prior data for this journey")
+      logger.debug(s"Session data for $journey does NOT exist. Loading prior data for this journey")
 
       val result = for {
         priorData          <- service.loadOneJourneyPriorData(taxYear, input.user, journey)

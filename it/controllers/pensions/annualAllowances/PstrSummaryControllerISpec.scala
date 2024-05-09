@@ -18,7 +18,6 @@ package controllers.pensions.annualAllowances
 
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
 import builders.PensionsUserDataBuilder.pensionsUserDataWithAnnualAllowances
-import controllers.pensions.annualAllowances.routes.{PensionSchemeTaxReferenceController, RemoveAnnualAllowancePstrController}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -134,20 +133,20 @@ class PstrSummaryControllerISpec extends IntegrationTest with BeforeAndAfterEach
           linkCheck(
             s"$change $change $pensionSchemeTaxReference $pstr1",
             changeLinkSelector(1),
-            PensionSchemeTaxReferenceController.show(taxYearEOY, Some(0)).url)
+            routes.PensionSchemeTaxReferenceController.show(taxYearEOY, Some(0)).url)
           linkCheck(
             s"$change $change $pensionSchemeTaxReference $pstr2",
             changeLinkSelector(2),
-            PensionSchemeTaxReferenceController.show(taxYearEOY, Some(1)).url)
+            routes.PensionSchemeTaxReferenceController.show(taxYearEOY, Some(1)).url)
           linkCheck(
             s"$remove $remove $pensionSchemeTaxReference $pstr1",
             removeLinkSelector(1),
-            RemoveAnnualAllowancePstrController.show(taxYearEOY, Some(0)).url)
+            routes.RemoveAnnualAllowancePstrController.show(taxYearEOY, Some(0)).url)
           linkCheck(
             s"$remove $remove $pensionSchemeTaxReference $pstr2",
             removeLinkSelector(2),
-            RemoveAnnualAllowancePstrController.show(taxYearEOY, Some(1)).url)
-          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, PensionSchemeTaxReferenceController.show(taxYearEOY, None).url)
+            routes.RemoveAnnualAllowancePstrController.show(taxYearEOY, Some(1)).url)
+          linkCheck(expectedAddAnotherText, addAnotherLinkSelector, routes.PensionSchemeTaxReferenceController.show(taxYearEOY, None).url)
           buttonCheck(expectedButtonText, continueButtonSelector, Some(annualAllowancesCYAUrl(taxYearEOY)))
           welshToggleCheck(user.isWelsh)
         }

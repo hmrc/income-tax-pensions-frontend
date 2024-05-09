@@ -17,8 +17,10 @@
 package views.pensions.annualAllowances
 
 import builders.PensionAnnualAllowanceViewModelBuilder.aPensionAnnualAllowanceViewModel
+import common.TaxYear
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
+import controllers.pensions.annualAllowances.routes
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContent
@@ -28,15 +30,12 @@ import views.html.pensions.annualAllowances.AnnualAllowancesCYAView
 class AnnualAllowanceCYAViewSpec extends ViewUnitTest {
 
   object ChangeLinks {
-
-    import controllers.pensions.annualAllowances.routes._
-
-    val changeReducedAnnualAllowance: String       = ReducedAnnualAllowanceController.show(taxYear).url
-    val changeTypeOfReducedAnnualAllowance: String = ReducedAnnualAllowanceTypeController.show(taxYear).url
-    val changeAboveAnnualAllowance: String         = AboveReducedAnnualAllowanceController.show(taxYear).url
-    val changeAmountAboveAnnualAllowance: String   = AboveReducedAnnualAllowanceController.show(taxYear).url
-    val changeAnnualAllowanceTax: String           = PensionProviderPaidTaxController.show(taxYear).url
-    val changeAnnualAllowanceSchemes: String       = PstrSummaryController.show(taxYear).url
+    val changeReducedAnnualAllowance: String       = routes.ReducedAnnualAllowanceController.show(taxYear).url
+    val changeTypeOfReducedAnnualAllowance: String = routes.ReducedAnnualAllowanceTypeController.show(taxYear).url
+    val changeAboveAnnualAllowance: String         = routes.AboveReducedAnnualAllowanceController.show(taxYear).url
+    val changeAmountAboveAnnualAllowance: String   = routes.AboveReducedAnnualAllowanceController.show(taxYear).url
+    val changeAnnualAllowanceTax: String           = routes.PensionProviderPaidTaxController.show(taxYear).url
+    val changeAnnualAllowanceSchemes: String       = routes.PstrSummaryController.show(taxYear).url
   }
 
   trait CommonExpectedResults {
@@ -144,7 +143,7 @@ class AnnualAllowanceCYAViewSpec extends ViewUnitTest {
         implicit val messages: Messages                          = getMessages(userScenario.isWelsh)
 
         val viewModel                   = aPensionAnnualAllowanceViewModel
-        val htmlFormat                  = underTest(taxYearEOY, viewModel)
+        val htmlFormat                  = underTest(TaxYear(taxYearEOY), viewModel)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         checkCommonElements(userScenario)
@@ -207,7 +206,7 @@ class AnnualAllowanceCYAViewSpec extends ViewUnitTest {
         implicit val messages: Messages                          = getMessages(userScenario.isWelsh)
 
         val viewModel                   = aPensionAnnualAllowanceViewModel.copy(aboveAnnualAllowanceQuestion = Some(false))
-        val htmlFormat                  = underTest(taxYearEOY, viewModel)
+        val htmlFormat                  = underTest(TaxYear(taxYearEOY), viewModel)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         checkCommonElements(userScenario)
@@ -247,7 +246,7 @@ class AnnualAllowanceCYAViewSpec extends ViewUnitTest {
         implicit val messages: Messages                          = getMessages(userScenario.isWelsh)
 
         val viewModel                   = aPensionAnnualAllowanceViewModel.copy(reducedAnnualAllowanceQuestion = Some(false))
-        val htmlFormat                  = underTest(taxYearEOY, viewModel)
+        val htmlFormat                  = underTest(TaxYear(taxYearEOY), viewModel)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         checkCommonElements(userScenario)

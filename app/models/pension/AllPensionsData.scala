@@ -54,7 +54,7 @@ object AllPensionsData {
   def generateSessionModelFromPrior(prior: AllPensionsData): PensionsCYAModel =
     PensionsCYAModel(
       paymentsIntoPension = PaymentsIntoPensionsViewModel.empty, // We only load prior answers when entering the payments into pension data
-      pensionsAnnualAllowances = generateAnnualAllowanceSessionFromPrior(prior),
+      pensionsAnnualAllowances = PensionAnnualAllowancesViewModel.empty,
       incomeFromPensions = generateIncomeFromPensionsModelFromPrior(prior),
       unauthorisedPayments = generateUnauthorisedPaymentsCyaModelFromPrior(prior),
       paymentsIntoOverseasPensions = generatePaymentsIntoOverseasPensionsFromPrior(prior),

@@ -16,6 +16,7 @@
 
 package models.pension.charges
 
+import connectors.OptionalContentHttpReads
 import models.pension.{AllPensionsData, PensionCYABaseModel}
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
@@ -114,7 +115,10 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
 }
 
 object PensionAnnualAllowancesViewModel {
-  implicit val format: OFormat[PensionAnnualAllowancesViewModel] = Json.format[PensionAnnualAllowancesViewModel]
+  implicit val format: OFormat[PensionAnnualAllowancesViewModel]                  = Json.format[PensionAnnualAllowancesViewModel]
+  implicit val optRds: OptionalContentHttpReads[PensionAnnualAllowancesViewModel] = new OptionalContentHttpReads[PensionAnnualAllowancesViewModel]
+
+  def empty: PensionAnnualAllowancesViewModel = PensionAnnualAllowancesViewModel(None, None, None, None, None, None, None, None)
 }
 
 case class EncryptedPensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Option[EncryptedValue] = None,

@@ -20,10 +20,10 @@ import cats.data.EitherT
 import common.{Nino, TaxYear}
 import connectors.{DownstreamOutcome, PensionsConnector}
 import models.APIErrorModel
-import models.mongo.{JourneyContext, JourneyStatus}
 import models.domain.ApiResultT
+import models.mongo.{JourneyContext, JourneyStatus}
 import models.pension.JourneyNameAndStatus
-import models.pension.charges.CreateUpdatePensionChargesRequestModel
+import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionAnnualAllowancesViewModel}
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
 import org.scalamock.handlers.{CallHandler3, CallHandler4, CallHandler5}
@@ -31,8 +31,8 @@ import org.scalamock.scalatest.MockFactory
 import services.{PensionChargesConnectorHelper, PensionIncomeConnectorHelper, PensionReliefsConnectorHelper}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
-import ExecutionContext.Implicits.global
 
 trait MockPensionsConnector extends MockFactory {
 
@@ -123,4 +123,12 @@ trait MockPensionsConnector extends MockFactory {
       .expects(*, *, *, *, *)
       .returns(EitherT.rightT[Future, APIErrorModel](()))
       .anyNumberOfTimes()
+
+  def mockSaveAnnualAllowances(): CallHandler5[Nino, TaxYear, PensionAnnualAllowancesViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
+    (mockPensionsConnector
+      .saveAnnualAllowances(_: Nino, _: TaxYear, _: PensionAnnualAllowancesViewModel)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(*, *, *, *, *)
+      .returns(EitherT.rightT[Future, APIErrorModel](()))
+      .anyNumberOfTimes()
+
 }

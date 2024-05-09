@@ -26,12 +26,12 @@ import org.mockito.Mockito._
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.{Application, Environment, Mode}
+import play.api.i18n.Messages
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.api.{Application, Environment, Mode}
 import services.PensionSessionService
 import stubs.services.PensionsServiceStub
 import testdata.allData
@@ -62,6 +62,8 @@ trait ControllerSpecBase extends PlaySpec with AnyWordSpecLike with MockitoSugar
 
   when(auditProvider.paymentsIntoPensionsUpdateAuditing(any[Int])).thenReturn(mkAction(allData))
   when(auditProvider.paymentsIntoPensionsViewAuditing(any[Int])).thenReturn(mkUserSessionDataRequest(allData))
+  when(auditProvider.annualAllowancesUpdateAuditing(any[Int])).thenReturn(mkAction(allData))
+  when(auditProvider.annualAllowancesViewAuditing(any[Int])).thenReturn(mkUserSessionDataRequest(allData))
 
   def mkAction(existingData: PensionsCYAModel) =
     new ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] {
