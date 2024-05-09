@@ -60,14 +60,14 @@ case class PaymentsIntoPensionsViewModel(
       pensionTaxReliefNotClaimedQuestion.exists(reliefNotClaimedAnswer =>
         if (reliefNotClaimedAnswer) yesNoAndAmountPopulated(workplacePensionPaymentsQuestion, totalWorkplacePensionPayments) else true)
 
-    Seq(
+    List(
       isDone_rasPensionPaymentQuestion,
       isDone_oneOffRASPaymentsQuestion,
       isDone_totalPaymentsIntoRASQuestion,
       isDone_retirementAnnuityContractPaymentsQuestion,
       isDone_workplacePensionPaymentsQuestion,
       isDone_taxReliefNotClaimedCompleted
-    ).forall(x => x)
+    ).forall(identity)
   }
 
   def journeyIsNo: Boolean =
