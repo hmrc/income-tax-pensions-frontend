@@ -29,6 +29,7 @@ import services.{AuditService, PensionSessionService}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
+// TODO Previous test for this class was unmanageable, so it was removed. Add a new one once the new prior data are finished
 @Singleton
 class AuditActionsProvider @Inject() (authAction: AuthorisedAction,
                                       pensionSessionService: PensionSessionService,
