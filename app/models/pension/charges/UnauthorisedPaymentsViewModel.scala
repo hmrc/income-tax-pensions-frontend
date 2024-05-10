@@ -17,7 +17,8 @@
 package models.pension.charges
 
 import cats.implicits.catsSyntaxOptionId
-import models.mongo.TextAndKey
+import connectors.OptionalContentHttpReads
+import models.mongo.{PensionsCYAModel, TextAndKey}
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
@@ -150,10 +151,13 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
       && pensionSchemeTaxReference.isEmpty)
 
   override def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
+
+  def toPensionsCYAModel: PensionsCYAModel = PensionsCYAModel.emptyModels.copy(unauthorisedPayments = this)
 }
 
 object UnauthorisedPaymentsViewModel {
-  implicit val format: OFormat[UnauthorisedPaymentsViewModel] = Json.format[UnauthorisedPaymentsViewModel]
+  implicit val format: OFormat[UnauthorisedPaymentsViewModel]                  = Json.format[UnauthorisedPaymentsViewModel]
+  implicit val optRds: OptionalContentHttpReads[UnauthorisedPaymentsViewModel] = new OptionalContentHttpReads[UnauthorisedPaymentsViewModel]
 
   sealed trait PaymentResult
   object PaymentResult {
