@@ -79,7 +79,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
         val res = pensionsConnector.getUnauthorisedPaymentsFromPensions(user.getNino, taxYear)
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case _ =>
-        EitherT.rightT[Future, APIErrorModel](None) // TODO We'll be added gradually journey by journey here
+        EitherT.rightT[Future, APIErrorModel](None) // TODO it will be added gradually journey by journey here
     }
 
     result.map(_.getOrElse(PensionsCYAModel.emptyModels))

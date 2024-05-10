@@ -108,7 +108,7 @@ class UnauthorisedPaymentsRedirectsSpec extends UnitTest {
 
   ".cyaPageCall" should {
     "return a redirect call to the cya page" in {
-      cyaPageCall(taxYear) shouldBe UnauthorisedPaymentsCYAController.show(taxYear)
+      cyaPageCall(taxYear) shouldBe UnauthorisedPaymentsCYAController.show(currentTaxYear)
     }
   }
 }

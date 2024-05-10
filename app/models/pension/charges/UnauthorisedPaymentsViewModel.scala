@@ -159,6 +159,8 @@ object UnauthorisedPaymentsViewModel {
   implicit val format: OFormat[UnauthorisedPaymentsViewModel]                  = Json.format[UnauthorisedPaymentsViewModel]
   implicit val optRds: OptionalContentHttpReads[UnauthorisedPaymentsViewModel] = new OptionalContentHttpReads[UnauthorisedPaymentsViewModel]
 
+  val empty: UnauthorisedPaymentsViewModel = UnauthorisedPaymentsViewModel(None, None, None, None, None, None, None, None, None, None)
+
   sealed trait PaymentResult
   object PaymentResult {
     case object Surcharge   extends PaymentResult
