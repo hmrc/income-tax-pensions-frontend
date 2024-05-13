@@ -206,7 +206,7 @@ object JourneyStatusSummaryViewModel {
       case UnauthorisedPayments =>
         determineJourneyStartOrCyaUrl(
           upRoutes.UnauthorisedPaymentsController.show(taxYear.endYear).url,
-          upRoutes.UnauthorisedPaymentsCYAController.show(taxYear.endYear).url
+          upRoutes.UnauthorisedPaymentsCYAController.show(taxYear).url
         )
       case UkPensionIncome =>
         determineJourneyStartOrCyaUrl(

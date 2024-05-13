@@ -27,7 +27,7 @@ import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
-import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions}
+import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, UnauthorisedPayments}
 import models.pension.{Journey, JourneyNameAndStatus}
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
@@ -59,29 +59,31 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
   def loadSessionData(taxYear: Int, user: User): Future[Either[Unit, Option[SessionData]]] =
     loadSession(taxYear, user).map(_.leftMap(_ => ()))
 
+  private def transformNotFoundToNone[A](res: ApiResultT[Option[A]]): ApiResultT[Option[A]] =
+    res.transform {
+      case result @ Left(err) => if (err.notFound) Right(None) else result
+      case result             => result
+    }
+
   /** It loads only provided journey (if exist in the Backend). All other Journeys are empty.
     */
-  def loadOneJourneyPriorData(taxYear: TaxYear, user: User, journey: Journey)(implicit hc: HeaderCarrier): ApiResultT[PensionsCYAModel] =
-    journey match {
+  def loadOneJourneyPriorData(taxYear: TaxYear, user: User, journey: Journey)(implicit hc: HeaderCarrier): ApiResultT[PensionsCYAModel] = {
+    val result = journey match {
       case PaymentsIntoPensions =>
-        pensionsConnector
-          .getPaymentsIntoPensions(user.getNino, taxYear)
-          .transform {
-            case result @ Left(err) => if (err.notFound) Right(None) else result
-            case result             => result
-          }
-          .map(_.map(_.toPensionsCYAModel).getOrElse(PensionsCYAModel.emptyModels))
+        val res = pensionsConnector.getPaymentsIntoPensions(user.getNino, taxYear)
+        transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case AnnualAllowances =>
-        pensionsConnector
-          .getAnnualAllowances(user.getNino, taxYear)
-          .transform {
-            case result @ Left(err) => if (err.notFound) Right(None) else result
-            case result             => result
-          }
-          .map(_.map(a => PensionsCYAModel.emptyModels.copy(pensionsAnnualAllowances = a)).getOrElse(PensionsCYAModel.emptyModels))
+        val res = pensionsConnector.getAnnualAllowances(user.getNino, taxYear)
+        transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
+      case UnauthorisedPayments =>
+        val res = pensionsConnector.getUnauthorisedPaymentsFromPensions(user.getNino, taxYear)
+        transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case _ =>
-        EitherT.rightT[Future, APIErrorModel](PensionsCYAModel.emptyModels) // TODO We'll be added gradually journey by journey here
+        EitherT.rightT[Future, APIErrorModel](None) // TODO it will be added gradually journey by journey here
     }
+
+    result.map(_.getOrElse(PensionsCYAModel.emptyModels))
+  }
 
   def loadPriorAndSession(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcomeT[(PriorData, SessionData)] =
     for {

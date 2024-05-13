@@ -56,16 +56,17 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
 
   lazy val logger: Logger = Logger(this.getClass.getName)
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.unauthorisedPaymentsViewAuditing(taxYear) async { implicit request =>
-    val cyaData = request.sessionData
-    if (!cyaData.pensions.unauthorisedPayments.isFinished) {
-      val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(cyaData), cyaPageCall(taxYear))(checkRedirect) { data =>
-        Future.successful(Ok(view(taxYear, data.pensions.unauthorisedPayments)))
-      }
+  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.unauthorisedPaymentsViewAuditing(taxYear.endYear) async { implicit request =>
+    val cyaData    = request.sessionData
+    val taxYearInt = taxYear.endYear
+
+    if (cyaData.pensions.unauthorisedPayments.isFinished) {
+      Future.successful(Ok(view(taxYearInt, cyaData.pensions.unauthorisedPayments)))
     } else {
-      pensionSessionService.createOrUpdateSessionData(request.user, cyaData.pensions, taxYear, isPriorSubmission = false)(
-        errorHandler.internalServerError())(Ok(view(taxYear, cyaData.pensions.unauthorisedPayments)))
+      val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYearInt)
+      redirectBasedOnCurrentAnswers(taxYearInt, Some(cyaData), cyaPageCall(taxYearInt))(checkRedirect) { data =>
+        Future.successful(Ok(view(taxYearInt, data.pensions.unauthorisedPayments)))
+      }
     }
   }
 

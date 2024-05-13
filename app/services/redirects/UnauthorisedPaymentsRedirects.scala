@@ -16,6 +16,7 @@
 
 package services.redirects
 
+import common.TaxYear
 import controllers.pensions.unauthorisedPayments.routes.{
   UkPensionSchemeDetailsController,
   UnauthorisedPaymentsCYAController,
@@ -40,7 +41,7 @@ object UnauthorisedPaymentsRedirects { // scalastyle:off magic.number
     )
   }
 
-  def cyaPageCall(taxYear: Int): Call = UnauthorisedPaymentsCYAController.show(taxYear)
+  def cyaPageCall(taxYear: Int): Call = UnauthorisedPaymentsCYAController.show(TaxYear(taxYear))
 
   def journeyCheck(currentPage: UnauthorisedPaymentsPages, cya: PensionsCYAModel, taxYear: Int, optIndex: Option[Int] = None): Option[Result] = {
     val unauthorisedPayments = cya.unauthorisedPayments

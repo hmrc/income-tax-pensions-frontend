@@ -17,6 +17,7 @@
 package models.pension.charges
 
 import connectors.OptionalContentHttpReads
+import models.mongo.PensionsCYAModel
 import models.pension.{AllPensionsData, PensionCYABaseModel}
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
@@ -112,6 +113,8 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
       }
     AnnualAllowancesPensionCharges(pensionSavingsTaxChargesOpt, pensionContributionsOpt)
   }
+
+  def toPensionsCYAModel: PensionsCYAModel = PensionsCYAModel.emptyModels.copy(pensionsAnnualAllowances = this)
 }
 
 object PensionAnnualAllowancesViewModel {

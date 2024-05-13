@@ -16,6 +16,7 @@
 
 package controllers.pensions.unauthorisedPayments
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.AuthorisedAction
 import controllers.predicates.actions.TaxYearAction.taxYearAction
@@ -82,7 +83,7 @@ class UnauthorisedPaymentsController @Inject() (mcc: MessagesControllerComponent
               } else if (unauthorisedPaymentsSelection.containsYesNotSurcharge) {
                 routes.NoSurchargeAmountController.show(taxYear)
               } else {
-                routes.UnauthorisedPaymentsCYAController.show(taxYear)
+                routes.UnauthorisedPaymentsCYAController.show(TaxYear(taxYear))
               }
 
             pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, isPriorSubmission)(
