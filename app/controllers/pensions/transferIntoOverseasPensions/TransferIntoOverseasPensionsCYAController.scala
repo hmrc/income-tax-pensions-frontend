@@ -19,17 +19,17 @@ package controllers.pensions.transferIntoOverseasPensions
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
-import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import models.mongo.PensionsCYAModel
 import models.pension.AllPensionsData
 import models.pension.AllPensionsData.generateSessionModelFromPrior
 import models.pension.Journey.TransferIntoOverseasPensions
+import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.TransferIntoOverseasPensionService
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.TransfersIntoOverseasPensionsPages.TransferIntoOverseasPensionsCYA
 import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, journeyCheck}
-import services.{PensionSessionService, TransferIntoOverseasPensionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import views.html.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionsCYAView
@@ -40,7 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TransferIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditActionsProvider,
                                                            view: TransferIntoOverseasPensionsCYAView,
-                                                           pensionSessionService: PensionSessionService,
                                                            chargesService: TransferIntoOverseasPensionService,
                                                            errorHandler: ErrorHandler,
                                                            mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
@@ -48,16 +47,17 @@ class TransferIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsViewAuditing(taxYear) async { implicit request =>
-    val cyaData = request.sessionData
-    if (!cyaData.pensions.transfersIntoOverseasPensions.isFinished) {
-      val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYear)
-      redirectBasedOnCurrentAnswers(taxYear, Some(cyaData), cyaPageCall(taxYear))(checkRedirect) { data =>
-        Future.successful(Ok(view(taxYear, data.pensions.transfersIntoOverseasPensions)))
-      }
+  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.transfersIntoOverseasPensionsViewAuditing(taxYear) async { implicit request =>
+    val cyaData    = request.sessionData
+    val taxYearInt = taxYear.endYear
+
+    if (cyaData.pensions.transfersIntoOverseasPensions.isFinished) {
+      Future.successful(Ok(view(taxYearInt, cyaData.pensions.transfersIntoOverseasPensions)))
     } else {
-      pensionSessionService.createOrUpdateSessionData(request.user, cyaData.pensions, taxYear, isPriorSubmission = false)(
-        errorHandler.internalServerError())(Ok(view(taxYear, cyaData.pensions.transfersIntoOverseasPensions)))
+      val checkRedirect = journeyCheck(TransferIntoOverseasPensionsCYA, _: PensionsCYAModel, taxYearInt)
+      redirectBasedOnCurrentAnswers(taxYearInt, Some(cyaData), cyaPageCall(taxYearInt))(checkRedirect) { data =>
+        Future.successful(Ok(view(taxYearInt, data.pensions.transfersIntoOverseasPensions)))
+      }
     }
   }
 

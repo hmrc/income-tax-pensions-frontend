@@ -32,7 +32,12 @@ import models.domain.ApiResultT
 import models.logging.ConnectorRequestInfo
 import models.mongo.{JourneyContext, JourneyStatus}
 import models.pension.JourneyNameAndStatus
-import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionAnnualAllowancesViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{
+  CreateUpdatePensionChargesRequestModel,
+  PensionAnnualAllowancesViewModel,
+  TransfersIntoOverseasPensionsViewModel,
+  UnauthorisedPaymentsViewModel
+}
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
@@ -102,6 +107,15 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     val url = appConfig.unauthorisedPaymentsAnswersUrl(taxYear, nino)
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[UnauthorisedPaymentsViewModel]]](url)
+    EitherT(res)
+  }
+
+  def getTransfersIntoOverseasPensions(nino: Nino, taxYear: TaxYear)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Option[TransfersIntoOverseasPensionsViewModel]] = {
+    val url = appConfig.transfersIntoOverseasPensionsAnswersUrl(taxYear, nino)
+    ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
+    val res = http.GET[DownstreamErrorOr[Option[TransfersIntoOverseasPensionsViewModel]]](url)
     EitherT(res)
   }
 

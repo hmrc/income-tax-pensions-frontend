@@ -46,7 +46,7 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
   private val schemeStartCall: Call                                            = OverseasTransferChargePaidController.show(taxYear, None)
   private val schemeDetailsCall: Call                                          = TransferPensionsSchemeController.show(taxYear, None)
   private val schemeSummaryCall: Call                                          = TransferChargeSummaryController.show(taxYear)
-  private val checkYourAnswersCall: Call                                       = TransferIntoOverseasPensionsCYAController.show(taxYear)
+  private val checkYourAnswersCall: Call                                       = TransferIntoOverseasPensionsCYAController.show(currentTaxYear)
   private val continueToContextualRedirect: PensionsUserData => Future[Result] = aPensionsUserData => Future.successful(Redirect(schemeDetailsCall))
 
   ".cyaPageCall" should {

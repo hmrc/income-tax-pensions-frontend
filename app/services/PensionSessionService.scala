@@ -27,7 +27,7 @@ import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
-import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, UnauthorisedPayments}
+import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, TransferIntoOverseasPensions, UnauthorisedPayments}
 import models.pension.{Journey, JourneyNameAndStatus}
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
@@ -77,6 +77,9 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case UnauthorisedPayments =>
         val res = pensionsConnector.getUnauthorisedPaymentsFromPensions(user.getNino, taxYear)
+        transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
+      case TransferIntoOverseasPensions =>
+        val res = pensionsConnector.getTransfersIntoOverseasPensions(user.getNino, taxYear)
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case _ =>
         EitherT.rightT[Future, APIErrorModel](None) // TODO it will be added gradually journey by journey here
@@ -179,9 +182,6 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       case Left(_)  => onFail
     }
   }
-
-  private def getAllJourneyStatuses: DownstreamOutcome[Seq[JourneyNameAndStatus]] = // TODO 7969 connector to mongo BE for journeyNameAndStatus list
-    Future(Right[APIErrorModel, Seq[JourneyNameAndStatus]](Seq()))
 
   def getJourneyStatus(ctx: JourneyContext)(implicit hc: HeaderCarrier): DownstreamOutcome[Option[JourneyStatus]] =
     pensionsConnector

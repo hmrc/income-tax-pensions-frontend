@@ -16,6 +16,7 @@
 
 package services.redirects
 
+import common.TaxYear
 import controllers.pensions.transferIntoOverseasPensions.routes.{
   OverseasTransferChargePaidController,
   TransferChargeSummaryController,
@@ -52,7 +53,7 @@ object TransfersIntoOverseasPensionsRedirects {
     }
   }
 
-  def cyaPageCall(taxYear: Int): Call = TransferIntoOverseasPensionsCYAController.show(taxYear)
+  def cyaPageCall(taxYear: Int): Call = TransferIntoOverseasPensionsCYAController.show(TaxYear(taxYear))
 
   def redirectForSchemeLoop(schemes: Seq[TransferPensionScheme], taxYear: Int): Call = {
     val filteredSchemes = schemes.filter(scheme => scheme.isFinished)

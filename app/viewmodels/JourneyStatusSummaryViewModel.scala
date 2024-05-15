@@ -231,7 +231,7 @@ object JourneyStatusSummaryViewModel {
       case TransferIntoOverseasPensions =>
         determineJourneyStartOrCyaUrl(
           tiopRoutes.TransferPensionSavingsController.show(taxYear.endYear).url,
-          tiopRoutes.TransferIntoOverseasPensionsCYAController.show(taxYear.endYear).url
+          tiopRoutes.TransferIntoOverseasPensionsCYAController.show(taxYear).url
         )
       case ShortServiceRefunds =>
         determineJourneyStartOrCyaUrl(

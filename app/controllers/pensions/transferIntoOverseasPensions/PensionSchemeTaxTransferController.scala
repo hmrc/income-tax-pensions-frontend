@@ -16,6 +16,7 @@
 
 package controllers.pensions.transferIntoOverseasPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.transferIntoOverseasPensions.routes._
 import controllers.predicates.actions.ActionsProvider
@@ -91,7 +92,7 @@ class PensionSchemeTaxTransferController @Inject() (actionsProvider: ActionsProv
       errorHandler.internalServerError()) {
       Redirect(
         if (!yesNo || updatedModel.transfersIntoOverseasPensions.isFinished) {
-          TransferIntoOverseasPensionsCYAController.show(taxYear)
+          TransferIntoOverseasPensionsCYAController.show(TaxYear(taxYear))
         } else {
           redirectForSchemeLoop(schemes = updatedModel.transfersIntoOverseasPensions.transferPensionScheme, taxYear)
         }
