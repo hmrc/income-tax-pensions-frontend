@@ -82,7 +82,7 @@ class PensionSchemeStartDateController @Inject() (pensionSessionService: Pension
               val pensionScheme: UkPensionIncomeViewModel = viewModel.uKPensionIncomes(index)
               val newStartDate                            = startDate.toLocalDate.toString
 
-              val updatedPensionIncomesList: Seq[UkPensionIncomeViewModel] =
+              val updatedPensionIncomesList: List[UkPensionIncomeViewModel] =
                 viewModel.uKPensionIncomes.updated(index, pensionScheme.copy(startDate = Some(newStartDate)))
               val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedPensionIncomesList))
 

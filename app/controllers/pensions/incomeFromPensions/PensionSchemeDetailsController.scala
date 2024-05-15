@@ -91,7 +91,7 @@ class PensionSchemeDetailsController @Inject() (mcc: MessagesControllerComponent
                     pensionSchemeRef = Some(formModel.schemeReference),
                     pensionId = Some(formModel.pensionId)))
 
-                val updatedPensionIncomesList: Seq[UkPensionIncomeViewModel] =
+                val updatedPensionIncomesList: List[UkPensionIncomeViewModel] =
                   (viewModel.uKPensionIncomes, pensionSchemeIndex) match {
                     case (list, Some(index)) =>
                       list.updated(

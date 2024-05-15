@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import cats.implicits._
 import common.TaxYear
 import config.ErrorHandler
 import models.domain.ApiResultT
@@ -21,7 +22,6 @@ import models.pension.Journey
 import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
 import play.api.Logger
 import play.api.mvc.Results.Redirect
-import cats.implicits._
 import play.api.mvc.{Request, Result}
 
 import scala.concurrent.{ExecutionContext, Future}

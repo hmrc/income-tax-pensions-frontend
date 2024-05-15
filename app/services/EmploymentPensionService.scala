@@ -105,7 +105,7 @@ class EmploymentPensionService @Inject() (sessionService: PensionSessionService,
   private def clearJourneyFromSession(session: SessionData): QueryResultT[Unit] = {
     val clearedJourneyModel =
       session.pensions.incomeFromPensions.copy(
-        uKPensionIncomes = Seq.empty,
+        uKPensionIncomes = Nil,
         uKPensionIncomesQuestion = None
       )
     val updatedSessionModel = session.copy(pensions = session.pensions.copy(incomeFromPensions = clearedJourneyModel))

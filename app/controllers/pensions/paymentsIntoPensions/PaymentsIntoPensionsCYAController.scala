@@ -20,9 +20,10 @@ import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.handleResult
 import controllers.predicates.auditActions.AuditActionsProvider
+import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.Journey
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.PensionsService
 import services.redirects.PaymentsIntoPensionPages.CheckYourAnswersPage
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}

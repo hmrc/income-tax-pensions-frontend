@@ -41,7 +41,7 @@ class IncomeFromOtherUkPensionsRedirectsSpec extends UnitTest {
   private val schemeDetailsCall: Call                     = PensionSchemeDetailsController.show(taxYear, Some(0))
   private val schemeSummaryCall: Call                     = UkPensionIncomeSummaryController.show(taxYear)
   private val removeSchemeCall: Call                      = RemovePensionSchemeController.show(taxYear, Some(0))
-  private val checkYourAnswersCall: Call                  = UkPensionIncomeCYAController.show(taxYear)
+  private val checkYourAnswersCall: Call                  = UkPensionIncomeCYAController.show(currentTaxYear)
   private val journeyStartRedirect: Some[Result]          = Some(Redirect(journeyStartCall))
   private def continueToContextualRedirect(continue: Call): PensionsUserData => Future[Result] = _ => Future.successful(Redirect(continue))
 
