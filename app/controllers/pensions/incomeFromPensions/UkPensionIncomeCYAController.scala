@@ -20,12 +20,11 @@ import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.handleResult
 import controllers.predicates.auditActions.AuditActionsProvider
-import models.mongo.{PensionsCYAModel, PensionsUserData}
+import models.mongo.PensionsCYAModel
 import models.pension.Journey
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionsService
-import services.redirects.IncomeFromOtherUkPensionsPages
 import services.redirects.IncomeFromOtherUkPensionsPages.CheckUkPensionIncomeCYAPage
 import services.redirects.IncomeFromOtherUkPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers

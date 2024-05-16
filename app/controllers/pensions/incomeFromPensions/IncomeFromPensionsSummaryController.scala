@@ -18,8 +18,7 @@ package controllers.pensions.incomeFromPensions
 
 import common.TaxYear
 import config.AppConfig
-import controllers.predicates.actions.{ActionsProvider, AuthorisedAction}
-import controllers.predicates.actions.TaxYearAction.taxYearAction
+import controllers.predicates.actions.ActionsProvider
 import models.pension.Journey
 import models.pension.Journey.IncomeFromPensionsSummary
 import play.api.i18n.I18nSupport

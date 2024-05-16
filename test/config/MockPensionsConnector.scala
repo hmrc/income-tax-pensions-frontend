@@ -26,6 +26,7 @@ import models.pension.JourneyNameAndStatus
 import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionAnnualAllowancesViewModel}
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
+import models.pension.statebenefits.IncomeFromPensionsViewModel
 import org.scalamock.handlers.{CallHandler3, CallHandler4, CallHandler5}
 import org.scalamock.scalatest.MockFactory
 import services.{PensionChargesConnectorHelper, PensionIncomeConnectorHelper, PensionReliefsConnectorHelper}
@@ -120,6 +121,13 @@ trait MockPensionsConnector extends MockFactory {
   def mockSavePaymentsIntoPensions(): CallHandler5[Nino, TaxYear, PaymentsIntoPensionsViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
     (mockPensionsConnector
       .savePaymentsIntoPensions(_: Nino, _: TaxYear, _: PaymentsIntoPensionsViewModel)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(*, *, *, *, *)
+      .returns(EitherT.rightT[Future, APIErrorModel](()))
+      .anyNumberOfTimes()
+
+  def mockSaveUkPensionIncome(): CallHandler5[Nino, TaxYear, IncomeFromPensionsViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
+    (mockPensionsConnector
+      .saveUkPensionIncome(_: Nino, _: TaxYear, _: IncomeFromPensionsViewModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, *, *, *, *)
       .returns(EitherT.rightT[Future, APIErrorModel](()))
       .anyNumberOfTimes()

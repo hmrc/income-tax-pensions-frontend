@@ -24,6 +24,7 @@ import models.domain.ApiResultT
 import models.mongo.PensionsUserData
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
+import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncomeViewModel}
 import services.PensionsService
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -32,6 +33,8 @@ import scala.concurrent.ExecutionContext
 final case class PensionsServiceStub(
     paymentsIntoPensionsResult: Either[ServiceError, Unit] = Right(()),
     var paymentsIntoPensionsList: List[PaymentsIntoPensionsViewModel] = Nil,
+    upsertUkPensionIncomeResult: Either[ServiceError, Unit] = Right(()),
+    var incomeFromPensionsList: List[IncomeFromPensionsViewModel] = Nil,
     annualAllowancesResult: Either[ServiceError, Unit] = Right(()),
     var annualAllowancesList: List[PensionAnnualAllowancesViewModel] = Nil
 ) extends PensionsService {
@@ -43,6 +46,13 @@ final case class PensionsServiceStub(
     EitherT.fromEither(paymentsIntoPensionsResult)
   }
 
+  def upsertUkPensionIncome(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    incomeFromPensionsList ::= sessionData.pensions.incomeFromPensions
+    EitherT.fromEither(upsertUkPensionIncomeResult)
+  }
+
   def upsertAnnualAllowances(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
@@ -50,7 +60,4 @@ final case class PensionsServiceStub(
     EitherT.fromEither(annualAllowancesResult)
   }
 
-  def upsertUkPensionIncome(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext): ApiResultT[Unit] = ???
 }
