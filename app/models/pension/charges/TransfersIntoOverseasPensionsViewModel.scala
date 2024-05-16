@@ -17,7 +17,8 @@
 package models.pension.charges
 
 import cats.implicits.{catsSyntaxOptionId, catsSyntaxTuple3Semigroupal, none, toTraverseOps}
-import models.mongo.TextAndKey
+import connectors.OptionalContentHttpReads
+import models.mongo.{PensionsCYAModel, TextAndKey}
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.Constants.GBAlpha3Code
@@ -103,10 +104,14 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
       pensionSchemeTransferChargeAmount = pensionSchemeTransferChargeAmount.map(_.encrypted),
       transferPensionScheme = transferPensionScheme.map(_.encrypted())
     )
+
+  def toPensionsCYAModel: PensionsCYAModel = PensionsCYAModel.emptyModels.copy(transfersIntoOverseasPensions = this)
 }
 
 object TransfersIntoOverseasPensionsViewModel {
   implicit val format: OFormat[TransfersIntoOverseasPensionsViewModel] = Json.format[TransfersIntoOverseasPensionsViewModel]
+  implicit val optRds: OptionalContentHttpReads[TransfersIntoOverseasPensionsViewModel] =
+    new OptionalContentHttpReads[TransfersIntoOverseasPensionsViewModel]
 
   val empty: TransfersIntoOverseasPensionsViewModel = TransfersIntoOverseasPensionsViewModel()
 }
