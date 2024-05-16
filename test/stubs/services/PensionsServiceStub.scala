@@ -49,4 +49,8 @@ final case class PensionsServiceStub(
     annualAllowancesList ::= sessionData.pensions.pensionsAnnualAllowances
     EitherT.fromEither(annualAllowancesResult)
   }
+
+  def upsertUkPensionIncome(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = ???
 }

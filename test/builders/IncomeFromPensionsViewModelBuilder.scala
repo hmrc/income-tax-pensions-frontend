@@ -33,55 +33,55 @@ object IncomeFromPensionsViewModelBuilder {
     statePension = Some(aStatePensionViewModel),
     statePensionLumpSum = Some(aStatePensionLumpSumViewModel),
     uKPensionIncomesQuestion = Some(true),
-    uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo)
+    uKPensionIncomes = List(anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo)
   )
   val aStatePensionIncomeFromPensionsViewModel: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
     statePension = Some(aStatePensionViewModel),
     statePensionLumpSum = Some(aStatePensionLumpSumViewModel),
     uKPensionIncomesQuestion = None,
-    uKPensionIncomes = Seq.empty
+    uKPensionIncomes = List.empty
   )
 
   val aStatePensionIncomeFromPensionsNoAddToCalculationViewModel: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
     statePension = Some(aStatePensionNoAddToCalculationViewModel),
     statePensionLumpSum = Some(aStatePensionLumpSumNoAddToCalculationViewModel),
     uKPensionIncomesQuestion = None,
-    uKPensionIncomes = Seq.empty
+    uKPensionIncomes = List.empty
   )
 
   val statePensionOnly: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
     statePension = Some(anStateBenefitViewModel),
     statePensionLumpSum = None,
     uKPensionIncomesQuestion = None,
-    uKPensionIncomes = Seq.empty
+    uKPensionIncomes = List.empty
   )
 
   val statePensionLumpSumOnly: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
     statePension = None,
     statePensionLumpSum = Some(anStateBenefitViewModel),
     uKPensionIncomesQuestion = None,
-    uKPensionIncomes = Seq.empty
+    uKPensionIncomes = List.empty
   )
 
   val spAndSpLumpSum: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
     statePension = Some(anStateBenefitViewModelOne),
     statePensionLumpSum = Some(anStateBenefitViewModel),
     uKPensionIncomesQuestion = None,
-    uKPensionIncomes = Seq.empty
+    uKPensionIncomes = List.empty
   )
 
   val aUKIncomeFromPensionsViewModel: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
     statePension = None,
     statePensionLumpSum = None,
     uKPensionIncomesQuestion = Some(true),
-    uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo)
+    uKPensionIncomes = List(anUkPensionIncomeViewModelOne, anUkPensionIncomeViewModelTwo)
   )
 
   val viewModelSingularClaim: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel(
     statePension = None,
     statePensionLumpSum = None,
     uKPensionIncomesQuestion = Some(true),
-    uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne)
+    uKPensionIncomes = List(anUkPensionIncomeViewModelOne)
   )
 
   val anIncomeFromPensionEmptyViewModel: IncomeFromPensionsViewModel = IncomeFromPensionsViewModel()

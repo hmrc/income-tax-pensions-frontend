@@ -276,7 +276,7 @@ class EmploymentPensionServiceSpec
     def clearedJourneyFromSession(session: SessionData): SessionData = {
       val clearedJourneyModel = session.pensions.incomeFromPensions
         .copy(
-          uKPensionIncomes = Seq.empty,
+          uKPensionIncomes = List.empty,
           uKPensionIncomesQuestion = None
         )
       session.copy(pensions = session.pensions.copy(incomeFromPensions = clearedJourneyModel))

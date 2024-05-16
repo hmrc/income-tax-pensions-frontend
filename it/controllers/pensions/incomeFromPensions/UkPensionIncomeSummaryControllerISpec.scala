@@ -92,7 +92,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
     val expectedNeedToAddPensionSchemeText = "Bydd angen i chi ychwanegu un cynllun pensiwn neu fwy."
   }
 
-  val userScenarios: Seq[UserScenario[CommonExpectedResults, Nothing]] = Seq(
+  val userScenarios: List[UserScenario[CommonExpectedResults, Nothing]] = List(
     UserScenario(isWelsh = false, isAgent = false, CommonExpectedEN),
     UserScenario(isWelsh = false, isAgent = true, CommonExpectedEN),
     UserScenario(isWelsh = true, isAgent = false, CommonExpectedCY),
@@ -113,7 +113,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
             implicit lazy val result: WSResponse = {
               authoriseAgentOrIndividual(user.isAgent)
               dropPensionsDB()
-              val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(
+              val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(
                 anUkPensionIncomeViewModelOne.copy(pensionId = None),
                 anUkPensionIncomeViewModelOne,
                 anUkPensionIncomeViewModelTwo.copy(pensionSchemeRef = None),
@@ -124,7 +124,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
                 fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)),
                 user.isWelsh,
                 follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+                headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
               )
             }
 
@@ -154,13 +154,13 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
               authoriseAgentOrIndividual(user.isAgent)
               dropPensionsDB()
               val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes =
-                Seq(anUkPensionIncomeViewModelOne.copy(pensionId = None), anUkPensionIncomeViewModelTwo.copy(pensionSchemeRef = None)))
+                List(anUkPensionIncomeViewModelOne.copy(pensionId = None), anUkPensionIncomeViewModelTwo.copy(pensionSchemeRef = None)))
               insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
               urlGet(
                 fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)),
                 user.isWelsh,
                 follow = false,
-                headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+                headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
               )
             }
 
@@ -192,7 +192,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
         urlGet(
           fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)),
           follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+          headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
       }
 
       "has an SEE_OTHER status" ignore { // TODO https://jira.tools.tax.service.gov.uk/browse/SASS-7162
@@ -211,7 +211,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           urlGet(
             fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)),
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
         "has an SEE_OTHER(303) status" in {
@@ -229,7 +229,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
           urlGet(
             fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)),
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
         "has an SEE_OTHER(303) status" in {
