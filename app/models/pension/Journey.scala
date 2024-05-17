@@ -74,12 +74,22 @@ object Journey {
 
   case object PensionsSummary extends Journey("pensions-summary")
 
-  case object AnnualAllowances extends Journey("annual-allowances") {
-    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
-  }
   case object PaymentsIntoPensions extends Journey("payments-into-pensions") {
     override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
   }
+
+  case object IncomeFromPensionsSummary extends Journey("income-from-pensions-summary")
+  case object UkPensionIncome extends Journey("uk-pension-income") {
+    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(INCOME_FROM_PENSIONS_HOME(taxYear))
+  }
+  case object StatePension extends Journey("state-pension") {
+    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(INCOME_FROM_PENSIONS_HOME(taxYear))
+  }
+
+  case object AnnualAllowances extends Journey("annual-allowances") {
+    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
+  }
+
   case object UnauthorisedPayments extends Journey("unauthorised-payments") {
     override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
   }
@@ -96,14 +106,6 @@ object Journey {
   }
   case object ShortServiceRefunds extends Journey("short-service-refunds") {
     override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(OVERSEAS_HOME(taxYear))
-  }
-
-  case object IncomeFromPensionsSummary extends Journey("income-from-pensions-summary")
-  case object UkPensionIncome extends Journey("uk-pension-income") {
-    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(INCOME_FROM_PENSIONS_HOME(taxYear))
-  }
-  case object StatePension extends Journey("state-pension") {
-    override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(INCOME_FROM_PENSIONS_HOME(taxYear))
   }
 
 }

@@ -31,9 +31,13 @@ trait PensionsService {
   def upsertPaymentsIntoPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit]
+  def upsertUkPensionIncome(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit]
   def upsertAnnualAllowances(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit]
+
 }
 
 @Singleton
@@ -44,6 +48,14 @@ class PensionsServiceImpl @Inject() (pensionsConnector: PensionsConnector, sessi
     for {
       _ <- pensionsConnector.savePaymentsIntoPensions(user.getNino, taxYear, sessionData.pensions.paymentsIntoPension)
       _ <- sessionService.clearSessionOnSuccess(Journey.PaymentsIntoPensions, sessionData)
+    } yield ()
+
+  def upsertUkPensionIncome(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] =
+    for {
+      _ <- pensionsConnector.saveUkPensionIncome(user.getNino, taxYear, sessionData.pensions.incomeFromPensions)
+      _ <- sessionService.clearSessionOnSuccess(Journey.UkPensionIncome, sessionData)
     } yield ()
 
   def upsertAnnualAllowances(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit

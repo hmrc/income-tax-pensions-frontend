@@ -313,12 +313,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           dropPensionsDB()
           authoriseAgentOrIndividual()
           val viewModel =
-            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
+            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = List(anUkPensionIncomeViewModelOne))
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
           urlGet(
             fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(8))),
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
         "has an SEE_OTHER status" in {
@@ -347,7 +347,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
               body = form,
               welsh = user.isWelsh,
               follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
             )
           }
 
@@ -385,7 +385,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
               body = form,
               welsh = user.isWelsh,
               follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
             )
           }
 
@@ -424,7 +424,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
               body = form,
               welsh = user.isWelsh,
               follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
             )
           }
 
@@ -460,12 +460,12 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           pensionId = Some("Pension Id"))
         insertCyaData(
           pensionsUserDataWithIncomeFromPensions(
-            anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne, uKPensionIncomesModel))))
+            anIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne, uKPensionIncomesModel))))
         urlPost(
           fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(1))),
           body = form,
           follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
       }
 
@@ -496,7 +496,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)),
           body = form,
           follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
       }
 
@@ -527,7 +527,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)),
           body = form,
           follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
       }
 
@@ -559,7 +559,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           fullUrl(pensionSchemeDetailsUrl(taxYearEOY, None)),
           body = form,
           follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
       }
 
@@ -582,7 +582,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))),
             body = form,
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
           )
         }
 
@@ -602,7 +602,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(0))),
             body = form,
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
           )
         }
 
@@ -621,7 +621,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
             fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(4))),
             body = form,
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+            headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
           )
         }
 

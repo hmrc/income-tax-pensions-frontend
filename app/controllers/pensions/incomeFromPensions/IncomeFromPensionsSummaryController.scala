@@ -16,9 +16,10 @@
 
 package controllers.pensions.incomeFromPensions
 
+import common.TaxYear
 import config.AppConfig
-import controllers.predicates.actions.AuthorisedAction
-import controllers.predicates.actions.TaxYearAction.taxYearAction
+import controllers.predicates.actions.ActionsProvider
+import models.pension.Journey
 import models.pension.Journey.IncomeFromPensionsSummary
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,15 +33,16 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class IncomeFromPensionsSummaryController @Inject() (mcc: MessagesControllerComponents,
-                                                     authAction: AuthorisedAction,
+                                                     actionProvider: ActionsProvider,
                                                      pensionSessionService: PensionSessionService,
                                                      view: IncomeFromPensionsSummaryView)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport {
 
-  def show(taxYear: Int): Action[AnyContent] = (authAction andThen taxYearAction(taxYear)).async { implicit request =>
-    def summaryViewResult(taxYear: Int, pensionsSummary: HtmlContent) = Ok(view(taxYear, pensionsSummary))
+  def show(taxYear: Int): Action[AnyContent] =
+    actionProvider.authoriseWithSessionAndPriorAuthRequest(TaxYear(taxYear), Journey.IncomeFromPensionsSummary).async { implicit request =>
+      def summaryViewResult(taxYear: Int, pensionsSummary: HtmlContent) = Ok(view(taxYear, pensionsSummary))
 
-    pensionSessionService.mergePriorDataToSession(IncomeFromPensionsSummary, taxYear, request.user, summaryViewResult)
-  }
+      pensionSessionService.mergePriorDataToSession(IncomeFromPensionsSummary, taxYear, request.user, summaryViewResult)
+    }
 }

@@ -16,6 +16,7 @@
 
 package services.redirects
 
+import common.TaxYear
 import controllers.pensions.incomeFromPensions.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncomeViewModel}
@@ -28,7 +29,7 @@ import scala.concurrent.Future
 
 object IncomeFromOtherUkPensionsRedirects {
 
-  def cyaPageCall(taxYear: Int): Call = UkPensionIncomeCYAController.show(taxYear)
+  def cyaPageCall(taxYear: Int): Call = UkPensionIncomeCYAController.show(TaxYear(taxYear))
 
   def schemeIsFinishedCheck(schemes: Seq[UkPensionIncomeViewModel], index: Int, taxYear: Int, continueRedirect: Call): Result =
     if (schemes(index).isFinished) {

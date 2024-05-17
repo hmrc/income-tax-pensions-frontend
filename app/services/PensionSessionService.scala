@@ -28,6 +28,7 @@ import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
 import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, TransferIntoOverseasPensions, UnauthorisedPayments}
+import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, UkPensionIncome, UnauthorisedPayments}
 import models.pension.{Journey, JourneyNameAndStatus}
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
@@ -72,6 +73,9 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       case PaymentsIntoPensions =>
         val res = pensionsConnector.getPaymentsIntoPensions(user.getNino, taxYear)
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
+      case UkPensionIncome =>
+        val res = pensionsConnector.getUkPensionIncome(user.getNino, taxYear)
+        transformNotFoundToNone(res).map(_.map(x => x.toPensionsCYAModel))
       case AnnualAllowances =>
         val res = pensionsConnector.getAnnualAllowances(user.getNino, taxYear)
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))

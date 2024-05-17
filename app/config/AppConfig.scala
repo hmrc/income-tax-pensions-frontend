@@ -46,6 +46,12 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   def paymentsIntoPensionsAnswersUrl(taxYear: TaxYear, nino: Nino): String =
     pensionBEBaseUrl + s"/${taxYear.endYear}/payments-into-pensions/${nino.value}/answers"
 
+  def upPensionIncomeAnswersUrl(taxYear: TaxYear, nino: Nino): String =
+    pensionBEBaseUrl + s"/${taxYear.endYear}/pension-income/uk-pension-income/${nino.value}/answers"
+
+  def statePensionAnswersUrl(taxYear: TaxYear, nino: Nino): String =
+    pensionBEBaseUrl + s"/${taxYear.endYear}/pension-income/state-pension/${nino.value}/answers"
+
   def annualAllowancesAnswersUrl(taxYear: TaxYear, nino: Nino): String =
     pensionBEBaseUrl + s"/${taxYear.endYear}/annual-allowances/${nino.value}/answers"
 

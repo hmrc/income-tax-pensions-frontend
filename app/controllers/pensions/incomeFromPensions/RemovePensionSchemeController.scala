@@ -60,11 +60,11 @@ class RemovePensionSchemeController @Inject() (mcc: MessagesControllerComponents
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         indexCheckThenJourneyCheck(data, pensionSchemeIndex, RemovePensionIncomePage, taxYear) { data =>
-          val pensionsCYAModel                                  = data.pensions
-          val viewModel                                         = pensionsCYAModel.incomeFromPensions
-          val pensionIncomesList: Seq[UkPensionIncomeViewModel] = viewModel.uKPensionIncomes
+          val pensionsCYAModel                                   = data.pensions
+          val viewModel                                          = pensionsCYAModel.incomeFromPensions
+          val pensionIncomesList: List[UkPensionIncomeViewModel] = viewModel.uKPensionIncomes
 
-          val updatedPensionIncomesList: Seq[UkPensionIncomeViewModel] = pensionIncomesList.patch(pensionSchemeIndex.get, Nil, 1)
+          val updatedPensionIncomesList: List[UkPensionIncomeViewModel] = pensionIncomesList.patch(pensionSchemeIndex.get, Nil, 1)
           val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedPensionIncomesList))
 
           pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(

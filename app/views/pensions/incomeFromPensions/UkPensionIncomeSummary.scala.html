@@ -22,6 +22,7 @@
 @import controllers.pensions.incomeFromPensions.routes.{PensionSchemeDetailsController, PensionSchemeSummaryController, RemovePensionSchemeController, UkPensionIncomeCYAController, IncomeFromPensionsSummaryController}
 @import models.pension.statebenefits.UkPensionIncomeViewModel
 @import models.requests.UserSessionDataRequest
+@import common.TaxYear
 
 @this(
     layout: Layout,
@@ -29,7 +30,6 @@
     heading: Heading,
     button: GovukButton,
     link: Link)
-
 
 @(taxYear: Int, pensionIncomeList: Seq[UkPensionIncomeViewModel])(implicit messages: Messages, appConfig: AppConfig, request: AuthorisationRequest[_])
 
@@ -74,7 +74,7 @@
             preventDoubleClick = Some(true),
             content = Text(messages("common.continue")),
             classes = "govuk-button govuk-!-margin-top-2",
-            href = Some(UkPensionIncomeCYAController.show(taxYear).url)
+            href = Some(UkPensionIncomeCYAController.show(TaxYear(taxYear)).url)
         ))
     } else {
         <p class="govuk-body" id="youNeedToAddOneOrMorePensionScheme1">

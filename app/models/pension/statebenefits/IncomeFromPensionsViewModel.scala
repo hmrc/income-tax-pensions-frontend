@@ -16,7 +16,8 @@
 
 package models.pension.statebenefits
 
-import models.mongo.TextAndKey
+import connectors.OptionalContentHttpReads
+import models.mongo.{PensionsCYAModel, TextAndKey}
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
@@ -28,7 +29,7 @@ import utils.{EncryptedValue, SecureGCMCipher}
 case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewModel] = None,
                                        statePensionLumpSum: Option[StateBenefitViewModel] = None,
                                        uKPensionIncomesQuestion: Option[Boolean] = None,
-                                       uKPensionIncomes: Seq[UkPensionIncomeViewModel] = Seq.empty)
+                                       uKPensionIncomes: List[UkPensionIncomeViewModel] = Nil)
     extends PensionCYABaseModel {
 
   def isEmpty: Boolean =
@@ -38,6 +39,10 @@ case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewMode
       uKPensionIncomes.isEmpty
 
   def nonEmpty: Boolean = !isEmpty
+
+  def removeUkPensionIncome: IncomeFromPensionsViewModel = copy(uKPensionIncomesQuestion = None, uKPensionIncomes = Nil)
+
+  def removeStatePension: IncomeFromPensionsViewModel = copy(statePension = None, statePensionLumpSum = None)
 
   def isStatePensionFinished: Boolean =
     statePension.exists(_.isFinished) ||
@@ -64,16 +69,22 @@ case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewMode
       uKPensionIncomesQuestion = uKPensionIncomesQuestion.map(_.encrypted),
       uKPensionIncomes = uKPensionIncomes.map(_.encrypted())
     )
+
+  def toPensionsCYAModel: PensionsCYAModel =
+    PensionsCYAModel.emptyModels.copy(incomeFromPensions = this)
+
 }
 
 object IncomeFromPensionsViewModel {
-  implicit val format: OFormat[IncomeFromPensionsViewModel] = Json.format[IncomeFromPensionsViewModel]
+  implicit val format: OFormat[IncomeFromPensionsViewModel]                  = Json.format[IncomeFromPensionsViewModel]
+  implicit val optRds: OptionalContentHttpReads[IncomeFromPensionsViewModel] = new OptionalContentHttpReads[IncomeFromPensionsViewModel]
+
 }
 
 case class EncryptedIncomeFromPensionsViewModel(statePension: Option[EncryptedStateBenefitViewModel] = None,
                                                 statePensionLumpSum: Option[EncryptedStateBenefitViewModel] = None,
                                                 uKPensionIncomesQuestion: Option[EncryptedValue] = None,
-                                                uKPensionIncomes: Seq[EncryptedUkPensionIncomeViewModel] = Seq.empty) {
+                                                uKPensionIncomes: List[EncryptedUkPensionIncomeViewModel] = Nil) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): IncomeFromPensionsViewModel =
     IncomeFromPensionsViewModel(
