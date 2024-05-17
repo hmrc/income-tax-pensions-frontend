@@ -42,6 +42,7 @@ import models.pension.charges.{
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
+import models.pension.statebenefits.IncomeFromPensionsViewModel
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -75,6 +76,27 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     val url = appConfig.journeyAnswersUrl(taxYear, nino, PaymentsIntoPensions)
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[PaymentsIntoPensionsViewModel]]](url)
+    EitherT(res)
+  }
+
+  def getUkPensionIncome(nino: Nino, taxYear: TaxYear)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Option[IncomeFromPensionsViewModel]] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, UkPensionIncome)
+    ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
+    val res = http.GET[DownstreamErrorOr[Option[IncomeFromPensionsViewModel]]](url)
+    EitherT(res)
+  }
+
+  def saveUkPensionIncome(nino: Nino, taxYear: TaxYear, answers: IncomeFromPensionsViewModel)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, UkPensionIncome)
+    ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, answers)
+
+    val res =
+      http.PUT[IncomeFromPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(IncomeFromPensionsViewModel.format, NoContentHttpReads, hc, ec)
+
     EitherT(res)
   }
 

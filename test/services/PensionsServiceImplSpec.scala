@@ -26,10 +26,10 @@ import utils.CommonData._
 
 class PensionsServiceImplSpec extends AnyWordSpecLike with MockPensionsConnector with MockPensionSessionService {
   val service = new PensionsServiceImpl(mockPensionsConnector, mockPensionSessionService)
+  val session = aPensionsUserData
 
   "upsertPaymentsIntoPensions" should {
     "remove answers after submission" in {
-      val session = aPensionsUserData
       mockSavePaymentsIntoPensions()
       mockClearSessionOnSuccess(Journey.PaymentsIntoPensions)
       val result = service.upsertPaymentsIntoPensions(user, currTaxYear, session).value.futureValue
@@ -38,9 +38,18 @@ class PensionsServiceImplSpec extends AnyWordSpecLike with MockPensionsConnector
     }
   }
 
+  "upsertUkIncomePension" should {
+    "remove answers after submission" in {
+      mockSaveUkPensionIncome()
+      mockClearSessionOnSuccess(Journey.UkPensionIncome)
+      val result = service.upsertUkPensionIncome(user, currTaxYear, session).value.futureValue
+
+      assert(result.isRight === true)
+    }
+  }
+
   "upsertAnnualAllowances" should {
     "remove answers after submission" in {
-      val session = aPensionsUserData
       mockSaveAnnualAllowances()
       mockClearSessionOnSuccess(Journey.AnnualAllowances)
       val result = service.upsertAnnualAllowances(user, currTaxYear, session).value.futureValue

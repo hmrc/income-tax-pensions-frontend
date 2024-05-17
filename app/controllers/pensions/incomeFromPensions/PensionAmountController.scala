@@ -93,7 +93,7 @@ class PensionAmountController @Inject() (mcc: MessagesControllerComponents,
 
                     val ukPensionModel: UkPensionIncomeViewModel        = viewModel.uKPensionIncomes(index)
                     val updatedUkPensionModel: UkPensionIncomeViewModel = ukPensionModel.copy(amount = amounts._1, taxPaid = amounts._2)
-                    val updatedList: Seq[UkPensionIncomeViewModel]      = viewModel.uKPensionIncomes.updated(index, updatedUkPensionModel)
+                    val updatedList: List[UkPensionIncomeViewModel]     = viewModel.uKPensionIncomes.updated(index, updatedUkPensionModel)
                     val updatedCyaModel: PensionsCYAModel =
                       pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedList))
                     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(

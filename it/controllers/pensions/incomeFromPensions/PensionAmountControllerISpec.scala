@@ -160,7 +160,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
         "render page with no prefilled values" which {
           lazy val pensionIncomeModel = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes =
-            Seq(anUkPensionIncomeViewModelOne.copy(amount = None, taxPaid = None, startDate = None)))
+            List(anUkPensionIncomeViewModelOne.copy(amount = None, taxPaid = None, startDate = None)))
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
@@ -266,7 +266,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
       "previous questions are unanswered" which {
         val incompleteJourney =
-          aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(pensionSchemeName = None)))
+          aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne.copy(pensionSchemeName = None)))
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
@@ -274,7 +274,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           urlGet(
             fullUrl(pensionAmountUrl(taxYearEOY, Some(0))),
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
         "has an SEE_OTHER(303) status" in {
@@ -291,7 +291,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           urlGet(
             fullUrl(pensionAmountUrl(taxYearEOY, None)),
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
         "has an SEE_OTHER(303) status" in {
@@ -305,12 +305,12 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           dropPensionsDB()
           authoriseAgentOrIndividual()
           val viewModel =
-            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
+            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = List(anUkPensionIncomeViewModelOne))
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
           urlGet(
             fullUrl(pensionAmountUrl(taxYearEOY, Some(8))),
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
         }
 
         "has an SEE_OTHER status" in {
@@ -341,7 +341,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
               body = emptyForm,
               welsh = user.isWelsh,
               follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
             )
           }
           "has the correct status" in {
@@ -385,7 +385,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
               body = invalidFormatForm,
               welsh = user.isWelsh,
               follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
             )
           }
 
@@ -429,7 +429,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
               body = overMaximumForm,
               welsh = user.isWelsh,
               follow = false,
-              headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+              headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
             )
           }
           "has the correct status" in {
@@ -472,12 +472,12 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(scheme))))
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(scheme))))
         urlPost(
           fullUrl(pensionAmountUrl(taxYearEOY, Some(index))),
           body = form,
           follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
       }
 
@@ -497,7 +497,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
     "redirect to the Scheme Summary page when a valid amount is submitted, completing the scheme" which {
       lazy val form: Map[String, String] = pensionAmountForm(newAmount.toString, newAmount2.toString)
-      val viewModel                      = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne))
+      val viewModel                      = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne))
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -507,7 +507,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           fullUrl(pensionAmountUrl(taxYearEOY, Some(index))),
           body = form,
           follow = false,
-          headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
         )
       }
 
@@ -537,7 +537,8 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
             fullUrl(pensionAmountUrl(taxYearEOY, Some(0))),
             body = form,
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has an SEE_OTHER(303) status" in {
@@ -549,7 +550,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
       "previous questions are unanswered" which {
         lazy val form: Map[String, String] = pensionAmountForm(newAmount.toString, newAmount2.toString)
         val incompleteJourney =
-          aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Seq(anUkPensionIncomeViewModelOne.copy(pensionSchemeName = None)))
+          aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne.copy(pensionSchemeName = None)))
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
@@ -558,7 +559,8 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
             fullUrl(pensionAmountUrl(taxYearEOY, Some(0))),
             body = form,
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has an SEE_OTHER(303) status" in {
@@ -578,7 +580,8 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
             fullUrl(pensionAmountUrl(taxYearEOY, Some(2))),
             body = form,
             follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList)))
+            headers = List(HeaderNames.COOKIE -> playSessionCookies(taxYearEOY, validTaxYearList))
+          )
         }
 
         "has an SEE_OTHER status" in {

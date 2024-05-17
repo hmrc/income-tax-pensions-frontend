@@ -18,21 +18,18 @@ package controllers.pensions.incomeFromPensions
 
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
+import controllers.handleResult
 import controllers.predicates.auditActions.AuditActionsProvider
-import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
-import forms.FormUtils
 import models.mongo.PensionsCYAModel
-import models.pension.AllPensionsData
-import models.pension.AllPensionsData.generateSessionModelFromPrior
-import models.pension.Journey.UkPensionIncome
+import models.pension.Journey
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.EmploymentPensionService
+import services.PensionsService
 import services.redirects.IncomeFromOtherUkPensionsPages.CheckUkPensionIncomeCYAPage
 import services.redirects.IncomeFromOtherUkPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.SessionHelper
+import utils.Logging
 import views.html.pensions.incomeFromPensions.UkPensionIncomeCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -41,37 +38,35 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UkPensionIncomeCYAController @Inject() (mcc: MessagesControllerComponents,
                                               auditProvider: AuditActionsProvider,
+                                              pensionsService: PensionsService,
                                               view: UkPensionIncomeCYAView,
-                                              service: EmploymentPensionService,
                                               errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with SessionHelper
-    with FormUtils {
+    with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.ukPensionIncomeViewAuditing(taxYear) async { implicit request =>
-    val checkRedirect = journeyCheck(CheckUkPensionIncomeCYAPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
-      Future.successful(Ok(view(taxYear, data.pensions.incomeFromPensions)))
+  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.ukPensionIncomeViewAuditing(taxYear.endYear) async { implicit request =>
+    val cyaData    = request.sessionData
+    val taxYearInt = taxYear.endYear
+
+    if (cyaData.pensions.incomeFromPensions.isUkPensionFinished) {
+      Future.successful(Ok(view(taxYearInt, cyaData.pensions.incomeFromPensions)))
+    } else {
+      val checkRedirect = journeyCheck(CheckUkPensionIncomeCYAPage, _: PensionsCYAModel, taxYear.endYear)
+      redirectBasedOnCurrentAnswers(taxYear.endYear, Some(request.sessionData), cyaPageCall(taxYear.endYear))(checkRedirect) { data =>
+        Future.successful(Ok(view(taxYear.endYear, data.pensions.incomeFromPensions)))
+      }
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = auditProvider.ukPensionIncomeUpdateAuditing(taxYear) async { implicit request =>
-    val checkRedirect = journeyCheck(CheckUkPensionIncomeCYAPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { sessionData =>
-      if (sessionDataDifferentThanPriorData(sessionData.pensions, request.maybePrior)) {
-        service.saveAnswers(request.user, TaxYear(taxYear)).map {
-          case Left(_)  => errorHandler.internalServerError()
-          case Right(_) => Redirect(SECTION_COMPLETED_PAGE(taxYear, UkPensionIncome))
-        }
-      } else Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, UkPensionIncome)))
-    }
-  }
+  def submit(taxYear: TaxYear): Action[AnyContent] = auditProvider.ukPensionIncomeUpdateAuditing(taxYear.endYear) async { implicit request =>
+    val res = pensionsService.upsertUkPensionIncome(
+      request.user,
+      taxYear,
+      request.sessionData
+    )(request.user.withDownstreamHc(hc), ec)
 
-  private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
-    priorData match {
-      case Some(prior) => !cyaData.equals(generateSessionModelFromPrior(prior))
-      case None        => true
-    }
+    handleResult(errorHandler, taxYear, Journey.UkPensionIncome, res)
+  }
 
 }

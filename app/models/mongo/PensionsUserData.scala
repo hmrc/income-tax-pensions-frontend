@@ -19,7 +19,7 @@ package models.mongo
 import common.TaxYear
 import models.User
 import models.pension.Journey
-import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, TransferIntoOverseasPensions}
+import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, StatePension, TransferIntoOverseasPensions, UkPensionIncome}
 import models.pension.charges.{PensionAnnualAllowancesViewModel, TransfersIntoOverseasPensionsViewModel}
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.libs.json.{Format, Json}
@@ -40,6 +40,10 @@ case class PensionsUserData(sessionId: String,
     journey match {
       case PaymentsIntoPensions =>
         copy(lastUpdated = now, pensions = pensions.copy(paymentsIntoPension = PaymentsIntoPensionsViewModel.empty))
+      case UkPensionIncome =>
+        copy(lastUpdated = now, pensions = pensions.copy(incomeFromPensions = pensions.incomeFromPensions.removeUkPensionIncome))
+      case StatePension =>
+        copy(lastUpdated = now, pensions = pensions.copy(incomeFromPensions = pensions.incomeFromPensions.removeStatePension))
       case AnnualAllowances =>
         copy(lastUpdated = now, pensions = pensions.copy(pensionsAnnualAllowances = PensionAnnualAllowancesViewModel.empty))
       case TransferIntoOverseasPensions =>

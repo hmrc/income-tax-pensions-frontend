@@ -47,8 +47,6 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   def journeyAnswersUrl(taxYear: TaxYear, nino: Nino, journey: Journey): String =
     pensionBEBaseUrl + s"/${taxYear.endYear}/${journey.toString}/${nino.value}/answers"
 
-  lazy val employmentBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxEmploymentUrl) + "/income-tax-employment"
-
   lazy val statePensionBEBaseUrl: String = servicesConfig.getString(incomeTaxStateBenefitsUrl)
   private val incomeTaxStateBenefitsUrl  = "microservice.services.income-tax-state-benefits.url"
 

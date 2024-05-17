@@ -118,8 +118,8 @@ object AllPensionsData {
     )
   }
 
-  def generateUkPensionSessionFromPrior(prior: AllPensionsData): (Option[Boolean], Seq[UkPensionIncomeViewModel]) = {
-    def getUkPensionIncome(prior: AllPensionsData): Seq[UkPensionIncomeViewModel] =
+  def generateUkPensionSessionFromPrior(prior: AllPensionsData): (Option[Boolean], List[UkPensionIncomeViewModel]) = {
+    def getUkPensionIncome(prior: AllPensionsData): List[UkPensionIncomeViewModel] =
       prior.employmentPensions match {
         case Some(ep) =>
           ep.employmentData.map(data =>
@@ -134,7 +134,7 @@ object AllPensionsData {
               taxPaid = data.taxPaid,
               isCustomerEmploymentData = data.isCustomerEmploymentData
             ))
-        case _ => Seq()
+        case _ => Nil
       }
 
     def getUkPensionQuestion(prior: AllPensionsData) =

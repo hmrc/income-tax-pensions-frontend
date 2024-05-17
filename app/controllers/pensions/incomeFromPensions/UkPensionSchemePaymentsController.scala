@@ -16,6 +16,7 @@
 
 package controllers.pensions.incomeFromPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromPensions.routes._
 import controllers.predicates.actions.AuthorisedAction
@@ -87,14 +88,14 @@ class UkPensionSchemePaymentsController @Inject() (mcc: MessagesControllerCompon
               val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions
               val updatedCyaModel: PensionsCYAModel =
                 pensionsCYAModel.copy(incomeFromPensions =
-                  viewModel.copy(uKPensionIncomesQuestion = Some(yesNo), uKPensionIncomes = if (yesNo) viewModel.uKPensionIncomes else Seq.empty))
+                  viewModel.copy(uKPensionIncomesQuestion = Some(yesNo), uKPensionIncomes = if (yesNo) viewModel.uKPensionIncomes else Nil))
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(
                 errorHandler.internalServerError()) {
                 Redirect(
                   if (yesNo) {
                     redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear)
                   } else {
-                    UkPensionIncomeCYAController.show(taxYear)
+                    UkPensionIncomeCYAController.show(TaxYear(taxYear))
                   }
                 )
               }

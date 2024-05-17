@@ -211,7 +211,7 @@ object JourneyStatusSummaryViewModel {
       case UkPensionIncome =>
         determineJourneyStartOrCyaUrl(
           ifpRoutes.UkPensionSchemePaymentsController.show(taxYear.endYear).url,
-          ifpRoutes.UkPensionIncomeCYAController.show(taxYear.endYear).url
+          ifpRoutes.UkPensionIncomeCYAController.show(taxYear).url
         )
       case StatePension =>
         determineJourneyStartOrCyaUrl(
