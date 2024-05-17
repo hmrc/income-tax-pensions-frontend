@@ -32,19 +32,19 @@ case class PensionsCYAModel(paymentsIntoPension: PaymentsIntoPensionsViewModel,
                             transfersIntoOverseasPensions: TransfersIntoOverseasPensionsViewModel,
                             shortServiceRefunds: ShortServiceRefundsViewModel) {
 
-  // TODO Change once a new journey is added
+  // TODO Change 'false' values once that journey has backend saving implemented
   def hasSessionData(journey: Journey): Boolean =
-    journey match {
-      case PensionsSummary              => true // Pension Summary is a special case
+    journey match { // Summary pages are always 'true'
+      case PensionsSummary              => true
       case PaymentsIntoPensions         => paymentsIntoPension.nonEmpty
       case AnnualAllowances             => pensionsAnnualAllowances.nonEmpty
       case UnauthorisedPayments         => false
-      case OverseasPensionsSummary      => true // it is a special case
+      case OverseasPensionsSummary      => true
       case IncomeFromOverseasPensions   => false
       case PaymentsIntoOverseasPensions => false
-      case TransferIntoOverseasPensions => false
+      case TransferIntoOverseasPensions => transfersIntoOverseasPensions.nonEmpty
       case ShortServiceRefunds          => false
-      case IncomeFromPensionsSummary    => true // it is a special case
+      case IncomeFromPensionsSummary    => true
       case UkPensionIncome              => false
       case StatePension                 => false
     }

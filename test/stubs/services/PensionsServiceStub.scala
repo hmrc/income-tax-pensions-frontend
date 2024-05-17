@@ -22,7 +22,7 @@ import connectors.ServiceError
 import models.User
 import models.domain.ApiResultT
 import models.mongo.PensionsUserData
-import models.pension.charges.PensionAnnualAllowancesViewModel
+import models.pension.charges.{PensionAnnualAllowancesViewModel, TransfersIntoOverseasPensionsViewModel}
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import services.PensionsService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -33,7 +33,9 @@ final case class PensionsServiceStub(
     paymentsIntoPensionsResult: Either[ServiceError, Unit] = Right(()),
     var paymentsIntoPensionsList: List[PaymentsIntoPensionsViewModel] = Nil,
     annualAllowancesResult: Either[ServiceError, Unit] = Right(()),
-    var annualAllowancesList: List[PensionAnnualAllowancesViewModel] = Nil
+    var annualAllowancesList: List[PensionAnnualAllowancesViewModel] = Nil,
+    transfersIntoOverseasPensionsResult: Either[ServiceError, Unit] = Right(()),
+    var transfersIntoOverseasPensionsList: List[TransfersIntoOverseasPensionsViewModel] = Nil
 ) extends PensionsService {
 
   def upsertPaymentsIntoPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
@@ -48,5 +50,12 @@ final case class PensionsServiceStub(
       ec: ExecutionContext): ApiResultT[Unit] = {
     annualAllowancesList ::= sessionData.pensions.pensionsAnnualAllowances
     EitherT.fromEither(annualAllowancesResult)
+  }
+
+  def upsertTransferIntoOverseasPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    transfersIntoOverseasPensionsList ::= sessionData.pensions.transfersIntoOverseasPensions
+    EitherT.fromEither(transfersIntoOverseasPensionsResult)
   }
 }

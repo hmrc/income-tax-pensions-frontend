@@ -59,7 +59,7 @@ object AllPensionsData {
       unauthorisedPayments = generateUnauthorisedPaymentsCyaModelFromPrior(prior),
       paymentsIntoOverseasPensions = generatePaymentsIntoOverseasPensionsFromPrior(prior),
       incomeFromOverseasPensions = generateIncomeFromOverseasPensionsCyaFromPrior(prior),
-      transfersIntoOverseasPensions = generateTransfersIntoOverseasPensionsCyaFromPrior(prior),
+      transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel.empty,
       shortServiceRefunds = generateShortServiceRefundCyaFromPrior(prior)
     )
 
@@ -242,27 +242,6 @@ object AllPensionsData {
             specialWithholdingTaxAmount = fP.specialWithholdingTax,
             foreignTaxCreditReliefQuestion = fP.foreignTaxCreditRelief,
             taxableAmount = Some(fP.taxableAmount)
-          ))))
-        .getOrElse(Nil)
-    )
-
-  private def generateTransfersIntoOverseasPensionsCyaFromPrior(prior: AllPensionsData): TransfersIntoOverseasPensionsViewModel =
-    TransfersIntoOverseasPensionsViewModel(
-      transferPensionSavings = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferCharge).isDefined),
-      overseasTransferCharge = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferCharge).isDefined),
-      overseasTransferChargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers.map(_.transferCharge)),
-      pensionSchemeTransferCharge = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferChargeTaxPaid).isDefined),
-      pensionSchemeTransferChargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers.map(_.transferChargeTaxPaid)),
-      transferPensionScheme = prior.pensionCharges
-        .flatMap(_.pensionSchemeOverseasTransfers.map(_.overseasSchemeProvider.map(osp =>
-          TransferPensionScheme(
-            ukTransferCharge = Some(osp.providerCountryCode == "GBR"),
-            name = Some(osp.providerName),
-            pstr = osp.pensionSchemeTaxReference.map(_.head).map(_.replace("Q", "")),
-            qops = osp.qualifyingRecognisedOverseasPensionScheme.map(_.head),
-            providerAddress = Some(osp.providerAddress),
-            alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(Some(osp.providerCountryCode)),
-            alphaThreeCountryCode = Some(osp.providerCountryCode)
           ))))
         .getOrElse(Nil)
     )

@@ -17,6 +17,7 @@
 package config
 
 import common.{Nino, TaxYear}
+import models.pension.Journey
 import play.api.Logging
 import play.api.i18n.Lang
 import play.api.mvc.{Call, RequestHeader}
@@ -43,17 +44,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
 
   lazy val pensionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxPensionsUrl) + "/income-tax-pensions"
 
-  def paymentsIntoPensionsAnswersUrl(taxYear: TaxYear, nino: Nino): String =
-    pensionBEBaseUrl + s"/${taxYear.endYear}/payments-into-pensions/${nino.value}/answers"
-
-  def annualAllowancesAnswersUrl(taxYear: TaxYear, nino: Nino): String =
-    pensionBEBaseUrl + s"/${taxYear.endYear}/annual-allowances/${nino.value}/answers"
-
-  def unauthorisedPaymentsAnswersUrl(taxYear: TaxYear, nino: Nino): String =
-    pensionBEBaseUrl + s"/${taxYear.endYear}/unauthorised-payments-from-pensions/${nino.value}/answers"
-
-  def transfersIntoOverseasPensionsAnswersUrl(taxYear: TaxYear, nino: Nino): String =
-    pensionBEBaseUrl + s"/${taxYear.endYear}/transfer-into-overseas-pensions/${nino.value}/answers"
+  def journeyAnswersUrl(taxYear: TaxYear, nino: Nino, journey: Journey): String =
+    pensionBEBaseUrl + s"/${taxYear.endYear}/${journey.toString}/${nino.value}/answers"
 
   lazy val employmentBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxEmploymentUrl) + "/income-tax-employment"
 

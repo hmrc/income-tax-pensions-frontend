@@ -276,7 +276,7 @@ GET         /:taxYear/overseas-pensions/overseas-transfer-charges/remove-oversea
 POST        /:taxYear/overseas-pensions/overseas-transfer-charges/remove-overseas-pension-scheme                                   controllers.pensions.transferIntoOverseasPensions.RemoveTransferChargeSchemeController.submit(taxYear: Int, index: Option[Int])
 
 GET         /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details                  controllers.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionsCYAController.show(taxYear: TaxYear)
-POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details                  controllers.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionsCYAController.submit(taxYear: Int)
+POST        /:taxYear/overseas-pensions/overseas-transfer-charges/transfer-charges/check-transfer-charges-details                  controllers.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionsCYAController.submit(taxYear: TaxYear)
 
 ###########################     Short service refunds pages     ####################################
 

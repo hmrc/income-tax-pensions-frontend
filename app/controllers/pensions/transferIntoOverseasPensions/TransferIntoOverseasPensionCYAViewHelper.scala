@@ -16,6 +16,7 @@
 
 package controllers.pensions.transferIntoOverseasPensions
 
+import common.TaxYear
 import models.pension.charges.TransfersIntoOverseasPensionsViewModel
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -23,7 +24,7 @@ import utils.CYABaseHelper
 
 object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
 
-  def summaryListRows(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit
+  def summaryListRows(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: TaxYear)(implicit
       messages: Messages): Seq[SummaryListRow] =
     Seq(
       summaryRowForTransferIntoOverseasPensions(transfersIntoOverseasPensionsViewModel, taxYear),
@@ -32,17 +33,17 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
       summaryRowForSchemesPayingTax(transfersIntoOverseasPensionsViewModel, taxYear)
     ).flatten
 
-  private def summaryRowForTransferIntoOverseasPensions(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(
-      implicit messages: Messages): Option[SummaryListRow] =
+  private def summaryRowForTransferIntoOverseasPensions(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel,
+                                                        taxYear: TaxYear)(implicit messages: Messages): Option[SummaryListRow] =
     Some(
       summaryListRowWithBooleanValue(
         "transferIntoOverseasPensions.cya.transferIntoOverseasPensions",
         transfersIntoOverseasPensionsViewModel.transferPensionSavings,
-        routes.TransferPensionSavingsController.show(taxYear)
+        routes.TransferPensionSavingsController.show(taxYear.endYear)
       )(messages)
     )
 
-  private def summaryRowForAmountCharged(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit
+  private def summaryRowForAmountCharged(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: TaxYear)(implicit
       messages: Messages): Option[SummaryListRow] =
     transfersIntoOverseasPensionsViewModel.transferPensionSavings
       .filter(identity)
@@ -52,18 +53,18 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
             summaryListRowWithOptionalAmountValue(
               "transferIntoOverseasPensions.cya.amountCharged",
               transfersIntoOverseasPensionsViewModel.overseasTransferChargeAmount,
-              routes.OverseasTransferChargeController.show(taxYear)
+              routes.OverseasTransferChargeController.show(taxYear.endYear)
             )(messages)
           case _ =>
             summaryListRowWithString(
               "transferIntoOverseasPensions.cya.amountCharged",
               Some(messages("transferIntoOverseasPensions.cya.noAmountCharged")),
-              routes.OverseasTransferChargeController.show(taxYear)
+              routes.OverseasTransferChargeController.show(taxYear.endYear)
             )(messages)
         })
 
-  private def summaryRowForTaxOnAmountCharged(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit
-      messages: Messages): Option[SummaryListRow] =
+  private def summaryRowForTaxOnAmountCharged(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: TaxYear)(
+      implicit messages: Messages): Option[SummaryListRow] =
     transfersIntoOverseasPensionsViewModel.transferPensionSavings.filter(identity).flatMap { _ =>
       transfersIntoOverseasPensionsViewModel.overseasTransferCharge
         .filter(identity)
@@ -73,18 +74,18 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
               summaryListRowWithOptionalAmountValue(
                 "transferIntoOverseasPensions.cya.taxOnAmountCharged",
                 transfersIntoOverseasPensionsViewModel.pensionSchemeTransferChargeAmount,
-                routes.PensionSchemeTaxTransferController.show(taxYear)
+                routes.PensionSchemeTaxTransferController.show(taxYear.endYear)
               )(messages)
             case _ =>
               summaryListRowWithString(
                 "transferIntoOverseasPensions.cya.taxOnAmountCharged",
                 Some(messages("common.noTaxPaid")),
-                routes.PensionSchemeTaxTransferController.show(taxYear)
+                routes.PensionSchemeTaxTransferController.show(taxYear.endYear)
               )(messages)
           })
     }
 
-  private def summaryRowForSchemesPayingTax(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: Int)(implicit
+  private def summaryRowForSchemesPayingTax(transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel, taxYear: TaxYear)(implicit
       messages: Messages): Option[SummaryListRow] =
     transfersIntoOverseasPensionsViewModel.transferPensionSavings.filter(identity).flatMap { _ =>
       transfersIntoOverseasPensionsViewModel.overseasTransferCharge.filter(identity).flatMap { _ =>
@@ -94,7 +95,7 @@ object TransferIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
             summaryListRowWithStrings(
               "transferIntoOverseasPensions.cya.schemesPayingTax",
               Some(transfersIntoOverseasPensionsViewModel.transferPensionScheme.flatMap(_.name)),
-              routes.TransferChargeSummaryController.show(taxYear)
+              routes.TransferChargeSummaryController.show(taxYear.endYear)
             )(messages))
       }
     }
