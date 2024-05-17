@@ -466,7 +466,7 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
     }
 
     "getUnauthorisedPaymentsFromPensions" should {
-      val url = s"/income-tax-pensions/$taxYear/unauthorised-payments-from-pensions/$nino/answers"
+      val url = s"/income-tax-pensions/$taxYear/unauthorised-payments/$nino/answers"
 
       "return None if no data is found" in {
         stubGetAnswers(url, OK, Json.obj().toString())
@@ -478,7 +478,6 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
         stubGetAnswers(url, OK, Json.toJson(UnauthorisedPaymentsTestData.answers).toString())
         val result = connector.getUnauthorisedPaymentsFromPensions(currNino, taxyear).value.futureValue
         assert(result.value === Some(UnauthorisedPaymentsTestData.answers))
-
       }
     }
   }
