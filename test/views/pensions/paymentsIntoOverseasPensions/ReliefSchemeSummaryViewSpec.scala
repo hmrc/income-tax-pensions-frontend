@@ -19,6 +19,7 @@ package views.pensions.paymentsIntoOverseasPensions
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
+import common.TaxYear
 import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
@@ -94,7 +95,7 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
     val text2                        = "Os nad oes gennych gynllun pensiwn i’w ychwanegu, gallwch ddychwelyd i’r trosolwg a dod nôl yn nes ymlaen."
   }
 
-  val cyaUrl       = PaymentsIntoOverseasPensionsCYAController.show(taxYearEOY).url
+  val cyaUrl       = PaymentsIntoOverseasPensionsCYAController.show(TaxYear(taxYearEOY)).url
   val changeUrl    = (index: Int) => ReliefsSchemeDetailsController.show(taxYearEOY, Some(index)).url
   val removeUrl    = (index: Int) => RemoveReliefSchemeController.show(taxYearEOY, Some(index)).url
   val addSchemeUrl = PensionsCustomerReferenceNumberController.show(taxYearEOY, None).url

@@ -38,19 +38,26 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditActionsProvider,
-                                                           view: PaymentsIntoOverseasPensionsCYAView,
-                                                           errorHandler: ErrorHandler,
-                                                           service: PaymentsIntoOverseasPensionsService,
-                                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
-    extends FrontendController(mcc)
+class PaymentsIntoOverseasPensionsCYAController @Inject()(auditProvider: AuditActionsProvider,
+                                                          view: PaymentsIntoOverseasPensionsCYAView,
+                                                          errorHandler: ErrorHandler,
+                                                          service: PaymentsIntoOverseasPensionsService,
+                                                          mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+  extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoOverseasPensionsViewAuditing(taxYear) async { implicit request =>
-    val checkRedirect = journeyCheck(PaymentsIntoOverseasPensionsCYAPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
-      Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoOverseasPensions)))
+  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoOverseasPensionsViewAuditing(taxYear) async { implicit request =>
+    val cyaData = request.sessionData
+    val taxYearInt = taxYear.endYear
+
+    if (cyaData.pensions.paymentsIntoOverseasPensions.isFinished) {
+      Future.successful(Ok(view(taxYearInt, cyaData.pensions.paymentsIntoOverseasPensions)))
+    } else {
+      val checkRedirect = journeyCheck(PaymentsIntoOverseasPensionsCYAPage, _: PensionsCYAModel, taxYearInt)
+      redirectBasedOnCurrentAnswers(taxYearInt, Some(cyaData), cyaPageCall(taxYearInt))(checkRedirect) { data =>
+        Future.successful(Ok(view(taxYearInt, data.pensions.paymentsIntoOverseasPensions)))
+      }
     }
   }
 
@@ -60,7 +67,7 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.maybePrior)) {
 
         service.saveAnswers(request.user, TaxYear(taxYear)).map {
-          case Left(_)  => errorHandler.internalServerError()
+          case Left(_) => errorHandler.internalServerError()
           case Right(_) => Redirect(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoOverseasPensions))
         }
       } else Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoOverseasPensions)))
@@ -69,7 +76,7 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
 
   private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData match {
-      case None        => true
+      case None => true
       case Some(prior) => !cyaData.equals(generateSessionModelFromPrior(prior))
     }
 

@@ -16,6 +16,7 @@
 
 package services.redirects
 
+import common.TaxYear
 import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.TaxReliefQuestion.{DoubleTaxationRelief, MigrantMemberRelief, TransitionalCorrespondingRelief}
@@ -97,7 +98,7 @@ object PaymentsIntoOverseasPensionsRedirects {
     }
   }
 
-  def cyaPageCall(taxYear: Int): Call = PaymentsIntoOverseasPensionsCYAController.show(taxYear)
+  def cyaPageCall(taxYear: Int): Call = PaymentsIntoOverseasPensionsCYAController.show(TaxYear(taxYear))
 
   private val indexPageValidInJourney: Map[Int, Relief => Boolean] =
     Map(

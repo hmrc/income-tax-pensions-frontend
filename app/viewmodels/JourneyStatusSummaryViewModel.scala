@@ -221,7 +221,7 @@ object JourneyStatusSummaryViewModel {
       case PaymentsIntoOverseasPensions =>
         determineJourneyStartOrCyaUrl(
           piopRoutes.PaymentIntoPensionSchemeController.show(taxYear.endYear).url,
-          piopRoutes.PaymentsIntoOverseasPensionsCYAController.show(taxYear.endYear).url
+          piopRoutes.PaymentsIntoOverseasPensionsCYAController.show(taxYear).url
         )
       case IncomeFromOverseasPensions =>
         determineJourneyStartOrCyaUrl(
