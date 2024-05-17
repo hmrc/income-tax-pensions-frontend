@@ -38,17 +38,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentsIntoOverseasPensionsCYAController @Inject()(auditProvider: AuditActionsProvider,
-                                                          view: PaymentsIntoOverseasPensionsCYAView,
-                                                          errorHandler: ErrorHandler,
-                                                          service: PaymentsIntoOverseasPensionsService,
-                                                          mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
-  extends FrontendController(mcc)
+class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditActionsProvider,
+                                                           view: PaymentsIntoOverseasPensionsCYAView,
+                                                           errorHandler: ErrorHandler,
+                                                           service: PaymentsIntoOverseasPensionsService,
+                                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+    extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
 
   def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoOverseasPensionsViewAuditing(taxYear) async { implicit request =>
-    val cyaData = request.sessionData
+    val cyaData    = request.sessionData
     val taxYearInt = taxYear.endYear
 
     if (cyaData.pensions.paymentsIntoOverseasPensions.isFinished) {
@@ -67,7 +67,7 @@ class PaymentsIntoOverseasPensionsCYAController @Inject()(auditProvider: AuditAc
       if (sessionDataDifferentThanPriorData(sessionData.pensions, request.maybePrior)) {
 
         service.saveAnswers(request.user, TaxYear(taxYear)).map {
-          case Left(_) => errorHandler.internalServerError()
+          case Left(_)  => errorHandler.internalServerError()
           case Right(_) => Redirect(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoOverseasPensions))
         }
       } else Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, PaymentsIntoOverseasPensions)))
@@ -76,7 +76,7 @@ class PaymentsIntoOverseasPensionsCYAController @Inject()(auditProvider: AuditAc
 
   private def sessionDataDifferentThanPriorData(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
     priorData match {
-      case None => true
+      case None        => true
       case Some(prior) => !cyaData.equals(generateSessionModelFromPrior(prior))
     }
 

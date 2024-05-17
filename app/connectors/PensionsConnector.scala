@@ -38,7 +38,12 @@ import models.pension.charges.{
   TransfersIntoOverseasPensionsViewModel,
   UnauthorisedPaymentsViewModel
 }
-import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.charges.{
+  CreateUpdatePensionChargesRequestModel,
+  PaymentsIntoOverseasPensionsViewModel,
+  PensionAnnualAllowancesViewModel,
+  UnauthorisedPaymentsViewModel
+}
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
@@ -134,8 +139,8 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   }
 
   def getPaymentsIntoOverseasPensions(nino: Nino, taxYear: TaxYear)(implicit
-                                                                    hc: HeaderCarrier,
-                                                                    ec: ExecutionContext): ApiResultT[Option[PaymentsIntoOverseasPensionsViewModel]] = {
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Option[PaymentsIntoOverseasPensionsViewModel]] = {
     val url = appConfig.paymentsIntoOverseasPensionsUrl(taxYear, nino)
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[PaymentsIntoOverseasPensionsViewModel]]](url)

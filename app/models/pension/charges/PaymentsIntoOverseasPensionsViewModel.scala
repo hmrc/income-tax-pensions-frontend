@@ -175,7 +175,8 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
 
 object PaymentsIntoOverseasPensionsViewModel {
   implicit val format: OFormat[PaymentsIntoOverseasPensionsViewModel] = Json.format[PaymentsIntoOverseasPensionsViewModel]
-  implicit val optRds: OptionalContentHttpReads[PaymentsIntoOverseasPensionsViewModel] = new OptionalContentHttpReads[PaymentsIntoOverseasPensionsViewModel]
+  implicit val optRds: OptionalContentHttpReads[PaymentsIntoOverseasPensionsViewModel] =
+    new OptionalContentHttpReads[PaymentsIntoOverseasPensionsViewModel]
 
   val empty: PaymentsIntoOverseasPensionsViewModel = PaymentsIntoOverseasPensionsViewModel()
 }
