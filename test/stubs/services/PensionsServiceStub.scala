@@ -63,4 +63,5 @@ final case class PensionsServiceStub(
   def upsertUnauthorisedPaymentsFromPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = ???
+
 }
