@@ -91,10 +91,10 @@ class PaymentsIntoOverseasPensionsService @Inject() (repository: PensionsUserDat
       case Some(claim) =>
         modelFromPrior.copy(overseasPensionContribution = OverseasPensionContributionContainer(claim.toDownstreamOverseasPensionContribution).some)
       case None =>
-        val maybePriorOPCs = modelFromPrior.overseasPensionContribution.map(_.opc)
+        val maybePriorOPCs = modelFromPrior.overseasPensionContribution.map(_.overseasPensionContributions)
         // So to "logically" delete all OPCs
         val maybeUpdatedOPCs    = maybePriorOPCs.map(opcs => opcs.map(_ => OverseasPensionContribution.blankSubmission))
-        val updatedOPCContainer = maybeUpdatedOPCs.flatMap(opcs => modelFromPrior.overseasPensionContribution.map(_.copy(opc = opcs)))
+        val updatedOPCContainer = maybeUpdatedOPCs.flatMap(opcs => modelFromPrior.overseasPensionContribution.map(_.copy(overseasPensionContributions = opcs)))
         modelFromPrior.copy(overseasPensionContribution = updatedOPCContainer)
     }
   }

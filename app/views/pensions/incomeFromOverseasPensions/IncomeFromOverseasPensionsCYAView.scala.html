@@ -19,6 +19,7 @@
 @import views.html.templates.helpers.{Button, Heading, SummaryList}
 @import models.requests.UserSessionDataRequest
 @import controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAViewHelper
+@import common.TaxYear
 
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
 
@@ -34,7 +35,7 @@
 
     @summaryList(IncomeFromOverseasPensionsCYAViewHelper.summaryListRows(cya, taxYear)(messages))
 
-    @csrfForm(controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasPensionsCYAController.submit(taxYear)) {
+    @csrfForm(controllers.pensions.incomeFromOverseasPensions.routes.IncomeFromOverseasPensionsCYAController.submit(TaxYear(taxYear))) {
         @button("common.saveAndContinue")
     }
 }
