@@ -25,14 +25,7 @@ import builders.ShortServiceRefundsViewModelBuilder.{aShortServiceRefundsViewMod
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
 import builders.UnauthorisedPaymentsViewModelBuilder.{anUnauthorisedPaymentsEmptyViewModel, anUnauthorisedPaymentsViewModel}
 import models.mongo.PensionsCYAModel
-import models.pension.charges.{
-  IncomeFromOverseasPensionsViewModel,
-  PaymentsIntoOverseasPensionsViewModel,
-  PensionAnnualAllowancesViewModel,
-  ShortServiceRefundsViewModel,
-  TransfersIntoOverseasPensionsViewModel,
-  UnauthorisedPaymentsViewModel
-}
+import models.pension.charges._
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 

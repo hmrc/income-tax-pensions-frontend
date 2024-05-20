@@ -14,11 +14,10 @@
  * limitations under the License.
  *@
 
-@import controllers.pensions.transferIntoOverseasPensions.routes.TransferPensionsSchemeController
+@import controllers.pensions.transferIntoOverseasPensions.routes
 @import forms.Countries
 @import forms.overseas.PensionSchemeForm.TcSsrPensionsSchemeFormModel
 @import models.requests.UserSessionDataRequest
-@import views.html.helper.CSPNonce
 @import views.html.templates.Layout
 @import views.html.templates.helpers.{Button, Details, ErrorSummary, Heading, InputTextAlt, InputTextareaAlt}
 @import views.html.templates.partials.CountryPartial
@@ -77,7 +76,7 @@
 
     <p class="govuk-body">@messages("common.overseasPensions.paragraph1")</p>
 
-    @formWithCsrf(action = TransferPensionsSchemeController.submit(taxYear, Some(index))) {
+    @formWithCsrf(action = routes.TransferPensionsSchemeController.submit(taxYear, Some(index))) {
         @inputText(
             form,
             id = "providerName",

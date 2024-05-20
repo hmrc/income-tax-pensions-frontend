@@ -17,7 +17,6 @@
 package controllers.pensions.transferIntoOverseasPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.transferIntoOverseasPensions.routes._
 import controllers.predicates.actions.ActionsProvider
 import controllers.validatedIndex
 import forms.Countries
@@ -33,6 +32,7 @@ import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.TransfersIntoOverseasPensionsPages.DidAUKPensionSchemePayTransferChargePage
 import services.redirects.TransfersIntoOverseasPensionsRedirects.{cyaPageCall, indexCheckThenJourneyCheck, journeyCheck, redirectForSchemeLoop}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.Constants.GBAlpha3Code
 import utils.SessionHelper
 import views.html.pensions.transferIntoOverseasPensions.TransferPensionsSchemeView
 
@@ -81,7 +81,7 @@ class TransferPensionsSchemeController @Inject() (actionsProvider: ActionsProvid
                   val updatedCYAModel = updateViewModel(data, tcPensionScheme, idx)
                   pensionSessionService.createOrUpdateSessionData(userSessionDataRequest.user, updatedCYAModel, taxYear, data.isPriorSubmission)(
                     errorHandler.internalServerError()) {
-                    Redirect(TransferChargeSummaryController.show(taxYear))
+                    Redirect(routes.TransferChargeSummaryController.show(taxYear))
                   }
                 }
               )
@@ -100,8 +100,7 @@ class TransferPensionsSchemeController @Inject() (actionsProvider: ActionsProvid
   private def updateFormModel(scheme: TransferPensionScheme) =
     TcSsrPensionsSchemeFormModel(
       providerName = scheme.name.getOrElse(""),
-      schemeReference = (if (scheme.ukTransferCharge.contains(true)) scheme.pstr else scheme.qops)
-        .getOrElse(""),
+      schemeReference = scheme.schemeReference.getOrElse(""),
       providerAddress = scheme.providerAddress.getOrElse(""),
       countryId = scheme.alphaTwoCountryCode.fold {
         Countries.get2AlphaCodeFrom3AlphaCode(scheme.alphaThreeCountryCode)
@@ -116,14 +115,10 @@ class TransferPensionsSchemeController @Inject() (actionsProvider: ActionsProvid
       val commonUpdatedScheme = viewModel
         .transferPensionScheme(index)
         .copy(name = Some(scheme.providerName), providerAddress = Some(scheme.providerAddress))
+      val countryCode =
+        if (commonUpdatedScheme.ukTransferCharge.contains(true)) Some(GBAlpha3Code) else Countries.maybeGet3AlphaCodeFrom2AlphaCode(scheme.countryId)
 
-      if (commonUpdatedScheme.ukTransferCharge.contains(true)) {
-        commonUpdatedScheme.copy(pstr = Some(scheme.schemeReference))
-      } else {
-        commonUpdatedScheme.copy(
-          qops = Some(scheme.schemeReference),
-          alphaThreeCountryCode = Countries.maybeGet3AlphaCodeFrom2AlphaCode(scheme.countryId))
-      }
+      commonUpdatedScheme.copy(schemeReference = Some(scheme.schemeReference), alphaThreeCountryCode = countryCode)
     }
     pensionsUserdata.pensions.copy(
       transfersIntoOverseasPensions = viewModel.copy(

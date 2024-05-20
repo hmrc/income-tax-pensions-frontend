@@ -23,18 +23,16 @@ object TransferPensionSchemeBuilder {
   val aUkTransferPensionScheme = TransferPensionScheme(
     ukTransferCharge = Some(true),
     name = Some("UK TPS"),
-    pstr = Some("12345678RA"),
-    qops = None,
+    schemeReference = Some("12345678RA"),
     providerAddress = Some("Some address 1"),
-    alphaTwoCountryCode = None,
-    alphaThreeCountryCode = None
+    alphaTwoCountryCode = Some("GB"),
+    alphaThreeCountryCode = Some("GBR")
   )
 
   val aNonUkTransferPensionScheme = TransferPensionScheme(
     ukTransferCharge = Some(false),
     name = Some("Non-UK TPS"),
-    pstr = None,
-    qops = Some("123456"),
+    schemeReference = Some("Q123456"),
     providerAddress = Some("Some address 2"),
     alphaTwoCountryCode = Some("FR"),
     alphaThreeCountryCode = Some("FRA")

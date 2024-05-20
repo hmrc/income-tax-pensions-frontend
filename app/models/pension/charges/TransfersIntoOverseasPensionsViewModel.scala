@@ -16,12 +16,10 @@
 
 package models.pension.charges
 
-import cats.implicits.{catsSyntaxOptionId, catsSyntaxTuple3Semigroupal, none, toTraverseOps}
 import connectors.OptionalContentHttpReads
 import models.mongo.{PensionsCYAModel, TextAndKey}
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
-import utils.Constants.GBAlpha3Code
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
@@ -43,53 +41,10 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
 
   def isFinished: Boolean =
     transferPensionSavings.exists(x =>
-      if (x) {
-        overseasTransferCharge.exists(x =>
-          if (!x) {
-            true
-          } else {
-            overseasTransferChargeAmount.isDefined &&
-            pensionSchemeTransferCharge.exists(x =>
-              if (!x) {
-                true
-              } else {
-                pensionSchemeTransferChargeAmount.isDefined &&
-                transferPensionScheme.nonEmpty && transferPensionScheme.forall(tps => tps.isFinished)
-              })
-          })
-      } else {
-        true
-      })
-
-  def maybeToDownstreamRequestModel: Option[PensionSchemeOverseasTransfers] =
-    (transferPensionSavings, overseasTransferCharge, pensionSchemeTransferCharge)
-      .flatMapN { case (transferred, charged, schemePaidTax) =>
-        if (transferred && charged && schemePaidTax)
-          for {
-            osp           <- fromTransferPensionSchemes(transferPensionScheme)
-            charge        <- overseasTransferChargeAmount
-            chargeTaxPaid <- pensionSchemeTransferChargeAmount
-          } yield PensionSchemeOverseasTransfers(
-            overseasSchemeProvider = osp,
-            transferCharge = charge,
-            transferChargeTaxPaid = chargeTaxPaid
-          )
-        else none[PensionSchemeOverseasTransfers]
-      }
-
-  private def fromTransferPensionSchemes(allTps: Seq[TransferPensionScheme]): Option[Seq[OverseasSchemeProvider]] =
-    allTps.traverse { tps =>
-      for {
-        name    <- tps.name
-        address <- tps.providerAddress
-      } yield OverseasSchemeProvider(
-        providerName = name,
-        providerAddress = address,
-        providerCountryCode = tps.alphaThreeCountryCode.fold(ifEmpty = GBAlpha3Code)(identity),
-        qualifyingRecognisedOverseasPensionScheme = tps.qops.fold(ifEmpty = none[Seq[String]])(qops => Seq(enforceValidQopsPrefix(qops)).some),
-        pensionSchemeTaxReference = tps.pstr.fold(ifEmpty = none[Seq[String]])(Seq(_).some)
-      )
-    }
+      !x || overseasTransferCharge.exists(x =>
+        !x || overseasTransferChargeAmount.isDefined && pensionSchemeTransferCharge.exists(x =>
+          !x || pensionSchemeTransferChargeAmount.isDefined && transferPensionScheme.nonEmpty && transferPensionScheme.forall(tps =>
+            tps.isFinished))))
 
   def journeyIsNo: Boolean = this.transferPensionSavings.contains(false)
 
@@ -140,27 +95,19 @@ object EncryptedTransfersIntoOverseasPensionsViewModel {
 
 case class TransferPensionScheme(ukTransferCharge: Option[Boolean] = None,
                                  name: Option[String] = None,
-                                 pstr: Option[String] = None,
-                                 qops: Option[String] = None,
+                                 schemeReference: Option[String] = None,
                                  providerAddress: Option[String] = None,
                                  alphaTwoCountryCode: Option[String] = None,
                                  alphaThreeCountryCode: Option[String] = None) {
 
   def isFinished: Boolean =
-    this.name.isDefined && this.providerAddress.isDefined &&
-      this.ukTransferCharge.exists(x =>
-        if (x) {
-          this.pstr.isDefined
-        } else {
-          this.qops.isDefined && this.alphaThreeCountryCode.isDefined
-        })
+    name.isDefined && providerAddress.isDefined && ukTransferCharge.isDefined && schemeReference.isDefined && alphaThreeCountryCode.isDefined
 
   def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransferPensionScheme =
     EncryptedTransferPensionScheme(
       ukTransferCharge = ukTransferCharge.map(_.encrypted),
       name = name.map(_.encrypted),
-      pensionSchemeTaxReference = pstr.map(_.encrypted),
-      qualifyingRecognisedOverseasPensionScheme = qops.map(_.encrypted),
+      schemeReference = schemeReference.map(_.encrypted),
       providerAddress = providerAddress.map(_.encrypted),
       alphaTwoCountryCode = alphaTwoCountryCode.map(_.encrypted),
       alphaThreeCountryCode = alphaThreeCountryCode.map(_.encrypted)
@@ -169,8 +116,7 @@ case class TransferPensionScheme(ukTransferCharge: Option[Boolean] = None,
 
 case class EncryptedTransferPensionScheme(ukTransferCharge: Option[EncryptedValue],
                                           name: Option[EncryptedValue],
-                                          pensionSchemeTaxReference: Option[EncryptedValue],
-                                          qualifyingRecognisedOverseasPensionScheme: Option[EncryptedValue],
+                                          schemeReference: Option[EncryptedValue],
                                           providerAddress: Option[EncryptedValue],
                                           alphaTwoCountryCode: Option[EncryptedValue],
                                           alphaThreeCountryCode: Option[EncryptedValue]) {
@@ -179,8 +125,7 @@ case class EncryptedTransferPensionScheme(ukTransferCharge: Option[EncryptedValu
     TransferPensionScheme(
       ukTransferCharge = ukTransferCharge.map(_.decrypted[Boolean]),
       name = name.map(_.decrypted[String]),
-      pstr = pensionSchemeTaxReference.map(_.decrypted[String]),
-      qops = qualifyingRecognisedOverseasPensionScheme.map(_.decrypted[String]),
+      schemeReference = schemeReference.map(_.decrypted[String]),
       providerAddress = providerAddress.map(_.decrypted[String]),
       alphaTwoCountryCode = alphaTwoCountryCode.map(_.decrypted[String]),
       alphaThreeCountryCode = alphaThreeCountryCode.map(_.decrypted[String])

@@ -20,6 +20,9 @@ import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensi
 
 object TransfersIntoOverseasPensionsViewModelTestData {
 
+  val pstrReference = "12345678RA"
+  val qopsReference = "123456"
+
   val transfersIntoOverseasPensionsAnswers = TransfersIntoOverseasPensionsViewModel(
     Some(true),
     Some(true),
@@ -30,8 +33,8 @@ object TransfersIntoOverseasPensionsViewModelTestData {
   )
 
   def transferPensionSchemeUK: TransferPensionScheme =
-    TransferPensionScheme(Some(true), Some("UK Scheme"), Some("PSTR"), None, Some("Address"), Some("GB"), Some("GBR"))
+    TransferPensionScheme(Some(true), Some("UK Scheme"), Some(pstrReference), Some("Address"), Some("GB"), Some("GBR"))
   def transferPensionSchemeNonUK: TransferPensionScheme =
-    TransferPensionScheme(Some(false), Some("Non-UK Scheme"), None, Some("QOPS"), Some("Address"), Some("FR"), Some("FRA"))
+    TransferPensionScheme(Some(false), Some("Non-UK Scheme"), Some(qopsReference), Some("Address"), Some("FR"), Some("FRA"))
 
 }

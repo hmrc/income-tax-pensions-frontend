@@ -48,8 +48,7 @@ object AllPensionsData {
 
   val Zero: BigDecimal = 0.0
 
-  def isNotZero(value: Option[BigDecimal]) =
-    value.exists(_ != Zero)
+  def isNotZero(value: Option[BigDecimal]): Boolean = value.exists(_ != Zero)
 
   def generateSessionModelFromPrior(prior: AllPensionsData): PensionsCYAModel =
     PensionsCYAModel(
