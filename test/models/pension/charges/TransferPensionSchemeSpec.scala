@@ -16,51 +16,43 @@
 
 package models.pension.charges
 
+import builders.TransferPensionSchemeBuilder.{aNonUkTransferPensionScheme, aUkTransferPensionScheme, anEmptyTransferPensionScheme}
 import utils.UnitTest
 
 class TransferPensionSchemeSpec extends UnitTest {
 
   "isFinished" should {
     "return true when all questions are populated" in {
-      TransferPensionScheme(
-        ukTransferCharge = Some(true),
-        name = Some("UK TPS"),
-        pstr = Some("12345678RA"),
-        qops = None,
-        providerAddress = Some("Some address 1"),
-        alphaTwoCountryCode = None,
-        alphaThreeCountryCode = None
-      ).isFinished shouldBe true
-      TransferPensionScheme(
-        ukTransferCharge = Some(false),
-        name = Some("Non-UK TPS"),
-        pstr = None,
-        qops = Some("QOPS123456"),
-        providerAddress = Some("Some address 2"),
-        alphaTwoCountryCode = Some("FR"),
-        alphaThreeCountryCode = Some("FRA")
-      ).isFinished shouldBe true
+      aUkTransferPensionScheme.isFinished shouldBe true
+      aNonUkTransferPensionScheme.isFinished shouldBe true
     }
-    "return false" when {
-      "not all necessary questions have been populated" in {
-        TransferPensionScheme(
-          ukTransferCharge = Some(true),
-          name = Some("UK TPS"),
-          pstr = Some("12345678RA"),
-          qops = None,
-          providerAddress = None,
-          alphaTwoCountryCode = None,
-          alphaThreeCountryCode = None
-        ).isFinished shouldBe false
-        TransferPensionScheme(
-          ukTransferCharge = Some(false),
-          name = Some("Non-UK TPS"),
-          pstr = None,
-          qops = Some("QOPS123456"),
-          providerAddress = Some("Some address 2"),
-          alphaTwoCountryCode = Some("FR"),
-          alphaThreeCountryCode = None
-        ).isFinished shouldBe false
+    "return false when not all necessary questions have been populated" in {
+      anEmptyTransferPensionScheme.isFinished shouldBe false
+      aNonUkTransferPensionScheme.copy(alphaThreeCountryCode = None).isFinished shouldBe false
+    }
+  }
+
+  "toOverseasSchemeProvider" should {
+    "convert a TransferPensionScheme to a valid OverseasSchemeProvider" which {
+      "has a PSTR value when it is a UK scheme" in {
+        val validUkOsp: OverseasSchemeProvider = OverseasSchemeProvider(
+          providerName = "UK TPS",
+          providerAddress = "Some address 1",
+          providerCountryCode = "GBR",
+          qualifyingRecognisedOverseasPensionScheme = None,
+          pensionSchemeTaxReference = Some(Seq("12345678RA"))
+        )
+        aUkTransferPensionScheme.toOverseasSchemeProvider shouldBe validUkOsp
+      }
+      "has a QOPS value when it is a non-UK scheme" in {
+        val validNonUkOsp: OverseasSchemeProvider = OverseasSchemeProvider(
+          providerName = "Non-UK TPS",
+          providerAddress = "Some address 2",
+          providerCountryCode = "FRA",
+          qualifyingRecognisedOverseasPensionScheme = Some(Seq("Q123456")),
+          pensionSchemeTaxReference = None
+        )
+        aNonUkTransferPensionScheme.toOverseasSchemeProvider shouldBe validNonUkOsp
       }
     }
   }

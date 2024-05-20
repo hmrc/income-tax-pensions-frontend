@@ -48,8 +48,7 @@ object AllPensionsData {
 
   val Zero: BigDecimal = 0.0
 
-  def isNotZero(value: Option[BigDecimal]) =
-    value.exists(_ != Zero)
+  def isNotZero(value: Option[BigDecimal]): Boolean = value.exists(_ != Zero)
 
   def generateSessionModelFromPrior(prior: AllPensionsData): PensionsCYAModel =
     PensionsCYAModel(
@@ -254,16 +253,7 @@ object AllPensionsData {
       pensionSchemeTransferCharge = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferChargeTaxPaid).isDefined),
       pensionSchemeTransferChargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers.map(_.transferChargeTaxPaid)),
       transferPensionScheme = prior.pensionCharges
-        .flatMap(_.pensionSchemeOverseasTransfers.map(_.overseasSchemeProvider.map(osp =>
-          TransferPensionScheme(
-            ukTransferCharge = Some(osp.providerCountryCode == "GBR"),
-            name = Some(osp.providerName),
-            pstr = osp.pensionSchemeTaxReference.map(_.head).map(_.replace("Q", "")),
-            qops = osp.qualifyingRecognisedOverseasPensionScheme.map(_.head),
-            providerAddress = Some(osp.providerAddress),
-            alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(Some(osp.providerCountryCode)),
-            alphaThreeCountryCode = Some(osp.providerCountryCode)
-          ))))
+        .flatMap(_.pensionSchemeOverseasTransfers.map(_.overseasSchemeProvider.map(_.toTransferPensionScheme)))
         .getOrElse(Nil)
     )
 

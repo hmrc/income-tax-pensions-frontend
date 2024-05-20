@@ -18,9 +18,9 @@ package controllers.pensions.transferIntoOverseasPensions
 
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.PensionsUserDataBuilder.pensionUserDataWithTransferIntoOverseasPension
+import builders.TransferPensionSchemeBuilder.{aNonUkTransferPensionScheme, aUkTransferPensionScheme}
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.aTransfersIntoOverseasPensionsViewModel
 import builders.UserBuilder.aUser
-import models.pension.charges.TransferPensionScheme
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.BeforeAndAfterEach
@@ -107,23 +107,7 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
         import user.commonExpectedResults._
 
         "render the 'overseas transfer charge' summary list page with pre-filled content" which {
-          val pensionScheme = TransferPensionScheme(
-            ukTransferCharge = Some(true),
-            name = Some("Pension Scheme 1"),
-            pstr = Some("12345678RA"),
-            qops = None,
-            providerAddress = Some("Some address 1"),
-            alphaThreeCountryCode = None
-          )
-          val pensionScheme2 = TransferPensionScheme(
-            ukTransferCharge = Some(true),
-            name = Some("Pension Scheme 2"),
-            pstr = Some("12345678RA"),
-            qops = None,
-            providerAddress = Some("Some address 2"),
-            alphaThreeCountryCode = None
-          )
-          val newPensionSchemes = Seq(pensionScheme, pensionScheme2)
+          val newPensionSchemes = Seq(aUkTransferPensionScheme, aNonUkTransferPensionScheme)
           val transferViewModel = aTransfersIntoOverseasPensionsViewModel.copy(transferPensionScheme = newPensionSchemes)
 
           implicit lazy val result: WSResponse = {
@@ -148,13 +132,13 @@ class TransferChargeSummaryControllerISpec extends IntegrationTest with BeforeAn
           titleCheck(expectedTitle, user.isWelsh)
           h1Check(expectedHeading)
           captionCheck(expectedCaption(taxYearEOY))
-          textOnPageCheck(s"${pensionScheme.name.get}", pensionNameSelector(1))
-          textOnPageCheck(s"${pensionScheme2.name.get}", pensionNameSelector(2))
+          textOnPageCheck(s"${aUkTransferPensionScheme.name.get}", pensionNameSelector(1))
+          textOnPageCheck(s"${aNonUkTransferPensionScheme.name.get}", pensionNameSelector(2))
 
-          linkCheck(s"$change $change ${pensionScheme.name.get}", changeLinkSelector(1), overseasTransferChargePaidUrl(taxYearEOY, 0))
-          linkCheck(s"$remove $remove ${pensionScheme.name.get}", removeLinkSelector(1), removeTransferChargeScheme(taxYearEOY, 0))
-          linkCheck(s"$change $change ${pensionScheme2.name.get}", changeLinkSelector(2), overseasTransferChargePaidUrl(taxYearEOY, 1))
-          linkCheck(s"$remove $remove ${pensionScheme2.name.get}", removeLinkSelector(2), removeTransferChargeScheme(taxYearEOY, 1))
+          linkCheck(s"$change $change ${aUkTransferPensionScheme.name.get}", changeLinkSelector(1), overseasTransferChargePaidUrl(taxYearEOY, 0))
+          linkCheck(s"$remove $remove ${aUkTransferPensionScheme.name.get}", removeLinkSelector(1), removeTransferChargeScheme(taxYearEOY, 0))
+          linkCheck(s"$change $change ${aNonUkTransferPensionScheme.name.get}", changeLinkSelector(2), overseasTransferChargePaidUrl(taxYearEOY, 1))
+          linkCheck(s"$remove $remove ${aNonUkTransferPensionScheme.name.get}", removeLinkSelector(2), removeTransferChargeScheme(taxYearEOY, 1))
           linkCheck(expectedAddAnotherText, addAnotherLinkSelector, overseasTransferChargePaidUrl(taxYearEOY))
 
           buttonCheck(expectedButtonText, continueButtonSelector, Some(checkYourDetailsPensionUrl(taxYearEOY)))

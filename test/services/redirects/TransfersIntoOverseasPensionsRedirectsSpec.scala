@@ -163,8 +163,7 @@ class TransfersIntoOverseasPensionsRedirectsSpec extends UnitTest {
         TransferPensionScheme(
           ukTransferCharge = Some(false),
           name = Some("UK TPS"),
-          pstr = Some("12345678RA"),
-          qops = None,
+          schemeReference = Some("12345678RA"),
           providerAddress = Some("Some address 1"),
           alphaTwoCountryCode = None,
           alphaThreeCountryCode = None

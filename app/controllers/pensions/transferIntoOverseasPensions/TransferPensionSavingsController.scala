@@ -18,7 +18,6 @@ package controllers.pensions.transferIntoOverseasPensions
 
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.transferIntoOverseasPensions.routes.{OverseasTransferChargeController, TransferIntoOverseasPensionsCYAController}
 import controllers.predicates.actions.ActionsProvider
 import forms.TransferPensionSavingsForm.yesNoForm
 import models.mongo.PensionsUserData
@@ -75,8 +74,8 @@ class TransferPensionSavingsController @Inject() (actionsProvider: ActionsProvid
     pensionSessionService.createOrUpdateSessionData(request.user, updateViewModel, taxYear, pensionUserData.isPriorSubmission)(
       errorHandler.internalServerError()) {
       Redirect(
-        if (transferPensionSavings) OverseasTransferChargeController.show(taxYear)
-        else TransferIntoOverseasPensionsCYAController.show(TaxYear(taxYear))
+        if (transferPensionSavings) routes.OverseasTransferChargeController.show(taxYear)
+        else routes.TransferIntoOverseasPensionsCYAController.show(TaxYear(taxYear))
       )
     }
   }

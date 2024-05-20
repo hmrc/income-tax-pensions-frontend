@@ -129,8 +129,7 @@ class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matc
             TransferPensionScheme(
               ukTransferCharge = Some(true),
               name = Some("Random Name"),
-              pstr = Some("12345678RA"),
-              qops = None,
+              schemeReference = Some("12345678RA"),
               providerAddress = Some("Random Address"),
               alphaTwoCountryCode = None
             ))
@@ -154,8 +153,7 @@ class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matc
             TransferPensionScheme(
               ukTransferCharge = Some(true),
               name = Some("Random Name"),
-              pstr = Some("12345678RA"),
-              qops = None,
+              schemeReference = Some("12345678RA"),
               providerAddress = Some("Random Address"),
               alphaTwoCountryCode = None
             ))

@@ -24,7 +24,7 @@ import models.domain.ApiResultT
 import models.mongo.PensionsUserData
 import models.pension.charges.PensionAnnualAllowancesViewModel
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
-import models.pension.statebenefits.{IncomeFromPensionsViewModel, UkPensionIncomeViewModel}
+import models.pension.statebenefits.IncomeFromPensionsViewModel
 import services.PensionsService
 import uk.gov.hmrc.http.HeaderCarrier
 
