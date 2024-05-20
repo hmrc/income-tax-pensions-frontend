@@ -16,14 +16,31 @@
 
 package models.pension.charges
 
+import forms.Countries
 import play.api.libs.json.{Json, OFormat}
+import utils.Constants.GBAlpha3Code
 import utils.EncryptedValue
 
 case class OverseasSchemeProvider(providerName: String,
                                   providerAddress: String,
                                   providerCountryCode: String,
                                   qualifyingRecognisedOverseasPensionScheme: Option[Seq[String]],
-                                  pensionSchemeTaxReference: Option[Seq[String]])
+                                  pensionSchemeTaxReference: Option[Seq[String]]) {
+
+  def toTransferPensionScheme: TransferPensionScheme = {
+    val isUkScheme = providerCountryCode == GBAlpha3Code
+    val schemeReference =
+      if (isUkScheme) pensionSchemeTaxReference.map(_.head) else qualifyingRecognisedOverseasPensionScheme.map(_.head).map(_.replace("Q", ""))
+    TransferPensionScheme(
+      ukTransferCharge = Some(isUkScheme),
+      name = Some(providerName),
+      schemeReference = schemeReference,
+      providerAddress = Some(providerAddress),
+      alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(Some(providerCountryCode)),
+      alphaThreeCountryCode = Some(providerCountryCode)
+    )
+  }
+}
 
 object OverseasSchemeProvider {
   implicit val format: OFormat[OverseasSchemeProvider] = Json.format[OverseasSchemeProvider]

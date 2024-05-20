@@ -131,6 +131,7 @@ object JourneyStatusSummaryViewModel {
       case OverseasPensionsSummary =>
         buildTaskListSummary(rows =
           Seq(paymentsIntoOverseasPensionsRow, incomeFromOverseasPensionsRow, transferIntoOverseasPensionsRow, shortServiceRefundsRow))
+      case _ => buildTaskListSummary(Seq.empty)
     })
   }
 
