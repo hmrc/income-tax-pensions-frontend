@@ -66,7 +66,7 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
     }
   }
 
-  // TODO: We don't know what it does, but we're waiting for Business to create proper story about Exclusion (leaving for now)
+  // TODO: We don't know what it does, but we're waiting for Business to create a proper story about Exclusion (leaving for now)
   private def maybeExcludePension(unauthorisedPaymentModel: UnauthorisedPaymentsViewModel,
                                   taxYear: Int,
                                   priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent])(implicit
