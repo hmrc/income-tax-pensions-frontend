@@ -219,7 +219,7 @@ GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/untaxed-
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                             controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.show(taxYear: Int, index: Option[Int])
 POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                             controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.submit(taxYear: Int, index: Option[Int])
 
-GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                             controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.show(taxYear: Int)
+GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                             controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.show(taxYear: TaxYear)
 POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                             controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.submit(taxYear: Int)
 
 ###########################     Income from overseas pensions pages     ####################################

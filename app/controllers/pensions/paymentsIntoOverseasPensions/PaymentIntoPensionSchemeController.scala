@@ -18,6 +18,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 
 import common.MessageKeys.OverseasPensions.PaymentIntoScheme
 import common.MessageKeys.YesNoAmountForm
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.BaseYesNoAmountController
 import controllers.pensions.paymentsIntoOverseasPensions.routes.{EmployerPayOverseasPensionController, PaymentsIntoOverseasPensionsCYAController}
@@ -54,7 +55,7 @@ class PaymentIntoPensionSchemeController @Inject() (cc: MessagesControllerCompon
       if (model.paymentsIntoOverseasPensionsQuestions.getOrElse(false)) {
         EmployerPayOverseasPensionController.show(taxYear)
       } else {
-        PaymentsIntoOverseasPensionsCYAController.show(taxYear)
+        PaymentsIntoOverseasPensionsCYAController.show(TaxYear(taxYear))
       }
     )
   }

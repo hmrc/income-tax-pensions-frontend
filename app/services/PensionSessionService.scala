@@ -27,6 +27,7 @@ import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
+import models.pension.Journey.{AnnualAllowances, PaymentsIntoOverseasPensions, PaymentsIntoPensions, UnauthorisedPayments}
 import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, TransferIntoOverseasPensions, UnauthorisedPayments}
 import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, UkPensionIncome, UnauthorisedPayments}
 import models.pension.{Journey, JourneyNameAndStatus}
@@ -81,6 +82,9 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case UnauthorisedPayments =>
         val res = pensionsConnector.getUnauthorisedPaymentsFromPensions(user.getNino, taxYear)
+        transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
+      case PaymentsIntoOverseasPensions =>
+        val res = pensionsConnector.getPaymentsIntoOverseasPensions(user.getNino, taxYear)
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case TransferIntoOverseasPensions =>
         val res = pensionsConnector.getTransfersIntoOverseasPensions(user.getNino, taxYear)

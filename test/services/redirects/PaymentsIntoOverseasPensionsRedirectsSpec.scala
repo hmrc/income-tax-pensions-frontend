@@ -19,6 +19,7 @@ package services.redirects
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.ReliefBuilder.{aDoubleTaxationRelief, aMigrantMemberRelief, aNoTaxRelief, aTransitionalCorrespondingRelief}
+import common.TaxYear
 import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import models.mongo.PensionsCYAModel
 import models.pension.charges.TaxReliefQuestion.TransitionalCorrespondingRelief
@@ -40,7 +41,7 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest { // scalastyle
   private val reliefStartCall: Call                                  = PensionsCustomerReferenceNumberController.show(taxYear, None)
   private val reliefDetailsCall: Call                                = ReliefsSchemeDetailsController.show(taxYear, Some(0))
   private val reliefSummaryCall: Call                                = ReliefsSchemeSummaryController.show(taxYear)
-  private val checkYourAnswersCall: Call                             = PaymentsIntoOverseasPensionsCYAController.show(taxYear)
+  private val checkYourAnswersCall: Call                             = PaymentsIntoOverseasPensionsCYAController.show(TaxYear(taxYear))
   private val continueToContextualRedirect: Relief => Future[Result] = _ => Future.successful(Redirect(reliefDetailsCall))
 
   ".cyaPageCall" should {

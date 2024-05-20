@@ -16,6 +16,7 @@
 
 package controllers.pensions.paymentsIntoOverseasPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoOverseasPensions.routes.{PaymentsIntoOverseasPensionsCYAController, TaxEmployerPaymentsController}
 import controllers.predicates.actions.AuthorisedAction
@@ -85,7 +86,7 @@ class EmployerPayOverseasPensionController @Inject() (authAction: AuthorisedActi
                 val updatedCyaModel: PensionsCYAModel = cyaModel.copy(paymentsIntoOverseasPensions = updatedViewModel)
 
                 val redirectLocation =
-                  if (yesNo) TaxEmployerPaymentsController.show(taxYear) else PaymentsIntoOverseasPensionsCYAController.show(taxYear)
+                  if (yesNo) TaxEmployerPaymentsController.show(taxYear) else PaymentsIntoOverseasPensionsCYAController.show(TaxYear(taxYear))
 
                 pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                   errorHandler.internalServerError()) {

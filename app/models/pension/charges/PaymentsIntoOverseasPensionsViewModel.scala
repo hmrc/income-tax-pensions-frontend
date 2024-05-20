@@ -16,7 +16,8 @@
 
 package models.pension.charges
 
-import models.mongo.TextAndKey
+import connectors.OptionalContentHttpReads
+import models.mongo.{PensionsCYAModel, TextAndKey}
 import models.pension.PensionCYABaseModel
 import models.pension.income.OverseasPensionContribution
 import play.api.libs.json.{Json, OFormat}
@@ -145,6 +146,8 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
 
   def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
 
+  def toPensionsCYAModel: PensionsCYAModel = PensionsCYAModel.emptyModels.copy(paymentsIntoOverseasPensions = this)
+
   // Prepares a sub-model required for the pensions income downstream request model.
   def toDownstreamOverseasPensionContribution: Seq[OverseasPensionContribution] =
     reliefs.map { relief =>
@@ -172,6 +175,8 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
 
 object PaymentsIntoOverseasPensionsViewModel {
   implicit val format: OFormat[PaymentsIntoOverseasPensionsViewModel] = Json.format[PaymentsIntoOverseasPensionsViewModel]
+  implicit val optRds: OptionalContentHttpReads[PaymentsIntoOverseasPensionsViewModel] =
+    new OptionalContentHttpReads[PaymentsIntoOverseasPensionsViewModel]
 
   val empty: PaymentsIntoOverseasPensionsViewModel = PaymentsIntoOverseasPensionsViewModel()
 }

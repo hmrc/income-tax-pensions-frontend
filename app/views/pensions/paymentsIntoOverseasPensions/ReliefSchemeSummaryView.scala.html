@@ -23,6 +23,7 @@
 @import views.html.templates.helpers.Link
 @import views.html.templates.helpers.SummaryList
 @import views.html.templates.Layout
+@import common.TaxYear
 
 @this(
     layout: Layout,
@@ -76,7 +77,7 @@
             preventDoubleClick = Some(true),
             content = Text(messages("common.continue")),
             classes = "govuk-button govuk-!-margin-top-2",
-            href = Some(PaymentsIntoOverseasPensionsCYAController.show(taxYear).url)
+            href = Some(PaymentsIntoOverseasPensionsCYAController.show(TaxYear(taxYear)).url)
         ))
     } else {
         <p class="govuk-body" id="youNeedToAddOneOrMoreReliefScheme1">

@@ -58,6 +58,9 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   def unauthorisedPaymentsAnswersUrl(taxYear: TaxYear, nino: Nino): String =
     pensionBEBaseUrl + s"/${taxYear.endYear}/unauthorised-payments-from-pensions/${nino.value}/answers"
 
+  def paymentsIntoOverseasPensionsUrl(taxYear: TaxYear, nino: Nino): String =
+    pensionBEBaseUrl + s"/${taxYear.endYear}/payments-into-overseas-pensions/${nino.value}/answers"
+
   def transfersIntoOverseasPensionsAnswersUrl(taxYear: TaxYear, nino: Nino): String =
     pensionBEBaseUrl + s"/${taxYear.endYear}/transfer-into-overseas-pensions/${nino.value}/answers"
 
