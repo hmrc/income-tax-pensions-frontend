@@ -114,6 +114,17 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     EitherT(res)
   }
 
+  def saveUnauthorisedPaymentsFromPensions(nino: Nino, taxYear: TaxYear, answers: UnauthorisedPaymentsViewModel)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    val url = appConfig.unauthorisedPaymentsAnswersUrl(taxYear, nino)
+    ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, answers)
+
+    val res =
+      http.PUT[UnauthorisedPaymentsViewModel, DownstreamErrorOr[Unit]](url, answers)(UnauthorisedPaymentsViewModel.format, NoContentHttpReads, hc, ec)
+    EitherT(res)
+  }
+
   def getAnnualAllowances(nino: Nino, taxYear: TaxYear)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Option[PensionAnnualAllowancesViewModel]] = {

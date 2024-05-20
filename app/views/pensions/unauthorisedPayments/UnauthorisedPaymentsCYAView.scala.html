@@ -19,6 +19,7 @@
 @import views.html.templates.helpers.{Button, Heading, SummaryList}
 @import controllers.pensions.unauthorisedPayments.UnauthorisedPaymentsCYAViewHelper
 @import models.requests.UserSessionDataRequest
+@import common.TaxYear
 
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
 
@@ -34,7 +35,7 @@
 
     @summaryList(UnauthorisedPaymentsCYAViewHelper.summaryListRows(cya, taxYear)(messages))
 
-    @csrfForm(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.submit(taxYear)) {
+    @csrfForm(controllers.pensions.unauthorisedPayments.routes.UnauthorisedPaymentsCYAController.submit(TaxYear(taxYear))) {
         @button("common.saveAndContinue")
     }
 }
