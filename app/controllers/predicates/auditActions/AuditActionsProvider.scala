@@ -55,7 +55,7 @@ class AuditActionsProvider @Inject() (authAction: AuthorisedAction,
       .andThen(UnauthorisedPaymentsUpdateAuditAction(auditService))
 
   def incomeFromOverseasPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
-      authoriseWithSessionAndPrior(TaxYear(taxYear), Journey.IncomeFromOverseasPensions)
+    authoriseWithSessionAndPrior(TaxYear(taxYear), Journey.IncomeFromOverseasPensions)
       .andThen(IncomeFromOverseasPensionsViewAuditAction(auditService))
 
   def incomeFromOverseasPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =

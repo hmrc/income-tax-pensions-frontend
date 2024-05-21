@@ -163,8 +163,8 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   }
 
   def getTransfersIntoOverseasPensions(nino: Nino, taxYear: TaxYear)(implicit
-                                                                     hc: HeaderCarrier,
-                                                                     ec: ExecutionContext): ApiResultT[Option[TransfersIntoOverseasPensionsViewModel]] = {
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Option[TransfersIntoOverseasPensionsViewModel]] = {
     val url = appConfig.transfersIntoOverseasPensionsAnswersUrl(taxYear, nino)
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[TransfersIntoOverseasPensionsViewModel]]](url)

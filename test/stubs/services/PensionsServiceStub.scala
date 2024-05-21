@@ -22,6 +22,7 @@ import connectors.ServiceError
 import models.User
 import models.domain.ApiResultT
 import models.mongo.PensionsUserData
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionAnnualAllowancesViewModel}
 import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel}
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
@@ -36,6 +37,9 @@ final case class PensionsServiceStub(
     upsertUkPensionIncomeResult: Either[ServiceError, Unit] = Right(()),
     var incomeFromPensionsList: List[IncomeFromPensionsViewModel] = Nil,
     annualAllowancesResult: Either[ServiceError, Unit] = Right(()),
+    var annualAllowancesList: List[PensionAnnualAllowancesViewModel] = Nil,
+    incomeFromOverseasPensionsResult: Either[ServiceError, Unit] = Right(()),
+    var incomeFromOverseasPensionsList: List[IncomeFromOverseasPensionsViewModel] = Nil
     var annualAllowancesList: List[PensionAnnualAllowancesViewModel] = Nil,
     paymentsIntoOverseasPensionsResult: Either[ServiceError, Unit] = Right(()),
     var paymentsIntoOverseasPensionsList: List[PaymentsIntoOverseasPensionsViewModel] = Nil
@@ -73,4 +77,10 @@ final case class PensionsServiceStub(
     EitherT.fromEither(paymentsIntoOverseasPensionsResult)
   }
 
+  def upsertIncomeFromOverseasPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    incomeFromOverseasPensionsList ::= sessionData.pensions.incomeFromOverseasPensions
+    EitherT.fromEither(incomeFromOverseasPensionsResult)
+  }
 }

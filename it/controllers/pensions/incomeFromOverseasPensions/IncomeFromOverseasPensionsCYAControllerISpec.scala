@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,12 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
-import builders.AllPensionsDataBuilder.anAllPensionsData
 import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsViewModel
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
-import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
-import builders.PensionsUserDataBuilder.{aPensionsUserData, pensionUserDataWithIncomeOverseasPension}
+import builders.PensionsUserDataBuilder.pensionUserDataWithIncomeOverseasPension
 import builders.UserBuilder.aUser
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.Journey.IncomeFromOverseasPensions
 import models.pension.charges.PensionScheme
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import org.jsoup.Jsoup
@@ -35,7 +32,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.SEE_OTHER
 import play.api.libs.ws.WSResponse
 import utils.PageUrls.IncomeFromOverseasPensionsPages.{checkIncomeFromOverseasPensionsCyaUrl, incomeFromOverseasPensionsStatus}
-import utils.PageUrls.{fullUrl, sectionCompletedUrl}
+import utils.PageUrls.fullUrl
 import utils.{CommonUtils, IntegrationTest, PensionsDatabaseHelper, ViewHelpers}
 
 // TODO: Controller tests need rewriting. They should be easy to read and easy to refactor when the implementation changes.
@@ -211,38 +208,6 @@ class IncomeFromOverseasPensionsCYAControllerISpec
 
       result.status shouldBe SEE_OTHER
       result.header("location") shouldBe Some(incomeFromOverseasPensionsStatus(taxYearEOY))
-    }
-  }
-
-  ".submit" should {
-    "redirect to the summary page" when {
-
-      "the CYA data is persisted" should {
-
-        val form = Map[String, String]()
-
-        lazy val result: WSResponse = {
-          dropPensionsDB()
-          userDataStub(anIncomeTaxUserData.copy(pensions = Some(anAllPensionsData)), nino, taxYear)
-          pensionIncomeSessionStub("", nino, taxYear)
-          insertCyaData(aPensionsUserData.copy(pensions = aPensionsCYAModel.copy(paymentsIntoPension = cyaDataIncomplete), taxYear = taxYear))
-          authoriseAgentOrIndividual()
-          urlPost(
-            fullUrl(checkIncomeFromOverseasPensionsCyaUrl(taxYear)),
-            form,
-            follow = false,
-            headers = Seq(HeaderNames.COOKIE -> playSessionCookies(taxYear, validTaxYearList))
-          )
-        }
-
-        "the status is SEE OTHER" in {
-          result.status shouldBe SEE_OTHER
-        }
-
-        "redirects to the summary page" in {
-          result.headers("Location").head shouldBe sectionCompletedUrl(taxYear, IncomeFromOverseasPensions)
-        }
-      }
     }
   }
 }
