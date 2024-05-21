@@ -37,6 +37,9 @@ trait PensionsService {
   def upsertAnnualAllowances(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit]
+  def upsertUnauthorisedPaymentsFromPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit]
   def upsertTransferIntoOverseasPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit]
@@ -66,6 +69,14 @@ class PensionsServiceImpl @Inject() (pensionsConnector: PensionsConnector, sessi
     for {
       _ <- pensionsConnector.saveAnnualAllowances(user.getNino, taxYear, sessionData.pensions.pensionsAnnualAllowances)
       _ <- sessionService.clearSessionOnSuccess(Journey.AnnualAllowances, sessionData)
+    } yield ()
+
+  def upsertUnauthorisedPaymentsFromPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] =
+    for {
+      _ <- pensionsConnector.saveUnauthorisedPaymentsFromPensions(user.getNino, taxYear, sessionData.pensions.unauthorisedPayments)
+      _ <- sessionService.clearSessionOnSuccess(Journey.UnauthorisedPayments, sessionData)
     } yield ()
 
   def upsertTransferIntoOverseasPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit

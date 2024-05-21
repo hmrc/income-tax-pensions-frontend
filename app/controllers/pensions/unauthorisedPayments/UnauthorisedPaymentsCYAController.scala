@@ -20,24 +20,22 @@ import cats.data.EitherT
 import cats.implicits._
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
+import controllers.handleResult
 import controllers.predicates.auditActions.AuditActionsProvider
-import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
-import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.AllPensionsData
-import models.pension.AllPensionsData.generateSessionModelFromPrior
-import models.pension.Journey.UnauthorisedPayments
+import models.APIErrorModel
+import models.domain.ApiResultT
+import models.mongo.PensionsCYAModel
+import models.pension.Journey
 import models.pension.charges.UnauthorisedPaymentsViewModel
 import models.requests.UserPriorAndSessionDataRequest
-import models.{APIErrorBodyModel, APIErrorModel, User}
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
 import services.redirects.UnauthorisedPaymentsPages.CYAPage
 import services.redirects.UnauthorisedPaymentsRedirects.{cyaPageCall, journeyCheck}
-import services.{ExcludeJourneyService, PensionSessionService, UnauthorisedPaymentsService}
-import uk.gov.hmrc.http.HeaderCarrier
+import services.{ExcludeJourneyService, PensionsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.Logging
 import views.html.pensions.unauthorisedPayments.UnauthorisedPaymentsCYAView
 
 import javax.inject.{Inject, Singleton}
@@ -46,15 +44,13 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsProvider,
                                                    view: UnauthorisedPaymentsCYAView,
-                                                   pensionSessionService: PensionSessionService,
-                                                   service: UnauthorisedPaymentsService,
+                                                   pensionsService: PensionsService,
                                                    errorHandler: ErrorHandler,
                                                    excludeJourneyService: ExcludeJourneyService,
                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
-    with I18nSupport {
-
-  lazy val logger: Logger = Logger(this.getClass.getName)
+    with I18nSupport
+    with Logging {
 
   def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.unauthorisedPaymentsViewAuditing(taxYear.endYear) async { implicit request =>
     val cyaData    = request.sessionData
@@ -70,63 +66,28 @@ class UnauthorisedPaymentsCYAController @Inject() (auditProvider: AuditActionsPr
     }
   }
 
-  // TODO: check conditions for excluding Pensions from submission without gateway
+  // TODO: We don't know what it does, but we're waiting for Business to create a proper story about Exclusion (leaving for now)
   private def maybeExcludePension(unauthorisedPaymentModel: UnauthorisedPaymentsViewModel,
                                   taxYear: Int,
                                   priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent])(implicit
-      request: Request[_]): EitherT[Future, Result, Unit] =
-    (if (!unauthorisedPaymentModel.surchargeQuestion.exists(x => x) && !unauthorisedPaymentModel.noSurchargeQuestion.exists(x => x)) {
-       EitherT(excludeJourneyService.excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)).void
-     } else {
-       EitherT.rightT[Future, APIErrorModel](())
-     }).leftSemiflatMap(_ => errorHandler.futureInternalServerError())
-
-  private def maybeUpdateAnswers(cya: PensionsUserData, prior: Option[AllPensionsData], taxYear: Int)(implicit
-      priorAndSessionRequest: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, Result, Result] =
-    if (isEqual(cya.pensions, prior)) {
-      EitherT.rightT[Future, Result](Redirect(SECTION_COMPLETED_PAGE(taxYear, UnauthorisedPayments)))
+      request: Request[_]): ApiResultT[Unit] =
+    if (!unauthorisedPaymentModel.surchargeQuestion.exists(x => x) && !unauthorisedPaymentModel.noSurchargeQuestion.exists(x => x)) {
+      EitherT(excludeJourneyService.excludeJourney("pensions", taxYear, priorAndSessionRequest.user.nino)(priorAndSessionRequest.user, hc)).void
     } else {
-      EitherT.right[Result](performSubmission(taxYear, Some(cya))(priorAndSessionRequest.user, hc, priorAndSessionRequest))
+      EitherT.rightT[Future, APIErrorModel](())
     }
 
-  def submit(taxYear: Int): Action[AnyContent] = auditProvider.unauthorisedPaymentsUpdateAuditing(taxYear) async { implicit request =>
-    val checkRedirect = journeyCheck(CYAPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
-      val (sessionData, priorData, unauthorisedPaymentModel) = (data, request.maybePrior, data.pensions.unauthorisedPayments)
+  def submit(taxYear: TaxYear): Action[AnyContent] = auditProvider.unauthorisedPaymentsUpdateAuditing(taxYear.endYear) async { implicit request =>
+    val res = for {
+      _ <- maybeExcludePension(request.sessionData.pensions.unauthorisedPayments, taxYear.endYear, request)
+      result <- pensionsService.upsertUnauthorisedPaymentsFromPensions(
+        request.user,
+        taxYear,
+        request.sessionData
+      )(request.user.withDownstreamHc(hc), ec)
+    } yield result
 
-      (for {
-        _ <- maybeExcludePension(unauthorisedPaymentModel, taxYear, request).map(_ => Redirect(SECTION_COMPLETED_PAGE(taxYear, UnauthorisedPayments)))
-        result <- maybeUpdateAnswers(sessionData, priorData, taxYear)
-      } yield result).merge
-    }
+    handleResult(errorHandler, taxYear, Journey.UnauthorisedPayments, res)
   }
-
-  private def performSubmission(taxYear: Int, cya: Option[PensionsUserData])(implicit
-      user: User,
-      hc: HeaderCarrier,
-      request: UserPriorAndSessionDataRequest[AnyContent]): Future[Result] =
-    (cya match {
-      case Some(_) =>
-        service.saveAnswers(user, TaxYear(taxYear)) map {
-          case Left(_) =>
-            logger.info("[submit] Failed to create or update session")
-            Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel(BAD_REQUEST.toString, "Unable to createOrUpdate pension service")))
-          case Right(_) =>
-            Right(Ok)
-        }
-      case _ =>
-        logger.info("[submit] CYA data or NINO missing from session.")
-        Future.successful(Left(APIErrorModel(BAD_REQUEST, APIErrorBodyModel("MISSING_DATA", "CYA data or NINO missing from session."))))
-    }).flatMap {
-      case Right(_) =>
-        Future.successful(Redirect(SECTION_COMPLETED_PAGE(taxYear, UnauthorisedPayments)))
-      case Left(error) => Future.successful(errorHandler.handleError(error.status))
-    }
-
-  private def isEqual(cyaData: PensionsCYAModel, priorData: Option[AllPensionsData]): Boolean =
-    priorData match {
-      case None        => false
-      case Some(prior) => cyaData.equals(generateSessionModelFromPrior(prior))
-    }
 
 }

@@ -47,10 +47,17 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.paymentsIntoOverseasPensionsViewAuditing(taxYear) async { implicit request =>
-    val checkRedirect = journeyCheck(PaymentsIntoOverseasPensionsCYAPage, _: PensionsCYAModel, taxYear)
-    redirectBasedOnCurrentAnswers(taxYear, Some(request.sessionData), cyaPageCall(taxYear))(checkRedirect) { data =>
-      Future.successful(Ok(view(taxYear, data.pensions.paymentsIntoOverseasPensions)))
+  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoOverseasPensionsViewAuditing(taxYear) async { implicit request =>
+    val cyaData    = request.sessionData
+    val taxYearInt = taxYear.endYear
+
+    if (cyaData.pensions.paymentsIntoOverseasPensions.isFinished) {
+      Future.successful(Ok(view(taxYearInt, cyaData.pensions.paymentsIntoOverseasPensions)))
+    } else {
+      val checkRedirect = journeyCheck(PaymentsIntoOverseasPensionsCYAPage, _: PensionsCYAModel, taxYearInt)
+      redirectBasedOnCurrentAnswers(taxYearInt, Some(cyaData), cyaPageCall(taxYearInt))(checkRedirect) { data =>
+        Future.successful(Ok(view(taxYearInt, data.pensions.paymentsIntoOverseasPensions)))
+      }
     }
   }
 
