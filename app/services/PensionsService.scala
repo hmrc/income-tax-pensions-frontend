@@ -90,7 +90,6 @@ class PensionsServiceImpl @Inject() (pensionsConnector: PensionsConnector, sessi
       _ <- sessionService.clearSessionOnSuccess(Journey.PaymentsIntoOverseasPensions, sessionData)
     } yield ()
 
-
   def upsertIncomeFromOverseasPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] =
