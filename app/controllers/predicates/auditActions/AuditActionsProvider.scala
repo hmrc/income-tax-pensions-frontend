@@ -108,7 +108,7 @@ class AuditActionsProvider @Inject() (authAction: AuthorisedAction,
       .andThen(AnnualAllowancesUpdateAuditAction(auditService))
 
   def transfersIntoOverseasPensionsViewAuditing(taxYear: Int): ActionBuilder[UserSessionDataRequest, AnyContent] =
-    authoriseWithSessionAndPrior(TaxYear(taxYear), Journey.AnnualAllowances)
+    authoriseWithSessionAndPrior(TaxYear(taxYear), Journey.TransferIntoOverseasPensions)
       .andThen(TransfersIntoOverseasPensionsViewAuditAction(auditService))
 
   def transfersIntoOverseasPensionsUpdateAuditing(taxYear: Int): ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] =
