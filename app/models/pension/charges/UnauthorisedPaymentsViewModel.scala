@@ -50,13 +50,16 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
       if (bool) noSurchargeAmount.isDefined && isTaxQuestionComplete(noSurchargeTaxAmountQuestion, noSurchargeTaxAmount)
       else true
     }
+
+    val hasPensionSchemesAndPSTR = ukPensionSchemesQuestion.exists { bool =>
+      if (bool) pensionSchemeTaxReference.nonEmpty else true
+    }
+
     val arePstrQuestionsComplete =
-      if (isSurchargeComplete || isNoSurchargeComplete)
-        ukPensionSchemesQuestion.exists { bool =>
-          if (bool) pensionSchemeTaxReference.nonEmpty
-          else true
-        }
-      else true
+      if (surchargeQuestion.contains(true) || noSurchargeQuestion.contains(true))
+        hasPensionSchemesAndPSTR
+      else
+        isSurchargeComplete && isNoSurchargeComplete // if both surcharges are false, we don't need to ask about UK pension schemes
 
     isSurchargeComplete && isNoSurchargeComplete && arePstrQuestionsComplete
   }

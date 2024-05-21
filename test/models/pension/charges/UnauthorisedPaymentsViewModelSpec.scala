@@ -65,30 +65,29 @@ class UnauthorisedPaymentsViewModelSpec extends UnitTest {
   }
 
   "isFinished" should {
+    val empty = UnauthorisedPaymentsViewModel()
+
     "return true" when {
       "all questions are populated" in {
         completeViewModel.isFinished
       }
       "all required questions are answered" in {
-        completeViewModel
+        empty
           .copy(
-            surchargeQuestion = Some(false),
-            surchargeAmount = None,
-            surchargeTaxAmountQuestion = None,
-            surchargeTaxAmount = None
+            surchargeQuestion = Some(true),
+            surchargeAmount = Some(1.0),
+            surchargeTaxAmountQuestion = Some(false),
+            noSurchargeQuestion = Some(false),
+            ukPensionSchemesQuestion = Some(false)
           )
           .isFinished shouldBe true
+      }
 
-        completeViewModel
+      "if surcharge and no surcharge false, ukPensionSchema not required" in {
+        empty
           .copy(
-            surchargeTaxAmountQuestion = Some(false),
-            surchargeTaxAmount = None,
-            noSurchargeQuestion = Some(false),
-            noSurchargeAmount = None,
-            noSurchargeTaxAmountQuestion = None,
-            noSurchargeTaxAmount = None,
-            ukPensionSchemesQuestion = Some(false),
-            pensionSchemeTaxReference = None
+            surchargeQuestion = Some(false),
+            noSurchargeQuestion = Some(false)
           )
           .isFinished shouldBe true
       }
