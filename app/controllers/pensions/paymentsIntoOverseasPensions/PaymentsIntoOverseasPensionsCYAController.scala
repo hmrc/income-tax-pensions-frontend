@@ -63,13 +63,13 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
 
   def submit(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoOverseasPensionsUpdateAuditing(taxYear.endYear) async {
     implicit request =>
-      val res = pensionsService.upsertPaymentsIntoPensions(
+      val res = pensionsService.upsertPaymentsIntoOverseasPensions(
         request.user,
         taxYear,
         request.sessionData
       )(request.user.withDownstreamHc(hc), executionContext)
 
-      handleResult(errorHandler, taxYear, Journey.PaymentsIntoPensions, res)
+      handleResult(errorHandler, taxYear, Journey.PaymentsIntoOverseasPensions, res)
   }
 
 }
