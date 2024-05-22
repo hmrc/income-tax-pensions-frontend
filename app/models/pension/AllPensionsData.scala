@@ -56,7 +56,7 @@ object AllPensionsData {
       pensionsAnnualAllowances = PensionAnnualAllowancesViewModel.empty,
       incomeFromPensions = generateIncomeFromPensionsModelFromPrior(prior),
       unauthorisedPayments = generateUnauthorisedPaymentsCyaModelFromPrior(prior),
-      paymentsIntoOverseasPensions = generatePaymentsIntoOverseasPensionsFromPrior(prior),
+      paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel.empty,
       incomeFromOverseasPensions = generateIncomeFromOverseasPensionsCyaFromPrior(prior),
       transfersIntoOverseasPensions = generateTransfersIntoOverseasPensionsCyaFromPrior(prior),
       shortServiceRefunds = generateShortServiceRefundCyaFromPrior(prior)
