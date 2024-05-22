@@ -31,19 +31,9 @@ import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSess
 import models.domain.ApiResultT
 import models.logging.ConnectorRequestInfo
 import models.mongo.{JourneyContext, JourneyStatus}
+import models.pension.Journey._
 import models.pension.JourneyNameAndStatus
-import models.pension.charges.{
-  CreateUpdatePensionChargesRequestModel,
-  PensionAnnualAllowancesViewModel,
-  TransfersIntoOverseasPensionsViewModel,
-  UnauthorisedPaymentsViewModel
-}
-import models.pension.charges.{
-  CreateUpdatePensionChargesRequestModel,
-  PaymentsIntoOverseasPensionsViewModel,
-  PensionAnnualAllowancesViewModel,
-  UnauthorisedPaymentsViewModel
-}
+import models.pension.charges._
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
@@ -66,7 +56,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def savePaymentsIntoPensions(nino: Nino, taxYear: TaxYear, answers: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
-    val url = appConfig.paymentsIntoPensionsAnswersUrl(taxYear, nino)
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, PaymentsIntoPensions)
     ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, answers)
 
     val res =
@@ -78,7 +68,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def getPaymentsIntoPensions(nino: Nino, taxYear: TaxYear)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Option[PaymentsIntoPensionsViewModel]] = {
-    val url = appConfig.paymentsIntoPensionsAnswersUrl(taxYear, nino)
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, PaymentsIntoPensions)
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[PaymentsIntoPensionsViewModel]]](url)
     EitherT(res)
@@ -87,7 +77,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def getUkPensionIncome(nino: Nino, taxYear: TaxYear)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Option[IncomeFromPensionsViewModel]] = {
-    val url = appConfig.upPensionIncomeAnswersUrl(taxYear, nino)
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, UkPensionIncome)
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[IncomeFromPensionsViewModel]]](url)
     EitherT(res)
@@ -96,7 +86,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def saveUkPensionIncome(nino: Nino, taxYear: TaxYear, answers: IncomeFromPensionsViewModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
-    val url = appConfig.upPensionIncomeAnswersUrl(taxYear, nino)
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, UkPensionIncome)
     ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, answers)
 
     val res =
@@ -108,7 +98,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def saveAnnualAllowances(nino: Nino, taxYear: TaxYear, answers: PensionAnnualAllowancesViewModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
-    val url = appConfig.annualAllowancesAnswersUrl(taxYear, nino)
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, AnnualAllowances)
     ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, answers)
 
     val res =
@@ -123,7 +113,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def saveUnauthorisedPaymentsFromPensions(nino: Nino, taxYear: TaxYear, answers: UnauthorisedPaymentsViewModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
-    val url = appConfig.unauthorisedPaymentsAnswersUrl(taxYear, nino)
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, UnauthorisedPayments)
     ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, answers)
 
     val res =
@@ -134,7 +124,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def getAnnualAllowances(nino: Nino, taxYear: TaxYear)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Option[PensionAnnualAllowancesViewModel]] = {
-    val url = appConfig.annualAllowancesAnswersUrl(taxYear, nino)
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, AnnualAllowances)
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[PensionAnnualAllowancesViewModel]]](url)
     EitherT(res)
@@ -143,7 +133,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def getUnauthorisedPaymentsFromPensions(nino: Nino, taxYear: TaxYear)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Option[UnauthorisedPaymentsViewModel]] = {
-    val url = appConfig.unauthorisedPaymentsAnswersUrl(taxYear, nino)
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, UnauthorisedPayments)
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[UnauthorisedPaymentsViewModel]]](url)
     EitherT(res)
@@ -152,7 +142,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def getPaymentsIntoOverseasPensions(nino: Nino, taxYear: TaxYear)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Option[PaymentsIntoOverseasPensionsViewModel]] = {
-    val url = appConfig.paymentsIntoOverseasPensionsUrl(taxYear, nino)
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, PaymentsIntoOverseasPensions)
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[PaymentsIntoOverseasPensionsViewModel]]](url)
     EitherT(res)
@@ -161,7 +151,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def getTransfersIntoOverseasPensions(nino: Nino, taxYear: TaxYear)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Option[TransfersIntoOverseasPensionsViewModel]] = {
-    val url = appConfig.transfersIntoOverseasPensionsAnswersUrl(taxYear, nino)
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, TransferIntoOverseasPensions)
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[TransfersIntoOverseasPensionsViewModel]]](url)
     EitherT(res)
