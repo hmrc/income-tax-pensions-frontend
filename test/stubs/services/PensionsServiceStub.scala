@@ -67,8 +67,8 @@ final case class PensionsServiceStub(
       ec: ExecutionContext): ApiResultT[Unit] = ???
 
   def upsertPaymentsIntoOverseasPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
-     hc: HeaderCarrier,
-     ec: ExecutionContext): ApiResultT[Unit] = {
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
     paymentsIntoOverseasPensionsList ::= sessionData.pensions.paymentsIntoOverseasPensions
     EitherT.fromEither(paymentsIntoOverseasPensionsResult)
   }
