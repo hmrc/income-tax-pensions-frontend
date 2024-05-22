@@ -17,6 +17,7 @@
 package views.pensions.paymentsIntoOverseasPensions
 
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder._
+import common.TaxYear
 import controllers.pensions.paymentsIntoOverseasPensions.routes
 import models.pension.charges.PaymentsIntoOverseasPensionsViewModel
 import models.requests.UserSessionDataRequest
@@ -105,7 +106,7 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { // scalasty
     implicit val request: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
     implicit val messages: Messages                          = getMessages(userScenario.isWelsh)
 
-    val htmlFormat = underTest(taxYearEOY, model)
+    val htmlFormat = underTest(TaxYear(taxYearEOY), model)
     import userScenario.commonExpectedResults._
     implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
