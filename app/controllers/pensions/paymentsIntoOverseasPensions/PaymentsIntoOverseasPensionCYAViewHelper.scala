@@ -86,7 +86,7 @@ object PaymentsIntoOverseasPensionCYAViewHelper extends CYABaseHelper {
         .map(_ =>
           summaryListRowWithStrings(
             "common.overseas.pension.schemes",
-            Some(piopViewModel.reliefs.flatMap(_.customerReference)),
+            Some(piopViewModel.schemes.flatMap(_.customerReference)),
             routes.ReliefsSchemeSummaryController.show(taxYear))(messages))
     }
 }

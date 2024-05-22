@@ -24,7 +24,7 @@
 @import views.html.templates.helpers.SummaryList
 @import controllers.pensions.paymentsIntoOverseasPensions.ReliefsSchemeDetailsHelper
 @import controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeSummaryController
-@import models.pension.charges.Relief
+@import models.pension.charges.OverseasPensionScheme
 
 @this(
 layout: Layout,
@@ -37,7 +37,7 @@ govUkButton: GovukButton,
 summaryList: SummaryList
 )
 
-@(taxYear: Int, reliefSchemeList: Seq[Relief], index: Option[Int])(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
+@(taxYear: Int, reliefSchemeList: Seq[OverseasPensionScheme], index: Option[Int])(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
 
 @titleText = @{messages("common.removePensionScheme.overseas.title")}
 

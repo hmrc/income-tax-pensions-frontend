@@ -54,7 +54,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
     }
 
     "redirect to first page in journey when index doesn't match and there are no relief schemes" in {
-      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq())
 
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
@@ -91,7 +91,7 @@ class ReliefSchemeDetailsControllerISpec extends IntegrationTest with ViewHelper
   ".submit" should {
 
     "redirect to first page in journey when index doesn't match and there are no relief schemes" in {
-      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq())
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)

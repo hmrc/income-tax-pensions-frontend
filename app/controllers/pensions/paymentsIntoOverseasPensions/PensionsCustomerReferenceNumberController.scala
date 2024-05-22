@@ -22,7 +22,7 @@ import controllers.predicates.actions.ActionsProvider
 import forms.PensionCustomerReferenceNumberForm
 import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.Relief
+import models.pension.charges.OverseasPensionScheme
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -81,7 +81,7 @@ class PensionsCustomerReferenceNumberController @Inject() (actionsProvider: Acti
       pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, request.sessionData.isPriorSubmission)(
         errorHandler.internalServerError()) {
         schemeIsFinishedCheck(
-          updatedCyaModel.paymentsIntoOverseasPensions.reliefs,
+          updatedCyaModel.paymentsIntoOverseasPensions.schemes,
           newIndex.getOrElse(0),
           taxYear,
           UntaxedEmployerPaymentsController.show(taxYear, newIndex))
@@ -98,14 +98,14 @@ class PensionsCustomerReferenceNumberController @Inject() (actionsProvider: Acti
               pensionCustomerReferenceNumber => {
                 val updatedCyaModel: PensionsCYAModel = data.pensions.copy(
                   paymentsIntoOverseasPensions = piop.copy(
-                    reliefs = piop.reliefs :+ Relief(customerReference = Some(pensionCustomerReferenceNumber))
+                    schemes = piop.schemes :+ OverseasPensionScheme(customerReference = Some(pensionCustomerReferenceNumber))
                   ))
-                createOrUpdateSessionData(updatedCyaModel, Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))
+                createOrUpdateSessionData(updatedCyaModel, Some(updatedCyaModel.paymentsIntoOverseasPensions.schemes.size - 1))
               }
             )
         }
       case Some(index) =>
-        indexCheckThenJourneyCheck(request.sessionData, Some(index), PensionsCustomerReferenceNumberPage, taxYear) { _: Relief =>
+        indexCheckThenJourneyCheck(request.sessionData, Some(index), PensionsCustomerReferenceNumberPage, taxYear) { _: OverseasPensionScheme =>
           referenceForm(request.user)
             .bindFromRequest()
             .fold(
@@ -113,11 +113,11 @@ class PensionsCustomerReferenceNumberController @Inject() (actionsProvider: Acti
               pensionCustomerReferenceNumber => {
                 val updatedCyaModel: PensionsCYAModel = request.sessionData.pensions.copy(
                   paymentsIntoOverseasPensions = piop.copy(
-                    reliefs = piop.reliefs.updated(
+                    schemes = piop.schemes.updated(
                       index,
-                      piop.reliefs(index).copy(customerReference = Some(pensionCustomerReferenceNumber))
+                      piop.schemes(index).copy(customerReference = Some(pensionCustomerReferenceNumber))
                     )))
-                val currentIndex = optIndex.fold(Some(updatedCyaModel.paymentsIntoOverseasPensions.reliefs.size - 1))(Some(_))
+                val currentIndex = optIndex.fold(Some(updatedCyaModel.paymentsIntoOverseasPensions.schemes.size - 1))(Some(_))
                 createOrUpdateSessionData(updatedCyaModel, currentIndex)
               }
             )

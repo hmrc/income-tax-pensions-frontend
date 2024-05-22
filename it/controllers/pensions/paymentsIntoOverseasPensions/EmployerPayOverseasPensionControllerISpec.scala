@@ -308,7 +308,7 @@ class EmployerPayOverseasPensionControllerISpec extends CommonUtils with BeforeA
           paymentsIntoOverseasPensionsAmount = Some(1999.99),
           employerPaymentsQuestion = Some(false),
           taxPaidOnEmployerPaymentsQuestion = None,
-          reliefs = Seq.empty
+          schemes = Seq.empty
         )
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.paymentsIntoOverseasPensions shouldBe expectedViewModel

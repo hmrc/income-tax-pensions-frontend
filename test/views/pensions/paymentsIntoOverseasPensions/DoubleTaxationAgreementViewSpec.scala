@@ -22,7 +22,7 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.{aUser, anAgentUser}
 import forms.overseas.DoubleTaxationAgreementForm
 import forms.overseas.DoubleTaxationAgreementForm.DoubleTaxationAgreementFormModel
-import models.pension.charges.Relief
+import models.pension.charges.OverseasPensionScheme
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -116,11 +116,11 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render page with no prefilled data" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val relief                      = Relief(Some(""))
+        val relief                      = OverseasPensionScheme(Some(""))
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
-              pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief)))),
+              pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -151,7 +151,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
 
       "render page with prefilled data" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val relief = Relief(
+        val relief = OverseasPensionScheme(
           Some(""),
           alphaTwoCountryCode = Some("AD"),
           doubleTaxationReliefAmount = Some(99.99),
@@ -162,7 +162,7 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
           UserSessionDataRequest(
             aPensionsUserData.copy(
               pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
-                .copy(reliefs = Seq(relief)))),
+                .copy(schemes = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -203,12 +203,12 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
 
       "render page with error text when no country is selected" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val relief                      = Relief(Some(""))
+        val relief                      = OverseasPensionScheme(Some(""))
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
               pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
-                .copy(reliefs = Seq(relief)))),
+                .copy(schemes = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -227,12 +227,12 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
 
       "render page with no results found error when country input doesn't match any countries" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val relief                      = Relief(Some(""))
+        val relief                      = OverseasPensionScheme(Some(""))
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
               pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
-                .copy(reliefs = Seq(relief)))),
+                .copy(schemes = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -251,12 +251,12 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
 
       "render page with error text when no double taxation relief is inputted" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val relief                      = Relief(Some(""))
+        val relief                      = OverseasPensionScheme(Some(""))
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
               pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
-                .copy(reliefs = Seq(relief)))),
+                .copy(schemes = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -275,12 +275,12 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
 
       "render page with incorrect format error when taxation relief input is in the wrong format" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val relief                      = Relief(Some(""))
+        val relief                      = OverseasPensionScheme(Some(""))
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
               pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
-                .copy(reliefs = Seq(relief)))),
+                .copy(schemes = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -299,12 +299,12 @@ class DoubleTaxationAgreementViewSpec extends ViewUnitTest with FakeRequestProvi
 
       "render page with value too big error when taxation relief input is greater than £100,000,000,000" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val relief                      = Relief(Some(""))
+        val relief                      = OverseasPensionScheme(Some(""))
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
               pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel
-                .copy(reliefs = Seq(relief)))),
+                .copy(schemes = Seq(relief)))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )

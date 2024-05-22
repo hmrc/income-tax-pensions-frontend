@@ -258,7 +258,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
     "redirect and update question to 'Yes' when user selects yes and there was no previous selection" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-      val pensionsViewModel              = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = None, reliefs = Seq.empty)
+      val pensionsViewModel              = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = None, schemes = Seq.empty)
       val pensionUserData                = pensionUserDataWithOverseasPensions(pensionsViewModel)
       lazy val result: WSResponse        = submitPage(pensionUserData, form)
 
@@ -275,7 +275,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
     "redirect and update question to 'Yes' when user selects yes and previously selected no" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.yes)
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(false), reliefs = Seq.empty)
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(false), schemes = Seq.empty)
       val pensionUserData   = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionUserData, form)
@@ -293,7 +293,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
 
     "redirect and update question to 'No' when user selects no and previously selected yes" which {
       lazy val form: Map[String, String] = Map(YesNoForm.yesNo -> YesNoForm.no)
-      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(true), reliefs = Seq.empty)
+      val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(true), schemes = Seq.empty)
       val pensionsUserData  = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
       lazy val result: WSResponse = submitPage(pensionsUserData, form)
@@ -309,7 +309,7 @@ class TaxEmployerPaymentsControllerISpec extends CommonUtils with BeforeAndAfter
           paymentsIntoOverseasPensionsAmount = Some(1999.99),
           employerPaymentsQuestion = Some(true),
           taxPaidOnEmployerPaymentsQuestion = Some(false),
-          reliefs = Seq.empty
+          schemes = Seq.empty
         )
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.paymentsIntoOverseasPensions shouldBe expectedViewModel

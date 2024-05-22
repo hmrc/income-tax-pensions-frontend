@@ -18,7 +18,7 @@
 @import controllers.pensions.paymentsIntoOverseasPensions.ReliefsSchemeDetailsHelper
 
 @import controllers.pensions.routes._
-@import models.pension.charges.Relief
+@import models.pension.charges.OverseasPensionScheme
 @import models.requests.UserSessionDataRequest
 @import utils.ViewUtils.bigDecimalCurrency
 @import views.html.templates.helpers.Heading
@@ -35,7 +35,7 @@ button: Button,
 formWithCsrf: FormWithCSRF)
 
 
-@(taxYear: Int, reliefs: Relief, index: Option[Int])(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
+@(taxYear: Int, reliefs: OverseasPensionScheme, index: Option[Int])(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
 
 @headingForUse = @{messages("overseasPension.reliefDetails.title")}
 

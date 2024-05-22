@@ -20,7 +20,7 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
-import models.pension.charges.{Relief, TaxReliefQuestion}
+import models.pension.charges.{OverseasPensionScheme, TaxReliefQuestion}
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -120,12 +120,16 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "Render the page with prefilled data for Transitional corresponding relief" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val updatedRelief: Relief =
-          Relief(Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.TransitionalCorrespondingRelief), sf74Reference = Some("123456"))
+        val updatedRelief: OverseasPensionScheme =
+          OverseasPensionScheme(
+            Some("PENSIONINCOME245"),
+            Some(193.54),
+            Some(TaxReliefQuestion.TransitionalCorrespondingRelief),
+            sf74Reference = Some("123456"))
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
           aPensionsUserData.copy(
             pensions =
-              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(updatedRelief)))),
+              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(updatedRelief)))),
           aUser,
           fakeIndividualRequest
         )
@@ -164,7 +168,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
 
       "Render the page with prefilled data for Migrant member relief" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val updatedRelief: Relief = Relief(
+        val updatedRelief: OverseasPensionScheme = OverseasPensionScheme(
           Some("PENSIONINCOME245"),
           Some(193.54),
           Some(TaxReliefQuestion.MigrantMemberRelief),
@@ -173,7 +177,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
           aPensionsUserData.copy(
             pensions =
-              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(updatedRelief)))),
+              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(updatedRelief)))),
           aUser,
           fakeIndividualRequest
         )
@@ -212,7 +216,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
 
       "Render the page with prefilled data for Double taxation relief" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val updatedRelief: Relief = Relief(
+        val updatedRelief: OverseasPensionScheme = OverseasPensionScheme(
           Some("PENSIONINCOME245"),
           Some(193.54),
           Some(TaxReliefQuestion.DoubleTaxationRelief),
@@ -224,7 +228,7 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
           aPensionsUserData.copy(
             pensions =
-              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(updatedRelief)))),
+              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(updatedRelief)))),
           aUser,
           fakeIndividualRequest
         )
@@ -263,12 +267,12 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
       }
 
       "Render the page with prefilled data when all cases are no" which {
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val updatedRelief: Relief       = Relief(None, None, None)
+        implicit val messages: Messages          = getMessages(userScenario.isWelsh)
+        val updatedRelief: OverseasPensionScheme = OverseasPensionScheme(None, None, None)
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
           aPensionsUserData.copy(
             pensions =
-              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(updatedRelief)))),
+              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(updatedRelief)))),
           aUser,
           fakeIndividualRequest
         )
@@ -302,12 +306,13 @@ class ReliefsSchemeDetailsViewSpec extends ViewUnitTest with FakeRequestProvider
 
       "Render the page with prefilled data when none of the above is selected" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val updatedRelief: Relief       = Relief(Some("PENSIONINCOME245"), Some(193.54), reliefType = Some(TaxReliefQuestion.NoTaxRelief))
+        val updatedRelief: OverseasPensionScheme =
+          OverseasPensionScheme(Some("PENSIONINCOME245"), Some(193.54), reliefType = Some(TaxReliefQuestion.NoTaxRelief))
 
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
           aPensionsUserData.copy(
             pensions =
-              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(updatedRelief)))),
+              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(updatedRelief)))),
           aUser,
           fakeIndividualRequest
         )

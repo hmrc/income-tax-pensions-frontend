@@ -139,7 +139,7 @@ class PaymentsIntoOverseasPensionsCYAViewSpec extends ViewUnitTest { // scalasty
       }
 
       "render the page with 'Yes' to all gateway questions and no schemes" when {
-        val piopModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(true), reliefs = Seq.empty)
+        val piopModel = aPaymentsIntoOverseasPensionsViewModel.copy(taxPaidOnEmployerPaymentsQuestion = Some(true), schemes = Seq.empty)
         implicit val document: Document = renderPage(userScenario, piopModel)
 
         cyaRowCheck(piopYesNo, yesText, ChangeLinks.changePiop, hiddenPiopYesNo, 1)

@@ -45,14 +45,14 @@ class ReliefsSchemeSummaryController @Inject() (view: ReliefSchemeSummaryView,
     val updatedUserData = cleanUpReliefs(request.sessionData)
     val checkRedirect   = journeyCheck(ReliefsSchemeSummaryPage, _: PensionsCYAModel, taxYear)
     redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { _ =>
-      Future.successful(Ok(view(taxYear, updatedUserData.pensions.paymentsIntoOverseasPensions.reliefs)))
+      Future.successful(Ok(view(taxYear, updatedUserData.pensions.paymentsIntoOverseasPensions.schemes)))
     }
   }
 
   private def cleanUpReliefs(pensionsUserData: PensionsUserData): PensionsUserData = {
-    val reliefs            = pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+    val reliefs            = pensionsUserData.pensions.paymentsIntoOverseasPensions.schemes
     val filteredReliefs    = if (reliefs.nonEmpty) reliefs.filter(relief => relief.isFinished) else reliefs
-    val updatedViewModel   = pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = filteredReliefs)
+    val updatedViewModel   = pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(schemes = filteredReliefs)
     val updatedPensionData = pensionsUserData.pensions.copy(paymentsIntoOverseasPensions = updatedViewModel)
     val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
     pensionSessionService.createOrUpdateSession(updatedUserData)

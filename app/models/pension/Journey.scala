@@ -90,7 +90,7 @@ object Journey {
     override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
   }
 
-  case object UnauthorisedPayments extends Journey("unauthorised-payments") {
+  case object UnauthorisedPayments extends Journey("unauthorised-payments-from-pensions") {
     override def sectionCompletedRedirect(taxYear: Int): Result = Redirect(HOME(taxYear))
   }
 

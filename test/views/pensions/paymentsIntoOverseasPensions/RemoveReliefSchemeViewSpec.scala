@@ -20,7 +20,7 @@ import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverse
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
-import models.pension.charges.{Relief, TaxReliefQuestion}
+import models.pension.charges.{OverseasPensionScheme, TaxReliefQuestion}
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -92,7 +92,7 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
       "Render the page with prefilled data for Migrant Scheme" which {
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
 
-        val reliefToRemove: Relief = Relief(
+        val reliefToRemove: OverseasPensionScheme = OverseasPensionScheme(
           customerReference = Some("PENSIONINCOME245"),
           employerPaymentsAmount = Some(193.54),
           reliefType = Some(TaxReliefQuestion.MigrantMemberRelief),
@@ -103,7 +103,7 @@ class RemoveReliefSchemeViewSpec extends ViewUnitTest with FakeRequestProvider {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = UserSessionDataRequest(
           aPensionsUserData.copy(
             pensions =
-              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(reliefToRemove)))),
+              aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(reliefToRemove)))),
           aUser,
           fakeIndividualRequest
         )

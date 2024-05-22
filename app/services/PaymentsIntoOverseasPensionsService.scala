@@ -52,8 +52,8 @@ class PaymentsIntoOverseasPensionsService @Inject() (repository: PensionsUserDat
     def processIncomeClaim(prior: IncomeTaxUserData, journey: PaymentsIntoOverseasPensionsViewModel): DownstreamOutcomeT[Unit] = {
       val hasPreviousOPCSubmission =
         prior.pensions.flatMap(_.pensionIncome.flatMap(_.overseasPensionContribution.map(OPCs => OPCs.forall(_.isBlankSubmission)))).contains(false)
-      val areClaimingOPC      = journey.reliefs.nonEmpty
-      val intentIsToDeleteOPC = journey.reliefs.isEmpty && hasPreviousOPCSubmission
+      val areClaimingOPC      = journey.schemes.nonEmpty
+      val intentIsToDeleteOPC = journey.schemes.isEmpty && hasPreviousOPCSubmission
 
       val incomeModel =
         if (areClaimingOPC) buildDownstreamIncomeModel(prior, maybeClaim = journey.some)
