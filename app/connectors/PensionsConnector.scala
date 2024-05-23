@@ -172,6 +172,29 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     EitherT(res)
   }
 
+  def getIncomeFromOverseasPensions(nino: Nino, taxYear: TaxYear)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Option[IncomeFromOverseasPensionsViewModel]] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, IncomeFromOverseasPensions)
+    ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
+    val res = http.GET[DownstreamErrorOr[Option[IncomeFromOverseasPensionsViewModel]]](url)
+    EitherT(res)
+  }
+
+  def saveIncomeFromOverseasPensions(nino: Nino, taxYear: TaxYear, answers: IncomeFromOverseasPensionsViewModel)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, IncomeFromOverseasPensions)
+    ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, answers)
+
+    val res = http.PUT[IncomeFromOverseasPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(
+      IncomeFromOverseasPensionsViewModel.format,
+      NoContentHttpReads,
+      hc,
+      ec)
+    EitherT(res)
+  }
+
   def savePensionCharges(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): DownstreamOutcome[Unit] = {

@@ -104,7 +104,7 @@ class ControllerSpec(val pathForThisPage: String)
     val incomeFromOverseasPensionsScheme: String  = relativeUrl("/overseas-pensions/income-from-overseas-pensions/pension-scheme-summary")
     val incomeFromOverseasPensionsCountrySummary: String = relativeUrl(
       "/overseas-pensions/income-from-overseas-pensions/pension-overseas-income-country-summary")
-    val incomeFromOverseasPensionsCya: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya")
+    val incomeFromOverseasPensionsCya: String = relativeUrl("/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income")
 
     val pensionSchemeTaxReferenceSummary: String = relativeUrl("/annual-allowance/pension-schemes-paying-annual-allowance-tax")
     val pensionSchemeTaxReference: String        = relativeUrl("/annual-lifetime-allowances/pension-scheme-tax-reference")

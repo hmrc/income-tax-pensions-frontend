@@ -23,7 +23,7 @@ import models.APIErrorModel
 import models.domain.ApiResultT
 import models.mongo.{JourneyContext, JourneyStatus}
 import models.pension.JourneyNameAndStatus
-import models.pension.charges.{CreateUpdatePensionChargesRequestModel, PensionAnnualAllowancesViewModel}
+import models.pension.charges.{CreateUpdatePensionChargesRequestModel, IncomeFromOverseasPensionsViewModel, PensionAnnualAllowancesViewModel}
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
 import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
 import models.pension.statebenefits.IncomeFromPensionsViewModel
@@ -135,6 +135,14 @@ trait MockPensionsConnector extends MockFactory {
   def mockSaveAnnualAllowances(): CallHandler5[Nino, TaxYear, PensionAnnualAllowancesViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
     (mockPensionsConnector
       .saveAnnualAllowances(_: Nino, _: TaxYear, _: PensionAnnualAllowancesViewModel)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(*, *, *, *, *)
+      .returns(EitherT.rightT[Future, APIErrorModel](()))
+      .anyNumberOfTimes()
+
+  def mockSaveIncomeFromOverseasPensions()
+      : CallHandler5[Nino, TaxYear, IncomeFromOverseasPensionsViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
+    (mockPensionsConnector
+      .saveIncomeFromOverseasPensions(_: Nino, _: TaxYear, _: IncomeFromOverseasPensionsViewModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, *, *, *, *)
       .returns(EitherT.rightT[Future, APIErrorModel](()))
       .anyNumberOfTimes()

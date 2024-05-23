@@ -131,14 +131,14 @@ object EncryptedPensionIncome {
 }
 
 // TODO: I think we can remove this container. I see no value in it, looks like a hack.
-case class ForeignPensionContainer(fp: Seq[ForeignPension]) extends PensionIncomeSubRequestModel {
+case class ForeignPensionContainer(foreignPensions: Seq[ForeignPension]) extends PensionIncomeSubRequestModel {
   override def isEmpty: Boolean =
-    fp.isEmpty
+    foreignPensions.isEmpty
 }
 // TODO: I think we can remove this container. I see no value in it, looks like a hack.
-case class OverseasPensionContributionContainer(opc: Seq[OverseasPensionContribution]) extends PensionIncomeSubRequestModel {
+case class OverseasPensionContributionContainer(overseasPensionContributions: Seq[OverseasPensionContribution]) extends PensionIncomeSubRequestModel {
   override def isEmpty: Boolean =
-    opc.isEmpty
+    overseasPensionContributions.isEmpty
 }
 
 case class CreateUpdatePensionIncomeRequestModel(foreignPension: Option[ForeignPensionContainer],
@@ -170,8 +170,8 @@ object CreateUpdatePensionIncomeRequestModel {
   implicit val writes: Writes[CreateUpdatePensionIncomeRequestModel] = new Writes[CreateUpdatePensionIncomeRequestModel] {
     override def writes(o: CreateUpdatePensionIncomeRequestModel): JsValue =
       Json.obj(
-        "foreignPension"              -> o.foreignPension.map(_.fp),
-        "overseasPensionContribution" -> o.overseasPensionContribution.map(_.opc)
+        "foreignPension"              -> o.foreignPension.map(_.foreignPensions),
+        "overseasPensionContribution" -> o.overseasPensionContribution.map(_.overseasPensionContributions)
       )
   }
 
