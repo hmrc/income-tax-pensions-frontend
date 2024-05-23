@@ -46,17 +46,17 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
   override def notFoundTemplate(implicit request: Request[_]): Html = notFoundTemplate()
 
   def internalServerError()(implicit request: Request[_]): Result = {
-    val errorLogMessage = s"[$CorrelationIdHeaderKey=$maybeCorrelationIdFromMdc] error occurred: for ${request.method} [${request.uri}]"
+    val errorLogMessage = s"[$CorrelationIdHeaderKey=${maybeCorrelationIdFromMdc()}] error occurred: for ${request.method} [${request.uri}]"
     logger.error(errorLogMessage)
 
     InternalServerError(internalServerErrorTemplate())
   }
 
   def futureInternalServerError()(implicit request: Request[_]): Future[Result] =
-    Future.successful(internalServerError)
+    Future.successful(internalServerError())
 
   def handleError(status: Int)(implicit request: Request[_]): Result = {
-    val errorLogMessage = s"[$CorrelationIdHeaderKey=$maybeCorrelationIdFromMdc] for ${request.method} [${request.uri}] - status=$status"
+    val errorLogMessage = s"[$CorrelationIdHeaderKey=${maybeCorrelationIdFromMdc()}] for ${request.method} [${request.uri}] - status=$status"
     logger.error(errorLogMessage)
 
     status match {
@@ -67,7 +67,7 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     val clientErrorLogMessage =
-      s"[$CorrelationIdHeaderKey=$maybeCorrelationIdFromMdc] Client error occurred: $statusCode for ${request.method} [${request.uri}] - $message"
+      s"[$CorrelationIdHeaderKey=${maybeCorrelationIdFromMdc()}] Client error occurred: $statusCode for ${request.method} [${request.uri}] - $message"
 
     statusCode match {
       case NOT_FOUND =>

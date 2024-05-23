@@ -65,7 +65,7 @@ class OverseasPensionSchemeSummarySpec extends ViewUnitTest {
     val alphaTwoCode: String                = "Country"
     val countryCodeValue: String            = "France"
     val pensionPayments: String             = "Pensions payments"
-    val pensionPaymentsValue: String        = "Amount: £1,999.99 Non-uk tax: £1,999.99"
+    val pensionPaymentsValue: String        = "Amount: £1,999.99 Non-UK tax: £1,999.99"
     val specialWithholdingTax: String       = "Special Withholding Tax"
     val specialWithholdingTaxValue: String  = "£1,999.99"
     val foreignTaxCredit: String            = "Foreign Tax Credit"

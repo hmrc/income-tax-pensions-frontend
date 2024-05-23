@@ -17,8 +17,9 @@
 package models.pension.charges
 
 import cats.implicits.{none, toTraverseOps}
+import connectors.OptionalContentHttpReads
 import forms.Countries
-import models.mongo.TextAndKey
+import models.mongo.{PensionsCYAModel, TextAndKey}
 import models.pension.PensionCYABaseModel
 import models.pension.income.ForeignPension
 import play.api.libs.json.{Json, OFormat}
@@ -43,6 +44,8 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
   def journeyIsNo: Boolean = !paymentsFromOverseasPensionsQuestion.getOrElse(true) && overseasIncomePensionSchemes.isEmpty
 
   def journeyIsUnanswered: Boolean = this.productIterator.forall(_ == None)
+
+  def toPensionsCYAModel: PensionsCYAModel = PensionsCYAModel.emptyModels.copy(incomeFromOverseasPensions = this)
 
   def hasPriorData: Boolean = paymentsFromOverseasPensionsQuestion.exists(_ && overseasIncomePensionSchemes.nonEmpty)
 
@@ -72,8 +75,10 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
 
 object IncomeFromOverseasPensionsViewModel {
   implicit val format: OFormat[IncomeFromOverseasPensionsViewModel] = Json.format[IncomeFromOverseasPensionsViewModel]
+  implicit val optRds: OptionalContentHttpReads[IncomeFromOverseasPensionsViewModel] =
+    new OptionalContentHttpReads[IncomeFromOverseasPensionsViewModel]
 
-  val empty: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(None, Nil)
+  def empty: IncomeFromOverseasPensionsViewModel = IncomeFromOverseasPensionsViewModel(None, Nil)
 }
 
 case class EncryptedIncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion: Option[EncryptedValue] = None,

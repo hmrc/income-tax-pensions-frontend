@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsEmptyViewModel
+import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsSingleSchemeViewModel
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.ShortServiceRefundsViewModelBuilder.emptyShortServiceRefundsViewModel
@@ -29,7 +29,7 @@ package object testdata {
     anIncomeFromPensionEmptyViewModel,
     anUnauthorisedPaymentsViewModel,
     aPaymentsIntoOverseasPensionsViewModel,
-    anIncomeFromOverseasPensionsEmptyViewModel,
+    anIncomeFromOverseasPensionsSingleSchemeViewModel,
     emptyTransfersIntoOverseasPensionsViewModel,
     emptyShortServiceRefundsViewModel
   )

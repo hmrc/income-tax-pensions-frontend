@@ -269,7 +269,7 @@ object PageUrls extends IntegrationTest {
     }
 
     def checkIncomeFromOverseasPensionsCyaUrl(taxYear: Int): String =
-      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya"
+      s"$appUrl/$taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income"
   }
 
   //  *****************     Transfers into overseas pensions pages      ******************************

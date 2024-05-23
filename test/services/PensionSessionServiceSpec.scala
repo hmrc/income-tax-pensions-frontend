@@ -26,7 +26,7 @@ import models.mongo._
 import models.pension.AllPensionsData.generateSessionModelFromPrior
 import models.pension.Journey.{PaymentsIntoPensions, PensionsSummary}
 import models.pension.JourneyNameAndStatus
-import models.pension.charges.PensionAnnualAllowancesViewModel
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionAnnualAllowancesViewModel}
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalatest.concurrent.ScalaFutures
@@ -158,7 +158,8 @@ class PensionSessionServiceSpec
       val response = generateSessionModelFromPrior(anAllPensionDataEmpty)
       response shouldBe aPensionsCYAGeneratedFromPriorEmpty.copy(
         paymentsIntoPension = PaymentsIntoPensionsViewModel.empty,
-        pensionsAnnualAllowances = PensionAnnualAllowancesViewModel.empty
+        pensionsAnnualAllowances = PensionAnnualAllowancesViewModel.empty,
+        incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel.empty
       )
     }
   }

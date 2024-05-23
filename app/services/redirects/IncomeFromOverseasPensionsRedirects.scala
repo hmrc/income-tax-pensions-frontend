@@ -16,6 +16,7 @@
 
 package services.redirects
 
+import common.TaxYear
 import controllers.pensions.incomeFromOverseasPensions.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
@@ -27,7 +28,7 @@ import scala.concurrent.Future
 
 object IncomeFromOverseasPensionsRedirects {
 
-  def cyaPageCall(taxYear: Int): Call = IncomeFromOverseasPensionsCYAController.show(taxYear)
+  def cyaPageCall(taxYear: Int): Call = IncomeFromOverseasPensionsCYAController.show(TaxYear(taxYear))
 
   def redirectForSchemeLoop(schemes: Seq[PensionScheme], taxYear: Int): Call = {
     val filteredSchemes = schemes.filter(scheme => scheme.isFinished)

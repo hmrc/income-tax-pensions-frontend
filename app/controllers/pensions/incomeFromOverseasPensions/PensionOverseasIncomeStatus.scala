@@ -16,6 +16,7 @@
 
 package controllers.pensions.incomeFromOverseasPensions
 
+import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.pensions.incomeFromOverseasPensions.routes._
 import controllers.pensions.routes.{OverseasPensionsSummaryController, PensionsSummaryController}
@@ -101,7 +102,7 @@ class PensionOverseasIncomeStatus @Inject() (authAction: AuthorisedAction,
                   if (yesNo) {
                     redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromOverseasPensions.overseasIncomePensionSchemes, taxYear)
                   } else {
-                    IncomeFromOverseasPensionsCYAController.show(taxYear)
+                    IncomeFromOverseasPensionsCYAController.show(TaxYear(taxYear))
                   }
                 )
               }

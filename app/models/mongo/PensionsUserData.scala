@@ -19,15 +19,8 @@ package models.mongo
 import common.TaxYear
 import models.User
 import models.pension.Journey
-import models.pension.Journey.{
-  AnnualAllowances,
-  PaymentsIntoOverseasPensions,
-  PaymentsIntoPensions,
-  StatePension,
-  UkPensionIncome,
-  UnauthorisedPayments
-}
-import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, UnauthorisedPaymentsViewModel}
+import models.pension.Journey._
+import models.pension.charges._
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import play.api.libs.json.{Format, Json}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -41,7 +34,7 @@ case class PensionsUserData(sessionId: String,
                             isPriorSubmission: Boolean, // TODO Where do we use that? Prior submission for which journey?
                             pensions: PensionsCYAModel,
                             lastUpdated: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC)) {
-  private def now = ZonedDateTime.now(ZoneOffset.UTC)
+  private def now: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC)
 
   def removeJourneyAnswers(journey: Journey): PensionsUserData =
     journey match {
@@ -55,6 +48,8 @@ case class PensionsUserData(sessionId: String,
         copy(lastUpdated = now, pensions = pensions.copy(pensionsAnnualAllowances = PensionAnnualAllowancesViewModel.empty))
       case UnauthorisedPayments =>
         copy(lastUpdated = now, pensions = pensions.copy(unauthorisedPayments = UnauthorisedPaymentsViewModel.empty))
+      case IncomeFromOverseasPensions =>
+        copy(lastUpdated = now, pensions = pensions.copy(incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel.empty))
       case PaymentsIntoOverseasPensions =>
         copy(lastUpdated = now, pensions = pensions.copy(paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel.empty))
       case _ => ??? // TODO will be done when other journeys are implemented

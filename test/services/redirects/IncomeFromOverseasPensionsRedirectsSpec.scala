@@ -19,6 +19,7 @@ package services.redirects
 import builders.IncomeFromOverseasPensionsViewModelBuilder.{anIncomeFromOverseasPensionsEmptyViewModel, anIncomeFromOverseasPensionsViewModel}
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
+import common.TaxYear
 import controllers.pensions.incomeFromOverseasPensions.routes._
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionScheme}
@@ -367,7 +368,7 @@ class IncomeFromOverseasPensionsRedirectsSpec extends UnitTest {
 
   ".cyaPageCall" should {
     "return a redirect call to the cya page" in {
-      cyaPageCall(taxYear) shouldBe IncomeFromOverseasPensionsCYAController.show(taxYear)
+      cyaPageCall(taxYear) shouldBe IncomeFromOverseasPensionsCYAController.show(TaxYear(taxYear))
     }
   }
 
