@@ -19,20 +19,21 @@
 @import views.html.templates.helpers.{Button, Heading, SummaryList}
 @import controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionCYAViewHelper
 @import models.requests.UserSessionDataRequest
+@import common.TaxYear
 
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
 
-@(taxYear: Int, paymentsIntoOverseasPensionsViewModel: PaymentsIntoOverseasPensionsViewModel)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
+@(taxYear: TaxYear, paymentsIntoOverseasPensionsViewModel: PaymentsIntoOverseasPensionsViewModel)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
 @headingForUse = @{
     messages(s"paymentsIntoOverseasPensions.cya.heading")
 }
 
-@layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
+@layout(pageTitle = headingForUse, taxYear = Some(taxYear.endYear)) {
 
-    @heading(headingForUse, Some(messages("common.paymentsIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
+    @heading(headingForUse, Some(messages("common.paymentsIntoOverseasPensions.caption", taxYear.startYear, taxYear.toString)), "govuk-!-margin-bottom-5")
 
-    @summaryList(PaymentsIntoOverseasPensionCYAViewHelper.summaryListRows(paymentsIntoOverseasPensionsViewModel, taxYear)(messages))
+    @summaryList(PaymentsIntoOverseasPensionCYAViewHelper.summaryListRows(paymentsIntoOverseasPensionsViewModel, taxYear.endYear)(messages))
 
     @csrfForm(controllers.pensions.paymentsIntoOverseasPensions.routes.PaymentsIntoOverseasPensionsCYAController.submit(taxYear)) {
         @button("common.saveAndContinue")

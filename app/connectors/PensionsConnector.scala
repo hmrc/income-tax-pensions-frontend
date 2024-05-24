@@ -148,6 +148,21 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     EitherT(res)
   }
 
+  def savePaymentsIntoOverseasPensions(nino: Nino, taxYear: TaxYear, answers: PaymentsIntoOverseasPensionsViewModel)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, PaymentsIntoOverseasPensions)
+    ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, answers)
+
+    val res =
+      http.PUT[PaymentsIntoOverseasPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(
+        PaymentsIntoOverseasPensionsViewModel.format,
+        NoContentHttpReads,
+        hc,
+        ec)
+    EitherT(res)
+  }
+
   def saveTransfersIntoOverseasPensions(nino: Nino, taxYear: TaxYear, answers: TransfersIntoOverseasPensionsViewModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
@@ -168,6 +183,29 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     val url = appConfig.journeyAnswersUrl(taxYear, nino, TransferIntoOverseasPensions)
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[TransfersIntoOverseasPensionsViewModel]]](url)
+    EitherT(res)
+  }
+
+  def getIncomeFromOverseasPensions(nino: Nino, taxYear: TaxYear)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Option[IncomeFromOverseasPensionsViewModel]] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, IncomeFromOverseasPensions)
+    ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
+    val res = http.GET[DownstreamErrorOr[Option[IncomeFromOverseasPensionsViewModel]]](url)
+    EitherT(res)
+  }
+
+  def saveIncomeFromOverseasPensions(nino: Nino, taxYear: TaxYear, answers: IncomeFromOverseasPensionsViewModel)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, IncomeFromOverseasPensions)
+    ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, answers)
+
+    val res = http.PUT[IncomeFromOverseasPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(
+      IncomeFromOverseasPensionsViewModel.format,
+      NoContentHttpReads,
+      hc,
+      ec)
     EitherT(res)
   }
 

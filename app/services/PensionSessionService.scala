@@ -28,8 +28,7 @@ import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
 import models.pension.Journey.{AnnualAllowances, PaymentsIntoOverseasPensions, PaymentsIntoPensions, UnauthorisedPayments}
-import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, TransferIntoOverseasPensions, UnauthorisedPayments}
-import models.pension.Journey.{AnnualAllowances, PaymentsIntoPensions, UkPensionIncome, UnauthorisedPayments}
+import models.pension.Journey._
 import models.pension.{Journey, JourneyNameAndStatus}
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}
@@ -88,6 +87,9 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case TransferIntoOverseasPensions =>
         val res = pensionsConnector.getTransfersIntoOverseasPensions(user.getNino, taxYear)
+        transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
+      case IncomeFromOverseasPensions =>
+        val res = pensionsConnector.getIncomeFromOverseasPensions(user.getNino, taxYear)
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case _ =>
         EitherT.rightT[Future, APIErrorModel](None) // TODO it will be added gradually journey by journey here
@@ -224,7 +226,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
   }
 
   def clearSessionOnSuccess(journey: Journey, existingSessionData: PensionsUserData): ApiResultT[Unit] = {
-    def updatedSession = existingSessionData.removeJourneyAnswers(journey)
+    def updatedSession: PensionsUserData = existingSessionData.removeJourneyAnswers(journey)
 
     upsertSessionT(updatedSession).leftMap(_.toAPIErrorModel)
   }

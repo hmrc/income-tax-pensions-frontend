@@ -91,7 +91,7 @@ lazy val microservice = Project(appName, file("."))
         group(Seq(
           "lib/govuk-frontend/govuk/all.js",
           "javascripts/jquery.min.js",
-          "javascripts/autocomplete.js",
+          "javascripts/autocompletePolyfill.js",
           "javascripts/libraries/location-autocomplete.min.js",
           "javascripts/app.js"
         ))

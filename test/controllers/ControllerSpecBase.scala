@@ -67,6 +67,8 @@ trait ControllerSpecBase extends PlaySpec with AnyWordSpecLike with MockitoSugar
   when(auditProvider.annualAllowancesViewAuditing(any[Int])).thenReturn(mkUserSessionDataRequest(allData))
   when(auditProvider.transfersIntoOverseasPensionsUpdateAuditing(any[Int])).thenReturn(mkAction(allData))
   when(auditProvider.transfersIntoOverseasPensionsViewAuditing(any[Int])).thenReturn(mkUserSessionDataRequest(allData))
+  when(auditProvider.incomeFromOverseasPensionsUpdateAuditing(any[Int])).thenReturn(mkAction(allData))
+  when(auditProvider.incomeFromOverseasPensionsViewAuditing(any[Int])).thenReturn(mkUserSessionDataRequest(allData))
 
   def mkAction(existingData: PensionsCYAModel) =
     new ActionBuilder[UserPriorAndSessionDataRequest, AnyContent] {

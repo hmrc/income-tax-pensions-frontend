@@ -220,7 +220,7 @@ GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-s
 POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/remove-schemes                                             controllers.pensions.paymentsIntoOverseasPensions.RemoveReliefSchemeController.submit(taxYear: Int, index: Option[Int])
 
 GET         /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                             controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.show(taxYear: TaxYear)
-POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                             controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.submit(taxYear: Int)
+POST        /:taxYear/overseas-pensions/payments-into-overseas-pensions/check-overseas-pension-details                             controllers.pensions.paymentsIntoOverseasPensions.PaymentsIntoOverseasPensionsCYAController.submit(taxYear: TaxYear)
 
 ###########################     Income from overseas pensions pages     ####################################
 
@@ -250,8 +250,8 @@ GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/pension-ov
 GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/remove-overseas-income-scheme                                controllers.pensions.incomeFromOverseasPensions.RemoveOverseasIncomeSchemeController.show(taxYear: Int, index: Option[Int])
 POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/remove-overseas-income-scheme                                controllers.pensions.incomeFromOverseasPensions.RemoveOverseasIncomeSchemeController.submit(taxYear: Int, index: Option[Int])
 
-GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income-cya                            controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income                                controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.show(taxYear: TaxYear)
+POST        /:taxYear/overseas-pensions/income-from-overseas-pensions/check-overseas-pension-income                                controllers.pensions.incomeFromOverseasPensions.IncomeFromOverseasPensionsCYAController.submit(taxYear: TaxYear)
 
 ###########################     Transfer into overseas pensions pages     ####################################
 
