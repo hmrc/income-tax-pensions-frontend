@@ -21,7 +21,7 @@ import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import controllers.predicates.actions.ActionsProvider
 import controllers.validatedIndex
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.Relief
+import models.pension.charges.OverseasPensionScheme
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -46,13 +46,13 @@ class RemoveReliefSchemeController @Inject() (actionsProvider: ActionsProvider,
     with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
-    indexCheckThenJourneyCheck(request.sessionData, index, RemoveReliefsSchemePage, taxYear) { relief: Relief =>
+    indexCheckThenJourneyCheck(request.sessionData, index, RemoveReliefsSchemePage, taxYear) { relief: OverseasPensionScheme =>
       Future.successful(Ok(view(taxYear = taxYear, reliefSchemeList = List(relief), index = index)))
     }
   }
 
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
-    val pensionReliefScheme = request.sessionData.pensions.paymentsIntoOverseasPensions.reliefs
+    val pensionReliefScheme = request.sessionData.pensions.paymentsIntoOverseasPensions.schemes
     validatedIndex(index, pensionReliefScheme.size)
       .fold(Future.successful(Redirect(ReliefsSchemeSummaryController.show(taxYear)))) { i =>
         indexCheckThenJourneyCheck(request.sessionData, Some(i), RemoveReliefsSchemePage, taxYear) { _ =>
@@ -62,10 +62,10 @@ class RemoveReliefSchemeController @Inject() (actionsProvider: ActionsProvider,
       }
   }
 
-  private def updateSessionData[T](pensionUserData: PensionsUserData, reliefScheme: Seq[Relief], taxYear: Int)(implicit
+  private def updateSessionData[T](pensionUserData: PensionsUserData, reliefScheme: Seq[OverseasPensionScheme], taxYear: Int)(implicit
       request: UserSessionDataRequest[T]): Future[Result] = {
     val updatedCyaModel: PensionsCYAModel =
-      pensionUserData.pensions.copy(paymentsIntoOverseasPensions = pensionUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = reliefScheme))
+      pensionUserData.pensions.copy(paymentsIntoOverseasPensions = pensionUserData.pensions.paymentsIntoOverseasPensions.copy(schemes = reliefScheme))
 
     pensionSessionService.createOrUpdateSessionData[Result](request.user, updatedCyaModel, taxYear, pensionUserData.isPriorSubmission)(
       errorHandler.internalServerError()) {

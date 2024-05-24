@@ -19,7 +19,7 @@ package controllers.pensions.paymentsIntoOverseasPensions
 import config.AppConfig
 import controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeSummaryController
 import controllers.predicates.actions.ActionsProvider
-import models.pension.charges.Relief
+import models.pension.charges.OverseasPensionScheme
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.redirects.PaymentsIntoOverseasPensionsPages.ReliefsSchemeDetailsPage
@@ -39,7 +39,7 @@ class ReliefsSchemeDetailsController @Inject() (view: ReliefSchemeDetailsView, a
     with SessionHelper {
 
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
-    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, ReliefsSchemeDetailsPage, taxYear) { relief: Relief =>
+    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, ReliefsSchemeDetailsPage, taxYear) { relief: OverseasPensionScheme =>
       Future.successful(Ok(view(taxYear, relief, reliefIndex)))
     }
   }

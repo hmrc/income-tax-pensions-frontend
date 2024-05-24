@@ -115,7 +115,7 @@ class ReliefSchemeSummaryViewSpec extends ViewUnitTest with FakeRequestProvider 
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(aPensionsUserData, aUser, fakeIndividualRequest)
         implicit val messages: Messages = getMessages(userScenario.isWelsh)
-        val schemes                     = aPaymentsIntoOverseasPensionsViewModel.reliefs
+        val schemes                     = aPaymentsIntoOverseasPensionsViewModel.schemes
         val htmlFormat                  = underTest(taxYearEOY, schemes)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 

@@ -16,12 +16,12 @@
 
 package builders
 
-import models.pension.charges.Relief
+import models.pension.charges.OverseasPensionScheme
 import models.pension.charges.TaxReliefQuestion.{DoubleTaxationRelief, MigrantMemberRelief, NoTaxRelief, TransitionalCorrespondingRelief}
 
 object ReliefBuilder {
 
-  val aTransitionalCorrespondingRelief: Relief = Relief(
+  val aTransitionalCorrespondingRelief: OverseasPensionScheme = OverseasPensionScheme(
     reliefType = Some(TransitionalCorrespondingRelief),
     customerReference = Some("tcrPENSIONINCOME2000"),
     employerPaymentsAmount = Some(1999.99),
@@ -34,7 +34,7 @@ object ReliefBuilder {
     sf74Reference = Some("SF74-123456")
   )
 
-  val aMigrantMemberRelief: Relief = Relief(
+  val aMigrantMemberRelief: OverseasPensionScheme = OverseasPensionScheme(
     reliefType = Some(MigrantMemberRelief),
     customerReference = Some("mmrPENSIONINCOME356"),
     employerPaymentsAmount = Some(356.00),
@@ -47,7 +47,7 @@ object ReliefBuilder {
     sf74Reference = None
   )
 
-  val aDoubleTaxationRelief: Relief = Relief(
+  val aDoubleTaxationRelief: OverseasPensionScheme = OverseasPensionScheme(
     reliefType = Some(DoubleTaxationRelief),
     customerReference = Some("dtrPENSIONINCOME550"),
     employerPaymentsAmount = Some(550.00),
@@ -60,7 +60,7 @@ object ReliefBuilder {
     sf74Reference = None
   )
 
-  val aNoTaxRelief: Relief = Relief(
+  val aNoTaxRelief: OverseasPensionScheme = OverseasPensionScheme(
     reliefType = Some(NoTaxRelief),
     customerReference = Some("noPENSIONINCOME100"),
     employerPaymentsAmount = Some(100),

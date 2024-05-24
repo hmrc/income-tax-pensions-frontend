@@ -21,7 +21,7 @@ import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import controllers.predicates.actions.ActionsProvider
 import forms.QOPSReferenceNumberForm
 import models.mongo.PensionsCYAModel
-import models.pension.charges.Relief
+import models.pension.charges.OverseasPensionScheme
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -50,7 +50,7 @@ class QOPSReferenceController @Inject() (actionsProvider: ActionsProvider,
   )
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
-    indexCheckThenJourneyCheck(request.sessionData, index, QOPSReferencePage, taxYear) { relief: Relief =>
+    indexCheckThenJourneyCheck(request.sessionData, index, QOPSReferencePage, taxYear) { relief: OverseasPensionScheme =>
       relief.qopsReference match {
         case Some(qopsNumber) => Future.successful(Ok(view(referenceForm.fill(removePrefix(qopsNumber)), taxYear, index)))
         case None             => Future.successful(Ok(view(referenceForm, taxYear, index)))
@@ -61,7 +61,7 @@ class QOPSReferenceController @Inject() (actionsProvider: ActionsProvider,
   def submit(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
     val piops = request.sessionData.pensions.paymentsIntoOverseasPensions
 
-    indexCheckThenJourneyCheck(request.sessionData, index, QOPSReferencePage, taxYear) { relief: Relief =>
+    indexCheckThenJourneyCheck(request.sessionData, index, QOPSReferencePage, taxYear) { relief: OverseasPensionScheme =>
       referenceForm
         .bindFromRequest()
         .fold(
@@ -70,7 +70,7 @@ class QOPSReferenceController @Inject() (actionsProvider: ActionsProvider,
             val maybeRef = if (referenceNumber.isEmpty) None else Some(referenceNumber)
 
             val updatedCyaModel: PensionsCYAModel = request.sessionData.pensions.copy(
-              paymentsIntoOverseasPensions = piops.copy(reliefs = piops.reliefs.updated(index.get, relief.copy(qopsReference = maybeRef)))
+              paymentsIntoOverseasPensions = piops.copy(schemes = piops.schemes.updated(index.get, relief.copy(qopsReference = maybeRef)))
             )
             pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, request.sessionData.isPriorSubmission)(
               errorHandler.internalServerError()) {

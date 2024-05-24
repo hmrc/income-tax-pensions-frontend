@@ -26,7 +26,7 @@ import builders.ReliefBuilder.{aDoubleTaxationRelief, aMigrantMemberRelief, aNoT
 import builders.UserBuilder.{aUser, aUserRequest}
 import forms.PensionCustomerReferenceNumberForm
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.Relief
+import models.pension.charges.OverseasPensionScheme
 import models.pension.charges.TaxReliefQuestion.TransitionalCorrespondingRelief
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.HeaderNames
@@ -47,7 +47,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       pensions = pensionsCyaModel
     )
 
-  val noCrnRelief: Relief = Relief(
+  val noCrnRelief: OverseasPensionScheme = OverseasPensionScheme(
     reliefType = Some(TransitionalCorrespondingRelief),
     customerReference = None,
     employerPaymentsAmount = Some(1999.99),
@@ -59,7 +59,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
     doubleTaxationReliefAmount = None,
     sf74Reference = Some("SF74-123456")
   )
-  val someCrnRelief: Relief = Relief(
+  val someCrnRelief: OverseasPensionScheme = OverseasPensionScheme(
     reliefType = Some(TransitionalCorrespondingRelief),
     customerReference = Some("PENSIONSINCOME480"),
     employerPaymentsAmount = Some(1999.99),
@@ -114,7 +114,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
     }
 
     "Redirect to the Customer Reference page if index is invalid and there are No pension schemes" in {
-      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq())
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
@@ -133,7 +133,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)
-        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(noCrnRelief, noCrnRelief, noCrnRelief))
+        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(noCrnRelief, noCrnRelief, noCrnRelief))
         val pensionCYAModel   = aPensionsCYAModel.copy(paymentsIntoOverseasPensions = pensionsViewModel)
         insertCyaData(pensionsUsersData(pensionCYAModel))
         urlGet(
@@ -220,7 +220,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
 
       lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
       cyaModel.pensions.paymentsIntoOverseasPensions shouldBe aPaymentsIntoOverseasPensionsViewModel.copy(
-        reliefs = Seq(
+        schemes = Seq(
           aTransitionalCorrespondingRelief,
           aMigrantMemberRelief.copy(customerReference = Some("PENSIONSINCOME24")),
           aDoubleTaxationRelief,
@@ -245,7 +245,7 @@ class PensionsCustomerReferenceNumberControllerISpec extends IntegrationTest wit
     }
 
     "redirect to the Customer Reference page if index is invalid and there are No pension schemes" in {
-      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq())
+      val pensionsNoSchemesViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq())
       lazy implicit val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual(aUser.isAgent)

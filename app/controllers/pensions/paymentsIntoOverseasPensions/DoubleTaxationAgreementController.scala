@@ -23,7 +23,7 @@ import forms.Countries
 import forms.overseas.DoubleTaxationAgreementForm.{DoubleTaxationAgreementFormModel, doubleTaxationAgreementForm}
 import models.User
 import models.mongo.PensionsUserData
-import models.pension.charges.Relief
+import models.pension.charges.OverseasPensionScheme
 import models.requests.UserSessionDataRequest
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -49,7 +49,7 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
     with SessionHelper {
 
   def show(taxYear: Int, index: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
-    indexCheckThenJourneyCheck(request.sessionData, index, DoubleTaxationAgreementPage, taxYear) { relief: Relief =>
+    indexCheckThenJourneyCheck(request.sessionData, index, DoubleTaxationAgreementPage, taxYear) { relief: OverseasPensionScheme =>
       val form: Form[DoubleTaxationAgreementFormModel] = dblTaxationAgreementForm(request.user).fill(updateViewModel(relief))
       Future.successful(Ok(view(form, taxYear, index)))
     }
@@ -69,7 +69,7 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
   private def dblTaxationAgreementForm(user: User): Form[DoubleTaxationAgreementFormModel] =
     doubleTaxationAgreementForm(agentOrIndividual = if (user.isAgent) "agent" else "individual")
 
-  private def updateViewModel(relief: Relief): DoubleTaxationAgreementFormModel =
+  private def updateViewModel(relief: OverseasPensionScheme): DoubleTaxationAgreementFormModel =
     DoubleTaxationAgreementFormModel(
       countryId = relief.alphaTwoCountryCode.fold(Countries.get2AlphaCodeFrom3AlphaCode(relief.alphaThreeCountryCode))(Some(_)),
       article = relief.doubleTaxationArticle,
@@ -85,10 +85,10 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
     val piopUserData = pensionsUserData.pensions.paymentsIntoOverseasPensions
     val updatedCyaModel = pensionsUserData.pensions.copy(
       paymentsIntoOverseasPensions = piopUserData.copy(
-        reliefs = piopUserData.reliefs.updated(
+        schemes = piopUserData.schemes.updated(
           idx,
           piopUserData
-            .reliefs(idx)
+            .schemes(idx)
             .copy(
               alphaTwoCountryCode = doubleTaxationAgreementFormModel.countryId,
               alphaThreeCountryCode = Countries.maybeGet3AlphaCodeFrom2AlphaCode(doubleTaxationAgreementFormModel.countryId),

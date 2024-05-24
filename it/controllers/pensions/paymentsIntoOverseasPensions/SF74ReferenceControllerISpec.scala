@@ -50,7 +50,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
 
         "render the 'sf74 reference' page " which {
           val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(
-            reliefs = Seq(aPaymentsIntoOverseasPensionsViewModel.reliefs.head.copy(sf74Reference = Some("1234567"))))
+            schemes = Seq(aPaymentsIntoOverseasPensionsViewModel.schemes.head.copy(sf74Reference = Some("1234567"))))
 
           implicit lazy val result: WSResponse = {
             authoriseAgentOrIndividual(user.isAgent)
@@ -72,7 +72,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
     }
     "redirect to the first page in scheme loop if the index doesn't match and there are NO pension schemes" should {
       val pensionsNoSchemesViewModel =
-        aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aTransitionalCorrespondingRelief.copy(sf74Reference = None)))
+        aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(aTransitionalCorrespondingRelief.copy(sf74Reference = None)))
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -129,7 +129,7 @@ class SF74ReferenceControllerISpec extends IntegrationTest with BeforeAndAfterEa
 
     "redirect to the the first page in scheme loop if the index doesn't match and there are no complete relief schemes" should {
       val pensionsNoSchemesViewModel =
-        aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aTransitionalCorrespondingRelief.copy(sf74Reference = None)))
+        aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(aTransitionalCorrespondingRelief.copy(sf74Reference = None)))
       val form: Map[String, String] = Map(SF74ReferenceForm.sf74ReferenceId -> "1234567")
 
       lazy val result: WSResponse = {

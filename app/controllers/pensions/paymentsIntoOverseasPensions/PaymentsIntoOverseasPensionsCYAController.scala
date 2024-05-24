@@ -40,14 +40,12 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
                                                            view: PaymentsIntoOverseasPensionsCYAView,
                                                            errorHandler: ErrorHandler,
                                                            pensionsService: PensionsService,
-                                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+                                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with Logging {
 
-  implicit val executionContext: ExecutionContext = mcc.executionContext
-
-  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoOverseasPensionsViewAuditing(taxYear) async { implicit request =>
+  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoOverseasPensionsViewAuditing(taxYear.endYear) async { implicit request =>
     val cyaData    = request.sessionData
     val taxYearInt = taxYear.endYear
 
@@ -67,7 +65,7 @@ class PaymentsIntoOverseasPensionsCYAController @Inject() (auditProvider: AuditA
         request.user,
         taxYear,
         request.sessionData
-      )(request.user.withDownstreamHc(hc), executionContext)
+      )(request.user.withDownstreamHc(hc), ec)
 
       handleResult(errorHandler, taxYear, Journey.PaymentsIntoOverseasPensions, res)
   }

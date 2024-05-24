@@ -466,7 +466,7 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
     }
 
     "getUnauthorisedPaymentsFromPensions" should {
-      val url = s"/income-tax-pensions/$taxYear/unauthorised-payments/$nino/answers"
+      val url = s"/income-tax-pensions/$taxYear/unauthorised-payments-from-pensions/$nino/answers"
 
       "return None if no data is found" in {
         stubGetAnswers(url, OK, Json.obj().toString())

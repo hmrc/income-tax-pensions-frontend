@@ -23,7 +23,7 @@ import common.TaxYear
 import controllers.pensions.paymentsIntoOverseasPensions.routes._
 import models.mongo.PensionsCYAModel
 import models.pension.charges.TaxReliefQuestion.TransitionalCorrespondingRelief
-import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, Relief}
+import models.pension.charges.{PaymentsIntoOverseasPensionsViewModel, OverseasPensionScheme}
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
@@ -35,14 +35,14 @@ import scala.concurrent.Future
 
 class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest { // scalastyle:off magic.number
 
-  private val cyaData: PensionsCYAModel                              = PensionsCYAModel.emptyModels
-  private val journeyStartCall: Call                                 = PaymentIntoPensionSchemeController.show(taxYear)
-  private val journeyStartRedirect: Option[Result]                   = Some(Redirect(journeyStartCall))
-  private val reliefStartCall: Call                                  = PensionsCustomerReferenceNumberController.show(taxYear, None)
-  private val reliefDetailsCall: Call                                = ReliefsSchemeDetailsController.show(taxYear, Some(0))
-  private val reliefSummaryCall: Call                                = ReliefsSchemeSummaryController.show(taxYear)
-  private val checkYourAnswersCall: Call                             = PaymentsIntoOverseasPensionsCYAController.show(TaxYear(taxYear))
-  private val continueToContextualRedirect: Relief => Future[Result] = _ => Future.successful(Redirect(reliefDetailsCall))
+  private val cyaData: PensionsCYAModel                                             = PensionsCYAModel.emptyModels
+  private val journeyStartCall: Call                                                = PaymentIntoPensionSchemeController.show(taxYear)
+  private val journeyStartRedirect: Option[Result]                                  = Some(Redirect(journeyStartCall))
+  private val reliefStartCall: Call                                                 = PensionsCustomerReferenceNumberController.show(taxYear, None)
+  private val reliefDetailsCall: Call                                               = ReliefsSchemeDetailsController.show(taxYear, Some(0))
+  private val reliefSummaryCall: Call                                               = ReliefsSchemeSummaryController.show(taxYear)
+  private val checkYourAnswersCall: Call                                            = PaymentsIntoOverseasPensionsCYAController.show(TaxYear(taxYear))
+  private val continueToContextualRedirect: OverseasPensionScheme => Future[Result] = _ => Future.successful(Redirect(reliefDetailsCall))
 
   ".cyaPageCall" should {
     "return a redirect call to the cya page" in {
@@ -52,8 +52,8 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest { // scalastyle
 
   ".redirectForSchemeLoop" should {
     "clear incomplete reliefs and return a Call to the first page in scheme loop when 'schemes' is empty" in {
-      val emptySchemes: Seq[Relief] = Seq.empty
-      val incompleteSchemes: Seq[Relief] = Seq(
+      val emptySchemes: Seq[OverseasPensionScheme] = Seq.empty
+      val incompleteSchemes: Seq[OverseasPensionScheme] = Seq(
         aTransitionalCorrespondingRelief.copy(sf74Reference = None),
         aMigrantMemberRelief.copy(employerPaymentsAmount = None),
         aDoubleTaxationRelief.copy(alphaTwoCountryCode = None),
@@ -66,8 +66,9 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest { // scalastyle
       result2 shouldBe reliefStartCall
     }
     "clear incomplete reliefs and return a Call to the scheme summary page when 'schemes' already exist" in {
-      val existingCompleteSchemes: Seq[Relief] = Seq(aTransitionalCorrespondingRelief, aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief)
-      val existingMixedSchemes: Seq[Relief] = Seq(
+      val existingCompleteSchemes: Seq[OverseasPensionScheme] =
+        Seq(aTransitionalCorrespondingRelief, aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief)
+      val existingMixedSchemes: Seq[OverseasPensionScheme] = Seq(
         aTransitionalCorrespondingRelief,
         aMigrantMemberRelief,
         aDoubleTaxationRelief.copy(alphaTwoCountryCode = None),
@@ -95,7 +96,7 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest { // scalastyle
       "redirect to the relief summary page" when {
         "previous relief questions are unanswered" in {
           val incompleteJourney = cyaData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(
-            reliefs = Seq(aTransitionalCorrespondingRelief)
+            schemes = Seq(aTransitionalCorrespondingRelief)
           ))
           val result = indexCheckThenJourneyCheck(
             data = aPensionsUserData.copy(pensions = incompleteJourney),
@@ -110,7 +111,7 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest { // scalastyle
         }
         "page is invalid to current relief journey" in {
           val invalidJourney = cyaData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(
-            reliefs = Seq(aTransitionalCorrespondingRelief)
+            schemes = Seq(aTransitionalCorrespondingRelief)
           ))
           val result = indexCheckThenJourneyCheck(
             data = aPensionsUserData.copy(pensions = invalidJourney),
@@ -128,7 +129,7 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest { // scalastyle
     "index is invalid" should {
       "redirect to the first page in journey" when {
         "there are no schemes" in {
-          val cyaModel = cyaData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty))
+          val cyaModel = cyaData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq.empty))
           val result = indexCheckThenJourneyCheck(
             data = aPensionsUserData.copy(pensions = cyaModel),
             optIndex = Some(2),
@@ -143,7 +144,7 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest { // scalastyle
         "previous questions are unanswered" in {
           val cyaModel = cyaData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(
             taxPaidOnEmployerPaymentsQuestion = None,
-            reliefs = Seq.empty
+            schemes = Seq.empty
           ))
           val result = indexCheckThenJourneyCheck(
             data = aPensionsUserData.copy(pensions = cyaModel),
@@ -180,8 +181,8 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest { // scalastyle
         ))
         val result1 = journeyCheck(TaxEmployerPaymentsPage, piopData1, taxYear)
         val piopData2 = cyaData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(
-          reliefs = Seq(
-            Relief(
+          schemes = Seq(
+            OverseasPensionScheme(
               reliefType = Some(TransitionalCorrespondingRelief),
               customerReference = Some("tcrPENSIONINCOME2000"),
               employerPaymentsAmount = Some(1999.99)
@@ -193,10 +194,10 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest { // scalastyle
       }
       "current page is pre-filled and at end of journey so far" in {
         val piopData1 = cyaData.copy(paymentsIntoOverseasPensions =
-          aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(Relief(customerReference = Some("tcrPENSIONINCOME2000")))))
+          aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(OverseasPensionScheme(customerReference = Some("tcrPENSIONINCOME2000")))))
         val result1 = journeyCheck(PensionsCustomerReferenceNumberPage, piopData1, taxYear, Some(0))
         val piopData2 = cyaData.copy(paymentsIntoOverseasPensions =
-          aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aMigrantMemberRelief, aTransitionalCorrespondingRelief)))
+          aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(aMigrantMemberRelief, aTransitionalCorrespondingRelief)))
         val result2   = journeyCheck(SF74ReferencePage, piopData2, taxYear, Some(1))
         val piopData3 = cyaData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel)
         val result3   = journeyCheck(PaymentsIntoOverseasPensionsCYAPage, piopData3, taxYear)
@@ -237,7 +238,7 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest { // scalastyle
         val piopData1 = cyaData
         val result1   = journeyCheck(EmployerPayOverseasPensionPage, piopData1, taxYear)
         val piopData2 = cyaData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(
-          reliefs = Seq(
+          schemes = Seq(
             aTransitionalCorrespondingRelief,
             aMigrantMemberRelief,
             aDoubleTaxationRelief,
@@ -252,7 +253,7 @@ class PaymentsIntoOverseasPensionsRedirectsSpec extends UnitTest { // scalastyle
       }
       "current page is invalid in journey" in {
         val piopData =
-          cyaData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aTransitionalCorrespondingRelief)))
+          cyaData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(aTransitionalCorrespondingRelief)))
         val result = journeyCheck(DoubleTaxationAgreementPage, piopData, taxYear, Some(0))
 
         result shouldBe journeyStartRedirect

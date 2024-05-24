@@ -54,7 +54,7 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse   = submitForm(Map("" -> ""), Map("index" -> "0"))
           val expectedViewModel =
-            sessionData.pensions.paymentsIntoOverseasPensions.copy(reliefs = Seq(aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief))
+            sessionData.pensions.paymentsIntoOverseasPensions.copy(schemes = Seq(aMigrantMemberRelief, aDoubleTaxationRelief, aNoTaxRelief))
 
           assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
           getPaymentsIntoOverseasPensionsViewModel mustBe Some(expectedViewModel)
@@ -70,12 +70,12 @@ class RemoveReliefSchemeISpec extends ControllerSpec("/overseas-pensions/payment
         }
         "an invalid index is used and there are no existing schemes" in {
           val sessionData =
-            pensionsUserData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty)))
+            pensionsUserData(aPensionsCYAModel.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq.empty)))
           implicit val userConfig: UserConfig = userConfigWhenIrrelevant(Some(sessionData))
           implicit val response: WSResponse   = submitForm(Map("" -> ""), Map("index" -> "4"))
 
           assertRedirectionAsExpected(PageRelativeURLs.reliefsSchemeSummary)
-          getPaymentsIntoOverseasPensionsViewModel mustBe Some(aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty))
+          getPaymentsIntoOverseasPensionsViewModel mustBe Some(aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq.empty))
         }
       }
     }

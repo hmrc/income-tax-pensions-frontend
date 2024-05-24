@@ -21,7 +21,7 @@ import controllers.pensions.paymentsIntoOverseasPensions.routes.ReliefsSchemeDet
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
 import models.mongo.PensionsUserData
-import models.pension.charges.Relief
+import models.pension.charges.OverseasPensionScheme
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -47,7 +47,7 @@ class SF74ReferenceController @Inject() (actionsProvider: ActionsProvider,
     with SessionHelper {
 
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
-    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, SF74ReferencePage, taxYear) { relief: Relief =>
+    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, SF74ReferencePage, taxYear) { relief: OverseasPensionScheme =>
       relief.sf74Reference match {
         case Some(value) => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm.fill(value), taxYear, reliefIndex)))
         case None        => Future.successful(Ok(view(formsProvider.sf74ReferenceIdForm, taxYear, reliefIndex)))
@@ -56,7 +56,7 @@ class SF74ReferenceController @Inject() (actionsProvider: ActionsProvider,
   }
 
   def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
-    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, SF74ReferencePage, taxYear) { _: Relief =>
+    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, SF74ReferencePage, taxYear) { _: OverseasPensionScheme =>
       formsProvider.sf74ReferenceIdForm
         .bindFromRequest()
         .fold(
@@ -73,7 +73,7 @@ class SF74ReferenceController @Inject() (actionsProvider: ActionsProvider,
 
     val updatedCyaModel = pensionsUserData.pensions.copy(
       paymentsIntoOverseasPensions =
-        piopUserData.copy(reliefs = piopUserData.reliefs.updated(idx, piopUserData.reliefs(idx).copy(sf74Reference = sf74Reference)))
+        piopUserData.copy(schemes = piopUserData.schemes.updated(idx, piopUserData.schemes(idx).copy(sf74Reference = sf74Reference)))
     )
     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, pensionsUserData.isPriorSubmission)(
       errorHandler.internalServerError()) {

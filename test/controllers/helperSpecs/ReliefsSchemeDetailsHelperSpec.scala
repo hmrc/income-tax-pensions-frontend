@@ -17,7 +17,7 @@
 package controllers.helperSpecs
 
 import controllers.pensions.paymentsIntoOverseasPensions.ReliefsSchemeDetailsHelper
-import models.pension.charges.{Relief, TaxReliefQuestion}
+import models.pension.charges.{OverseasPensionScheme, TaxReliefQuestion}
 import org.scalatest.Assertion
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -34,17 +34,21 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
   val taxYear = 2022
   val index   = Some(1)
 
-  val reliefTransactional: Relief =
-    Relief(Some("PENSIONINCOME245"), Some(193.54), Some(TaxReliefQuestion.TransitionalCorrespondingRelief), sf74Reference = Some("123456"))
+  val reliefTransactional: OverseasPensionScheme =
+    OverseasPensionScheme(
+      Some("PENSIONINCOME245"),
+      Some(193.54),
+      Some(TaxReliefQuestion.TransitionalCorrespondingRelief),
+      sf74Reference = Some("123456"))
 
-  val reliefMigrant: Relief = Relief(
+  val reliefMigrant: OverseasPensionScheme = OverseasPensionScheme(
     Some("PENSIONINCOME245"),
     Some(193.54),
     Some(TaxReliefQuestion.MigrantMemberRelief),
     qopsReference = Some("123456")
   )
 
-  val reliefDouble: Relief = Relief(
+  val reliefDouble: OverseasPensionScheme = OverseasPensionScheme(
     Some("PENSIONINCOME245"),
     Some(193.54),
     Some(TaxReliefQuestion.DoubleTaxationRelief),
@@ -54,7 +58,7 @@ class ReliefsSchemeDetailsHelperSpec extends AnyWordSpec with Matchers {
     doubleTaxationReliefAmount = Some(123.45)
   )
 
-  val reliefNone: Relief = Relief(None, None, reliefType = Some(TaxReliefQuestion.NoTaxRelief))
+  val reliefNone: OverseasPensionScheme = OverseasPensionScheme(None, None, reliefType = Some(TaxReliefQuestion.NoTaxRelief))
 
   "Getting the summary rows" should {
     "return the expected" when {
