@@ -29,7 +29,7 @@ object UntaxedEmployerPayments {
             form: Form[BigDecimal]): UntaxedEmployerPayments = {
 
     val optQuestionValue: Option[BigDecimal] = pensionSchemeIndex match {
-      case Some(value) => dataModel.reliefs(value).employerPaymentsAmount
+      case Some(value) => dataModel.schemes(value).employerPaymentsAmount
       case None        => None
     }
 

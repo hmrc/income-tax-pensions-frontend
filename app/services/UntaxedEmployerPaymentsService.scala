@@ -29,11 +29,11 @@ class UntaxedEmployerPaymentsService @Inject() (pensionSessionService: PensionSe
                                     amount: BigDecimal,
                                     pensionIndex: Option[Int]): Future[Either[Unit, PensionsUserData]] = {
 
-    val currentRelief = userData.pensions.paymentsIntoOverseasPensions.reliefs(pensionIndex.get)
+    val currentRelief = userData.pensions.paymentsIntoOverseasPensions.schemes(pensionIndex.get)
     val updatedReliefs =
-      userData.pensions.paymentsIntoOverseasPensions.reliefs.updated(pensionIndex.get, currentRelief.copy(employerPaymentsAmount = Some(amount)))
+      userData.pensions.paymentsIntoOverseasPensions.schemes.updated(pensionIndex.get, currentRelief.copy(employerPaymentsAmount = Some(amount)))
 
-    val updatedModel: PaymentsIntoOverseasPensionsViewModel = userData.pensions.paymentsIntoOverseasPensions.copy(reliefs = updatedReliefs)
+    val updatedModel: PaymentsIntoOverseasPensionsViewModel = userData.pensions.paymentsIntoOverseasPensions.copy(schemes = updatedReliefs)
 
     createOrUpdateModel(userData, updatedModel)
   }

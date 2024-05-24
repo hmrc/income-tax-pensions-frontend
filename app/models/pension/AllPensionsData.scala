@@ -24,7 +24,7 @@ import models.pension.charges.UnauthorisedPaymentsViewModel.PaymentResult.{NoSur
 import models.pension.charges.UnauthorisedPaymentsViewModel.{AmountType, PaymentResult}
 import models.pension.charges._
 import models.pension.employmentPensions.EmploymentPensions
-import models.pension.income.{OverseasPensionContribution, PensionIncome}
+import models.pension.income.PensionIncome
 import models.pension.reliefs.{PaymentsIntoPensionsViewModel, PensionReliefs}
 import models.pension.statebenefits._
 import play.api.libs.json.{Json, OFormat}
@@ -187,43 +187,6 @@ object AllPensionsData {
           none[Boolean]
         else journeyPrior.map(_.pensionSchemeTaxReference).map(_.nonEmpty),
       pensionSchemeTaxReference = journeyPrior.flatMap(_.pensionSchemeTaxReference)
-    )
-  }
-
-  private def generatePaymentsIntoOverseasPensionsFromPrior(prior: AllPensionsData): PaymentsIntoOverseasPensionsViewModel = {
-    def getTaxReliefQuestion(overseasPensionContribution: OverseasPensionContribution): String =
-      if (overseasPensionContribution.sf74Reference.isDefined) {
-        TaxReliefQuestion.TransitionalCorrespondingRelief
-      } else if (overseasPensionContribution.dblTaxationCountry.isDefined) {
-        TaxReliefQuestion.DoubleTaxationRelief
-      } else if (overseasPensionContribution.migrantMemReliefQopsRefNo.isDefined) {
-        TaxReliefQuestion.MigrantMemberRelief
-      } else {
-        TaxReliefQuestion.NoTaxRelief
-      }
-
-    PaymentsIntoOverseasPensionsViewModel(
-      paymentsIntoOverseasPensionsQuestions = prior.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions.map(_ != zero)),
-      paymentsIntoOverseasPensionsAmount = prior.pensionReliefs.flatMap(_.pensionReliefs.overseasPensionSchemeContributions),
-      // Cannot see a way to gather the right data to make the below Some(true) (i.e. Yes on the UI) if they answer Yes.
-      // Atm, always Some(false) (i.e. `No` on the UI) unless they claim for reliefs (say `No` to the follow up question).
-      employerPaymentsQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution).flatMap(_.headOption.map(!_.isBlankSubmission)),
-      taxPaidOnEmployerPaymentsQuestion = prior.pensionIncome.flatMap(_.overseasPensionContribution).map(opcs => opcs.forall(_.isBlankSubmission)),
-      reliefs = prior.pensionIncome
-        .flatMap(_.overseasPensionContribution.map(_.map(oPC =>
-          Relief(
-            customerReference = oPC.customerReference,
-            employerPaymentsAmount = Some(oPC.exemptEmployersPensionContribs),
-            reliefType = Some(getTaxReliefQuestion(oPC)),
-            qopsReference = oPC.migrantMemReliefQopsRefNo,
-            alphaTwoCountryCode = Countries.get2AlphaCodeFrom3AlphaCode(oPC.dblTaxationCountry),
-            alphaThreeCountryCode = oPC.dblTaxationCountry,
-            doubleTaxationArticle = oPC.dblTaxationArticle,
-            doubleTaxationTreaty = oPC.dblTaxationTreaty,
-            doubleTaxationReliefAmount = oPC.dblTaxationRelief,
-            sf74Reference = oPC.sf74Reference
-          ))))
-        .getOrElse(Nil)
     )
   }
 

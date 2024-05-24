@@ -23,7 +23,7 @@ import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder
 import builders.PensionsUserDataBuilder.pensionUserDataWithOverseasPensions
 import models.mongo.{PensionsCYAModel, PensionsUserData}
-import models.pension.charges.Relief
+import models.pension.charges.OverseasPensionScheme
 import models.pension.charges.TaxReliefQuestion.DoubleTaxationRelief
 import play.api.http.HeaderNames
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -53,13 +53,13 @@ class DoubleTaxationAgreementControllerISpec extends IntegrationTest with ViewHe
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        val relief = Relief(
+        val relief = OverseasPensionScheme(
           reliefType = Some(DoubleTaxationRelief),
           customerReference = Some("PENSIONINCOME245"),
           employerPaymentsAmount = Some(1999.99)
         )
 
-        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
+        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(relief))
         val pensionsUserData  = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
         insertCyaData(pensionsUserData)
@@ -149,13 +149,13 @@ class DoubleTaxationAgreementControllerISpec extends IntegrationTest with ViewHe
 
       lazy val result: WSResponse = {
 
-        val relief = Relief(
+        val relief = OverseasPensionScheme(
           reliefType = Some(DoubleTaxationRelief),
           customerReference = Some("PENSIONINCOME245"),
           employerPaymentsAmount = Some(1999.99)
         )
 
-        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(relief))
+        val pensionsViewModel = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(relief))
         val pensionsUserData  = pensionUserDataWithOverseasPensions(pensionsViewModel)
 
         insertCyaData(pensionsUserData)

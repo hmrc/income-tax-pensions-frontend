@@ -31,8 +31,8 @@ class UntaxedEmployerPaymentsPageSpec extends UnitTest {
     "return page with pre-filled form when scheme has value existing value" in {
 
       val index   = Some(0)
-      val reliefs = aPaymentsIntoOverseasPensionsViewModel.reliefs(index.get).copy(employerPaymentsAmount = Some(anyQuestionValue))
-      val cya     = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(reliefs))
+      val reliefs = aPaymentsIntoOverseasPensionsViewModel.schemes(index.get).copy(employerPaymentsAmount = Some(anyQuestionValue))
+      val cya     = aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(reliefs))
 
       UntaxedEmployerPayments.apply(taxYear, index, cya, pageForm) shouldBe UntaxedEmployerPayments(
         taxYear = taxYear,

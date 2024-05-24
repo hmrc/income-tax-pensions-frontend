@@ -80,7 +80,7 @@ class EmployerPayOverseasPensionController @Inject() (authAction: AuthorisedActi
                     cyaModel.paymentsIntoOverseasPensions.copy(
                       employerPaymentsQuestion = Some(false),
                       taxPaidOnEmployerPaymentsQuestion = None,
-                      reliefs = Seq.empty
+                      schemes = List.empty
                     )
                   }
                 val updatedCyaModel: PensionsCYAModel = cyaModel.copy(paymentsIntoOverseasPensions = updatedViewModel)

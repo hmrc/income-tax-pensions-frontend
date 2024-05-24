@@ -90,9 +90,9 @@ class PaymentIntoPensionSchemeController @Inject() (cc: MessagesControllerCompon
   override def sessionDataIsSufficient(pensionsUserData: PensionsUserData): Boolean = true
 
   private def cleanUpReliefs(pensionsUserData: PensionsUserData): PensionsUserData = {
-    val reliefs            = pensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs
+    val reliefs            = pensionsUserData.pensions.paymentsIntoOverseasPensions.schemes
     val filteredReliefs    = if (reliefs.nonEmpty) reliefs.filter(relief => relief.isFinished) else reliefs
-    val updatedViewModel   = pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(reliefs = filteredReliefs)
+    val updatedViewModel   = pensionsUserData.pensions.paymentsIntoOverseasPensions.copy(schemes = filteredReliefs)
     val updatedPensionData = pensionsUserData.pensions.copy(paymentsIntoOverseasPensions = updatedViewModel)
     val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
     pensionSessionService.createOrUpdateSession(updatedUserData)

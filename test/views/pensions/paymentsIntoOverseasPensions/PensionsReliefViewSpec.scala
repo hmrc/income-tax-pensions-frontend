@@ -21,7 +21,7 @@ import builders.PensionsCYAModelBuilder.emptyPensionsData
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.{aUser, anAgentUser}
 import forms.{FormsProvider, RadioButtonForm}
-import models.pension.charges.Relief
+import models.pension.charges.OverseasPensionScheme
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -125,8 +125,8 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] =
           UserSessionDataRequest(
             aPensionsUserData.copy(
-              pensions =
-                emptyPensionsData.copy(paymentsIntoOverseasPensions = aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq.empty[Relief]))),
+              pensions = emptyPensionsData.copy(paymentsIntoOverseasPensions =
+                aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq.empty[OverseasPensionScheme]))),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
@@ -161,7 +161,7 @@ class PensionsReliefViewSpec extends ViewUnitTest with FakeRequestProvider {
         def form: Form[String] = new FormsProvider().overseasPensionsReliefTypeForm(aUser)
 
         implicit val document: Document = Jsoup.parse(
-          underTest(form.fill(aPensionsUserData.pensions.paymentsIntoOverseasPensions.reliefs.head.reliefType.get), taxYearEOY, Some(0)).body)
+          underTest(form.fill(aPensionsUserData.pensions.paymentsIntoOverseasPensions.schemes.head.reliefType.get), taxYearEOY, Some(0)).body)
 
         captionCheck(userScenario.commonExpectedResults.expectedCaption(taxYearEOY), Selectors.captionSelector)
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)

@@ -22,7 +22,7 @@ import controllers.predicates.actions.ActionsProvider
 import controllers.validatedIndex
 import forms.FormsProvider
 import models.User
-import models.pension.charges.{Relief, TaxReliefQuestion}
+import models.pension.charges.{OverseasPensionScheme, TaxReliefQuestion}
 import models.requests.UserSessionDataRequest
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -48,7 +48,7 @@ class PensionReliefTypeController @Inject() (actionsProvider: ActionsProvider,
     with SessionHelper {
 
   def show(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
-    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, PensionReliefTypePage, taxYear) { relief: Relief =>
+    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, PensionReliefTypePage, taxYear) { relief: OverseasPensionScheme =>
       relief.reliefType.fold {
         Future.successful(Ok(view(formsProvider.overseasPensionsReliefTypeForm(request.user), taxYear, reliefIndex)))
       } { reliefType =>
@@ -58,7 +58,7 @@ class PensionReliefTypeController @Inject() (actionsProvider: ActionsProvider,
   }
 
   def submit(taxYear: Int, reliefIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
-    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, PensionReliefTypePage, taxYear) { _: Relief =>
+    indexCheckThenJourneyCheck(request.sessionData, reliefIndex, PensionReliefTypePage, taxYear) { _: OverseasPensionScheme =>
       formsProvider
         .overseasPensionsReliefTypeForm(request.user)
         .bindFromRequest()
@@ -72,11 +72,11 @@ class PensionReliefTypeController @Inject() (actionsProvider: ActionsProvider,
   private def updateViewModel(taxReliefQuestion: String, indexOpt: Option[Int], taxYear: Int)(implicit
       request: UserSessionDataRequest[_]): Future[Result] = {
 
-    val piopReliefs = request.sessionData.pensions.paymentsIntoOverseasPensions.reliefs
+    val piopReliefs = request.sessionData.pensions.paymentsIntoOverseasPensions.schemes
     validatedIndex(indexOpt, piopReliefs.size) match {
       case Some(idx) =>
         if (!piopReliefs(idx).reliefType.contains(taxReliefQuestion)) {
-          val updatedReliefs: Relief = piopReliefs(idx).copy(
+          val updatedReliefs: OverseasPensionScheme = piopReliefs(idx).copy(
             reliefType = Some(taxReliefQuestion),
             alphaTwoCountryCode = None,
             alphaThreeCountryCode = None,
@@ -89,7 +89,7 @@ class PensionReliefTypeController @Inject() (actionsProvider: ActionsProvider,
           pensionSessionService.createOrUpdateSessionData(
             request.user,
             request.sessionData.pensions.copy(paymentsIntoOverseasPensions =
-              request.sessionData.pensions.paymentsIntoOverseasPensions.copy(reliefs = piopReliefs.updated(idx, updatedReliefs))),
+              request.sessionData.pensions.paymentsIntoOverseasPensions.copy(schemes = piopReliefs.updated(idx, updatedReliefs))),
             taxYear,
             request.sessionData.isPriorSubmission
           )(errorHandler.internalServerError()) {

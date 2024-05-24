@@ -20,7 +20,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.pensions.paymentsIntoOverseasPensions.routes.PensionReliefTypeController
 import controllers.predicates.actions.ActionsProvider
 import forms.FormsProvider
-import models.pension.charges.Relief
+import models.pension.charges.OverseasPensionScheme
 import models.pension.pages.UntaxedEmployerPayments
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -47,7 +47,7 @@ class UntaxedEmployerPaymentsController @Inject() (actionsProvider: ActionsProvi
     implicit request =>
       val piopSessionData = request.sessionData.pensions.paymentsIntoOverseasPensions
 
-      indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: Relief =>
+      indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: OverseasPensionScheme =>
         Future.successful(
           Ok(
             view(UntaxedEmployerPayments(taxYear, pensionSchemeIndex, piopSessionData, formsProvider.untaxedEmployerPayments(request.user.isAgent)))))
@@ -58,7 +58,7 @@ class UntaxedEmployerPaymentsController @Inject() (actionsProvider: ActionsProvi
     actionsProvider.authoriseWithSession(taxYear).async { implicit request =>
       val piopSessionData = request.sessionData.pensions.paymentsIntoOverseasPensions
 
-      indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: Relief =>
+      indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, UntaxedEmployerPaymentsPage, taxYear) { _: OverseasPensionScheme =>
         formsProvider
           .untaxedEmployerPayments(request.user.isAgent)
           .bindFromRequest()
@@ -70,7 +70,7 @@ class UntaxedEmployerPaymentsController @Inject() (actionsProvider: ActionsProvi
                 case Left(_) => errorHandler.internalServerError()
                 case Right(_) =>
                   schemeIsFinishedCheck(
-                    request.sessionData.pensions.paymentsIntoOverseasPensions.reliefs,
+                    request.sessionData.pensions.paymentsIntoOverseasPensions.schemes,
                     pensionSchemeIndex.getOrElse(0),
                     taxYear,
                     PensionReliefTypeController.show(taxYear, pensionSchemeIndex)

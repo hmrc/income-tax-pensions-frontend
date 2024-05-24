@@ -57,7 +57,7 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest { // scalastyle
             taxPaidOnEmployerPaymentsQuestion = Some(true)
           )
           .isFinished shouldBe true
-        aPaymentsIntoOverseasPensionsViewModel.copy(reliefs = Seq(aNoTaxRelief)).isFinished shouldBe true
+        aPaymentsIntoOverseasPensionsViewModel.copy(schemes = Seq(aNoTaxRelief)).isFinished shouldBe true
       }
     }
 
@@ -71,8 +71,8 @@ class PaymentsIntoOverseasPensionsViewModelSpec extends UnitTest { // scalastyle
           )
           .isFinished shouldBe false
         aPaymentsIntoOverseasPensionsViewModel
-          .copy(reliefs = Seq(
-            Relief(
+          .copy(schemes = Seq(
+            OverseasPensionScheme(
               reliefType = Some(TaxReliefQuestion.DoubleTaxationRelief),
               customerReference = None,
               employerPaymentsAmount = None,
