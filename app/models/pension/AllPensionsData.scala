@@ -190,24 +190,6 @@ object AllPensionsData {
     )
   }
 
-  def generateIncomeFromOverseasPensionsCyaFromPrior(prior: AllPensionsData): IncomeFromOverseasPensionsViewModel =
-    IncomeFromOverseasPensionsViewModel(
-      paymentsFromOverseasPensionsQuestion = prior.pensionIncome.flatMap(_.foreignPension.map(_.nonEmpty)),
-      overseasIncomePensionSchemes = prior.pensionIncome
-        .flatMap(_.foreignPension.map(_.map(fP =>
-          PensionScheme(
-            alphaThreeCode = Some(fP.countryCode),
-            alphaTwoCode = Countries.get2AlphaCodeFrom3AlphaCode(Some(fP.countryCode)),
-            pensionPaymentAmount = fP.amountBeforeTax,
-            pensionPaymentTaxPaid = fP.taxTakenOff,
-            specialWithholdingTaxQuestion = Some(fP.specialWithholdingTax.isDefined),
-            specialWithholdingTaxAmount = fP.specialWithholdingTax,
-            foreignTaxCreditReliefQuestion = fP.foreignTaxCreditRelief,
-            taxableAmount = Some(fP.taxableAmount)
-          ))))
-        .getOrElse(Nil)
-    )
-
   private def generateTransfersIntoOverseasPensionsCyaFromPrior(prior: AllPensionsData): TransfersIntoOverseasPensionsViewModel =
     TransfersIntoOverseasPensionsViewModel(
       transferPensionSavings = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferCharge).isDefined),

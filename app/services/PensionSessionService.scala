@@ -90,7 +90,11 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case IncomeFromOverseasPensions =>
         val res = pensionsConnector.getIncomeFromOverseasPensions(user.getNino, taxYear)
-        transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
+        val a   = transformNotFoundToNone(res)
+        a.map { b =>
+          val c = b.map(_.toPensionsCYAModel)
+          c
+        }
       case _ =>
         EitherT.rightT[Future, APIErrorModel](None) // TODO it will be added gradually journey by journey here
     }
