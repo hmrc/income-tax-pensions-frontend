@@ -17,7 +17,6 @@
 package controllers
 
 import builders.UserBuilder
-import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.mongo.{PensionsCYAModel, PensionsUserData}
@@ -66,6 +65,8 @@ trait ControllerSpecBase extends PlaySpec with AnyWordSpecLike with MockitoSugar
   when(auditProvider.paymentsIntoPensionsViewAuditing(any[Int])).thenReturn(mkUserSessionDataRequest(allData))
   when(auditProvider.annualAllowancesUpdateAuditing(any[Int])).thenReturn(mkAction(allData))
   when(auditProvider.annualAllowancesViewAuditing(any[Int])).thenReturn(mkUserSessionDataRequest(allData))
+  when(auditProvider.transfersIntoOverseasPensionsUpdateAuditing(any[Int])).thenReturn(mkAction(allData))
+  when(auditProvider.transfersIntoOverseasPensionsViewAuditing(any[Int])).thenReturn(mkUserSessionDataRequest(allData))
   when(auditProvider.paymentsIntoOverseasPensionsUpdateAuditing(any[Int])).thenReturn(mkAction(allData))
   when(auditProvider.paymentsIntoOverseasPensionsViewAuditing(any[Int])).thenReturn(mkUserSessionDataRequest(allData))
   when(auditProvider.incomeFromOverseasPensionsUpdateAuditing(any[Int])).thenReturn(mkAction(allData))

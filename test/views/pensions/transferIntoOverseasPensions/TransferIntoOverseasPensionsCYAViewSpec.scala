@@ -17,9 +17,10 @@
 package views.pensions.transferIntoOverseasPensions
 
 import builders.TransfersIntoOverseasPensionsViewModelBuilder.{aTransfersIntoOverseasPensionsViewModel, emptyTransfersIntoOverseasPensionsViewModel}
+import common.TaxYear
 import controllers.pensions.transferIntoOverseasPensions.routes
-import models.requests.UserSessionDataRequest
 import models.pension.charges.TransfersIntoOverseasPensionsViewModel
+import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
@@ -101,7 +102,7 @@ class TransferIntoOverseasPensionsCYAViewSpec extends ViewUnitTest {
     implicit val authorisationRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
     implicit val messages: Messages                                       = getMessages(userScenario.isWelsh)
 
-    val htmlFormat                  = underTest(taxYearEOY, model)
+    val htmlFormat                  = underTest(TaxYear(taxYearEOY), model)
     implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
     titleCheck(expectedTitle, userScenario.isWelsh)

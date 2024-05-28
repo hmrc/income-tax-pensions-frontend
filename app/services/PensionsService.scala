@@ -46,6 +46,9 @@ trait PensionsService {
   def upsertIncomeFromOverseasPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit]
+  def upsertTransferIntoOverseasPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit]
 }
 
 @Singleton
@@ -96,5 +99,13 @@ class PensionsServiceImpl @Inject() (pensionsConnector: PensionsConnector, sessi
     for {
       _ <- pensionsConnector.saveIncomeFromOverseasPensions(user.getNino, taxYear, sessionData.pensions.incomeFromOverseasPensions)
       _ <- sessionService.clearSessionOnSuccess(Journey.IncomeFromOverseasPensions, sessionData)
+    } yield ()
+
+  def upsertTransferIntoOverseasPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] =
+    for {
+      _ <- pensionsConnector.saveTransfersIntoOverseasPensions(user.getNino, taxYear, sessionData.pensions.transfersIntoOverseasPensions)
+      _ <- sessionService.clearSessionOnSuccess(Journey.TransferIntoOverseasPensions, sessionData)
     } yield ()
 }

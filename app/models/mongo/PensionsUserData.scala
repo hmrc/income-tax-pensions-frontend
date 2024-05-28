@@ -48,6 +48,8 @@ case class PensionsUserData(sessionId: String,
         copy(lastUpdated = now, pensions = pensions.copy(pensionsAnnualAllowances = PensionAnnualAllowancesViewModel.empty))
       case UnauthorisedPayments =>
         copy(lastUpdated = now, pensions = pensions.copy(unauthorisedPayments = UnauthorisedPaymentsViewModel.empty))
+      case TransferIntoOverseasPensions =>
+        copy(lastUpdated = now, pensions = pensions.copy(transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel.empty))
       case IncomeFromOverseasPensions =>
         copy(lastUpdated = now, pensions = pensions.copy(incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel.empty))
       case PaymentsIntoOverseasPensions =>

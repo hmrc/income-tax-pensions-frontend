@@ -58,20 +58,8 @@ object AllPensionsData {
       unauthorisedPayments = generateUnauthorisedPaymentsCyaModelFromPrior(prior),
       paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel.empty,
       incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel.empty,
-      transfersIntoOverseasPensions = generateTransfersIntoOverseasPensionsCyaFromPrior(prior),
+      transfersIntoOverseasPensions = TransfersIntoOverseasPensionsViewModel.empty,
       shortServiceRefunds = generateShortServiceRefundCyaFromPrior(prior)
-    )
-
-  def generateAnnualAllowanceSessionFromPrior(prior: AllPensionsData): PensionAnnualAllowancesViewModel =
-    PensionAnnualAllowancesViewModel(
-      reducedAnnualAllowanceQuestion = prior.pensionCharges.flatMap(_.pensionContributions).flatMap(_.isAnnualAllowanceReduced),
-      moneyPurchaseAnnualAllowance = prior.pensionCharges.flatMap(_.pensionContributions).flatMap(_.moneyPurchasedAllowance),
-      taperedAnnualAllowance = prior.pensionCharges.flatMap(_.pensionContributions).flatMap(_.taperedAnnualAllowance),
-      aboveAnnualAllowanceQuestion = prior.pensionCharges.flatMap(_.pensionContributions).map(_.annualAllowanceTaxPaid > 0),
-      aboveAnnualAllowance = prior.pensionCharges.flatMap(_.pensionContributions).map(_.inExcessOfTheAnnualAllowance),
-      pensionProvidePaidAnnualAllowanceQuestion = prior.pensionCharges.flatMap(_.pensionContributions).map(_.annualAllowanceTaxPaid > 0),
-      taxPaidByPensionProvider = prior.pensionCharges.flatMap(_.pensionContributions).map(_.annualAllowanceTaxPaid),
-      pensionSchemeTaxReferences = prior.pensionCharges.flatMap(_.pensionContributions).map(_.pensionSchemeTaxReference)
     )
 
   private def generateIncomeFromPensionsModelFromPrior(prior: AllPensionsData): IncomeFromPensionsViewModel = {
@@ -189,18 +177,6 @@ object AllPensionsData {
       pensionSchemeTaxReference = journeyPrior.flatMap(_.pensionSchemeTaxReference)
     )
   }
-
-  private def generateTransfersIntoOverseasPensionsCyaFromPrior(prior: AllPensionsData): TransfersIntoOverseasPensionsViewModel =
-    TransfersIntoOverseasPensionsViewModel(
-      transferPensionSavings = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferCharge).isDefined),
-      overseasTransferCharge = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferCharge).isDefined),
-      overseasTransferChargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers.map(_.transferCharge)),
-      pensionSchemeTransferCharge = prior.pensionCharges.map(_.pensionSchemeOverseasTransfers.map(_.transferChargeTaxPaid).isDefined),
-      pensionSchemeTransferChargeAmount = prior.pensionCharges.flatMap(_.pensionSchemeOverseasTransfers.map(_.transferChargeTaxPaid)),
-      transferPensionScheme = prior.pensionCharges
-        .flatMap(_.pensionSchemeOverseasTransfers.map(_.overseasSchemeProvider.map(_.toTransferPensionScheme)))
-        .getOrElse(Nil)
-    )
 
   private def generateShortServiceRefundCyaFromPrior(prior: AllPensionsData): ShortServiceRefundsViewModel = {
     val priorTaxPaidAmount = prior.pensionCharges.flatMap(_.overseasPensionContributions.map(_.shortServiceRefundTaxPaid))

@@ -478,7 +478,6 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
         stubGetAnswers(url, OK, Json.toJson(UnauthorisedPaymentsTestData.answers).toString())
         val result = connector.getUnauthorisedPaymentsFromPensions(currNino, taxyear).value.futureValue
         assert(result.value === Some(UnauthorisedPaymentsTestData.answers))
-
       }
     }
   }

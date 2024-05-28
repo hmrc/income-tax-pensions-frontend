@@ -18,9 +18,9 @@ import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasP
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
 import builders.ShortServiceRefundsViewModelBuilder.emptyShortServiceRefundsViewModel
-import builders.TransfersIntoOverseasPensionsViewModelBuilder.emptyTransfersIntoOverseasPensionsViewModel
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import models.mongo.PensionsCYAModel
+import testdata.TransfersIntoOverseasPensionsViewModelTestData.transfersIntoOverseasPensionsAnswers
 
 package object testdata {
   val allData = PensionsCYAModel(
@@ -30,7 +30,7 @@ package object testdata {
     anUnauthorisedPaymentsViewModel,
     aPaymentsIntoOverseasPensionsViewModel,
     anIncomeFromOverseasPensionsSingleSchemeViewModel,
-    emptyTransfersIntoOverseasPensionsViewModel,
+    transfersIntoOverseasPensionsAnswers,
     emptyShortServiceRefundsViewModel
   )
 }

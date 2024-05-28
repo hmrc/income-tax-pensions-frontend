@@ -16,6 +16,7 @@
 
 package controllers.helperSpecs
 
+import common.TaxYear
 import controllers.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionCYAViewHelper
 import models.pension.charges.{TransferPensionScheme, TransfersIntoOverseasPensionsViewModel}
 import org.scalatest.Assertion
@@ -29,7 +30,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Summa
 
 class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matchers { // scalastyle:off magic.number
 
-  val taxYear = 2022
+  val taxYear = TaxYear(2024)
 
   implicit val messages: Messages = stubbedMessages()
 
@@ -178,7 +179,7 @@ class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matc
         "transferIntoOverseasPensions.cya.transferIntoOverseasPensions",
         expectedValue,
         "Change",
-        "/2022/overseas-pensions/overseas-transfer-charges/transfer-pension-savings",
+        s"/${taxYear.toString}/overseas-pensions/overseas-transfer-charges/transfer-pension-savings",
         "transferIntoOverseasPensions.cya.transferIntoOverseasPensions.hidden"
       )
     )
@@ -190,7 +191,7 @@ class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matc
         "transferIntoOverseasPensions.cya.amountCharged",
         expectedValue,
         "Change",
-        "/2022/overseas-pensions/overseas-transfer-charges/transfer-charge",
+        s"/${taxYear.toString}/overseas-pensions/overseas-transfer-charges/transfer-charge",
         "transferIntoOverseasPensions.cya.amountCharged.hidden"
       )
     )
@@ -202,7 +203,7 @@ class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matc
         "transferIntoOverseasPensions.cya.taxOnAmountCharged",
         expectedValue,
         "Change",
-        "/2022/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax",
+        s"/${taxYear.toString}/overseas-pensions/overseas-transfer-charges/overseas-transfer-charge-tax",
         "transferIntoOverseasPensions.cya.taxOnAmountCharged.hidden"
       )
     )
@@ -214,7 +215,7 @@ class TransferIntoOverseasPensionCYAViewHelperSpec extends AnyWordSpec with Matc
         "transferIntoOverseasPensions.cya.schemesPayingTax",
         expectedValue,
         "Change",
-        "/2022/overseas-pensions/overseas-transfer-charges/transfer-charges-summary",
+        s"/${taxYear.toString}/overseas-pensions/overseas-transfer-charges/transfer-charges-summary",
         "transferIntoOverseasPensions.cya.schemesPayingTax.hidden"
       )
     )

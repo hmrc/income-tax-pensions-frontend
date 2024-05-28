@@ -19,17 +19,19 @@
 @import views.html.templates.helpers.{Button, Heading, SummaryList}
 @import controllers.pensions.transferIntoOverseasPensions.TransferIntoOverseasPensionCYAViewHelper
 @import models.requests.UserSessionDataRequest
+@import common.TaxYear
+
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
 
-@(taxYear: Int, transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
+@(taxYear: TaxYear, transfersIntoOverseasPensionsViewModel: TransfersIntoOverseasPensionsViewModel)(implicit messages: Messages, appConfig: AppConfig, request: UserSessionDataRequest[_])
 
 @headingForUse = @{
     messages(s"transferIntoOverseasPensions.cya.heading")
 }
 
-@layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
+@layout(pageTitle = headingForUse, taxYear = Some(taxYear.endYear)) {
 
-    @heading(headingForUse, Some(messages("common.transferIntoOverseasPensions.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
+    @heading(headingForUse, Some(messages("common.transferIntoOverseasPensions.caption", taxYear.startYear, taxYear.toString)), "govuk-!-margin-bottom-5")
 
     @summaryList(TransferIntoOverseasPensionCYAViewHelper.summaryListRows(transfersIntoOverseasPensionsViewModel, taxYear)(messages))
 

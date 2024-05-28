@@ -22,7 +22,7 @@ import connectors.ServiceError
 import models.User
 import models.domain.ApiResultT
 import models.mongo.PensionsUserData
-import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PaymentsIntoOverseasPensionsViewModel, PensionAnnualAllowancesViewModel}
+import models.pension.charges._
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import services.PensionsService
@@ -30,25 +30,25 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
 
-final case class PensionsServiceStub(
-    paymentsIntoPensionsResult: Either[ServiceError, Unit] = Right(()),
-    var paymentsIntoPensionsList: List[PaymentsIntoPensionsViewModel] = Nil,
-    upsertUkPensionIncomeResult: Either[ServiceError, Unit] = Right(()),
-    var incomeFromPensionsList: List[IncomeFromPensionsViewModel] = Nil,
-    annualAllowancesResult: Either[ServiceError, Unit] = Right(()),
-    var annualAllowancesList: List[PensionAnnualAllowancesViewModel] = Nil,
-    upsertPaymentsIntoOverseasPensionsResult: Either[ServiceError, Unit] = Right(()),
-    var paymentsIntoOverseasPensionsList: List[PaymentsIntoOverseasPensionsViewModel] = Nil,
-    incomeFromOverseasPensionsResult: Either[ServiceError, Unit] = Right(()),
-    var incomeFromOverseasPensionsList: List[IncomeFromOverseasPensionsViewModel] = Nil,
-    paymentsIntoOverseasPensionsResult: Either[ServiceError, Unit] = Right(())
-) extends PensionsService {
+final case class PensionsServiceStub(upsertPaymentsIntoPensionsResult: Either[ServiceError, Unit] = Right(()),
+                                     var paymentsIntoPensionsList: List[PaymentsIntoPensionsViewModel] = Nil,
+                                     upsertUkPensionIncomeResult: Either[ServiceError, Unit] = Right(()),
+                                     var incomeFromPensionsList: List[IncomeFromPensionsViewModel] = Nil,
+                                     upsertAnnualAllowancesResult: Either[ServiceError, Unit] = Right(()),
+                                     var annualAllowancesList: List[PensionAnnualAllowancesViewModel] = Nil,
+                                     upsertTransfersIntoOverseasPensionsResult: Either[ServiceError, Unit] = Right(()),
+                                     var transfersIntoOverseasPensionsList: List[TransfersIntoOverseasPensionsViewModel] = Nil,
+                                     upsertIncomeFromOverseasPensionsResult: Either[ServiceError, Unit] = Right(()),
+                                     var incomeFromOverseasPensionsList: List[IncomeFromOverseasPensionsViewModel] = Nil,
+                                     upsertPaymentsIntoOverseasPensionsResult: Either[ServiceError, Unit] = Right(()),
+                                     var paymentsIntoOverseasPensionsList: List[PaymentsIntoOverseasPensionsViewModel] = Nil)
+    extends PensionsService {
 
   def upsertPaymentsIntoPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
     paymentsIntoPensionsList ::= sessionData.pensions.paymentsIntoPension
-    EitherT.fromEither(paymentsIntoPensionsResult)
+    EitherT.fromEither(upsertPaymentsIntoPensionsResult)
   }
 
   def upsertUkPensionIncome(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
@@ -62,12 +62,19 @@ final case class PensionsServiceStub(
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
     annualAllowancesList ::= sessionData.pensions.pensionsAnnualAllowances
-    EitherT.fromEither(annualAllowancesResult)
+    EitherT.fromEither(upsertAnnualAllowancesResult)
   }
 
   def upsertUnauthorisedPaymentsFromPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = ???
+
+  def upsertTransferIntoOverseasPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    transfersIntoOverseasPensionsList ::= sessionData.pensions.transfersIntoOverseasPensions
+    EitherT.fromEither(upsertTransfersIntoOverseasPensionsResult)
+  }
 
   def upsertPaymentsIntoOverseasPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
@@ -80,6 +87,6 @@ final case class PensionsServiceStub(
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
     incomeFromOverseasPensionsList ::= sessionData.pensions.incomeFromOverseasPensions
-    EitherT.fromEither(incomeFromOverseasPensionsResult)
+    EitherT.fromEither(upsertIncomeFromOverseasPensionsResult)
   }
 }

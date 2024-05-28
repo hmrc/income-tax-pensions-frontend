@@ -16,12 +16,10 @@
 
 package models.pension.charges
 
-import cats.implicits.{catsSyntaxTuple3Semigroupal, none}
 import connectors.OptionalContentHttpReads
 import models.mongo.{PensionsCYAModel, TextAndKey}
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
-import utils.Constants.GBAlpha3Code
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
@@ -47,22 +45,6 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
         !x || overseasTransferChargeAmount.isDefined && pensionSchemeTransferCharge.exists(x =>
           !x || pensionSchemeTransferChargeAmount.isDefined && transferPensionScheme.nonEmpty && transferPensionScheme.forall(tps =>
             tps.isFinished))))
-
-  def maybeToDownstreamRequestModel: Option[PensionSchemeOverseasTransfers] = // TODO 8251 this will be moved to the BE
-    (transferPensionSavings, overseasTransferCharge, pensionSchemeTransferCharge)
-      .flatMapN { case (transferred, charged, schemePaidTax) =>
-        if (transferred && charged && schemePaidTax)
-          for {
-            charge        <- overseasTransferChargeAmount
-            chargeTaxPaid <- pensionSchemeTransferChargeAmount
-            osp = transferPensionScheme.map(_.toOverseasSchemeProvider)
-          } yield PensionSchemeOverseasTransfers(
-            overseasSchemeProvider = osp,
-            transferCharge = charge,
-            transferChargeTaxPaid = chargeTaxPaid
-          )
-        else none[PensionSchemeOverseasTransfers]
-      }
 
   def journeyIsNo: Boolean = this.transferPensionSavings.contains(false)
 
@@ -117,19 +99,6 @@ case class TransferPensionScheme(ukTransferCharge: Option[Boolean] = None,
                                  providerAddress: Option[String] = None,
                                  alphaTwoCountryCode: Option[String] = None,
                                  alphaThreeCountryCode: Option[String] = None) {
-
-  def toOverseasSchemeProvider: OverseasSchemeProvider = { // TODO 8251 this will be moved to the BE
-    val isUkScheme = alphaThreeCountryCode.contains(GBAlpha3Code)
-    val pstr       = if (isUkScheme) schemeReference.map(Seq(_)) else none[Seq[String]]
-    val qops       = if (isUkScheme) none[Seq[String]] else schemeReference.map(qops => Seq(enforceValidQopsPrefix(qops)))
-    OverseasSchemeProvider(
-      providerName = name.getOrElse(""),
-      providerAddress = providerAddress.getOrElse(""),
-      providerCountryCode = alphaThreeCountryCode.getOrElse(""),
-      qualifyingRecognisedOverseasPensionScheme = qops,
-      pensionSchemeTaxReference = pstr
-    )
-  }
 
   def isFinished: Boolean =
     name.isDefined && providerAddress.isDefined && ukTransferCharge.isDefined && schemeReference.isDefined && alphaThreeCountryCode.isDefined

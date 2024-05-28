@@ -16,7 +16,7 @@
 
 package models.pension.charges
 
-import builders.TransferPensionSchemeBuilder.{aNonUkTransferPensionScheme, aUkTransferPensionScheme, anEmptyTransferPensionScheme}
+import builders.TransferPensionSchemeBuilder._
 import utils.UnitTest
 
 class TransferPensionSchemeSpec extends UnitTest {
@@ -29,31 +29,6 @@ class TransferPensionSchemeSpec extends UnitTest {
     "return false when not all necessary questions have been populated" in {
       anEmptyTransferPensionScheme.isFinished shouldBe false
       aNonUkTransferPensionScheme.copy(alphaThreeCountryCode = None).isFinished shouldBe false
-    }
-  }
-
-  "toOverseasSchemeProvider" should {
-    "convert a TransferPensionScheme to a valid OverseasSchemeProvider" which {
-      "has a PSTR value when it is a UK scheme" in {
-        val validUkOsp: OverseasSchemeProvider = OverseasSchemeProvider(
-          providerName = "UK TPS",
-          providerAddress = "Some address 1",
-          providerCountryCode = "GBR",
-          qualifyingRecognisedOverseasPensionScheme = None,
-          pensionSchemeTaxReference = Some(Seq("12345678RA"))
-        )
-        aUkTransferPensionScheme.toOverseasSchemeProvider shouldBe validUkOsp
-      }
-      "has a QOPS value when it is a non-UK scheme" in {
-        val validNonUkOsp: OverseasSchemeProvider = OverseasSchemeProvider(
-          providerName = "Non-UK TPS",
-          providerAddress = "Some address 2",
-          providerCountryCode = "FRA",
-          qualifyingRecognisedOverseasPensionScheme = Some(Seq("Q123456")),
-          pensionSchemeTaxReference = None
-        )
-        aNonUkTransferPensionScheme.toOverseasSchemeProvider shouldBe validNonUkOsp
-      }
     }
   }
 
