@@ -17,7 +17,7 @@
 import builders.IncomeFromOverseasPensionsViewModelBuilder.anIncomeFromOverseasPensionsSingleSchemeViewModel
 import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionEmptyViewModel
 import builders.PaymentsIntoOverseasPensionsViewModelBuilder.aPaymentsIntoOverseasPensionsViewModel
-import builders.ShortServiceRefundsViewModelBuilder.emptyShortServiceRefundsViewModel
+import builders.ShortServiceRefundsViewModelBuilder.aShortServiceRefundsViewModel
 import builders.UnauthorisedPaymentsViewModelBuilder.anUnauthorisedPaymentsViewModel
 import models.mongo.PensionsCYAModel
 import testdata.TransfersIntoOverseasPensionsViewModelTestData.transfersIntoOverseasPensionsAnswers
@@ -31,6 +31,6 @@ package object testdata {
     aPaymentsIntoOverseasPensionsViewModel,
     anIncomeFromOverseasPensionsSingleSchemeViewModel,
     transfersIntoOverseasPensionsAnswers,
-    emptyShortServiceRefundsViewModel
+    aShortServiceRefundsViewModel
   )
 }

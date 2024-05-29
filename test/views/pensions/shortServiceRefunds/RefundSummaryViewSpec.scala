@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,16 +108,16 @@ class RefundSummaryViewSpec extends ViewUnitTest {
         "render the refund scheme summary list page with multiple schemes" which {
 
           val schemes                     = getSchemes
-          val htmlFormat                  = underTest(taxYearEOY, schemes)
+          val htmlFormat                  = underTest(taxYear, schemes)
           implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
-          val cyaUrl = ShortServiceRefundsCYAController.show(taxYearEOY).url
+          val cyaUrl = ShortServiceRefundsCYAController.show(currentTaxYear).url
           val shortServiceSchemeUrl =
-            (refundPensionSchemeIndex: Option[Int]) => ShortServicePensionsSchemeController.show(taxYearEOY, refundPensionSchemeIndex).url
+            (refundPensionSchemeIndex: Option[Int]) => ShortServicePensionsSchemeController.show(taxYear, refundPensionSchemeIndex).url
 
           titleCheck(expectedTitle, userScenario.isWelsh)
           h1Check(expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY))
+          captionCheck(expectedCaption(taxYear))
           textOnPageCheck(s"${schemes.head.name.get}", pensionNameSelector(1))
           textOnPageCheck(s"${schemes.last.name.get}", pensionNameSelector(2))
 
@@ -135,16 +135,16 @@ class RefundSummaryViewSpec extends ViewUnitTest {
 
         "render the refund scheme summary list page with pre-filled content containing refund pension scheme but no name" which {
           val schemes                     = getSchemes.updated(1, getSchemes.last.copy(name = None))
-          val htmlFormat                  = underTest(taxYearEOY, schemes)
+          val htmlFormat                  = underTest(taxYear, schemes)
           implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
           val shortServiceSchemeUrl =
-            (refundPensionSchemeIndex: Option[Int]) => ShortServicePensionsSchemeController.show(taxYearEOY, refundPensionSchemeIndex).url
-          val cyaUrl = ShortServiceRefundsCYAController.show(taxYearEOY).url
+            (refundPensionSchemeIndex: Option[Int]) => ShortServicePensionsSchemeController.show(taxYear, refundPensionSchemeIndex).url
+          val cyaUrl = ShortServiceRefundsCYAController.show(currentTaxYear).url
 
           titleCheck(expectedTitle, userScenario.isWelsh)
           h1Check(expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY))
+          captionCheck(expectedCaption(taxYear))
           textOnPageCheck(s"${schemes.head.name.get}", pensionNameSelector(1))
           elementNotOnPageCheck(pensionNameSelector(2))
 
@@ -158,12 +158,12 @@ class RefundSummaryViewSpec extends ViewUnitTest {
 
         "render alternative refund scheme summary list page when no pensions schemes are provided" which {
 
-          val htmlFormat                  = underTest(taxYearEOY, Seq.empty)
+          val htmlFormat                  = underTest(taxYear, Seq.empty)
           implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
           titleCheck(expectedTitle, userScenario.isWelsh)
           h1Check(expectedHeading)
-          captionCheck(expectedCaption(taxYearEOY))
+          captionCheck(expectedCaption(taxYear))
           elementNotOnPageCheck(summaryListTableSelector)
           // todo update redirect to to transfer journey CYA page when navigation is linked up
           buttonCheck(addASchemeButton, "#AddAScheme")
@@ -194,5 +194,5 @@ class RefundSummaryViewSpec extends ViewUnitTest {
 
     Seq(scheme1, scheme2)
   }
-  private def removeLink(index: Int) = RemoveRefundSchemeController.show(taxYearEOY, Some(index)).url
+  private def removeLink(index: Int) = RemoveRefundSchemeController.show(taxYear, Some(index)).url
 }

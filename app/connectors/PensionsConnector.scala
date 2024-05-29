@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -209,6 +209,26 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     EitherT(res)
   }
 
+  def getShortServiceRefunds(nino: Nino, taxYear: TaxYear)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Option[ShortServiceRefundsViewModel]] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, ShortServiceRefunds)
+    ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
+    val res = http.GET[DownstreamErrorOr[Option[ShortServiceRefundsViewModel]]](url)
+    EitherT(res)
+  }
+
+  def saveShortServiceRefunds(nino: Nino, taxYear: TaxYear, answers: ShortServiceRefundsViewModel)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, ShortServiceRefunds)
+    ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, answers)
+
+    val res =
+      http.PUT[ShortServiceRefundsViewModel, DownstreamErrorOr[Unit]](url, answers)(ShortServiceRefundsViewModel.format, NoContentHttpReads, hc, ec)
+    EitherT(res)
+  }
+
   def savePensionCharges(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): DownstreamOutcome[Unit] = {
@@ -271,7 +291,6 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   }
 
   def getJourneyStatus(ctx: JourneyContext)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[List[JourneyNameAndStatus]] = {
-
     val url = buildUrl(s"/journey-status/${ctx.journey}/taxYear/${ctx.taxYear}")
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     http.GET[DownstreamErrorOr[List[JourneyNameAndStatus]]](url)(

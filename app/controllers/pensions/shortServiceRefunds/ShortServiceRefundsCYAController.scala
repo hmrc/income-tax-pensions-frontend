@@ -16,21 +16,16 @@
 
 package controllers.pensions.shortServiceRefunds
 
-import cats.data.EitherT
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
+import connectors.ContentHttpReads.logger
+import controllers.handleResult
 import controllers.predicates.auditActions.AuditActionsProvider
-import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
-import models.IncomeTaxUserData
-import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
-import models.pension.AllPensionsData
-import models.pension.AllPensionsData.generateSessionModelFromPrior
-import models.pension.Journey.ShortServiceRefunds
-import models.requests.UserPriorAndSessionDataRequest
+import models.pension.Journey
 import play.api.i18n.I18nSupport
 import play.api.mvc._
+import services.PensionsService
 import services.redirects.ShortServiceRefundsPages.CYAPage
-import services.{PensionSessionService, ShortServiceRefundsService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.SessionHelper
 import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.validateFlow
@@ -42,45 +37,28 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ShortServiceRefundsCYAController @Inject() (auditProvider: AuditActionsProvider,
                                                   view: ShortServiceRefundsCYAView,
-                                                  sessionService: PensionSessionService,
-                                                  service: ShortServiceRefundsService,
+                                                  pensionService: PensionsService,
                                                   errorHandler: ErrorHandler,
                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsViewAuditing(taxYear) async { implicit request =>
+  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.shortServiceRefundsViewAuditing(taxYear.endYear) async { implicit request =>
     val answers = request.sessionData.pensions.shortServiceRefunds
 
-    validateFlow(answers, CYAPage, taxYear) {
+    validateFlow(answers, CYAPage, taxYear.endYear) {
       Future.successful(Ok(view(taxYear, answers)))
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = auditProvider.shortServiceRefundsUpdateAuditing(taxYear) async { implicit request =>
-    val answers = request.sessionData.pensions.shortServiceRefunds
+  def submit(taxYear: TaxYear): Action[AnyContent] = auditProvider.shortServiceRefundsUpdateAuditing(taxYear.endYear) async { implicit request =>
+    val res = pensionService.upsertShortServiceRefunds(
+      request.user,
+      taxYear,
+      request.sessionData
+    )(request.user.withDownstreamHc(hc), ec)
 
-    validateFlow(answers, CYAPage, taxYear) {
-      val resultOrError: EitherT[Future, ServiceError, Result] =
-        for {
-          data <- sessionService.loadPriorAndSession(request.user, TaxYear(taxYear))
-          (prior, session) = data
-          _ <- processSubmission(session, prior, taxYear)
-        } yield Redirect(SECTION_COMPLETED_PAGE(taxYear, ShortServiceRefunds))
-
-      resultOrError
-        .leftMap(_ => errorHandler.internalServerError())
-        .merge
-    }
+    handleResult(errorHandler, taxYear, Journey.ShortServiceRefunds, res)
   }
-
-  private def processSubmission(session: PensionsUserData, prior: IncomeTaxUserData, taxYear: Int)(implicit
-      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, ServiceError, Unit] =
-    if (sessionDeviatesFromPrior(session.pensions, prior.pensions))
-      EitherT(service.saveAnswers(request.user, TaxYear(taxYear)))
-    else EitherT.pure[Future, ServiceError](())
-
-  private def sessionDeviatesFromPrior(session: PensionsCYAModel, maybePrior: Option[AllPensionsData]): Boolean =
-    maybePrior.fold(ifEmpty = true)(prior => !session.equals(generateSessionModelFromPrior(prior)))
 }

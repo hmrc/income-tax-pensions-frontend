@@ -27,6 +27,7 @@ import models.pension.charges.{
   CreateUpdatePensionChargesRequestModel,
   IncomeFromOverseasPensionsViewModel,
   PensionAnnualAllowancesViewModel,
+  ShortServiceRefundsViewModel,
   TransfersIntoOverseasPensionsViewModel
 }
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
@@ -156,6 +157,13 @@ trait MockPensionsConnector extends MockFactory {
       : CallHandler5[Nino, TaxYear, IncomeFromOverseasPensionsViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
     (mockPensionsConnector
       .saveIncomeFromOverseasPensions(_: Nino, _: TaxYear, _: IncomeFromOverseasPensionsViewModel)(_: HeaderCarrier, _: ExecutionContext))
+      .expects(*, *, *, *, *)
+      .returns(EitherT.rightT[Future, APIErrorModel](()))
+      .anyNumberOfTimes()
+
+  def mockShortServiceRefunds(): CallHandler5[Nino, TaxYear, ShortServiceRefundsViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
+    (mockPensionsConnector
+      .saveShortServiceRefunds(_: Nino, _: TaxYear, _: ShortServiceRefundsViewModel)(_: HeaderCarrier, _: ExecutionContext))
       .expects(*, *, *, *, *)
       .returns(EitherT.rightT[Future, APIErrorModel](()))
       .anyNumberOfTimes()

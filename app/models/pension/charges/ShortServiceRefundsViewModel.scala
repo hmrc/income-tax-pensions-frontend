@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 package models.pension.charges
 
 import cats.implicits.{catsSyntaxList, catsSyntaxOptionId, catsSyntaxTuple2Semigroupal, catsSyntaxTuple4Semigroupal, none}
-import models.mongo.TextAndKey
+import connectors.OptionalContentHttpReads
+import models.mongo.{PensionsCYAModel, TextAndKey}
 import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.Constants.zero
@@ -97,10 +98,13 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
 
   override def journeyIsUnanswered: Boolean = this.isEmpty
 
+  def toPensionsCYAModel: PensionsCYAModel = PensionsCYAModel.emptyModels.copy(shortServiceRefunds = this)
 }
 
 object ShortServiceRefundsViewModel {
   implicit val format: OFormat[ShortServiceRefundsViewModel] = Json.format[ShortServiceRefundsViewModel]
+  implicit val optRds: OptionalContentHttpReads[ShortServiceRefundsViewModel] =
+    new OptionalContentHttpReads[ShortServiceRefundsViewModel]
 
   val empty: ShortServiceRefundsViewModel = ShortServiceRefundsViewModel()
 }

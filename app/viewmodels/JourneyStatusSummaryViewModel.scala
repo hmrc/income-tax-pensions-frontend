@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -219,7 +219,7 @@ object JourneyStatusSummaryViewModel {
       case ShortServiceRefunds =>
         determineJourneyStartOrCyaUrl(
           ssrRoutes.TaxableRefundAmountController.show(taxYear.endYear).url,
-          ssrRoutes.ShortServiceRefundsCYAController.show(taxYear.endYear).url
+          ssrRoutes.ShortServiceRefundsCYAController.show(taxYear).url
         )
       case _ => "#"
     }

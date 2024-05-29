@@ -41,7 +41,9 @@ final case class PensionsServiceStub(upsertPaymentsIntoPensionsResult: Either[Se
                                      upsertIncomeFromOverseasPensionsResult: Either[ServiceError, Unit] = Right(()),
                                      var incomeFromOverseasPensionsList: List[IncomeFromOverseasPensionsViewModel] = Nil,
                                      upsertPaymentsIntoOverseasPensionsResult: Either[ServiceError, Unit] = Right(()),
-                                     var paymentsIntoOverseasPensionsList: List[PaymentsIntoOverseasPensionsViewModel] = Nil)
+                                     var paymentsIntoOverseasPensionsList: List[PaymentsIntoOverseasPensionsViewModel] = Nil,
+                                     shortServiceRefundsResult: Either[ServiceError, Unit] = Right(()),
+                                     var shortServiceRefundsList: List[ShortServiceRefundsViewModel] = Nil)
     extends PensionsService {
 
   def upsertPaymentsIntoPensions(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
@@ -88,5 +90,12 @@ final case class PensionsServiceStub(upsertPaymentsIntoPensionsResult: Either[Se
       ec: ExecutionContext): ApiResultT[Unit] = {
     incomeFromOverseasPensionsList ::= sessionData.pensions.incomeFromOverseasPensions
     EitherT.fromEither(upsertIncomeFromOverseasPensionsResult)
+  }
+
+  def upsertShortServiceRefunds(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    shortServiceRefundsList ::= sessionData.pensions.shortServiceRefunds
+    EitherT.fromEither(shortServiceRefundsResult)
   }
 }

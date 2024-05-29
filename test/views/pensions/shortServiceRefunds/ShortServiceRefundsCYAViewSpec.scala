@@ -108,7 +108,7 @@ class ShortServiceRefundsCYAViewSpec extends ViewUnitTest { // scalastyle:off ma
         implicit val request: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
         implicit val messages: Messages                          = getMessages(userScenario.isWelsh)
 
-        val htmlFormat = underTest(taxYearEOY, aShortServiceRefundsViewModel)
+        val htmlFormat = underTest(TaxYearFormatEOY, aShortServiceRefundsViewModel)
         import userScenario.commonExpectedResults._
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
@@ -129,7 +129,7 @@ class ShortServiceRefundsCYAViewSpec extends ViewUnitTest { // scalastyle:off ma
         implicit val request: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
         implicit val messages: Messages                          = getMessages(userScenario.isWelsh)
 
-        val htmlFormat = underTest(taxYearEOY, minimalShortServiceRefundsViewModel)
+        val htmlFormat = underTest(TaxYearFormatEOY, minimalShortServiceRefundsViewModel)
         import userScenario.commonExpectedResults._
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
