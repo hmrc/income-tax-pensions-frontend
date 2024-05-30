@@ -79,7 +79,7 @@ class PensionsServiceImpl @Inject() (pensionsConnector: PensionsConnector, sessi
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] =
     for {
-      _ <- pensionsConnector.saveUkPensionIncome(user.getNino, taxYear, sessionData.pensions.incomeFromPensions)
+      _ <- pensionsConnector.saveStatePension(user.getNino, taxYear, sessionData.pensions.incomeFromPensions)
       _ <- sessionService.clearSessionOnSuccess(Journey.UkPensionIncome, sessionData)
     } yield ()
 

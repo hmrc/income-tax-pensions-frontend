@@ -58,7 +58,7 @@ class StatePensionCYAController @Inject() (mcc: MessagesControllerComponents,
   }
 
   def submit(taxYear: TaxYear): Action[AnyContent] = auditProvider.incomeFromStatePensionsUpdateAuditing(taxYear.endYear) async { implicit request =>
-    val res = pensionsService.upsertStatePension(
+    def upsertAnswers = pensionsService.upsertStatePension(
       request.user,
       taxYear,
       request.sessionData
@@ -66,7 +66,7 @@ class StatePensionCYAController @Inject() (mcc: MessagesControllerComponents,
 
     // TODO Do we need this validate Flow? Why other journeys don't have it
     validateFlow(request.sessionData.pensions.incomeFromPensions, StatePensionsCYAPage, taxYear.endYear) {
-      handleResult(errorHandler, taxYear, Journey.StatePension, res)
+      handleResult(errorHandler, taxYear, Journey.StatePension, upsertAnswers)
     }
   }
 

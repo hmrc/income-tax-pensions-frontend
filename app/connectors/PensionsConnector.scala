@@ -86,7 +86,7 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def saveUkPensionIncome(nino: Nino, taxYear: TaxYear, answers: IncomeFromPensionsViewModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
-    val url = appConfig.upPensionIncomeAnswersUrl(taxYear, nino)
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, UkPensionIncome)
     ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, answers)
 
     val res =
@@ -99,6 +99,29 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
                                                                                            hc: HeaderCarrier,
                                                                                            ec: ExecutionContext): ApiResultT[Unit] = {
     val url = appConfig.journeyAnswersUrl(taxYear, nino, StatePension)
+    ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, answers)
+
+    val res =
+      http.PUT[IncomeFromPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(IncomeFromPensionsViewModel.format, NoContentHttpReads, hc, ec)
+
+    EitherT(res)
+  }
+
+  def getStatePension(nino: Nino, taxYear: TaxYear)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Option[IncomeFromPensionsViewModel]] = {
+    val url = appConfig.statePensionAnswersUrl(taxYear, nino)
+    ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
+
+    val res = http.GET[DownstreamErrorOr[Option[IncomeFromPensionsViewModel]]](url)
+
+    EitherT(res)
+  }
+
+  def saveStatePension(nino: Nino, taxYear: TaxYear, answers: IncomeFromPensionsViewModel)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    val url = appConfig.statePensionAnswersUrl(taxYear, nino)
     ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, answers)
 
     val res =
@@ -128,6 +151,17 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     val url = appConfig.journeyAnswersUrl(taxYear, nino, AnnualAllowances)
     ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
     val res = http.GET[DownstreamErrorOr[Option[PensionAnnualAllowancesViewModel]]](url)
+    EitherT(res)
+  }
+
+  def saveUnauthorisedPaymentsFromPensions(nino: Nino, taxYear: TaxYear, answers: UnauthorisedPaymentsViewModel)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, UnauthorisedPayments)
+    ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, answers)
+
+    val res =
+      http.PUT[UnauthorisedPaymentsViewModel, DownstreamErrorOr[Unit]](url, answers)(UnauthorisedPaymentsViewModel.format, NoContentHttpReads, hc, ec)
     EitherT(res)
   }
 
