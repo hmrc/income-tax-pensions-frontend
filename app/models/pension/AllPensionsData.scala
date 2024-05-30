@@ -72,7 +72,7 @@ object AllPensionsData {
 
       // TODO: set the question below based on the list from backend
       uKPensionIncomesQuestion = uKPenIncomesQ,
-      uKPensionIncomes = uKPenIncomes
+      uKPensionIncomes = Some(uKPenIncomes)
     )
   }
 

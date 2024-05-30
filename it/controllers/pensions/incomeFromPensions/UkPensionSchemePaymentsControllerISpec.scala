@@ -323,7 +323,7 @@ class UkPensionSchemePaymentsControllerISpec extends IntegrationTest with ViewHe
       "updates uKPensionIncomesQuestion to Some(false) and wipe the sets the uk pensions list to Seq.empty" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
         cyaModel.pensions.incomeFromPensions.uKPensionIncomesQuestion shouldBe Some(false)
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes shouldBe Seq.empty
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes shouldBe Seq.empty
       }
 
     }

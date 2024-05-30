@@ -85,7 +85,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
         val res = pensionsConnector.getUkPensionIncome(user.getNino, taxYear)
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case StatePension =>
-        val res = pensionsConnector.getStatePension(user.getNino, taxYear)
+        val res = pensionsConnector.getStatePension(user.getNino, taxYear).map(_.map(_.toIncomeFromPensionsViewModel))
         transformNotFoundToNone(res).map(_.map(x => x.toPensionsCYAModel))
       case AnnualAllowances =>
         val res = pensionsConnector.getAnnualAllowances(user.getNino, taxYear)

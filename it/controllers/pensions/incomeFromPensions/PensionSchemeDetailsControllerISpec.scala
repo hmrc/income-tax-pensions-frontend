@@ -313,7 +313,9 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           dropPensionsDB()
           authoriseAgentOrIndividual()
           val viewModel =
-            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = List(anUkPensionIncomeViewModelOne))
+            anIncomeFromPensionEmptyViewModel.copy(
+              uKPensionIncomesQuestion = Some(true),
+              uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne)))
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
           urlGet(
             fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(8))),
@@ -460,7 +462,7 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
           pensionId = Some("Pension Id"))
         insertCyaData(
           pensionsUserDataWithIncomeFromPensions(
-            anIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne, uKPensionIncomesModel))))
+            anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne, uKPensionIncomesModel)))))
         urlPost(
           fullUrl(pensionSchemeDetailsUrl(taxYearEOY, Some(1))),
           body = form,
@@ -476,11 +478,11 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
       "updates existing pension scheme with new values" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.size shouldBe 2
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionSchemeName shouldBe Some(validProviderName)
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionSchemeRef shouldBe Some(validRef)
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionId shouldBe Some(validPensionId)
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).employmentId shouldBe anUkPensionIncomeViewModelTwo.employmentId
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes.size shouldBe 2
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes(1).pensionSchemeName shouldBe Some(validProviderName)
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes(1).pensionSchemeRef shouldBe Some(validRef)
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes(1).pensionId shouldBe Some(validPensionId)
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes(1).employmentId shouldBe anUkPensionIncomeViewModelTwo.employmentId
       }
     }
 
@@ -507,11 +509,11 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
       "updates existing pension scheme with new values" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.size shouldBe 1
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionSchemeName shouldBe Some(validProviderName)
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionSchemeRef shouldBe Some(validRef)
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionId shouldBe Some(validPensionId)
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.employmentId shouldBe None
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes.size shouldBe 1
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes.head.pensionSchemeName shouldBe Some(validProviderName)
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes.head.pensionSchemeRef shouldBe Some(validRef)
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes.head.pensionId shouldBe Some(validPensionId)
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes.head.employmentId shouldBe None
       }
     }
 
@@ -538,14 +540,14 @@ class PensionSchemeDetailsControllerISpec extends IntegrationTest with ViewHelpe
 
       "updates existing pension scheme with new values without changing existing pension schemes" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.size shouldBe 3
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes.head.pensionSchemeName shouldBe
-          anIncomeFromPensionsViewModel.uKPensionIncomes.head.pensionSchemeName
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(1).pensionSchemeName shouldBe
-          anIncomeFromPensionsViewModel.uKPensionIncomes(1).pensionSchemeName
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(2).pensionSchemeName shouldBe Some(validProviderName)
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(2).pensionSchemeRef shouldBe Some(validRef)
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(2).pensionId shouldBe Some(validPensionId)
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes.size shouldBe 3
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes.head.pensionSchemeName shouldBe
+          anIncomeFromPensionsViewModel.getUKPensionIncomes.head.pensionSchemeName
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes(1).pensionSchemeName shouldBe
+          anIncomeFromPensionsViewModel.getUKPensionIncomes(1).pensionSchemeName
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes(2).pensionSchemeName shouldBe Some(validProviderName)
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes(2).pensionSchemeRef shouldBe Some(validRef)
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes(2).pensionId shouldBe Some(validPensionId)
       }
     }
 

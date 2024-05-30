@@ -47,7 +47,7 @@ class UkPensionIncomeSummaryController @Inject() (cc: MessagesControllerComponen
         val updatedUserData = cleanUpSchemes(data)
         val checkRedirect   = journeyCheck(UkPensionIncomePage, _: PensionsCYAModel, taxYear)
         redirectBasedOnCurrentAnswers(taxYear, Some(updatedUserData), cyaPageCall(taxYear))(checkRedirect) { data =>
-          val incomeFromPensionList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
+          val incomeFromPensionList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.getUKPensionIncomes
           Future(Ok(ukPensionIncomeSummary(taxYear, incomeFromPensionList)))
         }
       case None => Future(Redirect(PensionsSummaryController.show(taxYear)))
@@ -55,9 +55,9 @@ class UkPensionIncomeSummaryController @Inject() (cc: MessagesControllerComponen
   }
 
   private def cleanUpSchemes(pensionsUserData: PensionsUserData): PensionsUserData = {
-    val schemes            = pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+    val schemes            = pensionsUserData.pensions.incomeFromPensions.getUKPensionIncomes
     val filteredSchemes    = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
-    val updatedViewModel   = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = filteredSchemes)
+    val updatedViewModel   = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = Some(filteredSchemes))
     val updatedPensionData = pensionsUserData.pensions.copy(incomeFromPensions = updatedViewModel)
     val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
     pensionSessionService.createOrUpdateSession(updatedUserData)

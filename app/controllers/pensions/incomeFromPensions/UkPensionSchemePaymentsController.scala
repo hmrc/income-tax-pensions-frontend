@@ -67,9 +67,9 @@ class UkPensionSchemePaymentsController @Inject() (mcc: MessagesControllerCompon
   }
 
   private def cleanUpSchemes(pensionsUserData: PensionsUserData)(implicit ec: ExecutionContext): Future[Either[DatabaseError, PensionsUserData]] = {
-    val schemes            = pensionsUserData.pensions.incomeFromPensions.uKPensionIncomes
+    val schemes            = pensionsUserData.pensions.incomeFromPensions.getUKPensionIncomes
     val filteredSchemes    = if (schemes.nonEmpty) schemes.filter(scheme => scheme.isFinished) else schemes
-    val updatedViewModel   = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = filteredSchemes)
+    val updatedViewModel   = pensionsUserData.pensions.incomeFromPensions.copy(uKPensionIncomes = Some(filteredSchemes))
     val updatedPensionData = pensionsUserData.pensions.copy(incomeFromPensions = updatedViewModel)
     val updatedUserData    = pensionsUserData.copy(pensions = updatedPensionData)
     pensionSessionService.createOrUpdateSession(updatedUserData).map(_.map(_ => updatedUserData))
@@ -87,13 +87,13 @@ class UkPensionSchemePaymentsController @Inject() (mcc: MessagesControllerCompon
               val pensionsCYAModel: PensionsCYAModel     = optData.map(_.pensions).getOrElse(PensionsCYAModel.emptyModels)
               val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions
               val updatedCyaModel: PensionsCYAModel =
-                pensionsCYAModel.copy(incomeFromPensions =
-                  viewModel.copy(uKPensionIncomesQuestion = Some(yesNo), uKPensionIncomes = if (yesNo) viewModel.uKPensionIncomes else Nil))
+                pensionsCYAModel.copy(incomeFromPensions = viewModel
+                  .copy(uKPensionIncomesQuestion = Some(yesNo), uKPensionIncomes = if (yesNo) Some(viewModel.getUKPensionIncomes) else Some(Nil)))
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, optData.exists(_.isPriorSubmission))(
                 errorHandler.internalServerError()) {
                 Redirect(
                   if (yesNo) {
-                    redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.uKPensionIncomes, taxYear)
+                    redirectForSchemeLoop(schemes = updatedCyaModel.incomeFromPensions.getUKPensionIncomes, taxYear)
                   } else {
                     UkPensionIncomeCYAController.show(TaxYear(taxYear))
                   }

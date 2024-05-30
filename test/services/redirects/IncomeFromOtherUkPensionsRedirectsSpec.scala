@@ -109,7 +109,8 @@ class IncomeFromOtherUkPensionsRedirectsSpec extends UnitTest {
 
       "redirect to first page in journey" when {
         "previous questions are unanswered" in {
-          val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne.copy(amount = None)))
+          val incompleteJourney =
+            aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne.copy(amount = None))))
           val result = indexCheckThenJourneyCheck(
             data = pensionsUserDataWithIncomeFromPensions(incompleteJourney),
             optIndex = Some(0),
@@ -140,7 +141,8 @@ class IncomeFromOtherUkPensionsRedirectsSpec extends UnitTest {
     "index is invalid" should {
       "redirect to the first page in journey" when {
         "previous questions are unanswered" in {
-          val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne.copy(pensionId = None)))
+          val incompleteJourney =
+            aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne.copy(pensionId = None))))
           val result = indexCheckThenJourneyCheck(
             data = pensionsUserDataWithIncomeFromPensions(incompleteJourney),
             optIndex = Some(10),
@@ -179,7 +181,7 @@ class IncomeFromOtherUkPensionsRedirectsSpec extends UnitTest {
           locationHeader shouldBe Some(journeyStartCall.url)
         }
         "there are no schemes" in {
-          val emptySchemesViewModel = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = List.empty)
+          val emptySchemesViewModel = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List.empty))
           val result = indexCheckThenJourneyCheck(
             data = pensionsUserDataWithIncomeFromPensions(emptySchemesViewModel),
             optIndex = Some(-1),
@@ -214,7 +216,7 @@ class IncomeFromOtherUkPensionsRedirectsSpec extends UnitTest {
     }
     "return Some(Redirect) to first page in journey" when {
       "previous questions are unanswered" in {
-        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne.copy(amount = None)))
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne.copy(amount = None))))
         val result = journeyCheck(
           currentPage = WhenDidYouStartGettingPaymentsPage,
           cya = pensionsUserDataWithIncomeFromPensions(incompleteJourney).pensions,

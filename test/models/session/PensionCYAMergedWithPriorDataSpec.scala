@@ -61,7 +61,7 @@ class PensionCYAMergedWithPriorDataSpec extends AnyWordSpecLike with TableDriven
     val pension3 = expectedFullSession.copy(incomeFromPensions = IncomeFromPensionsViewModel(
       statePension = Some(StateBenefitViewModel(Some(UUID.randomUUID()))),
       uKPensionIncomesQuestion = Some(true),
-      uKPensionIncomes = List(UkPensionIncomeViewModel(employmentId = Some("id")))
+      uKPensionIncomes = Some(List(UkPensionIncomeViewModel(employmentId = Some("id"))))
     ))
     val pension4 = expectedFullSession.copy(unauthorisedPayments = UnauthorisedPaymentsViewModel(Some(true)))
     val pension5 = expectedFullSession.copy(paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel(Some(true)))

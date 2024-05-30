@@ -113,12 +113,12 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
             implicit lazy val result: WSResponse = {
               authoriseAgentOrIndividual(user.isAgent)
               dropPensionsDB()
-              val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(
+              val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(
                 anUkPensionIncomeViewModelOne.copy(pensionId = None),
                 anUkPensionIncomeViewModelOne,
                 anUkPensionIncomeViewModelTwo.copy(pensionSchemeRef = None),
                 anUkPensionIncomeViewModelTwo
-              ))
+              )))
               insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
               urlGet(
                 fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)),
@@ -154,7 +154,7 @@ class UkPensionIncomeSummaryControllerISpec extends IntegrationTest with BeforeA
               authoriseAgentOrIndividual(user.isAgent)
               dropPensionsDB()
               val viewModel = anIncomeFromPensionsViewModel.copy(uKPensionIncomes =
-                List(anUkPensionIncomeViewModelOne.copy(pensionId = None), anUkPensionIncomeViewModelTwo.copy(pensionSchemeRef = None)))
+                Some(List(anUkPensionIncomeViewModelOne.copy(pensionId = None), anUkPensionIncomeViewModelTwo.copy(pensionSchemeRef = None))))
               insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
               urlGet(
                 fullUrl(ukPensionSchemeSummaryListUrl(taxYearEOY)),

@@ -135,7 +135,8 @@ class PensionSchemeStartDateViewSpec extends ViewUnitTest with FakeRequestProvid
           UserSessionDataRequest(
             aPensionsUserData.copy(
               pensions = aPensionsCYAModel.copy(
-                incomeFromPensions = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne.copy(startDate = None)))
+                incomeFromPensions =
+                  anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne.copy(startDate = None))))
               )),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
@@ -167,7 +168,7 @@ class PensionSchemeStartDateViewSpec extends ViewUnitTest with FakeRequestProvid
             aPensionsUserData.copy(
               pensions = aPensionsCYAModel.copy(
                 incomeFromPensions = anIncomeFromPensionsViewModel.copy(
-                  uKPensionIncomes = List(anUkPensionIncomeViewModelOne.copy(startDate = Some(s"$validYear-$validMonth-$validDay"))))
+                  uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne.copy(startDate = Some(s"$validYear-$validMonth-$validDay")))))
               )),
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
