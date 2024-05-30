@@ -78,4 +78,14 @@ class PensionsServiceImplSpec extends AnyWordSpecLike with MockPensionsConnector
       assert(result.isRight === true)
     }
   }
+
+  "upsertShortServiceRefunds" should {
+    "remove answers after submission" in {
+      mockShortServiceRefunds()
+      mockClearSessionOnSuccess(Journey.ShortServiceRefunds)
+      val result = service.upsertShortServiceRefunds(user, currTaxYear, session).value.futureValue
+
+      assert(result.isRight === true)
+    }
+  }
 }

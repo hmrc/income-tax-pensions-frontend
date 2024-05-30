@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import models.logging.HeaderCarrierExtensions.HeaderCarrierOps
 import models.mongo.PensionsUserData.SessionData
 import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
-import models.pension.Journey.{AnnualAllowances, PaymentsIntoOverseasPensions, PaymentsIntoPensions, UnauthorisedPayments}
 import models.pension.Journey._
 import models.pension.{Journey, JourneyNameAndStatus}
 import models.session.PensionCYAMergedWithPriorData
@@ -87,6 +86,9 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case TransferIntoOverseasPensions =>
         val res = pensionsConnector.getTransfersIntoOverseasPensions(user.getNino, taxYear)
+        transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
+      case ShortServiceRefunds =>
+        val res = pensionsConnector.getShortServiceRefunds(user.getNino, taxYear)
         transformNotFoundToNone(res).map(_.map(_.toPensionsCYAModel))
       case IncomeFromOverseasPensions =>
         val res = pensionsConnector.getIncomeFromOverseasPensions(user.getNino, taxYear)

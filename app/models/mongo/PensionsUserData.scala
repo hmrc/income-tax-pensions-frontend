@@ -54,6 +54,8 @@ case class PensionsUserData(sessionId: String,
         copy(lastUpdated = now, pensions = pensions.copy(incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel.empty))
       case PaymentsIntoOverseasPensions =>
         copy(lastUpdated = now, pensions = pensions.copy(paymentsIntoOverseasPensions = PaymentsIntoOverseasPensionsViewModel.empty))
+      case ShortServiceRefunds =>
+        copy(lastUpdated = now, pensions = pensions.copy(shortServiceRefunds = ShortServiceRefundsViewModel.empty))
       case _ => ??? // TODO will be done when other journeys are implemented
     }
 }

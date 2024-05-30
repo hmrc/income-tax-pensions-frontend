@@ -14,25 +14,26 @@
  * limitations under the License.
  *@
 
+@import common.TaxYear
+@import controllers.pensions.shortServiceRefunds.ShortSummaryCYAViewHelper
 @import models.pension.charges.ShortServiceRefundsViewModel
+@import models.requests.UserSessionDataRequest
 @import views.html.templates.Layout
 @import views.html.templates.helpers.{Button, Heading, SummaryList}
-@import controllers.pensions.shortServiceRefunds.ShortSummaryCYAViewHelper
-@import models.requests.UserSessionDataRequest
 
 @this(layout: Layout, summaryList: SummaryList, heading: Heading, button: Button, csrfForm: FormWithCSRF)
 
-@(taxYear: Int, shortServiceRefundsViewModel: ShortServiceRefundsViewModel)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
+@(taxYear: TaxYear, shortServiceRefundsViewModel: ShortServiceRefundsViewModel)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
 @headingForUse = @{
     messages(s"shortServiceRefunds.cya.heading")
 }
 
-@layout(pageTitle = headingForUse, taxYear = Some(taxYear)) {
+@layout(pageTitle = headingForUse, taxYear = Some(taxYear.endYear)) {
 
-    @heading(headingForUse, Some(messages("common.shortServiceRefunds.caption", (taxYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
+    @heading(headingForUse, Some(messages("common.shortServiceRefunds.caption", (taxYear.endYear - 1).toString, taxYear.toString)), "govuk-!-margin-bottom-5")
 
-    @summaryList(ShortSummaryCYAViewHelper.summaryListRows(shortServiceRefundsViewModel, taxYear)(messages))
+    @summaryList(ShortSummaryCYAViewHelper.summaryListRows(shortServiceRefundsViewModel, taxYear.endYear)(messages))
 
     @csrfForm(controllers.pensions.shortServiceRefunds.routes.ShortServiceRefundsCYAController.submit(taxYear)) {
         @button("common.saveAndContinue")

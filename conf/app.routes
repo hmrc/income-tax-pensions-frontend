@@ -294,5 +294,5 @@ POST        /:taxYear/overseas-pensions/short-service-refunds/remove-pension-sch
 
 GET         /:taxYear/overseas-pensions/short-service-refunds/short-service-refund-summary                                         controllers.pensions.shortServiceRefunds.RefundSummaryController.show(taxYear: Int)
 
-GET         /:taxYear/overseas-pensions/short-service-refunds/check-short-service-refund-details                                   controllers.pensions.shortServiceRefunds.ShortServiceRefundsCYAController.show(taxYear: Int)
-POST        /:taxYear/overseas-pensions/short-service-refunds/check-short-service-refund-details                                   controllers.pensions.shortServiceRefunds.ShortServiceRefundsCYAController.submit(taxYear: Int)
+GET         /:taxYear/overseas-pensions/short-service-refunds/check-short-service-refund-details                                   controllers.pensions.shortServiceRefunds.ShortServiceRefundsCYAController.show(taxYear: TaxYear)
+POST        /:taxYear/overseas-pensions/short-service-refunds/check-short-service-refund-details                                   controllers.pensions.shortServiceRefunds.ShortServiceRefundsCYAController.submit(taxYear: TaxYear)

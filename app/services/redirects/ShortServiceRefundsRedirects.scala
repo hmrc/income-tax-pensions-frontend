@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package services.redirects
 
+import common.TaxYear
 import controllers.pensions.shortServiceRefunds.routes._
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
@@ -29,5 +30,5 @@ object ShortServiceRefundsRedirects {
   def nonUkTaxRefundsRedirect(taxYear: Int): Result                       = Redirect(NonUkTaxRefundsController.show(taxYear))
 
   def refundSummaryCall(taxYear: Int): Call = RefundSummaryController.show(taxYear)
-  def cyaPageCall(taxYear: Int): Call       = ShortServiceRefundsCYAController.show(taxYear)
+  def cyaPageCall(taxYear: Int): Call       = ShortServiceRefundsCYAController.show(TaxYear(taxYear))
 }
