@@ -86,8 +86,20 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
   def saveUkPensionIncome(nino: Nino, taxYear: TaxYear, answers: IncomeFromPensionsViewModel)(implicit
       hc: HeaderCarrier,
       ec: ExecutionContext): ApiResultT[Unit] = {
-    val url = appConfig.journeyAnswersUrl(taxYear, nino, UkPensionIncome)
+    val url = appConfig.upPensionIncomeAnswersUrl(taxYear, nino)
     ConnectorRequestInfo("PUT", url, "income-tax-pensions").logRequestWithBody(logger, answers)
+
+    val res =
+      http.PUT[IncomeFromPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(IncomeFromPensionsViewModel.format, NoContentHttpReads, hc, ec)
+
+    EitherT(res)
+  }
+
+  def saveStatePension(nino: Nino, taxYear: TaxYear, answers: IncomeFromPensionsViewModel)(implicit
+                                                                                           hc: HeaderCarrier,
+                                                                                           ec: ExecutionContext): ApiResultT[Unit] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, StatePension)
+    ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, answers)
 
     val res =
       http.PUT[IncomeFromPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(IncomeFromPensionsViewModel.format, NoContentHttpReads, hc, ec)

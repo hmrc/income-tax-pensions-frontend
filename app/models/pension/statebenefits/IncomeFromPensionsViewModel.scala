@@ -26,6 +26,7 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.booleanEncryptor
 import utils.{EncryptedValue, SecureGCMCipher}
 
+// TODO Any reason why these two journeys are aggregated in one case class?
 case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewModel] = None,
                                        statePensionLumpSum: Option[StateBenefitViewModel] = None,
                                        uKPensionIncomesQuestion: Option[Boolean] = None,

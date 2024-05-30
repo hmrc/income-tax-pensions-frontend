@@ -21,6 +21,7 @@
 @import utils.ViewUtils.summaryListRow
 @import views.html.templates.helpers.{Button, Heading, Link, SummaryList}
 @import views.html.templates.Layout
+@import common.TaxYear
 
 
 @this(
@@ -54,7 +55,7 @@
   @para2
   @summaryList(StatePensionCYAHelper.summaryListRows(statePension, taxYear)(messages))
 
-  @formWithCsrf(StatePensionCYAController.submit(taxYear)) {
+  @formWithCsrf(StatePensionCYAController.submit(TaxYear(taxYear))) {
     @button("common.saveAndContinue")
   }
 }
