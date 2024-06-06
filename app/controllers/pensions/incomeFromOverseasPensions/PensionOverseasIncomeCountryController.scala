@@ -50,7 +50,7 @@ class PensionOverseasIncomeCountryController @Inject() (authAction: AuthorisedAc
     pensionSessionService.loadSessionData(taxYear, request.user).flatMap {
       case Left(_) => Future.successful(errorHandler.handleError(INTERNAL_SERVER_ERROR))
       case Right(optData) =>
-        val countriesToInclude = Countries.overseasCountries
+        val countriesToInclude = Countries.incomeFromOverseasPensionsCountryCodeList
         val form               = countryForm(request.user)
 
         index.fold {

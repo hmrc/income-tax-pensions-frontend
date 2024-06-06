@@ -22,16 +22,23 @@ import scala.io.Source
 
 object Countries {
 
-  lazy val allCountries: List[Country] = countriesFromFile filter (c => mdgCountryCodes("/mdg-country-codes.csv") contains c.alphaTwoCode)
+  lazy val allCountries: List[Country] = countriesFromFile filter (c => getCountryCodesFromFile("/mdg-country-codes.csv") contains c.alphaTwoCode)
 
   lazy val overseasCountries: List[Country] = allCountries.filter(_.alphaTwoCode != "GB")
 
-  lazy val euCountries: List[Country] = countriesFromFile filter (c => mdgCountryCodes("/mdg-country-codes-eu.csv") contains c.alphaTwoCode)
-
   lazy val countriesThreeAlphaMapFromCountryName: Map[String, String] = countriesThreeAlphaMap.map(_.swap)
 
+  lazy val incomeFromOverseasPensionsCountryCodeList: List[Country] = allCountries filter ( c => getCountryCodesFromFile(
+    "/incomeFromOverseasPensions-threeAlphaCountryName.csv") contains c.alphaTwoCode)
+
+  lazy val overseasTransferContributionsCountryCodeList: List[Country] = allCountries filter (c => getCountryCodesFromFile(
+    "/overseasTransferContributions-threeAlphaCountryName.csv") contains c.alphaTwoCode)
+
+  lazy val overseasPaymentsAndShortServiceRefundsCountryCodeList: List[Country] = allCountries filter (c => getCountryCodesFromFile(
+    "/overseasPaymentsAndShortServiceRefunds-threeAlphaCountryName.csv") contains c.alphaTwoCode)
+
   lazy val countriesTwoAlphaMapFromCountryName: Map[String, String] =
-    countriesTwoAlphaMap.filter { case (k, _) => mdgCountryCodes("/mdg-country-codes.csv") contains k }.map(_.swap)
+    countriesTwoAlphaMap.filter { case (k, _) => getCountryCodesFromFile("/mdg-country-codes.csv") contains k }.map(_.swap)
 
   private def getCountryFromCode(alphaTwoCode: Option[String]): Option[Country] =
     alphaTwoCode.flatMap(x => allCountries.find(_.alphaTwoCode == x))
@@ -92,7 +99,7 @@ object Countries {
       .toMap
   }
 
-  private def mdgCountryCodes(fileName: String): List[String] =
+  private def getCountryCodesFromFile(fileName: String): List[String] =
     Source
       .fromInputStream(getClass.getResourceAsStream(fileName))
       .getLines()

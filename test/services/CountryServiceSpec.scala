@@ -37,12 +37,6 @@ class CountryServiceSpec extends UnitTest { // scalatest:off magic.number
       Countries.allCountries.size shouldBe 247
     }
 
-    "give all eu countries with codes in alphabetical order of country name with filtering according to permitted MDG EU values" in {
-      Countries.euCountries should contain(Country("France", "FR", "FRA"))
-      Countries.euCountries should contain(Country("Germany", "DE", "DEU"))
-      Countries.euCountries.size shouldBe 27
-    }
-
     "give all overseas countries with codes in alphabetical order of country name with filtering according to permitted MDG values" in {
       Countries.overseasCountries should contain(Country("Afghanistan", "AF", "AFG"))
       Countries.overseasCountries should contain(Country("Curaçao", "CW", "CUW"))
