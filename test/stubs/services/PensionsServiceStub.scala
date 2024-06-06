@@ -92,7 +92,9 @@ final case class PensionsServiceStub(upsertPaymentsIntoPensionsResult: Either[Se
     EitherT.fromEither(upsertIncomeFromOverseasPensionsResult)
   }
 
-  def upsertStatePension(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit hc: HeaderCarrier, ec: ExecutionContext): ApiResultT[Unit] = ???
+  def upsertStatePension(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = ???
 
   def upsertShortServiceRefunds(user: User, taxYear: TaxYear, sessionData: PensionsUserData)(implicit
       hc: HeaderCarrier,
