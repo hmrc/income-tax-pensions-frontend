@@ -29,6 +29,7 @@ case class IncomeFromPensionsStatePensionAnswers(
     IncomeFromPensionsViewModel(
       statePension = statePension,
       statePensionLumpSum = statePensionLumpSum,
+      None,
       None
     )
 }

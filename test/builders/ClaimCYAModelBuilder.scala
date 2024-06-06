@@ -31,10 +31,6 @@ object ClaimCYAModelBuilder {
   val aStatePensionClaimCYAModel = ClaimCYAModel(
     benefitId = aStatePensionViewModel.benefitId,
     startDate = aStatePensionViewModel.startDate.getOrElse(LocalDate.now()),
-    endDateQuestion = aStatePensionViewModel.endDateQuestion,
-    endDate = aStatePensionViewModel.endDate,
-    dateIgnored = aStatePensionViewModel.dateIgnored,
-    submittedOn = aStatePensionViewModel.submittedOn,
     amount = aStatePensionViewModel.amount,
     taxPaidQuestion = aStatePensionViewModel.taxPaidQuestion,
     taxPaid = aStatePensionViewModel.taxPaid
@@ -43,10 +39,6 @@ object ClaimCYAModelBuilder {
   val aStatePensionLumpSumClaimCYAModel = ClaimCYAModel(
     benefitId = aStatePensionLumpSumViewModel.benefitId,
     startDate = aStatePensionLumpSumViewModel.startDate.getOrElse(LocalDate.now()),
-    endDateQuestion = aStatePensionLumpSumViewModel.endDateQuestion,
-    endDate = aStatePensionLumpSumViewModel.endDate,
-    dateIgnored = aStatePensionLumpSumViewModel.dateIgnored,
-    submittedOn = aStatePensionLumpSumViewModel.submittedOn,
     amount = aStatePensionLumpSumViewModel.amount,
     taxPaidQuestion = aStatePensionLumpSumViewModel.taxPaidQuestion,
     taxPaid = aStatePensionLumpSumViewModel.taxPaid
@@ -55,10 +47,6 @@ object ClaimCYAModelBuilder {
   val aPriorStatePensionClaimCYAModel = ClaimCYAModel(
     benefitId = aPriorStatePensionViewModel.benefitId,
     startDate = aPriorStatePensionViewModel.startDate.getOrElse(LocalDate.now()),
-    endDateQuestion = aPriorStatePensionViewModel.endDateQuestion,
-    endDate = aPriorStatePensionViewModel.endDate,
-    dateIgnored = aPriorStatePensionViewModel.dateIgnored,
-    submittedOn = aPriorStatePensionViewModel.submittedOn,
     amount = aPriorStatePensionViewModel.amount,
     taxPaidQuestion = aPriorStatePensionViewModel.taxPaidQuestion,
     taxPaid = aPriorStatePensionViewModel.taxPaid
@@ -67,10 +55,6 @@ object ClaimCYAModelBuilder {
   val aPriorStatePensionLumpSumClaimCYAModel = ClaimCYAModel(
     benefitId = aPriorStatePensionLumpSumViewModel.benefitId,
     startDate = aPriorStatePensionLumpSumViewModel.startDate.getOrElse(LocalDate.now()),
-    endDateQuestion = aPriorStatePensionLumpSumViewModel.endDateQuestion,
-    endDate = aPriorStatePensionLumpSumViewModel.endDate,
-    dateIgnored = aPriorStatePensionLumpSumViewModel.dateIgnored,
-    submittedOn = aPriorStatePensionLumpSumViewModel.submittedOn,
     amount = aPriorStatePensionLumpSumViewModel.amount,
     taxPaidQuestion = aPriorStatePensionLumpSumViewModel.taxPaidQuestion,
     taxPaid = aPriorStatePensionLumpSumViewModel.taxPaid

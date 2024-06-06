@@ -19,24 +19,17 @@ package models.pension.statebenefits
 import models.mongo.TextAndKey
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
-import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, instantDecryptor, localDateDecryptor, uuidDecryptor}
+import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, localDateDecryptor, uuidDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
-import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, instantEncryptor, localDateEncryptor, uuidEncryptor}
+import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, localDateEncryptor, uuidEncryptor}
 import utils.{EncryptedValue, SecureGCMCipher}
 
-import java.time.{Instant, LocalDate}
+import java.time.LocalDate
 import java.util.UUID
 
-// TODO: Understand why we have all of these fields? Not all of them are questions on the form. Do we send them downstream?
 case class StateBenefitViewModel(benefitId: Option[UUID] = None,
                                  startDateQuestion: Option[Boolean] = None,
                                  startDate: Option[LocalDate] = None,
-                                 endDateQuestion: Option[Boolean] = None,
-                                 endDate: Option[LocalDate] = None,
-                                 submittedOnQuestion: Option[Boolean] = None,
-                                 submittedOn: Option[Instant] = None,
-                                 dateIgnoredQuestion: Option[Boolean] = None,
-                                 dateIgnored: Option[Instant] = None,
                                  amountPaidQuestion: Option[Boolean] = None,
                                  amount: Option[BigDecimal] = None,
                                  taxPaidQuestion: Option[Boolean] = None,
@@ -70,12 +63,6 @@ case class StateBenefitViewModel(benefitId: Option[UUID] = None,
       benefitId = benefitId.map(_.encrypted),
       startDateQuestion = startDateQuestion.map(_.encrypted),
       startDate = startDate.map(_.encrypted),
-      endDateQuestion = endDateQuestion.map(_.encrypted),
-      endDate = endDate.map(_.encrypted),
-      submittedOnQuestion = submittedOnQuestion.map(_.encrypted),
-      submittedOn = submittedOn.map(_.encrypted),
-      dateIgnoredQuestion = dateIgnoredQuestion.map(_.encrypted),
-      dateIgnored = dateIgnored.map(_.encrypted),
       amountPaidQuestion = amountPaidQuestion.map(_.encrypted),
       amount = amount.map(_.encrypted),
       taxPaidQuestion = taxPaidQuestion.map(_.encrypted),
@@ -111,12 +98,6 @@ case class EncryptedStateBenefitViewModel(
       benefitId = benefitId.map(_.decrypted[UUID]),
       startDateQuestion = startDateQuestion.map(_.decrypted[Boolean]),
       startDate = startDate.map(_.decrypted[LocalDate]),
-      endDateQuestion = endDateQuestion.map(_.decrypted[Boolean]),
-      endDate = endDate.map(_.decrypted[LocalDate]),
-      submittedOnQuestion = submittedOnQuestion.map(_.decrypted[Boolean]),
-      submittedOn = submittedOn.map(_.decrypted[Instant]),
-      dateIgnoredQuestion = dateIgnoredQuestion.map(_.decrypted[Boolean]),
-      dateIgnored = dateIgnored.map(_.decrypted[Instant]),
       amountPaidQuestion = amountPaidQuestion.map(_.decrypted[Boolean]),
       amount = amount.map(_.decrypted[BigDecimal]),
       taxPaidQuestion = taxPaidQuestion.map(_.decrypted[Boolean]),
