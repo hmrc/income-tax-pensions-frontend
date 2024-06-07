@@ -62,7 +62,7 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
     }
   }
 
-  "PensionsConnector .savePensionChargesSessionData" should {
+  "savePensionChargesSessionData" should {
 
     val chargesURL = s"/income-tax-pensions/pension-charges/session-data/nino/$nino/taxYear/$taxYear"
     val chargesRequestModel = CreateUpdatePensionChargesRequestModel(
@@ -138,7 +138,7 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
     }
   }
 
-  "PensionsConnector .savePensionIncomeSessionData" should {
+  "savePensionIncomeSessionData" should {
 
     val incomeURL = s"/income-tax-pensions/pension-income/session-data/nino/$nino/taxYear/$taxYear"
     val incomeRequestModel = CreateUpdatePensionIncomeRequestModel(
@@ -211,7 +211,7 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
     }
   }
 
-  "PensionsConnector .savePensionReliefSessionData" should {
+  "savePensionReliefSessionData" should {
 
     val reliefURL = s"/income-tax-pensions/pension-reliefs/nino/$nino/taxYear/$taxYear"
     val reliefRequestModel = CreateUpdatePensionReliefsModel(

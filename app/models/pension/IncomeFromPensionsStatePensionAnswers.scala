@@ -38,4 +38,6 @@ object IncomeFromPensionsStatePensionAnswers {
   implicit val format: OFormat[IncomeFromPensionsStatePensionAnswers] = Json.format[IncomeFromPensionsStatePensionAnswers]
   implicit val optRds: OptionalContentHttpReads[IncomeFromPensionsStatePensionAnswers] =
     new OptionalContentHttpReads[IncomeFromPensionsStatePensionAnswers]
+
+  def empty: IncomeFromPensionsStatePensionAnswers = IncomeFromPensionsStatePensionAnswers(None, None, None)
 }

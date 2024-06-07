@@ -44,6 +44,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
+// TODO add tests
 class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends Logging {
   private val apiId                 = "income-tax-pensions"
   private def buildUrl(url: String) = s"${appConfig.pensionBEBaseUrl}$url"

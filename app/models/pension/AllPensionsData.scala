@@ -69,10 +69,8 @@ object AllPensionsData {
     IncomeFromPensionsViewModel(
       statePension = statePen,
       statePensionLumpSum = statePenLumpSum,
-
-      // TODO: set the question below based on the list from backend
       uKPensionIncomesQuestion = uKPenIncomesQ,
-      uKPensionIncomes = Some(uKPenIncomes)
+      uKPensionIncomes = if (uKPenIncomes.isEmpty) None else Some(uKPenIncomes)
     )
   }
 
