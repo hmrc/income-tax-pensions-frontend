@@ -16,6 +16,7 @@
 
 package services.redirects
 
+import common.TaxYear
 import controllers.pensions.incomeFromPensions.routes._
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Call, Result}
@@ -29,5 +30,5 @@ object StatePensionRedirects {
   def lumpSumStartDateRedirect(taxYear: Int): Result      = Redirect(StatePensionLumpSumStartDateController.show(taxYear))
   def cyaPageRedirect(taxYear: Int): Result               = Redirect(cyaPageCall(taxYear))
 
-  def cyaPageCall(taxYear: Int): Call = StatePensionCYAController.show(taxYear)
+  def cyaPageCall(taxYear: Int): Call = StatePensionCYAController.show(TaxYear(taxYear))
 }

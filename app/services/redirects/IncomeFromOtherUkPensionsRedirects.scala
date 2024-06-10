@@ -43,7 +43,7 @@ object IncomeFromOtherUkPensionsRedirects {
 
     val checkRedirect = journeyCheck(currentPage, _, taxYear, optIndex)
     redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
-      val pensionSchemes: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
+      val pensionSchemes: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.getUKPensionIncomes
       val validatedIndex: Option[Int]                   = optIndex.filter(pensionSchemes.indices.contains)
 
       (pensionSchemes.nonEmpty, validatedIndex) match {
@@ -100,7 +100,7 @@ object IncomeFromOtherUkPensionsRedirects {
   }
 
   private def previousQuestionIsAnswered(pageId: Int, optIndex: Option[Int], viewModel: IncomeFromPensionsViewModel): Boolean = {
-    val validIndex = optIndex.filter(viewModel.uKPensionIncomes.indices.contains)
+    val validIndex = optIndex.filter(viewModel.getUKPensionIncomes.indices.contains)
 
     val previousQuestionAnswered: Map[Int, IncomeFromPensionsViewModel => Boolean] = Map(
       1 -> { _: IncomeFromPensionsViewModel => true },
@@ -111,23 +111,23 @@ object IncomeFromOtherUkPensionsRedirects {
         if (validIndex.isEmpty) {
           false
         } else {
-          viewModel.uKPensionIncomes(validIndex.get).pensionSchemeName.isDefined &&
-          viewModel.uKPensionIncomes(validIndex.get).pensionSchemeRef.isDefined &&
-          viewModel.uKPensionIncomes(validIndex.get).pensionId.isDefined
+          viewModel.getUKPensionIncomes(validIndex.get).pensionSchemeName.isDefined &&
+          viewModel.getUKPensionIncomes(validIndex.get).pensionSchemeRef.isDefined &&
+          viewModel.getUKPensionIncomes(validIndex.get).pensionId.isDefined
         }
       },
       4 -> { viewModel: IncomeFromPensionsViewModel =>
         if (validIndex.isEmpty) {
           false
         } else {
-          viewModel.uKPensionIncomes(validIndex.get).amount.isDefined && viewModel.uKPensionIncomes(validIndex.get).taxPaid.isDefined
+          viewModel.getUKPensionIncomes(validIndex.get).amount.isDefined && viewModel.getUKPensionIncomes(validIndex.get).taxPaid.isDefined
         }
       },
       5 -> { viewModel: IncomeFromPensionsViewModel =>
         if (validIndex.isEmpty) {
           false
         } else {
-          viewModel.uKPensionIncomes(validIndex.get).isFinished
+          viewModel.getUKPensionIncomes(validIndex.get).isFinished
         }
       },
       6 -> { _: IncomeFromPensionsViewModel => true }, // if valid then schemes can exist or be empty
@@ -135,7 +135,7 @@ object IncomeFromOtherUkPensionsRedirects {
         if (validIndex.isEmpty) {
           true // to summary page
         } else {
-          viewModel.uKPensionIncomes(validIndex.get).isFinished // to journey start
+          viewModel.getUKPensionIncomes(validIndex.get).isFinished // to journey start
         }
       },
       8 -> { viewModel: IncomeFromPensionsViewModel =>

@@ -74,7 +74,7 @@ object UkPensionIncomeAudit {
       mtdItId = sessionData.mtdItId,
       ukPensionIncome = AuditUkPensionIncome(
         sessionData.pensions.incomeFromPensions.uKPensionIncomesQuestion,
-        sessionData.pensions.incomeFromPensions.uKPensionIncomes),
+        sessionData.pensions.incomeFromPensions.getUKPensionIncomes),
       priorUkPensionIncome = priorData
         .map(pd => AllPensionsData.generateUkPensionSessionFromPrior(pd))
         .map { case (ukPensionIncomeQ, ukPensionIncomes) => AuditUkPensionIncome(ukPensionIncomeQ, ukPensionIncomes) }
@@ -88,6 +88,6 @@ object UkPensionIncomeAudit {
       mtdItId = sessionData.mtdItId,
       ukPensionIncome = AuditUkPensionIncome(
         sessionData.pensions.incomeFromPensions.uKPensionIncomesQuestion,
-        sessionData.pensions.incomeFromPensions.uKPensionIncomes)
+        sessionData.pensions.incomeFromPensions.getUKPensionIncomes)
     )
 }

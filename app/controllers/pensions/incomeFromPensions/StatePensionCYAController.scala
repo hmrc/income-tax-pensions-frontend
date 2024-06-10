@@ -16,23 +16,17 @@
 
 package controllers.pensions.incomeFromPensions
 
-import cats.data.EitherT
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
+import controllers.handleResult
 import controllers.predicates.auditActions.AuditActionsProvider
-import models.redirects.AppLocations.SECTION_COMPLETED_PAGE
-import models.IncomeTaxUserData
-import models.mongo.{PensionsCYAModel, PensionsUserData, ServiceError}
-import models.pension.AllPensionsData
-import models.pension.AllPensionsData.generateSessionModelFromPrior
-import models.pension.Journey.StatePension
-import models.requests.UserPriorAndSessionDataRequest
+import models.pension.Journey
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.PensionsService
 import services.redirects.StatePensionPages.StatePensionsCYAPage
-import services.{PensionSessionService, StatePensionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.SessionHelper
+import utils.Logging
 import validation.pensions.incomeFromPensions.StatePensionValidator.validateFlow
 import views.html.pensions.incomeFromPensions.StatePensionCYAView
 
@@ -40,49 +34,40 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class StatePensionCYAController @Inject() (auditProvider: AuditActionsProvider,
-                                           sessionService: PensionSessionService,
-                                           statePensionService: StatePensionService,
+class StatePensionCYAController @Inject() (mcc: MessagesControllerComponents,
+                                           auditProvider: AuditActionsProvider,
+                                           pensionsService: PensionsService,
                                            view: StatePensionCYAView,
-                                           mcc: MessagesControllerComponents,
                                            errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
-    with SessionHelper {
+    with Logging {
 
-  def show(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsViewAuditing(taxYear) async { implicit request =>
-    val journey = request.sessionData.pensions.incomeFromPensions
+  def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.incomeFromStatePensionsViewAuditing(taxYear.endYear) async { implicit request =>
+    val cyaData    = request.sessionData
+    val taxYearInt = taxYear.endYear
 
-    validateFlow(journey, StatePensionsCYAPage, taxYear) {
-      Future.successful(Ok(view(taxYear, journey)))
+    if (cyaData.pensions.incomeFromPensions.isStatePensionFinished) {
+      Future.successful(Ok(view(taxYearInt, cyaData.pensions.incomeFromPensions)))
+    } else {
+      val incomeFromPensions = request.sessionData.pensions.incomeFromPensions
+      validateFlow(incomeFromPensions, StatePensionsCYAPage, taxYear.endYear) {
+        Future.successful(Ok(view(taxYear.endYear, incomeFromPensions)))
+      }
     }
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = auditProvider.incomeFromStatePensionsUpdateAuditing(taxYear) async { implicit request =>
-    val journey = request.sessionData.pensions.incomeFromPensions
+  def submit(taxYear: TaxYear): Action[AnyContent] = auditProvider.incomeFromStatePensionsUpdateAuditing(taxYear.endYear) async { implicit request =>
+    def upsertAnswers = pensionsService.upsertStatePension(
+      request.user,
+      taxYear,
+      request.sessionData
+    )(request.user.withDownstreamHc(hc), ec)
 
-    validateFlow(journey, StatePensionsCYAPage, taxYear) {
-      val resultOrError: EitherT[Future, ServiceError, Result] =
-        for {
-          data <- sessionService.loadPriorAndSession(request.user, TaxYear(taxYear))
-          (prior, session) = data
-          _ <- processSubmission(session, prior, taxYear)
-        } yield Redirect(SECTION_COMPLETED_PAGE(taxYear, StatePension))
-
-      resultOrError
-        .leftMap(_ => errorHandler.internalServerError())
-        .merge
+    // TODO Do we need this validate Flow? Why other journeys don't have it
+    validateFlow(request.sessionData.pensions.incomeFromPensions, StatePensionsCYAPage, taxYear.endYear) {
+      handleResult(errorHandler, taxYear, Journey.StatePension, upsertAnswers)
     }
-
   }
-
-  private def processSubmission(session: PensionsUserData, prior: IncomeTaxUserData, taxYear: Int)(implicit
-      request: UserPriorAndSessionDataRequest[AnyContent]): EitherT[Future, ServiceError, Unit] =
-    if (sessionDeviatesFromPrior(session.pensions, prior.pensions))
-      EitherT(statePensionService.saveAnswers(request.user, TaxYear(taxYear)))
-    else EitherT.pure[Future, ServiceError](())
-
-  private def sessionDeviatesFromPrior(session: PensionsCYAModel, maybePrior: Option[AllPensionsData]): Boolean =
-    maybePrior.fold(ifEmpty = true)(prior => !session.equals(generateSessionModelFromPrior(prior)))
 
 }

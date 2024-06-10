@@ -39,7 +39,7 @@ class PensionSchemeSummaryController @Inject() (view: PensionSchemeSummaryView, 
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
     implicit request =>
       indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, SchemeSummaryPage, taxYear) { data =>
-        val scheme: UkPensionIncomeViewModel = data.pensions.incomeFromPensions.uKPensionIncomes(pensionSchemeIndex.getOrElse(0))
+        val scheme: UkPensionIncomeViewModel = data.pensions.incomeFromPensions.getUKPensionIncomes(pensionSchemeIndex.getOrElse(0))
         Future.successful(Ok(view(taxYear, scheme, pensionSchemeIndex)))
       }
   }

@@ -49,7 +49,7 @@ class RemovePensionSchemeController @Inject() (mcc: MessagesControllerComponents
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>
           indexCheckThenJourneyCheck(data, pensionSchemeIndex, RemovePensionIncomePage, taxYear) { data =>
-            val scheme: UkPensionIncomeViewModel = data.pensions.incomeFromPensions.uKPensionIncomes(pensionSchemeIndex.getOrElse(0))
+            val scheme: UkPensionIncomeViewModel = data.pensions.incomeFromPensions.getUKPensionIncomes(pensionSchemeIndex.getOrElse(0))
             Future.successful(Ok(view(taxYear, scheme.pensionSchemeName.getOrElse(""), pensionSchemeIndex)))
           }
         case _ => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
@@ -62,10 +62,10 @@ class RemovePensionSchemeController @Inject() (mcc: MessagesControllerComponents
         indexCheckThenJourneyCheck(data, pensionSchemeIndex, RemovePensionIncomePage, taxYear) { data =>
           val pensionsCYAModel                                   = data.pensions
           val viewModel                                          = pensionsCYAModel.incomeFromPensions
-          val pensionIncomesList: List[UkPensionIncomeViewModel] = viewModel.uKPensionIncomes
+          val pensionIncomesList: List[UkPensionIncomeViewModel] = viewModel.getUKPensionIncomes
 
           val updatedPensionIncomesList: List[UkPensionIncomeViewModel] = pensionIncomesList.patch(pensionSchemeIndex.get, Nil, 1)
-          val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedPensionIncomesList))
+          val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = Some(updatedPensionIncomesList)))
 
           pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
             errorHandler.internalServerError()) {

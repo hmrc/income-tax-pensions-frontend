@@ -18,7 +18,7 @@ package models.pension.statebenefits
 
 import connectors.OptionalContentHttpReads
 import models.mongo.{PensionsCYAModel, TextAndKey}
-import models.pension.PensionCYABaseModel
+import models.pension.{IncomeFromPensionsStatePensionAnswers, PensionCYABaseModel}
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.booleanDecryptor
@@ -26,37 +26,47 @@ import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.booleanEncryptor
 import utils.{EncryptedValue, SecureGCMCipher}
 
+// TODO Any reason why these two journeys are aggregated in one case class?
 case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewModel] = None,
                                        statePensionLumpSum: Option[StateBenefitViewModel] = None,
                                        uKPensionIncomesQuestion: Option[Boolean] = None,
-                                       uKPensionIncomes: List[UkPensionIncomeViewModel] = Nil)
+                                       uKPensionIncomes: Option[List[UkPensionIncomeViewModel]] = None)
     extends PensionCYABaseModel {
+
+  def getUKPensionIncomes: List[UkPensionIncomeViewModel] = uKPensionIncomes.getOrElse(Nil)
 
   def isEmpty: Boolean =
     statePension.isEmpty &&
       statePensionLumpSum.isEmpty &&
       uKPensionIncomesQuestion.isEmpty &&
-      uKPensionIncomes.isEmpty
+      getUKPensionIncomes.isEmpty
 
   def nonEmpty: Boolean = !isEmpty
 
-  def removeUkPensionIncome: IncomeFromPensionsViewModel = copy(uKPensionIncomesQuestion = None, uKPensionIncomes = Nil)
+  def removeUkPensionIncome: IncomeFromPensionsViewModel = copy(uKPensionIncomesQuestion = None, uKPensionIncomes = None)
 
   def removeStatePension: IncomeFromPensionsViewModel = copy(statePension = None, statePensionLumpSum = None)
+
+  def toIncomeFromPensionsStatePensionAnswers(sessionId: String): IncomeFromPensionsStatePensionAnswers =
+    IncomeFromPensionsStatePensionAnswers(
+      statePension = statePension,
+      statePensionLumpSum = statePensionLumpSum,
+      sessionId = Some(sessionId)
+    )
 
   def isStatePensionFinished: Boolean =
     statePension.exists(_.isFinished) ||
       statePensionLumpSum.exists(_.isFinished)
 
   def isUkPensionFinished: Boolean =
-    uKPensionIncomesQuestion.exists(x => !x || (uKPensionIncomes.nonEmpty && uKPensionIncomes.forall(_.isFinished)))
+    uKPensionIncomesQuestion.exists(x => !x || (getUKPensionIncomes.nonEmpty && getUKPensionIncomes.forall(_.isFinished)))
 
   def isFinished: Boolean = isStatePensionFinished && isUkPensionFinished
 
   def journeyIsNoStatePension: Boolean =
     statePension.exists(!_.amountPaidQuestion.getOrElse(true)) && statePensionLumpSum.exists(!_.amountPaidQuestion.getOrElse(true))
 
-  private def journeyIsNoUkPension: Boolean = uKPensionIncomesQuestion.exists(x => !x && uKPensionIncomes.isEmpty)
+  private def journeyIsNoUkPension: Boolean = uKPensionIncomesQuestion.exists(x => !x && getUKPensionIncomes.isEmpty)
 
   def journeyIsNo: Boolean = journeyIsNoStatePension && journeyIsNoUkPension
 
@@ -67,7 +77,7 @@ case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewMode
       statePension = statePension.map(_.encrypted()),
       statePensionLumpSum = statePensionLumpSum.map(_.encrypted()),
       uKPensionIncomesQuestion = uKPensionIncomesQuestion.map(_.encrypted),
-      uKPensionIncomes = uKPensionIncomes.map(_.encrypted())
+      uKPensionIncomes = uKPensionIncomes.map(_.map(_.encrypted()))
     )
 
   def toPensionsCYAModel: PensionsCYAModel =
@@ -84,14 +94,14 @@ object IncomeFromPensionsViewModel {
 case class EncryptedIncomeFromPensionsViewModel(statePension: Option[EncryptedStateBenefitViewModel] = None,
                                                 statePensionLumpSum: Option[EncryptedStateBenefitViewModel] = None,
                                                 uKPensionIncomesQuestion: Option[EncryptedValue] = None,
-                                                uKPensionIncomes: List[EncryptedUkPensionIncomeViewModel] = Nil) {
+                                                uKPensionIncomes: Option[List[EncryptedUkPensionIncomeViewModel]] = None) {
 
   def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): IncomeFromPensionsViewModel =
     IncomeFromPensionsViewModel(
       statePension = statePension.map(_.decrypted()),
       statePensionLumpSum = statePensionLumpSum.map(_.decrypted()),
       uKPensionIncomesQuestion = uKPensionIncomesQuestion.map(_.decrypted[Boolean]),
-      uKPensionIncomes.map(_.decrypted())
+      uKPensionIncomes.map(_.map(_.decrypted()))
     )
 }
 

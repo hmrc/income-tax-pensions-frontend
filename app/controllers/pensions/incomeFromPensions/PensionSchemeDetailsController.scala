@@ -53,7 +53,7 @@ class PensionSchemeDetailsController @Inject() (mcc: MessagesControllerComponent
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>
           indexCheckThenJourneyCheck(data, pensionSchemeIndex, PensionSchemeDetailsPage, taxYear) { data =>
-            val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
+            val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.getUKPensionIncomes
             val form: Form[PensionSchemeDetailsModel]             = PensionSchemeDetailsForm.pensionSchemeDetailsForm(request.user)
 
             pensionSchemeIndex match {
@@ -92,7 +92,7 @@ class PensionSchemeDetailsController @Inject() (mcc: MessagesControllerComponent
                     pensionId = Some(formModel.pensionId)))
 
                 val updatedPensionIncomesList: List[UkPensionIncomeViewModel] =
-                  (viewModel.uKPensionIncomes, pensionSchemeIndex) match {
+                  (viewModel.getUKPensionIncomes, pensionSchemeIndex) match {
                     case (list, Some(index)) =>
                       list.updated(
                         index,
@@ -104,9 +104,9 @@ class PensionSchemeDetailsController @Inject() (mcc: MessagesControllerComponent
                     case (list, None) => list ++ newPensionIncomeScheme
                   }
 
-                val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedPensionIncomesList))
+                val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = Some(updatedPensionIncomesList)))
                 val updatedPensionSchemeIndex =
-                  (viewModel.uKPensionIncomes, pensionSchemeIndex) match {
+                  (viewModel.getUKPensionIncomes, pensionSchemeIndex) match {
                     case (list, None) if list.isEmpty => Some(0)
                     case (list, None)                 => Some(list.size)
                     case (_, Some(_))                 => pensionSchemeIndex

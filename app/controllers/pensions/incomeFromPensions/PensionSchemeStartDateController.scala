@@ -50,7 +50,7 @@ class PensionSchemeStartDateController @Inject() (pensionSessionService: Pension
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
     implicit request =>
       indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, WhenDidYouStartGettingPaymentsPage, taxYear) { data =>
-        val viewModel = data.pensions.incomeFromPensions.uKPensionIncomes
+        val viewModel = data.pensions.incomeFromPensions.getUKPensionIncomes
         val index     = pensionSchemeIndex.getOrElse(0)
         viewModel(index).startDate.fold {
           Future.successful(Ok(view(formProvider.pensionSchemeDateForm, taxYear, index)))
@@ -79,12 +79,12 @@ class PensionSchemeStartDateController @Inject() (pensionSessionService: Pension
             startDate => {
               val pensionsCYAModel: PensionsCYAModel      = data.pensions
               val viewModel                               = pensionsCYAModel.incomeFromPensions
-              val pensionScheme: UkPensionIncomeViewModel = viewModel.uKPensionIncomes(index)
+              val pensionScheme: UkPensionIncomeViewModel = viewModel.getUKPensionIncomes(index)
               val newStartDate                            = startDate.toLocalDate.toString
 
               val updatedPensionIncomesList: List[UkPensionIncomeViewModel] =
-                viewModel.uKPensionIncomes.updated(index, pensionScheme.copy(startDate = Some(newStartDate)))
-              val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedPensionIncomesList))
+                viewModel.getUKPensionIncomes.updated(index, pensionScheme.copy(startDate = Some(newStartDate)))
+              val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = Some(updatedPensionIncomesList)))
 
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                 errorHandler.internalServerError()) {

@@ -69,10 +69,8 @@ object AllPensionsData {
     IncomeFromPensionsViewModel(
       statePension = statePen,
       statePensionLumpSum = statePenLumpSum,
-
-      // TODO: set the question below based on the list from backend
       uKPensionIncomesQuestion = uKPenIncomesQ,
-      uKPensionIncomes = uKPenIncomes
+      uKPensionIncomes = if (uKPenIncomes.isEmpty) None else Some(uKPenIncomes)
     )
   }
 
@@ -85,12 +83,6 @@ object AllPensionsData {
               benefitId = Some(benefit.benefitId),
               startDateQuestion = Some(true),
               startDate = Some(benefit.startDate),
-              endDateQuestion = Some(benefit.endDate.isDefined),
-              endDate = benefit.endDate,
-              submittedOnQuestion = Some(benefit.submittedOn.isDefined),
-              submittedOn = benefit.submittedOn,
-              dateIgnoredQuestion = Some(benefit.dateIgnored.isDefined),
-              dateIgnored = benefit.dateIgnored,
               amountPaidQuestion = Some(benefit.amount.isDefined),
               amount = benefit.amount,
               taxPaidQuestion = Some(benefit.taxPaid.isDefined),

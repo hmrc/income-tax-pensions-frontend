@@ -75,7 +75,7 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
       }
 
       "previous questions are unanswered" which {
-        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne.copy(amount = None)))
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne.copy(amount = None))))
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
@@ -97,7 +97,9 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
           dropPensionsDB()
           authoriseAgentOrIndividual()
           val viewModel =
-            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = List(anUkPensionIncomeViewModelOne))
+            anIncomeFromPensionEmptyViewModel.copy(
+              uKPensionIncomesQuestion = Some(true),
+              uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne)))
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
           urlGet(
             fullUrl(pensionSchemeSummaryUrl(taxYearEOY, Some(8))),
@@ -116,7 +118,9 @@ class PensionSchemeSummaryControllerISpec extends IntegrationTest with ViewHelpe
           dropPensionsDB()
           authoriseAgentOrIndividual()
           val viewModel =
-            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = List(anUkPensionIncomeViewModelOne))
+            anIncomeFromPensionEmptyViewModel.copy(
+              uKPensionIncomesQuestion = Some(true),
+              uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne)))
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
           urlGet(
             fullUrl(pensionSchemeSummaryUrl(taxYearEOY, None)),

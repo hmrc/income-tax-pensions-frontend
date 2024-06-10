@@ -70,13 +70,13 @@ class PensionsCYAModelSpec extends AnyWordSpecLike with Matchers {
         statePension = sessionStatePension.some,
         statePensionLumpSum = None,
         uKPensionIncomesQuestion = None,
-        uKPensionIncomes = Nil
+        uKPensionIncomes = Some(Nil)
       )
       val priorIncomeFromPensions = IncomeFromPensionsViewModel(
         statePension = priorStatePension.some,
         statePensionLumpSum = None,
         uKPensionIncomesQuestion = true.some,
-        uKPensionIncomes = List(priorUkPension)
+        uKPensionIncomes = Some(List(priorUkPension))
       )
 
       val sessionModel = PensionsCYAModel.emptyModels.copy(incomeFromPensions = sessionIncomeFromPensions)
@@ -86,7 +86,7 @@ class PensionsCYAModelSpec extends AnyWordSpecLike with Matchers {
 
       withClue("State pension session was not retained")(result.incomeFromPensions.statePension shouldBe sessionStatePension.some)
       withClue("UK pension prior data was not merged in")(
-        result.incomeFromPensions.uKPensionIncomes should contain theSameElementsAs List(priorUkPension))
+        result.incomeFromPensions.getUKPensionIncomes should contain theSameElementsAs List(priorUkPension))
     }
   }
 }

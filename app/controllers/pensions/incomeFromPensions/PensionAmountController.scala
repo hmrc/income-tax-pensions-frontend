@@ -59,7 +59,7 @@ class PensionAmountController @Inject() (mcc: MessagesControllerComponents,
       pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
         case Some(data) =>
           indexCheckThenJourneyCheck(data, pensionSchemeIndex, HowMuchPensionDidYouGetPaidPage, taxYear) { data =>
-            val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
+            val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.getUKPensionIncomes
             validateIndex(pensionSchemeIndex, pensionIncomesList) match {
               case Some(index) =>
                 Future.successful(
@@ -79,7 +79,7 @@ class PensionAmountController @Inject() (mcc: MessagesControllerComponents,
     pensionSessionService.getPensionsSessionDataResult(taxYear, request.user) {
       case Some(data) =>
         indexCheckThenJourneyCheck(data, pensionSchemeIndex, HowMuchPensionDidYouGetPaidPage, taxYear) { data =>
-          val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.uKPensionIncomes
+          val pensionIncomesList: Seq[UkPensionIncomeViewModel] = data.pensions.incomeFromPensions.getUKPensionIncomes
           validateIndex(pensionSchemeIndex, pensionIncomesList) match {
             case Some(index) =>
               formsProvider
@@ -91,11 +91,11 @@ class PensionAmountController @Inject() (mcc: MessagesControllerComponents,
                     val pensionsCYAModel: PensionsCYAModel     = data.pensions
                     val viewModel: IncomeFromPensionsViewModel = pensionsCYAModel.incomeFromPensions
 
-                    val ukPensionModel: UkPensionIncomeViewModel        = viewModel.uKPensionIncomes(index)
+                    val ukPensionModel: UkPensionIncomeViewModel        = viewModel.getUKPensionIncomes(index)
                     val updatedUkPensionModel: UkPensionIncomeViewModel = ukPensionModel.copy(amount = amounts._1, taxPaid = amounts._2)
-                    val updatedList: List[UkPensionIncomeViewModel]     = viewModel.uKPensionIncomes.updated(index, updatedUkPensionModel)
+                    val updatedList: List[UkPensionIncomeViewModel]     = viewModel.getUKPensionIncomes.updated(index, updatedUkPensionModel)
                     val updatedCyaModel: PensionsCYAModel =
-                      pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = updatedList))
+                      pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = Some(updatedList)))
                     pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                       errorHandler.internalServerError()) {
 

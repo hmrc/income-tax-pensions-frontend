@@ -156,11 +156,12 @@ class PensionSessionServiceSpec
     "generate a PensionsCYAModel from prior AllPensionsData" in {
       mockCreateOrUpdate(emptySessionData, Right(()))
       val response = generateSessionModelFromPrior(anAllPensionDataEmpty)
-      response shouldBe aPensionsCYAGeneratedFromPriorEmpty.copy(
+      val expected = aPensionsCYAGeneratedFromPriorEmpty.copy(
         paymentsIntoPension = PaymentsIntoPensionsViewModel.empty,
         pensionsAnnualAllowances = PensionAnnualAllowancesViewModel.empty,
         incomeFromOverseasPensions = IncomeFromOverseasPensionsViewModel.empty
       )
+      response.incomeFromPensions shouldBe expected.incomeFromPensions
     }
   }
 

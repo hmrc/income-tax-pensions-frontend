@@ -160,7 +160,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
         "render page with no prefilled values" which {
           lazy val pensionIncomeModel = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes =
-            List(anUkPensionIncomeViewModelOne.copy(amount = None, taxPaid = None, startDate = None)))
+            Some(List(anUkPensionIncomeViewModelOne.copy(amount = None, taxPaid = None, startDate = None))))
           lazy val result: WSResponse = {
             dropPensionsDB()
             authoriseAgentOrIndividual(user.isAgent)
@@ -266,7 +266,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
       "previous questions are unanswered" which {
         val incompleteJourney =
-          aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne.copy(pensionSchemeName = None)))
+          aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne.copy(pensionSchemeName = None))))
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
@@ -305,7 +305,9 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
           dropPensionsDB()
           authoriseAgentOrIndividual()
           val viewModel =
-            anIncomeFromPensionEmptyViewModel.copy(uKPensionIncomesQuestion = Some(true), uKPensionIncomes = List(anUkPensionIncomeViewModelOne))
+            anIncomeFromPensionEmptyViewModel.copy(
+              uKPensionIncomesQuestion = Some(true),
+              uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne)))
           insertCyaData(pensionsUserDataWithIncomeFromPensions(viewModel))
           urlGet(
             fullUrl(pensionAmountUrl(taxYearEOY, Some(8))),
@@ -472,7 +474,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
       lazy val result: WSResponse = {
         dropPensionsDB()
         authoriseAgentOrIndividual()
-        insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(scheme))))
+        insertCyaData(pensionsUserDataWithIncomeFromPensions(anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(scheme)))))
         urlPost(
           fullUrl(pensionAmountUrl(taxYearEOY, Some(index))),
           body = form,
@@ -488,7 +490,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
       "update state pension amount to Some(new values)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(index) shouldBe scheme.copy(
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes(index) shouldBe scheme.copy(
           amount = Some(newAmount),
           taxPaid = Some(newAmount2)
         )
@@ -497,7 +499,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
     "redirect to the Scheme Summary page when a valid amount is submitted, completing the scheme" which {
       lazy val form: Map[String, String] = pensionAmountForm(newAmount.toString, newAmount2.toString)
-      val viewModel                      = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne))
+      val viewModel                      = anIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne)))
 
       lazy val result: WSResponse = {
         dropPensionsDB()
@@ -518,7 +520,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
 
       "update state pension amount to Some(new values)" in {
         lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-        cyaModel.pensions.incomeFromPensions.uKPensionIncomes(index) shouldBe anUkPensionIncomeViewModelOne.copy(
+        cyaModel.pensions.incomeFromPensions.getUKPensionIncomes(index) shouldBe anUkPensionIncomeViewModelOne.copy(
           amount = Some(newAmount),
           taxPaid = Some(newAmount2)
         )
@@ -550,7 +552,7 @@ class PensionAmountControllerISpec extends IntegrationTest with ViewHelpers with
       "previous questions are unanswered" which {
         lazy val form: Map[String, String] = pensionAmountForm(newAmount.toString, newAmount2.toString)
         val incompleteJourney =
-          aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne.copy(pensionSchemeName = None)))
+          aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne.copy(pensionSchemeName = None))))
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()

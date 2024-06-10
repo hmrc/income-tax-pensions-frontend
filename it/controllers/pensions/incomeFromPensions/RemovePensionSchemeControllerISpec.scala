@@ -176,7 +176,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
       }
 
       "previous questions are unanswered" which {
-        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne.copy(amount = None)))
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne.copy(amount = None))))
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()
@@ -219,7 +219,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
 
         "removes the scheme from the list" in {
           lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-          cyaModel.pensions.incomeFromPensions.uKPensionIncomes shouldBe List(anUkPensionIncomeViewModelTwo)
+          cyaModel.pensions.incomeFromPensions.getUKPensionIncomes shouldBe List(anUkPensionIncomeViewModelTwo)
         }
       }
 
@@ -243,7 +243,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
 
         "does not remove any schemes from the list" in {
           lazy val cyaModel = findCyaData(taxYearEOY, aUserRequest).get
-          cyaModel.pensions.incomeFromPensions.uKPensionIncomes shouldBe UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelSeq.toList
+          cyaModel.pensions.incomeFromPensions.getUKPensionIncomes shouldBe UkPensionIncomeViewModelBuilder.anUkPensionIncomeViewModelSeq.toList
         }
       }
     }
@@ -270,7 +270,7 @@ class RemovePensionSchemeControllerISpec extends IntegrationTest with ViewHelper
       }
 
       "previous questions are unanswered" which {
-        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = List(anUkPensionIncomeViewModelOne.copy(amount = None)))
+        val incompleteJourney = aUKIncomeFromPensionsViewModel.copy(uKPensionIncomes = Some(List(anUkPensionIncomeViewModelOne.copy(amount = None))))
         lazy val result: WSResponse = {
           dropPensionsDB()
           authoriseAgentOrIndividual()

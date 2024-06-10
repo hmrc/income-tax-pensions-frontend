@@ -32,7 +32,7 @@ import models.domain.ApiResultT
 import models.logging.ConnectorRequestInfo
 import models.mongo.{JourneyContext, JourneyStatus}
 import models.pension.Journey._
-import models.pension.JourneyNameAndStatus
+import models.pension.{IncomeFromPensionsStatePensionAnswers, JourneyNameAndStatus}
 import models.pension.charges._
 import models.pension.employmentPensions.EmploymentPensions
 import models.pension.income.CreateUpdatePensionIncomeRequestModel
@@ -44,6 +44,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
+// TODO add tests
 class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends Logging {
   private val apiId                 = "income-tax-pensions"
   private def buildUrl(url: String) = s"${appConfig.pensionBEBaseUrl}$url"
@@ -91,6 +92,34 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
 
     val res =
       http.PUT[IncomeFromPensionsViewModel, DownstreamErrorOr[Unit]](url, answers)(IncomeFromPensionsViewModel.format, NoContentHttpReads, hc, ec)
+
+    EitherT(res)
+  }
+
+  def getStatePension(nino: Nino, taxYear: TaxYear)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Option[IncomeFromPensionsStatePensionAnswers]] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, StatePension)
+    ConnectorRequestInfo("GET", url, apiId).logRequest(logger)
+
+    val res = http.GET[DownstreamErrorOr[Option[IncomeFromPensionsStatePensionAnswers]]](url)
+
+    EitherT(res)
+  }
+
+  def saveStatePension(nino: Nino, taxYear: TaxYear, answers: IncomeFromPensionsStatePensionAnswers)(implicit
+      hc: HeaderCarrier,
+      ec: ExecutionContext): ApiResultT[Unit] = {
+    val url = appConfig.journeyAnswersUrl(taxYear, nino, StatePension)
+
+    ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, answers)
+
+    val res =
+      http.PUT[IncomeFromPensionsStatePensionAnswers, DownstreamErrorOr[Unit]](url, answers)(
+        IncomeFromPensionsStatePensionAnswers.format,
+        NoContentHttpReads,
+        hc,
+        ec)
 
     EitherT(res)
   }

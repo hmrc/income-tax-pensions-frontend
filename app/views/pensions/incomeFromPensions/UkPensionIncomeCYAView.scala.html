@@ -42,7 +42,7 @@
 }
 
 @schemeNames = {
-    @for(name <- cya.uKPensionIncomes.collect{case scheme => scheme.pensionSchemeName}){
+    @for(name <- cya.getUKPensionIncomes.collect{case scheme => scheme.pensionSchemeName}){
         <div class="form-group">@name</div>
     }
 }
@@ -58,7 +58,7 @@
 }
 
 @schemesRow = @{
-    if(cya.uKPensionIncomes.nonEmpty) {
+    if(cya.getUKPensionIncomes.nonEmpty) {
         Some(summaryListRow(
             HtmlContent(messages("unauthorisedPayments.common.ukPensionSchemes")),
             HtmlContent(schemeNames),
