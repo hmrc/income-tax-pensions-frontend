@@ -90,6 +90,6 @@ class PensionCYAMergedWithPriorDataSpec extends AnyWordSpecLike with TableDriven
       (Some(session8), Some(fullPensionsModel), PensionCYAMergedWithPriorData(pension8, false))
     )
 
-    "don't override data for user in the middle of a change (not submitted)" in forAll(dontOverrideCases)(assertMergeCases)
+    "not override data for user in the middle of a change (not submitted)" in forAll(dontOverrideCases)(assertMergeCases)
   }
 }
