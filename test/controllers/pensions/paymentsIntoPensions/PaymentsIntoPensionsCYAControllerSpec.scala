@@ -27,6 +27,7 @@ class PaymentsIntoPensionsCYAControllerSpec extends ControllerSpecBase {
   val controller = new PaymentsIntoPensionsCYAController(
     auditProvider,
     pensionsService,
+    excludeJourneyService,
     view,
     errorHandler,
     mcc

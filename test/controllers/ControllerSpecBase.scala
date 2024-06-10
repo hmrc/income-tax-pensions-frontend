@@ -32,7 +32,7 @@ import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Application, Environment, Mode}
-import services.PensionSessionService
+import services.{ExcludeJourneyService, PensionSessionService}
 import stubs.services.PensionsServiceStub
 import testdata.allData
 import utils.CommonData.{currTaxYear, nino}
@@ -50,6 +50,7 @@ trait ControllerSpecBase extends PlaySpec with AnyWordSpecLike with MockitoSugar
   val auditProvider         = mock[AuditActionsProvider]
   val pensionsService       = PensionsServiceStub()
   val pensionSessionService = mock[PensionSessionService]
+  val excludeJourneyService = mock[ExcludeJourneyService]
   val errorHandler          = mock[ErrorHandler]
   val mcc                   = stubMessagesControllerComponents()
   val user                  = UserBuilder.aUser

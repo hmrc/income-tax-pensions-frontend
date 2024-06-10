@@ -47,4 +47,9 @@ object PaymentsIntoPensionVewModelBuilder {
   )
 
   val aPaymentsIntoPensionsEmptyViewModel: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel()
+
+  val aPaymentsIntoPensionsNoJourneyViewModel: PaymentsIntoPensionsViewModel = PaymentsIntoPensionsViewModel(
+    rasPensionPaymentQuestion = Some(false),
+    pensionTaxReliefNotClaimedQuestion = Some(false)
+  )
 }

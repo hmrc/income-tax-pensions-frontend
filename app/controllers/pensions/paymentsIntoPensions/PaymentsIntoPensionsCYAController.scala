@@ -20,13 +20,17 @@ import common.TaxYear
 import config.{AppConfig, ErrorHandler}
 import controllers.handleResult
 import controllers.predicates.auditActions.AuditActionsProvider
+import models.domain.ApiResultT
 import models.pension.Journey
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
+import models.requests.UserPriorAndSessionDataRequest
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PensionsService
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.redirects.PaymentsIntoPensionPages.CheckYourAnswersPage
 import services.redirects.PaymentsIntoPensionsRedirects.{cyaPageCall, journeyCheck}
 import services.redirects.SimpleRedirectService.redirectBasedOnCurrentAnswers
+import services.{ExcludeJourneyService, PensionsService}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.Logging
 import views.html.pensions.paymentsIntoPensions.PaymentsIntoPensionsCYAView
@@ -37,6 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsProvider,
                                                    pensionsService: PensionsService,
+                                                   excludeJourneyService: ExcludeJourneyService,
                                                    view: PaymentsIntoPensionsCYAView,
                                                    errorHandler: ErrorHandler,
                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
@@ -60,14 +65,29 @@ class PaymentsIntoPensionsCYAController @Inject() (auditProvider: AuditActionsPr
     }
   }
 
-  // TODO Business Question: Do we need to exclude the journey if answers NOs to some of the questions?
   def submit(taxYear: TaxYear): Action[AnyContent] = auditProvider.paymentsIntoPensionsUpdateAuditing(taxYear.endYear) async { implicit request =>
-    val res = pensionsService.upsertPaymentsIntoPensions(
-      request.user,
-      taxYear,
-      request.sessionData
-    )(request.user.withDownstreamHc(hc), executionContext)
+    excludeJourney(taxYear, request.sessionData.pensions.paymentsIntoPension).flatMap {
+      case Right(_) =>
+        val res: ApiResultT[Unit] = pensionsService.upsertPaymentsIntoPensions(
+          request.user,
+          taxYear,
+          request.sessionData
+        )(request.user.withDownstreamHc(hc), executionContext)
 
-    handleResult(errorHandler, taxYear, Journey.PaymentsIntoPensions, res)
+        handleResult(errorHandler, taxYear, Journey.PaymentsIntoPensions, res)
+      case Left(errorResult) => Future.successful(errorResult)
+    }
   }
+
+  private def excludeJourney(taxYear: TaxYear, paymentsIntoPensionFromSession: PaymentsIntoPensionsViewModel)(implicit
+      hc: HeaderCarrier,
+      request: UserPriorAndSessionDataRequest[AnyContent]): Future[Either[Result, Unit]] =
+    if (paymentsIntoPensionFromSession.journeyIsNo) {
+      excludeJourneyService
+        .excludeJourney("pensions", taxYear.endYear, request.user.nino)(request.user, hc)
+        .map(_ => Right(()))
+        .recover { case _ => Left(errorHandler.internalServerError()) }
+    } else {
+      Future.successful(Right(()))
+    }
 }
