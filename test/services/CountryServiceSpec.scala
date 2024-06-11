@@ -34,7 +34,7 @@ class CountryServiceSpec extends UnitTest { // scalatest:off magic.number
       Countries.allCountries should contain(Country("Åland Islands", "AX", "AXA"))
       Countries.allCountries should contain(Country("United Kingdom", "GB", "GBR"))
       Countries.allCountries should contain(Country("Czechoslovakia", "CS", "N/A"))
-      Countries.allCountries.size shouldBe 249
+      Countries.allCountries.size shouldBe 250
     }
 
     "give all overseas countries with codes in alphabetical order of country name with filtering according to permitted MDG values" in {
@@ -44,7 +44,7 @@ class CountryServiceSpec extends UnitTest { // scalatest:off magic.number
       Countries.overseasCountries should contain(Country("Zimbabwe", "ZW", "ZWE"))
       Countries.overseasCountries should contain(Country("Åland Islands", "AX", "AXA"))
       Countries.overseasCountries should not contain Country("United Kingdom", "GB", "GBR")
-      Countries.overseasCountries.size shouldBe 248
+      Countries.overseasCountries.size shouldBe 249
     }
 
     "since the link between the twoAlphaCountryCode map and the threeAlphaCountryCode map is country name " +
