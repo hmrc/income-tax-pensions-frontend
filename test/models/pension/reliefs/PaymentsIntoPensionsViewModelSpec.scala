@@ -16,7 +16,11 @@
 
 package models.pension.reliefs
 
-import builders.PaymentsIntoPensionVewModelBuilder.{aPaymentsIntoPensionViewModel, aPaymentsIntoPensionsEmptyViewModel}
+import builders.PaymentsIntoPensionVewModelBuilder.{
+  aPaymentsIntoPensionViewModel,
+  aPaymentsIntoPensionsEmptyViewModel,
+  aPaymentsIntoPensionsNoJourneyViewModel
+}
 import cats.implicits._
 import models.pension.AllPensionsData.Zero
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -68,14 +72,20 @@ class PaymentsIntoPensionsViewModelSpec extends UnitTest with TableDrivenPropert
   }
 
   "journeyIsNo" should {
-    "return true when rasPensionPaymentQuestion is 'false' and no others have been answered" in {
-      assert(aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(false)).journeyIsNo)
-    }
-    "return false in any other case" in {
-      aPaymentsIntoPensionsEmptyViewModel.journeyIsNo shouldBe false
-      aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(true)).journeyIsNo shouldBe false
-      aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(false)).journeyIsNo shouldBe false
-    }
+    val cases = Table(
+      ("answers", "journeyIsNo"),
+      (aPaymentsIntoPensionsNoJourneyViewModel, true),
+      (aPaymentsIntoPensionsEmptyViewModel, false),
+      (aPaymentsIntoPensionViewModel, false),
+      (aPaymentsIntoPensionViewModel.copy(rasPensionPaymentQuestion = Some(false)), false),
+      (aPaymentsIntoPensionViewModel.copy(pensionTaxReliefNotClaimedQuestion = Some(false)), false),
+      (aPaymentsIntoPensionsEmptyViewModel.copy(rasPensionPaymentQuestion = Some(false)), false),
+      (aPaymentsIntoPensionsEmptyViewModel.copy(pensionTaxReliefNotClaimedQuestion = Some(false)), false)
+    )
+    "return true when rasPensionPaymentQuestion and pensionTaxReliefNotClaimedQuestion are 'false' " +
+      "and all other answers are empty" in forAll(cases) { case (answers, journeyIsNo) =>
+        assert(answers.journeyIsNo == journeyIsNo)
+      }
   }
 
   "fromSubmittedReliefs" should {

@@ -77,7 +77,7 @@ case class PaymentsIntoPensionsViewModel(
       && oneOffRasPaymentPlusTaxReliefQuestion.isEmpty
       && totalOneOffRasPaymentPlusTaxRelief.isEmpty
       && totalPaymentsIntoRASQuestion.isEmpty
-      && pensionTaxReliefNotClaimedQuestion.isEmpty
+      && !pensionTaxReliefNotClaimedQuestion.getOrElse(true)
       && retirementAnnuityContractPaymentsQuestion.isEmpty
       && totalRetirementAnnuityContractPayments.isEmpty
       && workplacePensionPaymentsQuestion.isEmpty
