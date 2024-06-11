@@ -136,6 +136,10 @@
     "territory:BV"
   ],
   [
+    "Bonaire, Sint Eustatius and Saba",
+    "territory:BQ"
+  ],
+  [
     "Brazil",
     "country:BR"
   ],
@@ -825,7 +829,7 @@
   ],
   [
     "Saint Helena",
-    "territory:SH-HL"
+    "territory:SH"
   ],
   [
     "Saint Pierre and Miquelon",
