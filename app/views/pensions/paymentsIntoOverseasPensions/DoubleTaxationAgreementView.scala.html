@@ -65,7 +65,7 @@
 
         @formWithCsrf(action = DoubleTaxationAgreementController.submit(taxYear, index)) {
             <div style="width: 300px;">
-            @countryPartial(form, Countries.overseasPaymentsAndShortServiceRefundsCountryCodeList)
+            @countryPartial(form, Countries.osTransferContributionsAndOsPaymentsAndSsRefundsCountryCodeList)
             </div>
 
             @inputText(

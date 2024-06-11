@@ -29,16 +29,11 @@ object Countries {
   lazy val countriesThreeAlphaMapFromCountryName: Map[String, String] = countriesThreeAlphaMap.map(_.swap)
 
   lazy val incomeFromOverseasPensionsCountryCodeList: List[Country] =
-    allCountries filter (c => getCountryCodesFromFile(
-      "/incomeFromOverseasPensions-threeAlphaCountryName.csv") contains c.alphaThreeCode)
+    allCountries filter (c => getCountryCodesFromFile("/incomeFromOverseasPensions-threeAlphaCountryName.csv") contains c.alphaThreeCode)
 
-  lazy val overseasTransferContributionsCountryCodeList: List[Country] =
-    allCountries filter (c => getCountryCodesFromFile(
-      "/overseasTransferContributions-threeAlphaCountryName.csv") contains c.alphaThreeCode)
-
-  lazy val overseasPaymentsAndShortServiceRefundsCountryCodeList: List[Country] =
-    overseasCountries filter(c =>
-      getCountryCodesFromFile("/overseasPaymentsAndShortServiceRefunds-threeAlphaCountryName.csv") contains c.alphaThreeCode)
+  lazy val osTransferContributionsAndOsPaymentsAndSsRefundsCountryCodeList: List[Country] =
+    overseasCountries filter (c =>
+      getCountryCodesFromFile("/osTransferContributionsAndOsPaymentsAndSsRefunds-threeAlphaCountryName.csv") contains c.alphaThreeCode)
 
   lazy val countriesTwoAlphaMapFromCountryName: Map[String, String] =
     countriesTwoAlphaMap.filter { case (k, _) => getCountryCodesFromFile("/mdg-country-codes.csv") contains k }.map(_.swap)
