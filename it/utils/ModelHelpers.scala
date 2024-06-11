@@ -25,5 +25,5 @@ object ModelHelpers {
     PensionContributions(Seq.empty, 0.00, 0.00, None, None, None)
 
   val emptyChargesDownstreamRequestModel: CreateUpdatePensionChargesRequestModel =
-    CreateUpdatePensionChargesRequestModel(None, None, None, None, None)
+    CreateUpdatePensionChargesRequestModel(None, None, None, None)
 }

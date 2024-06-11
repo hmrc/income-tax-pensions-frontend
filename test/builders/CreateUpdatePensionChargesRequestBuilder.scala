@@ -18,7 +18,6 @@ package builders
 
 import builders.IncomeTaxUserDataBuilder.anIncomeTaxUserData
 import builders.OverseasPensionContributionsBuilder.anOverseasPensionContributions
-import builders.PensionSavingTaxChargesBuilder.aPensionSavingsTaxCharges
 import builders.PensionSchemeOverseasTransfersBuilder.anPensionSchemeOverseasTransfers
 import models.pension.charges.CreateUpdatePensionChargesRequestModel
 
@@ -27,7 +26,6 @@ object CreateUpdatePensionChargesRequestBuilder {
   val priorPensionChargesData = anIncomeTaxUserData.pensions.flatMap(_.pensionCharges)
 
   val priorPensionChargesRM: CreateUpdatePensionChargesRequestModel = CreateUpdatePensionChargesRequestModel(
-    pensionSavingsTaxCharges = priorPensionChargesData.flatMap(_.pensionSavingsTaxCharges),
     pensionSchemeOverseasTransfers = priorPensionChargesData.flatMap(_.pensionSchemeOverseasTransfers),
     pensionSchemeUnauthorisedPayments = priorPensionChargesData.flatMap(_.pensionSchemeUnauthorisedPayments),
     pensionContributions = priorPensionChargesData.flatMap(_.pensionContributions),
@@ -39,11 +37,6 @@ object CreateUpdatePensionChargesRequestBuilder {
 
   val shortServiceRefundSubmissionCRM = priorPensionChargesRM.copy(
     overseasPensionContributions = Some(anOverseasPensionContributions.copy(shortServiceRefund = 1000.20, shortServiceRefundTaxPaid = 250.00))
-  )
-
-  val annualAllowanceSubmissionCRM = priorPensionChargesRM.copy(
-    pensionSavingsTaxCharges =
-      Some(aPensionSavingsTaxCharges.copy(lumpSumBenefitTakenInExcessOfLifetimeAllowance = None, benefitInExcessOfLifetimeAllowance = None))
   )
 
 }

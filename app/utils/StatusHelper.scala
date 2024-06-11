@@ -70,7 +70,7 @@ object StatusHelper {
     prior.exists(_.employmentPensions.exists(_.employmentData.nonEmpty))
 
   def annualAllowanceHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.exists(_.pensionCharges.exists(pstc => pstc.pensionSavingsTaxCharges.nonEmpty && pstc.pensionContributions.nonEmpty))
+    prior.exists(_.pensionCharges.exists(_.pensionContributions.nonEmpty))
 
   def unauthorisedPaymentsHasPriorData(prior: Option[AllPensionsData]): Boolean =
     prior.exists(_.pensionCharges.exists(_.pensionSchemeUnauthorisedPayments.nonEmpty))

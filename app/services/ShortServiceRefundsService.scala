@@ -60,13 +60,11 @@ class ShortServiceRefundsService @Inject() (sessionService: PensionSessionServic
   private def hasOtherPriorChargesSubmissions(prior: IncomeTaxUserData): Boolean = {
     val priorCharges = prior.pensions.flatMap(_.pensionCharges)
 
-    val hasPriorPSTC = priorCharges.flatMap(_.pensionSavingsTaxCharges).isDefined
     val hasPriorPSUP = priorCharges.flatMap(_.pensionSchemeUnauthorisedPayments).isDefined
     val hasPriorPC   = priorCharges.flatMap(_.pensionContributions).isDefined
     val hasPriorPSOT = priorCharges.flatMap(_.pensionSchemeOverseasTransfers).isDefined
 
-    if (hasPriorPSTC || hasPriorPSUP || hasPriorPC || hasPriorPSOT) true
-    else false
+    if (hasPriorPSUP || hasPriorPC || hasPriorPSOT) true else false
   }
 
   private def clearJourneyFromSession(session: PensionsUserData): QueryResultT[Unit] = {

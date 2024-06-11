@@ -29,7 +29,6 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
 
   val pensionChargerConnectorHelper = new PensionChargesConnectorHelper(mockPensionsConnector)
   val model = CreateUpdatePensionChargesRequestModel(
-    anPensionCharges.pensionSavingsTaxCharges,
     anPensionCharges.pensionSchemeOverseasTransfers,
     anPensionCharges.pensionSchemeUnauthorisedPayments,
     anPensionCharges.pensionContributions,
@@ -68,7 +67,6 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
         "when all sub models are empty, and unauthorised model is empty" in {
 
           val chargesModel = model.copy(
-            pensionSavingsTaxCharges = None,
             pensionContributions = None,
             pensionSchemeOverseasTransfers = None,
             pensionSchemeUnauthorisedPayments = None,
@@ -87,7 +85,6 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
         "when all sub models are empty, and unauthorised model is defined but empty" in {
 
           val chargesModel = model.copy(
-            pensionSavingsTaxCharges = None,
             pensionContributions = None,
             pensionSchemeOverseasTransfers = None,
             pensionSchemeUnauthorisedPayments = Some(unauthModel),
@@ -111,7 +108,6 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
       val unauthModel = anUnauthorisedPaymentsViewModel.toDownstreamRequestModel
 
       val chargesModel = model.copy(
-        pensionSavingsTaxCharges = None,
         pensionContributions = None,
         pensionSchemeOverseasTransfers = None,
         pensionSchemeUnauthorisedPayments = Some(unauthModel),
@@ -133,7 +129,6 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
       val unauthModel = anUnauthorisedPaymentsEmptyViewModel.toDownstreamRequestModel
 
       val chargesModel = model.copy(
-        pensionSavingsTaxCharges = None,
         pensionContributions = None,
         pensionSchemeOverseasTransfers = None,
         pensionSchemeUnauthorisedPayments = Some(unauthModel),
@@ -148,7 +143,6 @@ class PensionChargesConnectorHelperSpec extends UnitTest with MockPensionsConnec
         Duration.Inf)
 
       result shouldBe Right(())
-
     }
   }
 

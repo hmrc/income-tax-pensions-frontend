@@ -29,14 +29,14 @@ import models.mongo._
 import models.pension.AllPensionsData.PriorPensionsData
 import models.pension.Journey.{
   AnnualAllowances,
+  PaymentsIntoOverseasPensions,
   PaymentsIntoPensions,
   StatePension,
   TransferIntoOverseasPensions,
   UkPensionIncome,
-  UnauthorisedPayments
+  UnauthorisedPayments,
+  _
 }
-import models.pension.Journey.{AnnualAllowances, PaymentsIntoOverseasPensions, PaymentsIntoPensions, UnauthorisedPayments}
-import models.pension.Journey._
 import models.pension.{Journey, JourneyNameAndStatus}
 import models.session.PensionCYAMergedWithPriorData
 import models.{APIErrorModel, User}

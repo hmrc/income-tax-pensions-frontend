@@ -41,17 +41,6 @@ object PensionDataStubs {
     pensionCharges = Some(
       PensionCharges(
         submittedOn = "2020-07-27T17:00:19Z",
-        pensionSavingsTaxCharges = Some(PensionSavingsTaxCharges(
-          pensionSchemeTaxReference = Some(Seq("00123456RA", "00123456RB")),
-          lumpSumBenefitTakenInExcessOfLifetimeAllowance = Some(LifetimeAllowance(
-            amount = Some(800.02),
-            taxPaid = Some(200.02)
-          )),
-          benefitInExcessOfLifetimeAllowance = Some(LifetimeAllowance(
-            amount = Some(800.02),
-            taxPaid = Some(200.02)
-          ))
-        )),
         pensionSchemeOverseasTransfers = Some(PensionSchemeOverseasTransfers(
           overseasSchemeProvider = Seq(OverseasSchemeProvider(
             providerName = "overseas providerName 1 qualifying scheme",

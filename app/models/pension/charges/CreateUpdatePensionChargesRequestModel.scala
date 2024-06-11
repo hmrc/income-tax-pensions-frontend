@@ -20,8 +20,7 @@ import models.IncomeTaxUserData
 import models.pension.{PensionChargesSubRequestModel, PensionRequestModel, PensionSubRequestModel}
 import play.api.libs.json.{Json, OFormat}
 
-case class CreateUpdatePensionChargesRequestModel(pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges],
-                                                  pensionSchemeOverseasTransfers: Option[PensionSchemeOverseasTransfers],
+case class CreateUpdatePensionChargesRequestModel(pensionSchemeOverseasTransfers: Option[PensionSchemeOverseasTransfers],
                                                   pensionSchemeUnauthorisedPayments: Option[PensionSchemeUnauthorisedPayments],
                                                   pensionContributions: Option[PensionContributions],
                                                   overseasPensionContributions: Option[OverseasPensionContributions])
@@ -34,33 +33,23 @@ case class CreateUpdatePensionChargesRequestModel(pensionSavingsTaxCharges: Opti
         pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
         pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
         overseasPensionContributions.forall(_.isEmpty)
-      case Some(_: PensionSavingsTaxCharges) =>
-        pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
-        pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
-        pensionContributions.forall(_.isEmpty) &&
-        overseasPensionContributions.forall(_.isEmpty)
       case Some(_: PensionSchemeOverseasTransfers) =>
-        pensionSavingsTaxCharges.forall(_.isEmpty) &&
         pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
         pensionContributions.forall(_.isEmpty) &&
         overseasPensionContributions.forall(_.isEmpty)
       case Some(_: PensionSchemeUnauthorisedPayments) =>
-        pensionSavingsTaxCharges.forall(_.isEmpty) &&
         pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
         pensionContributions.forall(_.isEmpty) &&
         overseasPensionContributions.forall(_.isEmpty)
       case Some(_: PensionContributions) =>
-        pensionSavingsTaxCharges.forall(_.isEmpty) &&
         pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
         pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
         overseasPensionContributions.forall(_.isEmpty)
       case Some(_: OverseasPensionContributions) =>
-        pensionSavingsTaxCharges.forall(_.isEmpty) &&
         pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
         pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
         pensionContributions.forall(_.isEmpty)
       case _ =>
-        pensionSavingsTaxCharges.forall(_.isEmpty) &&
         pensionSchemeOverseasTransfers.forall(_.isEmpty) &&
         pensionSchemeUnauthorisedPayments.forall(_.isEmpty) &&
         pensionContributions.forall(_.isEmpty) &&
@@ -76,7 +65,6 @@ case class CreateUpdatePensionChargesRequestModel(pensionSavingsTaxCharges: Opti
       }
 
     CreateUpdatePensionChargesRequestModel(
-      pensionSavingsTaxCharges = processModel(this.pensionSavingsTaxCharges),
       pensionSchemeOverseasTransfers = processModel(this.pensionSchemeOverseasTransfers),
       pensionSchemeUnauthorisedPayments = processModel(this.pensionSchemeUnauthorisedPayments),
       pensionContributions = processModel(this.pensionContributions),
@@ -90,7 +78,6 @@ object CreateUpdatePensionChargesRequestModel {
 
   def fromPriorData(prior: IncomeTaxUserData): CreateUpdatePensionChargesRequestModel =
     CreateUpdatePensionChargesRequestModel(
-      PensionSavingsTaxCharges.fromPriorData(prior),
       PensionSchemeOverseasTransfers.fromPriorData(prior),
       PensionSchemeUnauthorisedPayments.fromPriorData(prior),
       PensionContributions.fromPriorData(prior),

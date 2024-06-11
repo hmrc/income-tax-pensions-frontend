@@ -18,8 +18,6 @@ package models.pension.charges
 
 import models.pension.PensionChargesSubRequestModel
 
-case class AnnualAllowancesPensionCharges(pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges],
-                                          pensionContributions: Option[PensionContributions])
-    extends PensionChargesSubRequestModel {
+case class AnnualAllowancesPensionCharges(pensionContributions: Option[PensionContributions]) extends PensionChargesSubRequestModel {
   override def isEmpty: Boolean = this.productIterator.forall(_ == None)
 }
