@@ -24,18 +24,16 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
   ".otherSubModelsEmpty" should {
 
     val annualAllowancesPensionSubModel =
-      AnnualAllowancesPensionCharges(anPensionCharges.pensionSavingsTaxCharges, anPensionCharges.pensionContributions)
+      AnnualAllowancesPensionCharges(anPensionCharges.pensionContributions)
     Seq(
       anPensionCharges.pensionContributions,
       anPensionCharges.overseasPensionContributions,
-      anPensionCharges.pensionSavingsTaxCharges,
       anPensionCharges.pensionSchemeUnauthorisedPayments,
       anPensionCharges.pensionSchemeOverseasTransfers,
       Some(annualAllowancesPensionSubModel)
     ).foreach { subModel =>
       s"be false when subModel is non empty ${subModel.get.getClass.getName} and other models are not empty" in {
         val actualResult = CreateUpdatePensionChargesRequestModel(
-          anPensionCharges.pensionSavingsTaxCharges,
           anPensionCharges.pensionSchemeOverseasTransfers,
           anPensionCharges.pensionSchemeUnauthorisedPayments,
           anPensionCharges.pensionContributions,
@@ -49,7 +47,6 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
           None,
           None,
           None,
-          None,
           None
         ).otherSubRequestModelsEmpty(subModel)
         actualResult shouldBe true
@@ -57,7 +54,6 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
 
       s"be true when ${subModel.get.getClass.getName} subModel is non empty and the other models are either empty or have empty contents" in {
         val actualResult = CreateUpdatePensionChargesRequestModel(
-          anPensionCharges.pensionSavingsTaxCharges.map(_.copy(None, None, None)),
           None,
           anPensionCharges.pensionSchemeUnauthorisedPayments.map(_.copy(None, None, None)),
           None,
@@ -69,8 +65,7 @@ class CreateUpdatePensionChargesRequestModelSpec extends UnitTest {
 
       s"be false when ${subModel.get.getClass.getName} subModel is non empty and some other models have non-empty contents" in {
         val actualResult = CreateUpdatePensionChargesRequestModel(
-          anPensionCharges.pensionSavingsTaxCharges.map(_.copy(Some(Seq("00123456RA")), None, None)),
-          None,
+          anPensionCharges.pensionSchemeOverseasTransfers,
           anPensionCharges.pensionSchemeUnauthorisedPayments.map(_.copy(Some(Seq("PSTR")), None, None)),
           None,
           None

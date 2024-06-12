@@ -18,7 +18,7 @@ package models.pension.charges
 
 import connectors.OptionalContentHttpReads
 import models.mongo.PensionsCYAModel
-import models.pension.{AllPensionsData, PensionCYABaseModel}
+import models.pension.PensionCYABaseModel
 import play.api.libs.json.{Json, OFormat}
 import utils.EncryptedValue
 
@@ -69,50 +69,6 @@ case class PensionAnnualAllowancesViewModel(reducedAnnualAllowanceQuestion: Opti
       case (_, Some(true))          => Some(Seq("Tapered"))
       case _                        => None
     }
-
-  def toPensionContributions: PensionContributions =
-    PensionContributions(
-      pensionSchemeTaxReference = pensionSchemeTaxReferences.getOrElse(Nil),
-      inExcessOfTheAnnualAllowance = aboveAnnualAllowance.getOrElse(BigDecimal(0.00)),
-      annualAllowanceTaxPaid = taxPaidByPensionProvider.getOrElse(BigDecimal(0.00)),
-      isAnnualAllowanceReduced = reducedAnnualAllowanceQuestion,
-      taperedAnnualAllowance = taperedAnnualAllowance,
-      moneyPurchasedAllowance = moneyPurchaseAnnualAllowance
-    )
-
-  def toPensionSavingsTaxCharges(prior: Option[AllPensionsData]): PensionSavingsTaxCharges =
-    PensionSavingsTaxCharges(
-      pensionSchemeTaxReference = prior
-        .flatMap(_.pensionCharges)
-        .flatMap(_.pensionSavingsTaxCharges)
-        .flatMap(_.pensionSchemeTaxReference),
-      lumpSumBenefitTakenInExcessOfLifetimeAllowance = prior
-        .flatMap(_.pensionCharges)
-        .flatMap(_.pensionSavingsTaxCharges)
-        .flatMap(_.lumpSumBenefitTakenInExcessOfLifetimeAllowance),
-      benefitInExcessOfLifetimeAllowance = prior
-        .flatMap(_.pensionCharges)
-        .flatMap(_.pensionSavingsTaxCharges)
-        .flatMap(_.benefitInExcessOfLifetimeAllowance)
-    )
-
-  def toDownstreamRequestModel(prior: Option[AllPensionsData]): AnnualAllowancesPensionCharges = {
-    val pensionContributionsOpt =
-      if (pensionSchemeTaxReferences.getOrElse(Nil) == Nil && aboveAnnualAllowance.isEmpty && taxPaidByPensionProvider.isEmpty) {
-        None
-      } else {
-        Some(toPensionContributions)
-      }
-
-    val pensionSavingsTaxChargesOpt =
-      if (pensionSchemeTaxReferences.getOrElse(Nil) == Nil && reducedAnnualAllowanceQuestion.isEmpty &&
-        taperedAnnualAllowance.isEmpty && moneyPurchaseAnnualAllowance.isEmpty) {
-        None
-      } else {
-        Some(toPensionSavingsTaxCharges(prior))
-      }
-    AnnualAllowancesPensionCharges(pensionSavingsTaxChargesOpt, pensionContributionsOpt)
-  }
 
   def toPensionsCYAModel: PensionsCYAModel = PensionsCYAModel.emptyModels.copy(pensionsAnnualAllowances = this)
 }

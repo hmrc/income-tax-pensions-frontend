@@ -66,7 +66,6 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
 
     val chargesURL = s"/income-tax-pensions/pension-charges/session-data/nino/$nino/taxYear/$taxYear"
     val chargesRequestModel = CreateUpdatePensionChargesRequestModel(
-      anPensionCharges.pensionSavingsTaxCharges,
       anPensionCharges.pensionSchemeOverseasTransfers,
       anPensionCharges.pensionSchemeUnauthorisedPayments,
       anPensionCharges.pensionContributions,
