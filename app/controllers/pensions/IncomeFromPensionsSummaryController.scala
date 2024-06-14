@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.pensions.incomeFromPensions
+package controllers.pensions
 
 import common.TaxYear
 import config.AppConfig

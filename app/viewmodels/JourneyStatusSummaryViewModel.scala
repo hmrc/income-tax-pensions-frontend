@@ -28,7 +28,7 @@ import controllers.pensions.unauthorisedPayments.{routes => upRoutes}
 import models.mongo.JourneyStatus.{Completed, InProgress, NotStarted}
 import models.mongo.{JourneyStatus, PensionsCYAModel}
 import models.pension.Journey._
-import models.pension.{AllPensionsData, Journey, JourneyNameAndStatus}
+import models.pension.{Journey, JourneyNameAndStatus}
 import models.redirects.AppLocations.{INCOME_FROM_PENSIONS_HOME, OVERSEAS_HOME}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -36,68 +36,62 @@ import utils.StatusHelper._
 
 object JourneyStatusSummaryViewModel {
 
-  def buildSummaryList(summaryPage: Journey,
-                       journeyStatuses: Seq[JourneyNameAndStatus],
-                       priorData: Option[AllPensionsData],
-                       cya: Option[PensionsCYAModel],
-                       taxYear: Int)(implicit messages: Messages): HtmlContent = {
+  def buildSummaryList(summaryPage: Journey, journeyStatuses: Seq[JourneyNameAndStatus], cya: Option[PensionsCYAModel], taxYear: Int)(implicit
+      messages: Messages): HtmlContent = {
     implicit val impTaxYear: TaxYear                           = TaxYear(taxYear)
     implicit val impJourneyStatuses: Seq[JourneyNameAndStatus] = journeyStatuses
 
     def paymentsIntoPensionsRow = buildRow(
       PaymentsIntoPensions,
-      paymentIntoPensionHasPriorData(priorData),
-      paymentsIntoPensionsIsUpdated(cya)
+      paymentsIntoPensionsIsUpdated(cya),
+      cya.exists(_.paymentsIntoPension.isFinished)
     )
 
-    def incomeFromPensionsHasPriorData = ukPensionsSchemeHasPriorData(priorData) | statePensionsHasPriorData(priorData)
-    def incomeFromPensionsIsUpdated    = ukPensionsSchemeIsUpdated(cya) | statePensionIsUpdated(cya)
+    def incomeFromPensionsIsUpdated = ukPensionsSchemeIsUpdated(cya) | statePensionIsUpdated(cya)
     def incomeFromPensionsRow =
-      buildRow(IncomeFromPensionsSummary, incomeFromPensionsHasPriorData, incomeFromPensionsIsUpdated)
+      buildRow(IncomeFromPensionsSummary, incomeFromPensionsIsUpdated, cya.exists(_.incomeFromPensions.isFinished))
 
-    def annualAllowancesRow = buildRow(AnnualAllowances, annualAllowanceHasPriorData(priorData), annualAllowanceIsUpdated(cya))
+    def annualAllowancesRow = buildRow(AnnualAllowances, annualAllowanceIsUpdated(cya), cya.exists(_.pensionsAnnualAllowances.isFinished))
 
     def unauthorisedPaymentsRow =
       buildRow(
         UnauthorisedPayments,
-        unauthorisedPaymentsHasPriorData(priorData),
-        unauthorisedPaymentsFromPensionsIsUpdated(cya)
+        unauthorisedPaymentsFromPensionsIsUpdated(cya),
+        cya.exists(_.unauthorisedPayments.isFinished)
       )
 
-    def overseasPensionsHasPriorData = paymentsIntoOverseasPensionsHasPriorData(priorData) | incomeFromOverseasPensionsHasPriorData(
-      priorData) | transferIntoOverseasPensionHasPriorData(priorData) | shortServiceRefundsHasPriorData(priorData)
     def overseasPensionsIsUpdated =
       paymentsIntoOverseasPensionsIsUpdated(cya) | incomeFromOverseasPensionsIsUpdated(cya) | overseasPensionsTransferChargesIsUpdated(
         cya) | shortServiceRefundsIsUpdated(cya)
-    def overseasPensionsRow = buildRow(OverseasPensionsSummary, overseasPensionsHasPriorData, overseasPensionsIsUpdated)
+    def overseasPensionsRow = buildRow(OverseasPensionsSummary, overseasPensionsIsUpdated, journeyIsComplete = false)
 
     def ukPensionsIncomeRow =
-      buildRow(UkPensionIncome, ukPensionsSchemeHasPriorData(priorData), ukPensionsSchemeIsUpdated(cya))
+      buildRow(UkPensionIncome, ukPensionsSchemeIsUpdated(cya), cya.exists(_.incomeFromPensions.isUkPensionFinished))
     def statePensionRow = buildRow(
       StatePension,
-      statePensionsHasPriorData(priorData),
-      statePensionIsUpdated(cya)
-    ) // TODO right now we assume prior data == isFinished
+      statePensionIsUpdated(cya),
+      cya.exists(_.incomeFromPensions.isStatePensionFinished)
+    )
 
     def paymentsIntoOverseasPensionsRow =
       buildRow(
         PaymentsIntoOverseasPensions,
-        paymentsIntoOverseasPensionsHasPriorData(priorData),
-        paymentsIntoOverseasPensionsIsUpdated(cya)
+        paymentsIntoOverseasPensionsIsUpdated(cya),
+        cya.exists(_.paymentsIntoOverseasPensions.isFinished)
       )
     def incomeFromOverseasPensionsRow =
       buildRow(
         IncomeFromOverseasPensions,
-        incomeFromOverseasPensionsHasPriorData(priorData),
-        incomeFromOverseasPensionsIsUpdated(cya)
+        incomeFromOverseasPensionsIsUpdated(cya),
+        cya.exists(_.incomeFromOverseasPensions.isFinished)
       )
     def transferIntoOverseasPensionsRow =
       buildRow(
         TransferIntoOverseasPensions,
-        transferIntoOverseasPensionHasPriorData(priorData),
-        overseasPensionsTransferChargesIsUpdated(cya)
+        overseasPensionsTransferChargesIsUpdated(cya),
+        cya.exists(_.transfersIntoOverseasPensions.isFinished)
       )
-    def shortServiceRefundsRow = buildRow(ShortServiceRefunds, shortServiceRefundsHasPriorData(priorData), shortServiceRefundsIsUpdated(cya))
+    def shortServiceRefundsRow = buildRow(ShortServiceRefunds, shortServiceRefundsIsUpdated(cya), cya.exists(_.shortServiceRefunds.isFinished))
 
     HtmlContent(summaryPage match {
       case PensionsSummary =>
@@ -126,13 +120,12 @@ object JourneyStatusSummaryViewModel {
        |  </div>
        |""".stripMargin
 
-  // TODO Remove default false once all journeys are added
-  private def buildRow(journey: Journey, hasPriorJourneyAnswers: Boolean, journeyIsStarted: Boolean)(implicit
+  private def buildRow(journey: Journey, journeyIsStarted: Boolean, journeyIsComplete: Boolean)(implicit
       messages: Messages,
       taxYear: TaxYear,
       journeyStatuses: Seq[JourneyNameAndStatus]): String = {
-    val status   = getJourneyStatus(journey, journeyStatuses, hasPriorJourneyAnswers, journeyIsStarted)
-    val href     = getUrl(journey, taxYear, status == Completed)
+    val status   = getJourneyStatus(journey, journeyStatuses, journeyIsStarted)
+    val href     = getUrl(journey, taxYear, journeyIsComplete)
     val statusId = s"journey-${journey.toString}-status"
     val statusTag =
       if (status == Completed) messages(s"common.status.$status")
@@ -148,10 +141,7 @@ object JourneyStatusSummaryViewModel {
        |""".stripMargin
   }
 
-  private def getJourneyStatus(journey: Journey,
-                               journeyStatuses: Seq[JourneyNameAndStatus],
-                               hasPriorJourneyAnswers: Boolean, // TODO remove hasPriorJourneyAnswers check from all uses
-                               journeyIsStarted: Boolean): JourneyStatus = {
+  private def getJourneyStatus(journey: Journey, journeyStatuses: Seq[JourneyNameAndStatus], journeyIsStarted: Boolean): JourneyStatus = {
     def getStatus(journey: Journey) =
       journeyStatuses.find(_.name == journey).map(_.journeyStatus).getOrElse(NotStarted)
     def summaryStatus(dependentJourneys: Seq[Journey]): JourneyStatus = {
@@ -165,8 +155,8 @@ object JourneyStatusSummaryViewModel {
       case _ => getStatus(journey)
     }
     status match {
-      case NotStarted if hasPriorJourneyAnswers | journeyIsStarted => InProgress
-      case status                                                  => status
+      case NotStarted if journeyIsStarted => InProgress
+      case status                         => status
     }
   }
 

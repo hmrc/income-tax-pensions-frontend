@@ -18,10 +18,9 @@
 @import views.html.templates.helpers.SummaryList
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.Link
-@import controllers.pensions.routes._
-@import controllers.pensions.incomeFromPensions.routes.{PensionSchemeDetailsController, PensionSchemeSummaryController, RemovePensionSchemeController, UkPensionIncomeCYAController, IncomeFromPensionsSummaryController}
+@import controllers.pensions.incomeFromPensions.routes
+@import controllers.pensions
 @import models.pension.statebenefits.UkPensionIncomeViewModel
-@import models.requests.UserSessionDataRequest
 @import common.TaxYear
 
 @this(
@@ -53,13 +52,13 @@
                             @pensionIncome.pensionSchemeName.getOrElse("")
                         </dt>
                         <dd class="hmrc-add-to-a-list__change">
-                        <a class="govuk-link" href="@PensionSchemeSummaryController.show(taxYear, Some(index))">
+                        <a class="govuk-link" href="@routes.PensionSchemeSummaryController.show(taxYear, Some(index))">
                             <span aria-hidden="true">@messages("common.change")</span>
                             <span class="govuk-visually-hidden">@{s"${messages("common.change")} ${pensionIncome.pensionSchemeName.getOrElse("")}"}</span>
                             </a>
                         </dd>
                         <dd class="hmrc-add-to-a-list__remove">
-                        <a class="govuk-link" href="@RemovePensionSchemeController.show(taxYear, Some(index))">
+                        <a class="govuk-link" href="@routes.RemovePensionSchemeController.show(taxYear, Some(index))">
                                 <span aria-hidden="true">@messages("common.remove")</span>
                                 <span class="govuk-visually-hidden">@{s"${messages("common.remove")} ${pensionIncome.pensionSchemeName.getOrElse("")}"}</span>
                             </a>
@@ -68,13 +67,13 @@
                 }
             </dl>
         </div>
-        @addAnotherLink(PensionSchemeDetailsController.show(taxYear, None).url)
+        @addAnotherLink(routes.PensionSchemeDetailsController.show(taxYear, None).url)
         @button(Button(
             attributes = Map("id" -> "continue"),
             preventDoubleClick = Some(true),
             content = Text(messages("common.continue")),
             classes = "govuk-button govuk-!-margin-top-2",
-            href = Some(UkPensionIncomeCYAController.show(TaxYear(taxYear)).url)
+            href = Some(routes.UkPensionIncomeCYAController.show(TaxYear(taxYear)).url)
         ))
     } else {
         <p class="govuk-body" id="youNeedToAddOneOrMorePensionScheme1">
@@ -86,7 +85,7 @@
             preventDoubleClick = Some(true),
             classes = "govuk-button govuk-!-margin-top-2",
             content = Text(messages("common.summary.addAScheme")),
-            href = Some(PensionSchemeDetailsController.show(taxYear, None).url)
+            href = Some(routes.PensionSchemeDetailsController.show(taxYear, None).url)
         ))
 
         <p class="govuk-body" id="youNeedToAddOneOrMorePensionScheme2">
@@ -98,7 +97,7 @@
             preventDoubleClick = Some(true),
             classes = "govuk-button--secondary",
             content = Text(messages("common.return.overview.buttonText")),
-            href = Some(IncomeFromPensionsSummaryController.show(taxYear).url)
+            href = Some(pensions.routes.IncomeFromPensionsSummaryController.show(taxYear).url)
         ))
     }
 </div>

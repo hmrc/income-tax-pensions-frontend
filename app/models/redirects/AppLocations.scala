@@ -28,7 +28,7 @@ object AppLocations {
     (taxYear: Int) => pensions.routes.OverseasPensionsSummaryController.show(taxYear)
 
   val INCOME_FROM_PENSIONS_HOME: Int => Call =
-    (taxYear: Int) => pensions.incomeFromPensions.routes.IncomeFromPensionsSummaryController.show(taxYear)
+    (taxYear: Int) => pensions.routes.IncomeFromPensionsSummaryController.show(taxYear)
 
   val SECTION_COMPLETED_PAGE: (Int, Journey) => Call =
     (taxYear: Int, journey: Journey) => pensions.routes.SectionCompletedStateController.show(taxYear, journey)
