@@ -177,7 +177,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       renderView: (Int, HtmlContent) => Result)(implicit request: Request[_], messages: Messages): Future[Result] = {
     val updatedSession                = PensionCYAMergedWithPriorData.mergeSessionAndPriorData(sessionData, priorData)
     val updatedSessionPensionCYAModel = updatedSession.newPensionsCYAModel
-    val pensionsSummary               = buildSummaryList(summaryPage, journeyStatuses, priorData, updatedSessionPensionCYAModel.some, taxYear)
+    val pensionsSummary               = buildSummaryList(summaryPage, journeyStatuses, updatedSessionPensionCYAModel.some, taxYear)
     val summaryView                   = renderView(taxYear, pensionsSummary)
 
     if (updatedSession.newModelChanged) {

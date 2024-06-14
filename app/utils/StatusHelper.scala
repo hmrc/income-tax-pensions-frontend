@@ -17,7 +17,6 @@
 package utils
 
 import models.mongo.PensionsCYAModel
-import models.pension.AllPensionsData
 
 object StatusHelper {
 
@@ -55,35 +54,4 @@ object StatusHelper {
   def ukPensionsSchemeIsUpdated(cya: Option[PensionsCYAModel]): Boolean =
     cya.exists(_.incomeFromPensions.uKPensionIncomesQuestion.isDefined)
 
-  /* ------- hasPriorData  statuses------------------
-    We will primarily use these to determine if when going to a journey you
-    first either navigate to the CYA page or the 1st page of the journey
-   */
-
-  def paymentIntoPensionHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.map(_.getPaymentsIntoPensionsCyaFromPrior).exists(_.isFinished)
-
-  def statePensionsHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.exists(_.stateBenefits.exists(_.stateBenefitsData.exists(data => data.statePension.nonEmpty || data.statePensionLumpSum.nonEmpty)))
-
-  def ukPensionsSchemeHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.exists(_.employmentPensions.exists(_.employmentData.nonEmpty))
-
-  def annualAllowanceHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.exists(_.pensionCharges.exists(_.pensionContributions.nonEmpty))
-
-  def unauthorisedPaymentsHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.exists(_.pensionCharges.exists(_.pensionSchemeUnauthorisedPayments.nonEmpty))
-
-  def paymentsIntoOverseasPensionsHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.exists(_.pensionReliefs.exists(_.pensionReliefs.overseasPensionSchemeContributions.isDefined))
-
-  def incomeFromOverseasPensionsHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.exists(_.pensionIncome.exists(_.foreignPension.nonEmpty))
-
-  def transferIntoOverseasPensionHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.exists(_.pensionCharges.exists(_.pensionSchemeOverseasTransfers.nonEmpty))
-
-  def shortServiceRefundsHasPriorData(prior: Option[AllPensionsData]): Boolean =
-    prior.exists(_.pensionCharges.exists(_.overseasPensionContributions.nonEmpty))
 }

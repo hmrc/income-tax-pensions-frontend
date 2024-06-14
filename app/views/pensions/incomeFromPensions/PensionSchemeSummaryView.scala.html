@@ -14,14 +14,10 @@
  * limitations under the License.
  *@
 
-@import controllers.pensions.incomeFromPensions.IncomeFromPensionsSummaryController
-@import controllers.pensions.incomeFromPensions.routes._
+@import controllers.pensions.incomeFromPensions.routes
 @import controllers.pensions.incomeFromPensions.PensionSchemeSummaryHelper
-
-@import controllers.pensions.routes._
 @import models.pension.statebenefits.UkPensionIncomeViewModel
 @import models.requests.UserSessionDataRequest
-@import utils.ViewUtils.bigDecimalCurrency
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.SummaryList
 @import views.html.templates.Layout
@@ -47,7 +43,7 @@ formWithCsrf: FormWithCSRF)
 
   @summaryList(PensionSchemeSummaryHelper.summaryListRows(pensionIncome, taxYear, index)(messages))
 
-  @formWithCsrf(UkPensionIncomeSummaryController.show(taxYear)) {
+  @formWithCsrf(routes.UkPensionIncomeSummaryController.show(taxYear)) {
     @button("common.continue")
   }
 }

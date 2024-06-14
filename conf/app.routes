@@ -74,7 +74,7 @@ POST        /:taxYear/payments-into-pensions/check-payments-into-pensions       
 
 ###########################     Income from Pension pages     ####################################
 
-GET         /:taxYear/pension-income/pensions-income-summary                                                                       controllers.pensions.incomeFromPensions.IncomeFromPensionsSummaryController.show(taxYear: Int)
+GET         /:taxYear/pension-income/pensions-income-summary                                                                       controllers.pensions.IncomeFromPensionsSummaryController.show(taxYear: Int)
 
 ###     Income from pensions - UK pension income     ###
 
