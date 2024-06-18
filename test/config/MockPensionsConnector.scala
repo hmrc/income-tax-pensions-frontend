@@ -24,18 +24,15 @@ import models.domain.ApiResultT
 import models.mongo.{JourneyContext, JourneyStatus}
 import models.pension.JourneyNameAndStatus
 import models.pension.charges.{
-  CreateUpdatePensionChargesRequestModel,
   IncomeFromOverseasPensionsViewModel,
   PensionAnnualAllowancesViewModel,
   ShortServiceRefundsViewModel,
   TransfersIntoOverseasPensionsViewModel
 }
-import models.pension.income.CreateUpdatePensionIncomeRequestModel
-import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import org.scalamock.handlers.{CallHandler3, CallHandler4, CallHandler5}
 import org.scalamock.scalatest.MockFactory
-import services.{PensionChargesConnectorHelper, PensionIncomeConnectorHelper, PensionReliefsConnectorHelper}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -44,20 +41,6 @@ import scala.concurrent.{ExecutionContext, Future}
 trait MockPensionsConnector extends MockFactory {
 
   val mockPensionsConnector: PensionsConnector = mock[PensionsConnector]
-  val mockPensionConnectorHelper               = new PensionChargesConnectorHelper(mockPensionsConnector)
-  val mockPensionIncomeConnectorHelper         = new PensionIncomeConnectorHelper(mockPensionsConnector)
-  val mockPensionReliefsConnectorHelper        = new PensionReliefsConnectorHelper(mockPensionsConnector)
-
-  def mockSavePensionChargesSessionData(nino: String,
-                                        taxYear: Int,
-                                        model: CreateUpdatePensionChargesRequestModel,
-                                        response: Either[APIErrorModel, Unit])
-      : CallHandler5[String, Int, CreateUpdatePensionChargesRequestModel, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
-    (mockPensionsConnector
-      .savePensionCharges(_: String, _: Int, _: CreateUpdatePensionChargesRequestModel)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(nino, taxYear, model, *, *)
-      .returns(Future.successful(response))
-      .anyNumberOfTimes()
 
   def mockDeletePensionChargesSessionData(
       nino: String,
@@ -65,35 +48,6 @@ trait MockPensionsConnector extends MockFactory {
       response: Either[APIErrorModel, Unit]): CallHandler4[String, Int, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
     (mockPensionsConnector
       .deletePensionCharges(_: String, _: Int)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(nino, taxYear, *, *)
-      .returns(Future.successful(response))
-      .anyNumberOfTimes()
-
-  def mockSavePensionIncomeSessionData(nino: String,
-                                       taxYear: Int,
-                                       model: CreateUpdatePensionIncomeRequestModel,
-                                       response: Either[APIErrorModel, Unit])
-      : CallHandler5[String, Int, CreateUpdatePensionIncomeRequestModel, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
-    (mockPensionsConnector
-      .savePensionIncome(_: String, _: Int, _: CreateUpdatePensionIncomeRequestModel)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(nino, taxYear, model, *, *)
-      .returns(Future.successful(response))
-      .anyNumberOfTimes()
-
-  def mockSavePensionReliefSessionData(nino: String, taxYear: Int, model: CreateUpdatePensionReliefsModel, response: Either[APIErrorModel, Unit])
-      : CallHandler5[String, Int, CreateUpdatePensionReliefsModel, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
-    (mockPensionsConnector
-      .savePensionReliefs(_: String, _: Int, _: CreateUpdatePensionReliefsModel)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(nino, taxYear, model, *, *)
-      .returns(Future.successful(response))
-      .anyNumberOfTimes()
-
-  def mockDeletePensionReliefSessionData(
-      nino: String,
-      taxYear: Int,
-      response: Either[APIErrorModel, Unit]): CallHandler4[String, Int, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
-    (mockPensionsConnector
-      .deletePensionReliefData(_: String, _: Int)(_: HeaderCarrier, _: ExecutionContext))
       .expects(nino, taxYear, *, *)
       .returns(Future.successful(response))
       .anyNumberOfTimes()

@@ -21,23 +21,17 @@ import common.{Nino, TaxYear}
 import config.AppConfig
 import connectors.Connector.hcWithCorrelationId
 import connectors.httpParsers.DeletePensionChargesHttpParser.DeletePensionChargesHttpReads
-import connectors.httpParsers.DeletePensionIncomeHttpParser.DeletePensionIncomeHttpReads
-import connectors.httpParsers.DeletePensionReliefsHttpParser.DeletePensionReliefsHttpReads
 import connectors.httpParsers.GetJourneyStatusesHttpParser.GetJourneyStatusesHttpReads
 import connectors.httpParsers.LoadPriorEmploymentHttpParser.LoadPriorEmploymentHttpReads
-import connectors.httpParsers.PensionChargesSessionHttpParser.PensionChargesSessionHttpReads
-import connectors.httpParsers.PensionIncomeSessionHttpParser.PensionIncomeSessionHttpReads
-import connectors.httpParsers.PensionReliefsSessionHttpParser.PensionReliefsSessionHttpReads
 import models.domain.ApiResultT
 import models.logging.ConnectorRequestInfo
 import models.mongo.{JourneyContext, JourneyStatus}
 import models.pension.Journey._
-import models.pension.{IncomeFromPensionsStatePensionAnswers, JourneyNameAndStatus}
 import models.pension.charges._
 import models.pension.employmentPensions.EmploymentPensions
-import models.pension.income.CreateUpdatePensionIncomeRequestModel
-import models.pension.reliefs.{CreateUpdatePensionReliefsModel, PaymentsIntoPensionsViewModel}
+import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
+import models.pension.{IncomeFromPensionsStatePensionAnswers, JourneyNameAndStatus}
 import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -258,59 +252,10 @@ class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfi
     EitherT(res)
   }
 
-  def savePensionCharges(nino: String, taxYear: Int, model: CreateUpdatePensionChargesRequestModel)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext): DownstreamOutcome[Unit] = {
-    val url = buildUrl(s"/pension-charges/session-data/nino/$nino/taxYear/${taxYear.toString}")
-    ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, model)
-    http.PUT[CreateUpdatePensionChargesRequestModel, DownstreamErrorOr[Unit]](url, model)(
-      CreateUpdatePensionChargesRequestModel.format,
-      PensionChargesSessionHttpReads,
-      hcWithCorrelationId(hc),
-      ec)
-  }
-
   def deletePensionCharges(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
     val url = buildUrl(s"/pension-charges/session-data/nino/$nino/taxYear/${taxYear.toString}")
     ConnectorRequestInfo("DELETE", url, apiId).logRequest(logger)
     http.DELETE[DownstreamErrorOr[Unit]](url)(DeletePensionChargesHttpReads, hcWithCorrelationId(hc), ec)
-  }
-
-  def savePensionIncome(nino: String, taxYear: Int, model: CreateUpdatePensionIncomeRequestModel)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext): DownstreamOutcome[Unit] = {
-    val url = buildUrl(s"/pension-income/session-data/nino/$nino/taxYear/${taxYear.toString}")
-    ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, model)
-    http.PUT[CreateUpdatePensionIncomeRequestModel, DownstreamErrorOr[Unit]](url, model)(
-      CreateUpdatePensionIncomeRequestModel.writes,
-      PensionIncomeSessionHttpReads,
-      hcWithCorrelationId(hc),
-      ec)
-  }
-
-  def deletePensionIncome(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
-    val url = buildUrl(s"/pension-income/session-data/nino/$nino/taxYear/${taxYear.toString}")
-    ConnectorRequestInfo("DELETE", url, apiId).logRequest(logger)
-    http.DELETE[DownstreamErrorOr[Unit]](url)(DeletePensionIncomeHttpReads, hc, ec)
-  }
-
-  def savePensionReliefs(nino: String, taxYear: Int, model: CreateUpdatePensionReliefsModel)(implicit
-      hc: HeaderCarrier,
-      ec: ExecutionContext): DownstreamOutcome[Unit] = {
-    val url = buildUrl(s"/pension-reliefs/nino/$nino/taxYear/${taxYear.toString}")
-    ConnectorRequestInfo("PUT", url, apiId).logRequestWithBody(logger, model)
-    http.PUT[CreateUpdatePensionReliefsModel, DownstreamErrorOr[Unit]](url, model)(
-      CreateUpdatePensionReliefsModel.format,
-      PensionReliefsSessionHttpReads,
-      hcWithCorrelationId(hc),
-      ec
-    )
-  }
-
-  def deletePensionReliefData(nino: String, taxYear: Int)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
-    val url = buildUrl(s"/pension-reliefs/session-data/nino/$nino/taxYear/${taxYear.toString}")
-    ConnectorRequestInfo("DELETE", url, apiId).logRequest(logger)
-    http.DELETE[DownstreamErrorOr[Unit]](url)(DeletePensionReliefsHttpReads, hcWithCorrelationId(hc), ec)
   }
 
   def getAllJourneyStatuses(taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[List[JourneyNameAndStatus]] = {
