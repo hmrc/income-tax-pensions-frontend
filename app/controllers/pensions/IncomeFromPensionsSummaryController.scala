@@ -35,7 +35,7 @@ import scala.concurrent.ExecutionContext
 class IncomeFromPensionsSummaryController @Inject() (mcc: MessagesControllerComponents,
                                                      actionProvider: ActionsProvider,
                                                      pensionSessionService: PensionSessionService,
-                                                     view: IncomeFromPensionsSummaryView)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                                     view: IncomeFromPensionsSummaryView)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport {
 
