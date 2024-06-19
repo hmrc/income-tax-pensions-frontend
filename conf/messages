@@ -74,6 +74,17 @@ common.error.incorrectFormat = Enter the total amount in pounds
 common.useCalculator.paragraph.link = if you need to work this out
 common.useCalculator.paragraph = Use a calculator
 
+common.error.localDate.empty.all = Enter the pension start date
+common.error.localDate.empty.day = The pension start date must include a day
+common.error.localDate.empty.dayMonth = The pension start date must include a day and month
+common.error.localDate.empty.dayYear = The pension start date must include a day and year
+common.error.localDate.empty.month = The pension start date must include a month
+common.error.localDate.empty.monthYear = The pension start date must include a month and year
+common.error.localDate.empty.year = The pension start date must include a year
+common.error.localDate.invalidFormat = The day, month and year must be valid
+common.error.localDate.dateInFuture = The pension start date must be in the past
+common.error.localDate.tooLongAgo = The pension start date must be after 1 January 1900
+
 unauthorisedPayments.common.title = Unauthorised payments
 unauthorisedPayments.common.title.hidden = Change unauthorised payments
 unauthorisedPayments.common.ukPensionSchemes = UK pension schemes
@@ -509,16 +520,6 @@ incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.agent = Your cli
 incomeFromPensions.stateBenefitStartDate.title.individual = When did you start getting State Pension payments?
 incomeFromPensions.stateBenefitStartDate.title.agent = When did your client start getting State Pension payments?
 incomeFromPensions.stateBenefitStartDate.date.hint = For example, 27 3 2007
-incomeFromPensions.stateBenefitStartDate.error.empty.all = Enter the pension start date
-incomeFromPensions.stateBenefitStartDate.error.empty.day = The pension start date must include a day
-incomeFromPensions.stateBenefitStartDate.error.empty.dayMonth = The pension start date must include a day and month
-incomeFromPensions.stateBenefitStartDate.error.empty.dayYear = The pension start date must include a day and year
-incomeFromPensions.stateBenefitStartDate.error.empty.month = The pension start date must include a month
-incomeFromPensions.stateBenefitStartDate.error.empty.monthYear = The pension start date must include a month and year
-incomeFromPensions.stateBenefitStartDate.error.empty.year = The pension start date must include a year
-incomeFromPensions.stateBenefitStartDate.error.invalidFormat = The day, month and year must be valid
-incomeFromPensions.stateBenefitStartDate.error.dateInFuture = The pension start date must be in the past
-incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
 
 #tax paid on state pension lump sum
 pensions.taxPaidOnStatePensionLumpSum.amount = Amount of tax paid
@@ -537,16 +538,16 @@ pensions.statePensionLumpSumStartDate.title.individual = When did you get your S
 pensions.statePensionLumpSumStartDate.title.agent = When did your client get their State Pension lump sum?
 pensions.statePensionLumpSumStartDate.hint.individual = You can find this in your P60.
 pensions.statePensionLumpSumStartDate.hint.agent = They can find this on their P60.
-pensions.statePensionLumpSumStartDate.error.empty.all = Enter the pension lump sum start date
-pensions.statePensionLumpSumStartDate.error.empty.day = The pension lump sum start date must include a day
-pensions.statePensionLumpSumStartDate.error.empty.dayMonth = The pension lump sum start date must include a day and month
-pensions.statePensionLumpSumStartDate.error.empty.dayYear = The pension lump sum start date must include a day and year
-pensions.statePensionLumpSumStartDate.error.empty.month = The pension lump sum start date must include a month
-pensions.statePensionLumpSumStartDate.error.empty.monthYear = The pension lump sum start date must include a month and year
-pensions.statePensionLumpSumStartDate.error.empty.year = The pension lump sum start date must include a year
-pensions.statePensionLumpSumStartDate.error.invalidFormat = The day, month and year must be valid
-pensions.statePensionLumpSumStartDate.error.dateInFuture = The pension lump sum start date must be in the past
-pensions.statePensionLumpSumStartDate.error.tooLongAgo = The date must be after 1 January 1900
+pensions.statePensionLumpSumStartDate.error.localDate.empty.all = Enter the pension lump sum start date
+pensions.statePensionLumpSumStartDate.error.localDate.empty.day = The pension lump sum start date must include a day
+pensions.statePensionLumpSumStartDate.error.localDate.empty.dayMonth = The pension lump sum start date must include a day and month
+pensions.statePensionLumpSumStartDate.error.localDate.empty.dayYear = The pension lump sum start date must include a day and year
+pensions.statePensionLumpSumStartDate.error.localDate.empty.month = The pension lump sum start date must include a month
+pensions.statePensionLumpSumStartDate.error.localDate.empty.monthYear = The pension lump sum start date must include a month and year
+pensions.statePensionLumpSumStartDate.error.localDate.empty.year = The pension lump sum start date must include a year
+pensions.statePensionLumpSumStartDate.error.localDate.invalidFormat = The day, month and year must be valid
+pensions.statePensionLumpSumStartDate.error.localDate.dateInFuture = The pension lump sum start date must be in the past
+pensions.statePensionLumpSumStartDate.error.localDate.tooLongAgo = The date must be after 1 January 1900
 
 #state pension
 pensions.statePension.title.individual = Do you get regular State Pension payments?
@@ -638,16 +639,6 @@ pensions.pensionAmount.taxPaid.error.overMaximum = The amount of tax paid must b
 incomeFromPensions.pensionStartDate.title.individual = When did you start getting payments from this scheme?
 incomeFromPensions.pensionStartDate.title.agent = When did your client start getting payments from this scheme?
 incomeFromPensions.pensionStartDate.date.hint = For example, 12 11 2007
-incomeFromPensions.pensionStartDate.error.empty.all = Enter the pension start date
-incomeFromPensions.pensionStartDate.error.empty.day = The pension start date must include a day
-incomeFromPensions.pensionStartDate.error.empty.dayMonth = The pension start date must include a day and month
-incomeFromPensions.pensionStartDate.error.empty.dayYear = The pension start date must include a day and year
-incomeFromPensions.pensionStartDate.error.empty.month = The pension start date must include a month
-incomeFromPensions.pensionStartDate.error.empty.monthYear = The pension start date must include a month and year
-incomeFromPensions.pensionStartDate.error.empty.year = The pension start date must include a year
-incomeFromPensions.pensionStartDate.error.invalidFormat = The pension start date must be a real date
-incomeFromPensions.pensionStartDate.error.dateInFuture = The pension start date must be in the past
-incomeFromPensions.pensionStartDate.error.tooLongAgo = The pension start date must be after 1 January 1900
 
 #Remove pension scheme page
 incomeFromPensions.removePensionScheme.buttonText = Remove pension

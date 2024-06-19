@@ -19,11 +19,12 @@ package controllers.pensions.incomeFromPensions
 import cats.implicits.catsSyntaxOptionId
 import config.AppConfig
 import controllers.predicates.actions.ActionsProvider
-import forms.DateForm.DateModel
-import forms.{DateForm, FormsProvider}
+import forms.standard.LocalDateFormProvider
+import forms.standard.StandardErrorKeys.{EarliestDate, PresentDate}
 import models.mongo.PensionsUserData
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import models.requests.UserSessionDataRequest
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.PensionSessionService
@@ -35,6 +36,7 @@ import utils.SessionHelper
 import validation.pensions.incomeFromPensions.StatePensionValidator.validateFlow
 import views.html.pensions.incomeFromPensions.StatePensionLumpSumStartDateView
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,58 +44,50 @@ import scala.concurrent.{ExecutionContext, Future}
 class StatePensionLumpSumStartDateController @Inject() (actionsProvider: ActionsProvider,
                                                         service: PensionSessionService,
                                                         view: StatePensionLumpSumStartDateView,
-                                                        formsProvider: FormsProvider,
+                                                        formProvider: LocalDateFormProvider,
                                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {
 
+  private val form: Form[LocalDate] =
+    formProvider(
+      "statePensionLumpSumStartDate",
+      altErrorPrefix = "pensions.statePensionLumpSumStartDate",
+      earliestDateAndError = Some((EarliestDate, "pensions.statePensionLumpSumStartDate.error.localDate.tooLongAgo")),
+      latestDateAndError = Some((PresentDate, "pensions.statePensionLumpSumStartDate.error.localDate.dateInFuture"))
+    )
+
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
-    val journey      = request.sessionData.pensions.incomeFromPensions
-    val formProvider = formsProvider.statePensionLumpSumStartDateForm
-
-    validateFlow(journey, StatePensionLumpSumStartDatePage, taxYear) {
-      val form = journey.statePensionLumpSum
-        .flatMap(_.startDate)
-        .fold(formProvider) { date =>
-          formProvider.fill(
-            DateModel(
-              date.getDayOfMonth.toString,
-              date.getMonthValue.toString,
-              date.getYear.toString
-            )
-          )
-        }
-
-      Future.successful(Ok(view(form, taxYear)))
+    val journeyData = request.sessionData.pensions.incomeFromPensions
+    validateFlow(journeyData, StatePensionLumpSumStartDatePage, taxYear) {
+      val filledForm = journeyData.statePensionLumpSum.flatMap(_.startDate).fold(form)(form.fill)
+      Future.successful(Ok(view(filledForm, taxYear)))
     }
-
   }
 
   def submit(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async { implicit request =>
-    val journey      = request.sessionData.pensions.incomeFromPensions
-    val formProvider = formsProvider.statePensionLumpSumStartDateForm.bindFromRequest()
+    val journeyData = request.sessionData.pensions.incomeFromPensions
 
-    validateFlow(journey, StatePensionLumpSumStartDatePage, taxYear) {
-      // TODO: The validations on date forms needs rewriting. We shouldn't be using `.get` here. Will be fixed in SASS-7591.
-      formProvider
-        .copy(errors = DateForm.verifyDate(formProvider.get, "pensions.statePensionLumpSumStartDate"))
+    validateFlow(journeyData, StatePensionLumpSumStartDatePage, taxYear) {
+      form
+        .bindFromRequest()
         .fold(
           formErrors => Future.successful(BadRequest(view(formErrors, taxYear))),
           answer =>
             service
-              .upsertSession(updateSessionModel(journey, answer))
+              .upsertSession(updateSessionModel(journeyData, answer))
               .onSuccess(cyaPageRedirect(taxYear))
         )
     }
 
   }
-  private def updateSessionModel(journey: IncomeFromPensionsViewModel, answer: DateModel)(implicit
+  private def updateSessionModel(journey: IncomeFromPensionsViewModel, answer: LocalDate)(implicit
       request: UserSessionDataRequest[AnyContent]): PensionsUserData = {
     val updatedLumpSumJourney = journey.statePensionLumpSum.map { lumpSum =>
       lumpSum.copy(
         startDateQuestion = true.some,
-        startDate = answer.toLocalDate.some
+        startDate = answer.some
       )
     }
     val updatedPensionsIncome = journey.copy(statePensionLumpSum = updatedLumpSumJourney)

@@ -49,28 +49,6 @@ case class UkPensionIncomeViewModel(employmentId: Option[String] = None,
       isCustomerEmploymentData = isCustomerEmploymentData.map(_.encrypted)
     )
 
-  def toDownstreamModel: CreateUpdateEmploymentRequest =
-    CreateUpdateEmploymentRequest(
-      employmentId = this.employmentId,
-      employment = Some(
-        CreateUpdateEmployment(
-          employerRef = this.pensionSchemeRef,
-          employerName = this.pensionSchemeName.getOrElse(""),
-          startDate = this.startDate.getOrElse(""),
-          cessationDate = this.endDate,
-          payrollId = this.pensionId
-        )
-      ),
-      employmentData = Some(
-        CreateUpdateEmploymentData(
-          PayModel(
-            taxablePayToDate = this.amount.getOrElse(0.00),
-            totalTaxToDate = this.taxPaid.getOrElse(0.00)
-          ))
-      ),
-      isHmrcEmploymentId = this.isCustomerEmploymentData.map(!_)
-    )
-
   def isFinished: Boolean =
     this.pensionId.isDefined &&
       this.startDate.isDefined &&

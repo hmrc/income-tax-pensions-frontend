@@ -22,7 +22,7 @@
 @import models.requests.UserSessionDataRequest
 @import utils.ViewUtils._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import forms.DateForm.DateModel
+@import java.time.LocalDate
 
 @this(
     layout: Layout,
@@ -33,7 +33,7 @@
     button: Button
 )
 
-@(form: Form[DateModel], taxYear: Int)(implicit messages: Messages, request: UserSessionDataRequest[_], appConfig: AppConfig)
+@(form: Form[LocalDate], taxYear: Int)(implicit messages: Messages, request: UserSessionDataRequest[_], appConfig: AppConfig)
 
 @titleForUse = @{messages(s"pensions.statePensionLumpSumStartDate.title.${if(request.user.isAgent) "agent" else "individual"}")}
 
