@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package forms.mappings
+package forms.validation.mappings
 
 import play.api.data.FieldMapping
 import play.api.data.Forms.of
 
 import java.time.LocalDate
 
-trait Mappings extends Formatters {
+object Mappings {
 
-  protected def localDate(missingAllError: String,
-                          missingDay: String,
-                          missingMonth: String,
-                          missingYear: String,
-                          missingDayMonth: String,
-                          missingMonthYear: String,
-                          missingDayYear: String,
-                          invalidFormatError: String,
-                          earliestDateAndError: Option[(LocalDate, String)] = None,
-                          latestDateAndError: Option[(LocalDate, String)] = None,
-                          args: Seq[String] = Seq.empty): FieldMapping[LocalDate] =
+  def localDate(missingAllError: String,
+                missingDay: String,
+                missingMonth: String,
+                missingYear: String,
+                missingDayMonth: String,
+                missingMonthYear: String,
+                missingDayYear: String,
+                invalidFormatError: String,
+                earliestDateAndError: Option[(LocalDate, String)] = None,
+                latestDateAndError: Option[(LocalDate, String)] = None,
+                args: Seq[String] = Seq.empty): FieldMapping[LocalDate] =
     of(
       new LocalDateFormatter(
         missingAllError,
@@ -49,5 +49,3 @@ trait Mappings extends Formatters {
         args
       ))
 }
-
-object Mappings extends Mappings

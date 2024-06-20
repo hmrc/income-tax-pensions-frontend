@@ -16,15 +16,15 @@
 
 package forms.standard
 
-import forms.mappings.Mappings
 import forms.standard.StandardErrorKeys._
+import forms.validation.mappings.Mappings.localDate
 import play.api.data.Form
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class LocalDateFormProvider @Inject() extends Mappings {
+class LocalDateFormProvider @Inject() {
 
   def apply(pageName: String,
             altErrorPrefix: String = "",

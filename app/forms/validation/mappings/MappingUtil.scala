@@ -16,10 +16,11 @@
 
 package forms.validation.mappings
 
+import forms.validation.mappings.Formatters.{currencyFormatter, optionCurrencyFormatter}
 import play.api.data.Forms.{default, of, optional, text}
 import play.api.data.{FieldMapping, Mapping}
 
-object MappingUtil extends Formatters {
+object MappingUtil {
 
   val trimmedText: Mapping[String] = default(text, "").transform(_.trim, identity)
 

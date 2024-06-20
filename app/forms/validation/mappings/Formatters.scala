@@ -21,28 +21,54 @@ import play.api.data.format.Formatter
 
 import scala.util.control.Exception.nonFatalCatch
 
-trait Formatters {
+object Formatters {
 
   private val maxAmount = "100000000000"
 
-  private[mappings] def stringFormatter(errorKey: String, optional: Boolean = false): Formatter[String] = new Formatter[String] {
+  def stringFormatter(errorKey: String, optional: Boolean = false, args: Seq[String] = Seq.empty): Formatter[String] =
+    new Formatter[String] {
 
-    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
-      data.get(key) match {
-        case None                                  => Left(Seq(FormError(key, errorKey)))
-        case Some(x) if x.trim.isEmpty && optional => Left(Seq(FormError(key, errorKey)))
-        case Some(x) if x.trim.isEmpty && optional => Right(x.trim)
-        case Some(s)                               => Right(s.trim)
-      }
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
+        data.get(key) match {
+          case None                                  => Left(Seq(FormError(key, errorKey, args)))
+          case Some(x) if x.trim.isEmpty && optional => Right(x.trim)
+          case Some(x) if x.trim.isEmpty             => Left(Seq(FormError(key, errorKey, args)))
+          case Some(s)                               => Right(s.trim)
+        }
 
-    override def unbind(key: String, value: String): Map[String, String] =
-      Map(key -> value.trim)
-  }
+      override def unbind(key: String, value: String): Map[String, String] =
+        Map(key -> value.trim)
+    }
 
-  private[mappings] def currencyFormatter(requiredKey: String,
-                                          invalidNumericKey: String,
-                                          maxAmountKey: String,
-                                          args: Seq[String] = Seq.empty[String]): Formatter[BigDecimal] =
+  def intFormatter(requiredKey: String, wholeNumberKey: String, nonNumericKey: String, args: Seq[String] = Seq.empty): Formatter[Int] =
+    new Formatter[Int] {
+
+      val decimalRegexp = """^-?(\d*\.\d*)$"""
+
+      private val baseFormatter = stringFormatter(requiredKey, args = args)
+
+      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] =
+        baseFormatter
+          .bind(key, data)
+          .map(_.replace(",", ""))
+          .flatMap {
+            case s if s.matches(decimalRegexp) =>
+              Left(Seq(FormError(key, wholeNumberKey, args)))
+            case s =>
+              nonFatalCatch
+                .either(s.toInt)
+                .left
+                .map(_ => Seq(FormError(key, nonNumericKey, args)))
+          }
+
+      override def unbind(key: String, value: Int): Map[String, String] =
+        baseFormatter.unbind(key, value.toString)
+    }
+
+  def currencyFormatter(requiredKey: String,
+                        invalidNumericKey: String,
+                        maxAmountKey: String,
+                        args: Seq[String] = Seq.empty[String]): Formatter[BigDecimal] =
     new Formatter[BigDecimal] {
 
       val is2dp        = """\d+|\d*\.\d{1,2}"""
@@ -113,11 +139,11 @@ trait Formatters {
     }
   }
 
-  private[mappings] def optionCurrencyFormatter(requiredKey: String,
-                                                invalidNumericKey: String,
-                                                maxAmountKey: String = "",
-                                                minAmountkey: String,
-                                                args: Seq[String] = Seq.empty[String]): Formatter[Option[BigDecimal]] =
+  def optionCurrencyFormatter(requiredKey: String,
+                              invalidNumericKey: String,
+                              maxAmountKey: String = "",
+                              minAmountKey: String,
+                              args: Seq[String] = Seq.empty[String]): Formatter[Option[BigDecimal]] =
     new Formatter[Option[BigDecimal]] {
 
       private val baseFormatter = stringFormatter(requiredKey)
@@ -130,8 +156,8 @@ trait Formatters {
           .map(_.replaceAll("""\s""", ""))
           .flatMap(s => checkIfValidString(s, key, requiredKey, invalidNumericKey, args))
           .flatMap(bd =>
-            if (minAmountkey != "") {
-              checksWithMinAmount(bd, key, minAmountkey, maxAmountKey, args)
+            if (minAmountKey != "") {
+              checksWithMinAmount(bd, key, minAmountKey, maxAmountKey, args)
             } else {
               checksWithOutMinAmount(bd, key, maxAmountKey, args)
             })

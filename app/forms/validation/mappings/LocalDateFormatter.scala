@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package forms.mappings
+package forms.validation.mappings
 
+import forms.validation.mappings.Formatters.intFormatter
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
@@ -33,8 +34,7 @@ private[mappings] class LocalDateFormatter(missingAllError: String,
                                            earliestDateAndError: Option[(LocalDate, String)],
                                            latestDateAndError: Option[(LocalDate, String)],
                                            args: Seq[String] = Seq.empty)
-    extends Formatter[LocalDate]
-    with Formatters {
+    extends Formatter[LocalDate] {
 
   private val fieldKeys: List[String] = List("day", "month", "year")
 
