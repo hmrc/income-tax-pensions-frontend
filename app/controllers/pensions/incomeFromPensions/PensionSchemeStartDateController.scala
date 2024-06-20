@@ -17,10 +17,8 @@
 package controllers.pensions.incomeFromPensions
 
 import config.{AppConfig, ErrorHandler}
-import controllers.pensions.incomeFromPensions.routes.PensionSchemeSummaryController
 import controllers.predicates.actions.ActionsProvider
-import forms.DateForm.DateModel
-import forms.{DateForm, FormsProvider}
+import forms.standard.LocalDateFormProvider
 import models.mongo.PensionsCYAModel
 import models.pension.statebenefits.UkPensionIncomeViewModel
 import play.api.data.Form
@@ -30,7 +28,6 @@ import services.PensionSessionService
 import services.redirects.IncomeFromOtherUkPensionsPages.WhenDidYouStartGettingPaymentsPage
 import services.redirects.IncomeFromOtherUkPensionsRedirects.indexCheckThenJourneyCheck
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.DateTimeUtil.localDateTimeFormat
 import views.html.pensions.incomeFromPensions.PensionSchemeStartDateView
 
 import java.time.LocalDate
@@ -42,53 +39,44 @@ class PensionSchemeStartDateController @Inject() (pensionSessionService: Pension
                                                   errorHandler: ErrorHandler,
                                                   view: PensionSchemeStartDateView,
                                                   actionsProvider: ActionsProvider,
-                                                  formProvider: FormsProvider,
+                                                  formProvider: LocalDateFormProvider,
                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport {
 
+  private val form: Form[LocalDate] = formProvider("pensionStartDate")
+
   def show(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
     implicit request =>
       indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, WhenDidYouStartGettingPaymentsPage, taxYear) { data =>
-        val viewModel = data.pensions.incomeFromPensions.getUKPensionIncomes
-        val index     = pensionSchemeIndex.getOrElse(0)
-        viewModel(index).startDate.fold {
-          Future.successful(Ok(view(formProvider.pensionSchemeDateForm, taxYear, index)))
-        } { startDate =>
-          val parsedDate: LocalDate = LocalDate.parse(startDate, localDateTimeFormat)
-          val filledForm: Form[DateModel] = formProvider.pensionSchemeDateForm.fill(
-            DateModel(
-              parsedDate.getDayOfMonth.toString,
-              parsedDate.getMonthValue.toString,
-              parsedDate.getYear.toString
-            ))
-          Future.successful(Ok(view(filledForm, taxYear, index)))
-        }
+        val viewModel                         = data.pensions.incomeFromPensions.getUKPensionIncomes
+        val index                             = pensionSchemeIndex.getOrElse(0)
+        val maybeStartDate: Option[LocalDate] = viewModel(index).startDate.map(LocalDate.parse(_))
+        val filledForm: Form[LocalDate]       = maybeStartDate.fold(form)(form.fill)
+        Future.successful(Ok(view(filledForm, taxYear, index)))
       }
   }
 
   def submit(taxYear: Int, pensionSchemeIndex: Option[Int]): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) async {
     implicit request =>
       indexCheckThenJourneyCheck(request.sessionData, pensionSchemeIndex, WhenDidYouStartGettingPaymentsPage, taxYear) { data =>
-        val index        = pensionSchemeIndex.getOrElse(0)
-        val verifiedForm = formProvider.pensionSchemeDateForm.bindFromRequest()
-        verifiedForm
-          .copy(errors = DateForm.verifyDate(verifiedForm.get, "incomeFromPensions.pensionStartDate"))
+        val index = pensionSchemeIndex.getOrElse(0)
+        form
+          .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, taxYear, index))),
             startDate => {
               val pensionsCYAModel: PensionsCYAModel      = data.pensions
               val viewModel                               = pensionsCYAModel.incomeFromPensions
               val pensionScheme: UkPensionIncomeViewModel = viewModel.getUKPensionIncomes(index)
-              val newStartDate                            = startDate.toLocalDate.toString
 
               val updatedPensionIncomesList: List[UkPensionIncomeViewModel] =
-                viewModel.getUKPensionIncomes.updated(index, pensionScheme.copy(startDate = Some(newStartDate)))
+                viewModel.getUKPensionIncomes.updated(index, pensionScheme.copy(startDate = Some(startDate.toString)))
               val updatedCyaModel = pensionsCYAModel.copy(incomeFromPensions = viewModel.copy(uKPensionIncomes = Some(updatedPensionIncomesList)))
 
               pensionSessionService.createOrUpdateSessionData(request.user, updatedCyaModel, taxYear, data.isPriorSubmission)(
                 errorHandler.internalServerError()) {
-                Redirect(PensionSchemeSummaryController.show(taxYear, pensionSchemeIndex))
+                Redirect(routes.PensionSchemeSummaryController.show(taxYear, pensionSchemeIndex))
               }
             }
           )

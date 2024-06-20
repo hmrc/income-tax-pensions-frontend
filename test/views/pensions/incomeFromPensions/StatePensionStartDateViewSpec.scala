@@ -20,8 +20,7 @@ import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.{aUser, anAgentUser}
-import forms.DateForm.DateModel
-import forms.{DateForm, FormsProvider}
+import forms.standard.LocalDateFormProvider
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -31,6 +30,8 @@ import play.api.mvc.AnyContent
 import support.ViewUnitTest
 import utils.FakeRequestProvider
 import views.html.pensions.incomeFromPensions.StatePensionStartDateView
+
+import java.time.LocalDate
 
 class StatePensionStartDateViewSpec extends ViewUnitTest with FakeRequestProvider {
 
@@ -43,6 +44,8 @@ class StatePensionStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
   private val validDay       = "27"
   private val validMonth     = "10"
   private val validYear      = "2021"
+  private val validDate      = LocalDate.parse(s"$validYear-$validMonth-$validDay")
+  private val formProvider   = new LocalDateFormProvider()
 
   object Selectors {
     val captionSelector: String        = "#main-content > div > div > header > p"
@@ -128,7 +131,7 @@ class StatePensionStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest
           )
 
-        def form: Form[DateForm.DateModel] = new FormsProvider().stateBenefitDateForm
+        def form: Form[LocalDate] = formProvider("stateBenefitStartDate")
 
         implicit val document: Document = Jsoup.parse(underTest(form, taxYearEOY).body)
 
@@ -155,9 +158,9 @@ class StatePensionStartDateViewSpec extends ViewUnitTest with FakeRequestProvide
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-        def form: Form[DateForm.DateModel] = new FormsProvider().stateBenefitDateForm
+        def form: Form[LocalDate] = formProvider("stateBenefitStartDate")
 
-        implicit val document: Document = Jsoup.parse(underTest(form.fill(DateModel(validDay, validMonth, validYear)), taxYearEOY).body)
+        implicit val document: Document = Jsoup.parse(underTest(form.fill(validDate), taxYearEOY).body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)
         h1Check(userScenario.specificExpectedResults.get.expectedHeading)

@@ -74,6 +74,17 @@ common.error.incorrectFormat = Nodwch y cyfanswm yn y fformat cywir
 common.useCalculator.paragraph.link = os bydd angen i chi gyfrifo hyn
 common.useCalculator.paragraph = Defnyddiwch gyfrifiannell
 
+common.error.localDate.empty.all =
+common.error.localDate.empty.day = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod
+common.error.localDate.empty.dayMonth = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a mis
+common.error.localDate.empty.dayYear = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a blwyddyn
+common.error.localDate.empty.month = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis
+common.error.localDate.empty.monthYear = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis a blwyddyn
+common.error.localDate.empty.year = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys blwyddyn
+common.error.localDate.invalidFormat = Mae’n rhaid i’r diwrnod, mis a’r flwyddyn fod yn ddilys
+common.error.localDate.dateInFuture = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod yn y gorffennol
+common.error.localDate.tooLongAgo = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod ar ôl 1 Ionawr 1900
+
 unauthorisedPayments.common.title = Taliadau heb awdurdod
 unauthorisedPayments.common.title.hidden = Newid taliadau heb awdurdod
 unauthorisedPayments.common.ukPensionSchemes = Cynlluniau pensiwn y DU
@@ -509,16 +520,6 @@ incomeFromPensions.statePensionLumpSum.amount.error.overMaximum.agent = Mae’n 
 incomeFromPensions.stateBenefitStartDate.title.individual = Pryd y gwnaethoch chi ddechrau cael taliadau Pensiwn y Wladwriaeth?
 incomeFromPensions.stateBenefitStartDate.title.agent = Pryd y gwnaeth eich cleient ddechrau cael taliadau Pensiwn y Wladwriaeth?
 incomeFromPensions.stateBenefitStartDate.date.hint = Er enghraifft, 27 3 2007
-incomeFromPensions.stateBenefitStartDate.error.empty.all = Nodwch ddyddiad dechrau’r pensiwn
-incomeFromPensions.stateBenefitStartDate.error.empty.day = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod
-incomeFromPensions.stateBenefitStartDate.error.empty.dayMonth = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a mis
-incomeFromPensions.stateBenefitStartDate.error.empty.dayYear = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a blwyddyn
-incomeFromPensions.stateBenefitStartDate.error.empty.month = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis
-incomeFromPensions.stateBenefitStartDate.error.empty.monthYear = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis a blwyddyn
-incomeFromPensions.stateBenefitStartDate.error.empty.year = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys blwyddyn
-incomeFromPensions.stateBenefitStartDate.error.invalidFormat = Mae’n rhaid i’r diwrnod, mis a’r flwyddyn fod yn ddilys
-incomeFromPensions.stateBenefitStartDate.error.dateInFuture = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod yn y gorffennol
-incomeFromPensions.stateBenefitStartDate.error.tooLongAgo = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod ar ôl 1 Ionawr 1900
 
 #tax paid on state pension lump sum
 pensions.taxPaidOnStatePensionLumpSum.amount = Swm y dreth a dalwyd
@@ -537,16 +538,16 @@ pensions.statePensionLumpSumStartDate.title.individual = Pryd cawsoch eich cyfan
 pensions.statePensionLumpSumStartDate.title.agent = Pryd cafodd eich cleient gyfandaliad Pensiwn y Wladwriaeth?
 pensions.statePensionLumpSumStartDate.hint.individual = Mae hwn i’w weld ar eich P60.
 pensions.statePensionLumpSumStartDate.hint.agent = Mae hwn i’w weld ar ei P60.
-pensions.statePensionLumpSumStartDate.error.empty.all = Nodwch y dyddiad dechrau ar gyfer y cyfandaliad pensiwn
-pensions.statePensionLumpSumStartDate.error.empty.day = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys diwrnod
-pensions.statePensionLumpSumStartDate.error.empty.dayMonth = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys diwrnod a mis
-pensions.statePensionLumpSumStartDate.error.empty.dayYear = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys diwrnod a blwyddyn
-pensions.statePensionLumpSumStartDate.error.empty.month = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys mis
-pensions.statePensionLumpSumStartDate.error.empty.monthYear = Mae’n rhaid i’r dyddiad dechrau ar gyfer cyfandaliad pensiwn gynnwys mis a blwyddyn
-pensions.statePensionLumpSumStartDate.error.empty.year = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys blwyddyn
-pensions.statePensionLumpSumStartDate.error.invalidFormat = Mae’n rhaid i’r diwrnod, mis a’r flwyddyn fod yn ddilys
-pensions.statePensionLumpSumStartDate.error.dateInFuture = Mae’n rhaid i’r dyddiad a nodwyd gennych fod yn y gorffennol
-pensions.statePensionLumpSumStartDate.error.tooLongAgo = Mae’n rhaid i’r dyddiad fod ar ôl 1 Ionawr 1900
+pensions.statePensionLumpSumStartDate.error.localDate.empty.all = Nodwch y dyddiad dechrau ar gyfer y cyfandaliad pensiwn
+pensions.statePensionLumpSumStartDate.error.localDate.empty.day = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys diwrnod
+pensions.statePensionLumpSumStartDate.error.localDate.empty.dayMonth = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys diwrnod a mis
+pensions.statePensionLumpSumStartDate.error.localDate.empty.dayYear = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys diwrnod a blwyddyn
+pensions.statePensionLumpSumStartDate.error.localDate.empty.month = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys mis
+pensions.statePensionLumpSumStartDate.error.localDate.empty.monthYear = Mae’n rhaid i’r dyddiad dechrau ar gyfer cyfandaliad pensiwn gynnwys mis a blwyddyn
+pensions.statePensionLumpSumStartDate.error.localDate.empty.year = Mae’n rhaid i’r dyddiad dechrau ar gyfer y cyfandaliad pensiwn gynnwys blwyddyn
+pensions.statePensionLumpSumStartDate.error.localDate.invalidFormat = Mae’n rhaid i’r diwrnod, mis a’r flwyddyn fod yn ddilys
+pensions.statePensionLumpSumStartDate.error.localDate.dateInFuture = Mae’n rhaid i’r dyddiad a nodwyd gennych fod yn y gorffennol
+pensions.statePensionLumpSumStartDate.error.localDate.tooLongAgo = Mae’n rhaid i’r dyddiad fod ar ôl 1 Ionawr 1900
 
 #state pension
 pensions.statePension.title.individual = A ydych chi’n cael taliadau rheolaidd o Bensiwn y Wladwriaeth?
@@ -638,16 +639,6 @@ pensions.pensionAmount.taxPaid.error.overMaximum = Mae’n rhaid i swm y dreth a
 incomeFromPensions.pensionStartDate.title.individual = Pryd y gwnaethoch ddechrau cael taliadau o’r cynllun hwn?
 incomeFromPensions.pensionStartDate.title.agent = Pryd y gwnaeth eich cleient ddechrau cael taliadau o’r cynllun hwn?
 incomeFromPensions.pensionStartDate.date.hint = Er enghraifft, 12 11 2007
-incomeFromPensions.pensionStartDate.error.empty.all = Nodwch ddyddiad dechrau’r pensiwn
-incomeFromPensions.pensionStartDate.error.empty.day = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod
-incomeFromPensions.pensionStartDate.error.empty.dayMonth = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a mis
-incomeFromPensions.pensionStartDate.error.empty.dayYear = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys diwrnod a blwyddyn
-incomeFromPensions.pensionStartDate.error.empty.month = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis
-incomeFromPensions.pensionStartDate.error.empty.monthYear = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys mis a blwyddyn
-incomeFromPensions.pensionStartDate.error.empty.year = Mae’n rhaid i ddyddiad dechrau’r pensiwn gynnwys blwyddyn
-incomeFromPensions.pensionStartDate.error.invalidFormat = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod yn ddyddiad go iawn
-incomeFromPensions.pensionStartDate.error.dateInFuture = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod yn y gorffennol
-incomeFromPensions.pensionStartDate.error.tooLongAgo = Mae’n rhaid i ddyddiad dechrau’r pensiwn fod ar ol 1 Ionawr 1900
 
 #Remove pension scheme page
 incomeFromPensions.removePensionScheme.buttonText = Dileu’r pensiwn

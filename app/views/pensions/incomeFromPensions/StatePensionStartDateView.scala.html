@@ -15,14 +15,10 @@
  *@
 
 @import views.html.templates.Layout
-@import views.html.templates.helpers.Heading
-@import views.html.templates.helpers.DateInput
-@import views.html.templates.helpers.Button
+@import views.html.templates.helpers.{Button, DateInput, ErrorSummary, Heading}
 @import models.requests.UserSessionDataRequest
-@import views.html.templates.helpers.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import forms.DateForm.DateModel
-
+@import java.time.LocalDate
 
 @this(
     layout: Layout,
@@ -33,14 +29,14 @@
     dateInput : DateInput,
 )
 
-@(form: Form[DateModel], taxYear: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
+@(form: Form[LocalDate], taxYear: Int)(implicit request: UserSessionDataRequest[_], messages: Messages, appConfig: AppConfig)
 
 @titleForUse = @{messages(s"incomeFromPensions.stateBenefitStartDate.title.${if(request.user.isAgent) "agent" else "individual"}")}
 
 @layout(pageTitle = titleForUse, taxYear = Some(taxYear), hasErrors = form.hasErrors, isAgent = request.user.isAgent) {
 
     @errorSummary(form.errors.distinct.map{ error =>
-            error.key match {
+        error.key match {
             case "invalidFormat" | "emptyDayMonth" | "emptyDayYear" | "emptyDay" | "emptyAll" => error.copy(key = "day")
             case "emptyMonthYear" | "emptyMonth" => error.copy(key = "month")
             case "emptyYear" => error.copy(key = "year")

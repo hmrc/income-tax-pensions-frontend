@@ -20,8 +20,8 @@ import builders.IncomeFromPensionsViewModelBuilder.anIncomeFromPensionsViewModel
 import builders.PensionsCYAModelBuilder.aPensionsCYAModel
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.{aUser, anAgentUser}
-import forms.DateForm.DateModel
-import forms.{DateForm, FormsProvider}
+import forms.standard.LocalDateFormProvider
+import forms.standard.StandardErrorKeys.{EarliestDate, PresentDate}
 import models.requests.UserSessionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -32,6 +32,8 @@ import support.ViewUnitTest
 import utils.FakeRequestProvider
 import views.html.pensions.incomeFromPensions.StatePensionLumpSumStartDateView
 
+import java.time.LocalDate
+
 class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequestProvider {
 
   private val dayInputName   = "statePensionLumpSumStartDate-day"
@@ -40,6 +42,8 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
   private val validDay       = "27"
   private val validMonth     = "10"
   private val validYear      = "2021"
+  private val validDate      = LocalDate.parse(s"$validYear-$validMonth-$validDay")
+  private val formProvider   = new LocalDateFormProvider()
 
   trait CommonExpectedResults {
     val expectedCaption: Int => String
@@ -114,7 +118,12 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
 
   userScenarios.foreach { userScenario =>
     import Selectors._
-    def form: Form[DateForm.DateModel] = new FormsProvider().statePensionLumpSumStartDateForm
+    def form: Form[LocalDate] = formProvider(
+      "statePensionLumpSumStartDate",
+      altErrorPrefix = "pensions.statePensionLumpSumStartDate",
+      earliestDateAndError = Some((EarliestDate, "pensions.statePensionLumpSumStartDate.error.localDate.tooLongAgo")),
+      latestDateAndError = Some((PresentDate, "pensions.statePensionLumpSumStartDate.error.localDate.dateInFuture"))
+    )
 
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "render page with no pre-filled data" which {
@@ -155,7 +164,7 @@ class StatePensionLumpSumStartDateViewSpec extends ViewUnitTest with FakeRequest
             if (userScenario.isAgent) anAgentUser else aUser,
             if (userScenario.isAgent) fakeAgentRequest else fakeIndividualRequest)
 
-        val htmlFormat                  = underTest(form.fill(DateModel(validDay, validMonth, validYear)), taxYearEOY)
+        val htmlFormat                  = underTest(form.fill(validDate), taxYearEOY)
         implicit val document: Document = Jsoup.parse(htmlFormat.body)
 
         titleCheck(userScenario.specificExpectedResults.get.expectedTitle, userScenario.isWelsh)

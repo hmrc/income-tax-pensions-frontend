@@ -153,15 +153,6 @@ class FormsProvider {
     )
   }
 
-  def stateBenefitDateForm: Form[DateForm.DateModel] =
-    DateForm.dateForm("stateBenefitStartDate")
-
-  def statePensionLumpSumStartDateForm: Form[DateForm.DateModel] =
-    DateForm.dateForm("statePensionLumpSumStartDate")
-
-  def pensionSchemeDateForm: Form[DateForm.DateModel] =
-    DateForm.dateForm("pensionStartDate")
-
   def unauthorisedNonUkTaxOnSurchargedAmountForm(implicit user: User): Form[(Boolean, Option[BigDecimal])] = {
     val agentOrIndividual = if (user.isAgent) "agent" else "individual"
     RadioButtonAmountForm.radioButtonAndAmountForm(

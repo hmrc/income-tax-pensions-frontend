@@ -63,7 +63,7 @@ object JourneyStatusSummaryViewModel {
     def overseasPensionsIsUpdated =
       paymentsIntoOverseasPensionsIsUpdated(cya) | incomeFromOverseasPensionsIsUpdated(cya) | overseasPensionsTransferChargesIsUpdated(
         cya) | shortServiceRefundsIsUpdated(cya)
-    def overseasPensionsRow = buildRow(OverseasPensionsSummary, overseasPensionsIsUpdated, journeyIsComplete = false)
+    def overseasPensionsRow = buildRow(OverseasPensionsSummary, overseasPensionsIsUpdated, journeyAnswersAreComplete = false)
 
     def ukPensionsIncomeRow =
       buildRow(UkPensionIncome, ukPensionsSchemeIsUpdated(cya), cya.exists(_.incomeFromPensions.isUkPensionFinished))
@@ -120,12 +120,13 @@ object JourneyStatusSummaryViewModel {
        |  </div>
        |""".stripMargin
 
-  private def buildRow(journey: Journey, journeyIsStarted: Boolean, journeyIsComplete: Boolean)(implicit
+  private def buildRow(journey: Journey, journeyIsStarted: Boolean, journeyAnswersAreComplete: Boolean)(implicit
       messages: Messages,
       taxYear: TaxYear,
       journeyStatuses: Seq[JourneyNameAndStatus]): String = {
+    // URL is determined by journey completion in session data, not by status
     val status   = getJourneyStatus(journey, journeyStatuses, journeyIsStarted)
-    val href     = getUrl(journey, taxYear, journeyIsComplete)
+    val href     = getUrl(journey, taxYear, journeyAnswersAreComplete)
     val statusId = s"journey-${journey.toString}-status"
     val statusTag =
       if (status == Completed) messages(s"common.status.$status")
