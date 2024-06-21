@@ -19,15 +19,16 @@ package models.audit
 import models.User
 import models.mongo.PensionsUserData
 import models.pension.AllPensionsData
-import models.pension.charges.UnauthorisedPaymentsViewModel
+import models.pension.charges.UnauthorisedPaymentsAuditViewModel
+import models.pension.charges.UnauthorisedPaymentsViewModel.toAuditViewModel
 import play.api.libs.json.{Json, OWrites}
 
 case class UnauthorisedPaymentsAudit(taxYear: Int,
                                      userType: String,
                                      nino: String,
                                      mtdItId: String,
-                                     unauthorisedPayments: UnauthorisedPaymentsViewModel,
-                                     priorUnauthorisedPayments: Option[UnauthorisedPaymentsViewModel] = None) {
+                                     unauthorisedPayments: UnauthorisedPaymentsAuditViewModel,
+                                     priorUnauthorisedPayments: Option[UnauthorisedPaymentsAuditViewModel] = None) {
 
   private val amend  = "AmendUnauthorisedPayments"
   private val create = "CreateUnauthorisedPayments"
@@ -46,8 +47,8 @@ object UnauthorisedPaymentsAudit {
 
   def apply(taxYear: Int,
             user: User,
-            unauthorisedPayments: UnauthorisedPaymentsViewModel,
-            priorUnauthorisedPayments: Option[UnauthorisedPaymentsViewModel]): UnauthorisedPaymentsAudit =
+            unauthorisedPayments: UnauthorisedPaymentsAuditViewModel,
+            priorUnauthorisedPayments: Option[UnauthorisedPaymentsAuditViewModel]): UnauthorisedPaymentsAudit =
     UnauthorisedPaymentsAudit(
       taxYear,
       user.affinityGroup,
@@ -65,8 +66,8 @@ object UnauthorisedPaymentsAudit {
       userType = user.affinityGroup,
       nino = sessionData.nino,
       mtdItId = sessionData.mtdItId,
-      unauthorisedPayments = sessionData.pensions.unauthorisedPayments,
-      priorUnauthorisedPayments = priorData.map(pd => AllPensionsData.generateSessionModelFromPrior(pd).unauthorisedPayments)
+      unauthorisedPayments = toAuditViewModel(sessionData.pensions.unauthorisedPayments),
+      priorUnauthorisedPayments = priorData.map(pd => toAuditViewModel(AllPensionsData.generateSessionModelFromPrior(pd).unauthorisedPayments))
     )
 
   def standardAudit(user: User, sessionData: PensionsUserData): UnauthorisedPaymentsAudit =
@@ -75,6 +76,6 @@ object UnauthorisedPaymentsAudit {
       userType = user.affinityGroup,
       nino = sessionData.nino,
       mtdItId = sessionData.mtdItId,
-      unauthorisedPayments = sessionData.pensions.unauthorisedPayments
+      unauthorisedPayments = toAuditViewModel(sessionData.pensions.unauthorisedPayments)
     )
 }
