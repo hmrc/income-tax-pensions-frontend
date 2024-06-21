@@ -158,6 +158,19 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
   def toPensionsCYAModel: PensionsCYAModel = PensionsCYAModel.emptyModels.copy(unauthorisedPayments = this)
 }
 
+case class UnauthorisedPaymentsAuditViewModel(unauthorisedPayment: Option[String] = None,
+                                              surchargeAmount: Option[BigDecimal] = None,
+                                              surchargeTaxAmountQuestion: Option[Boolean] = None,
+                                              surchargeTaxAmount: Option[BigDecimal] = None,
+                                              noSurchargeAmount: Option[BigDecimal] = None,
+                                              noSurchargeTaxAmountQuestion: Option[Boolean] = None,
+                                              noSurchargeTaxAmount: Option[BigDecimal] = None,
+                                              ukPensionSchemesQuestion: Option[Boolean] = None,
+                                              pensionSchemeTaxReference: Option[Seq[String]] = None)
+object UnauthorisedPaymentsAuditViewModel {
+  implicit val format: OFormat[UnauthorisedPaymentsAuditViewModel] = Json.format[UnauthorisedPaymentsAuditViewModel]
+}
+
 object UnauthorisedPaymentsViewModel {
   implicit val format: OFormat[UnauthorisedPaymentsViewModel]                  = Json.format[UnauthorisedPaymentsViewModel]
   implicit val optRds: OptionalContentHttpReads[UnauthorisedPaymentsViewModel] = new OptionalContentHttpReads[UnauthorisedPaymentsViewModel]
@@ -174,6 +187,28 @@ object UnauthorisedPaymentsViewModel {
   object AmountType {
     case object Amount    extends AmountType
     case object TaxAmount extends AmountType
+  }
+
+  def toAuditViewModel(viewModel: UnauthorisedPaymentsViewModel): UnauthorisedPaymentsAuditViewModel = {
+    val unauthorisedPayment: String = (viewModel.surchargeQuestion, viewModel.noSurchargeQuestion) match {
+      case (Some(true), Some(true))   => "bothPayments"
+      case (Some(true), Some(false))  => "unauthorisedWithSurcharge"
+      case (Some(false), Some(true))  => "unauthorisedWithoutSurcharge"
+      case (Some(false), Some(false)) => "noPayment"
+      case _                          => "None"
+    }
+
+    UnauthorisedPaymentsAuditViewModel(
+      unauthorisedPayment = Some(unauthorisedPayment),
+      surchargeAmount = viewModel.surchargeAmount,
+      surchargeTaxAmountQuestion = viewModel.surchargeTaxAmountQuestion,
+      surchargeTaxAmount = viewModel.surchargeTaxAmount,
+      noSurchargeAmount = viewModel.noSurchargeAmount,
+      noSurchargeTaxAmountQuestion = viewModel.noSurchargeTaxAmountQuestion,
+      noSurchargeTaxAmount = viewModel.noSurchargeTaxAmount,
+      ukPensionSchemesQuestion = viewModel.ukPensionSchemesQuestion,
+      pensionSchemeTaxReference = viewModel.pensionSchemeTaxReference
+    )
   }
 }
 
