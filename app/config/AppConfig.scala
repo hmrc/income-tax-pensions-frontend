@@ -29,11 +29,11 @@ import scala.concurrent.duration.Duration
 
 @Singleton
 class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
-  private val signInBaseUrl: String         = servicesConfig.getString(ConfigKeys.signInUrl)
-  private val signInContinueBaseUrl: String = servicesConfig.getString(ConfigKeys.signInContinueUrl)
-  val signInContinueUrl: String             = SafeRedirectUrl(signInContinueBaseUrl).encodedUrl // TODO add redirect to overview page
-  private val signInOrigin                  = servicesConfig.getString("appName")
-  val signInUrl: String                     = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
+  private[config] val signInBaseUrl: String         = servicesConfig.getString(ConfigKeys.signInUrl)
+  private[config] val signInContinueBaseUrl: String = servicesConfig.getString(ConfigKeys.signInContinueUrl)
+  val signInContinueUrl: String                     = SafeRedirectUrl(signInContinueBaseUrl).encodedUrl // TODO add redirect to overview page
+  private[config] val signInOrigin                  = servicesConfig.getString("appName")
+  val signInUrl: String                             = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
 
   // TODO Why we need this?
   def defaultTaxYear: Int = servicesConfig.getInt(ConfigKeys.defaultTaxYear)
@@ -49,7 +49,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   val incomeTaxSubmissionBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionFrontendUrl) +
     servicesConfig.getString("microservice.services.income-tax-submission-frontend.context")
 
-  private val incomeTaxSubmissionFrontendOverview: String = servicesConfig.getString("microservice.services.income-tax-submission-frontend.overview")
+  private[config] val incomeTaxSubmissionFrontendOverview: String =
+    servicesConfig.getString("microservice.services.income-tax-submission-frontend.overview")
 
   def incomeTaxSubmissionOverviewUrl(taxYear: Int): String = incomeTaxSubmissionBaseUrl + "/" + taxYear + incomeTaxSubmissionFrontendOverview
 
@@ -62,11 +63,11 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
     servicesConfig.getString(ConfigKeys.viewAndChangeUrl) // TODO Missing key, what should be set? Change to val once set correctly
   def viewAndChangeEnterUtrUrl: String = s"$vcBaseUrl/report-quarterly/income-and-expenses/view/agents/client-utr"
 
-  private val appUrl: String     = servicesConfig.getString("microservice.url")
-  private val contactFrontEndUrl = servicesConfig.getString(ConfigKeys.contactFrontendUrl)
+  private[config] val appUrl: String     = servicesConfig.getString("microservice.url")
+  private[config] val contactFrontEndUrl = servicesConfig.getString(ConfigKeys.contactFrontendUrl)
 
-  private val contactFormServiceIndividual                           = "update-and-submit-income-tax-return"
-  private val contactFormServiceAgent                                = "update-and-submit-income-tax-return-agent"
+  private[config] val contactFormServiceIndividual                   = "update-and-submit-income-tax-return"
+  private[config] val contactFormServiceAgent                        = "update-and-submit-income-tax-return-agent"
   private def contactFormServiceIdentifier(isAgent: Boolean): String = if (isAgent) contactFormServiceAgent else contactFormServiceIndividual
 
   private def requestUri(implicit request: RequestHeader): String = SafeRedirectUrl(appUrl + request.uri).encodedUrl
@@ -80,7 +81,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
 
   def contactUrl(implicit isAgent: Boolean): String = s"$contactFrontEndUrl/contact/contact-hmrc?service=${contactFormServiceIdentifier(isAgent)}"
 
-  private val basGatewayUrl = servicesConfig.getString(ConfigKeys.basGatewayFrontendUrl)
+  private[config] val basGatewayUrl = servicesConfig.getString(ConfigKeys.basGatewayFrontendUrl)
 
   val signOutUrl: String = s"$basGatewayUrl/bas-gateway/sign-out-without-state"
 

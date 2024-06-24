@@ -41,7 +41,8 @@ class SignOutControllerSpec extends UnitTestWithApp with DefaultAwaitTimeout {
         }
 
         "return a Location header containing the sign out url with feedback url" in {
-          header(LOCATION, responseF) shouldBe Some("/sign-out-url?continue=%2FfeedbackUrl")
+          header(LOCATION, responseF) shouldBe Some(
+            "http://localhost:9553/bas-gateway/sign-out-without-state?continue=http%3A%2F%2Flocalhost%3A9514%2Ffeedback%2Fupdate-and-submit-income-tax-return")
         }
       }
 

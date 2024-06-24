@@ -26,8 +26,8 @@ import utils.{TestTaxYearHelper, UnitTest}
 
 class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
 
-  implicit lazy val mockedConfig: AppConfig = mock[AppConfig]
-  implicit lazy val cc: MessagesApi         = mockControllerComponents.messagesApi
+  implicit val mockedConfig: AppConfig = app.injector.instanceOf[AppConfig]
+  implicit lazy val cc: MessagesApi    = mockControllerComponents.messagesApi
 
   def taxYearAction(taxYear: Int, reset: Boolean = true): TaxYearAction = new TaxYearAction(taxYear, reset)
 
@@ -41,11 +41,8 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
           fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString, SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
         )
 
-        lazy val result = {
-          (() => mockedConfig.taxYearErrorFeature).expects() returning true
-
+        lazy val result =
           await(taxYearAction(taxYear).refine(userRequest))
-        }
 
         result.isRight shouldBe true
       }
@@ -56,11 +53,8 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
           fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYearEOY.toString, SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
         )
 
-        lazy val result = {
-          (() => mockedConfig.taxYearErrorFeature).expects() returning false
-
+        lazy val result =
           await(taxYearAction(taxYearEOY).refine(userRequest))
-        }
 
         result.isRight shouldBe true
       }
@@ -71,11 +65,8 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
           fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString, SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
         )
 
-        lazy val result = {
-          (() => mockedConfig.taxYearErrorFeature).expects() returning false
-
+        lazy val result =
           await(taxYearAction(taxYearEOY, reset = false).refine(userRequest))
-        }
 
         result.isRight shouldBe true
       }
@@ -92,19 +83,14 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
           )
         )
 
-        lazy val result = {
-          mockedConfig.incomeTaxSubmissionStartUrl _ expects taxYear returning
-            "controllers.routes.StartPageController.show(taxYear).url"
-
-          taxYearAction(taxYear).refine(userRequest)
-        }
+        lazy val result = taxYearAction(taxYear).refine(userRequest)
 
         "has a status of SEE_OTHER (303)" in {
           status(result.map(_.left.toOption.get)) shouldBe SEE_OTHER
         }
 
         "has the start page redirect url" in {
-          redirectUrl(result.map(_.left.toOption.get)) shouldBe "controllers.routes.StartPageController.show(taxYear).url"
+          redirectUrl(result.map(_.left.toOption.get)) shouldBe "http://localhost:9302/update-and-submit-income-tax-return/2025/start"
         }
 
       }
@@ -115,11 +101,8 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
           fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString, SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
         )
 
-        lazy val result = {
-          (() => mockedConfig.taxYearErrorFeature).expects() returning true
-
+        lazy val result =
           taxYearAction(invalidTaxYear).refine(userRequest)
-        }
 
         "has a status of SEE_OTHER (303)" in {
           status(result.map(_.left.toOption.get)) shouldBe SEE_OTHER
@@ -136,20 +119,15 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
           fakeRequest.withSession(SessionValues.TAX_YEAR -> taxYear.toString, SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(","))
         )
 
-        lazy val result = {
-          (() => mockedConfig.taxYearErrorFeature).expects() returning true
-          mockedConfig.incomeTaxSubmissionOverviewUrl _ expects taxYearEOY returning
-            "controllers.routes.OverviewPageController.show(taxYearEOY).url"
-
+        lazy val result =
           taxYearAction(taxYearEOY).refine(userRequest)
-        }
 
         "has a status of SEE_OTHER (303)" in {
           status(result.map(_.left.toOption.get)) shouldBe SEE_OTHER
         }
 
         "has the Overview page redirect url" in {
-          redirectUrl(result.map(_.left.toOption.get)) shouldBe "controllers.routes.OverviewPageController.show(taxYearEOY).url"
+          redirectUrl(result.map(_.left.toOption.get)) shouldBe s"http://localhost:9302/update-and-submit-income-tax-return/$taxYearEOY/view"
         }
 
         "has the updated TAX_YEAR session value" in {

@@ -16,15 +16,17 @@
 
 package utils
 
+import com.codahale.metrics.SharedMetricRegistries
+import config.AppConfig
+import models.mongo.TextAndKey
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
+import utils.TypeCaster.Converter.stringLoader
+
 import java.security.InvalidAlgorithmParameterException
 import java.util.Base64
-
-import com.codahale.metrics.SharedMetricRegistries
-import config.{AppConfig, MockAppConfig}
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.{Cipher, IllegalBlockSizeException, KeyGenerator, NoSuchPaddingException}
-import models.mongo.TextAndKey
-import utils.TypeCaster.Converter.stringLoader
 
 class SecureGCMCipherSpec extends UnitTest {
   SharedMetricRegistries.clear()
@@ -44,10 +46,17 @@ class SecureGCMCipherSpec extends UnitTest {
 
   implicit val textAndKey: TextAndKey = TextAndKey(associatedText, secretKey)
 
+  override def fakeApplication(): Application =
+    new GuiceApplicationBuilder()
+      .configure("useEncryption" -> "true")
+      .build()
+
   "encrypt" should {
     "return plain text when turned off" in {
-      val encrypterWithNoCrypt = new SecureGCMCipher()(new MockAppConfig().config(false))
-      val encryptedText        = encrypterWithNoCrypt.encrypt(textToEncrypt)
+      val encrypterWithNoCrypt = new SecureGCMCipher()(
+        new GuiceApplicationBuilder().build().injector.instanceOf[AppConfig]
+      )
+      val encryptedText = encrypterWithNoCrypt.encrypt(textToEncrypt)
 
       encryptedText.value shouldBe textToEncrypt
     }
@@ -174,7 +183,7 @@ class SecureGCMCipherSpec extends UnitTest {
 
   "decrypt" should {
     "return plain text when turned off" in {
-      val encrypterWithNoCrypt = new SecureGCMCipher()(new MockAppConfig().config(false))
+      val encrypterWithNoCrypt = new SecureGCMCipher()(new GuiceApplicationBuilder().build().injector.instanceOf[AppConfig])
       val encryptedText        = encrypterWithNoCrypt.decrypt(textToEncrypt, "nonce")
       encryptedText shouldBe textToEncrypt
     }

@@ -17,10 +17,11 @@
 package support.mocks
 
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
-import config.MockAppConfig
+import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import org.scalamock.handlers.CallHandler4
 import org.scalamock.scalatest.MockFactory
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Helpers.stubMessagesControllerComponents
 import services.AuthService
 import uk.gov.hmrc.auth.core._
@@ -32,9 +33,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockAuthorisedAction extends MockFactory {
-
-  private val mockAppConfig                        = new MockAppConfig().config()
+trait MockAuthorisedAction extends MockFactory { this: GuiceOneAppPerSuite =>
+  private val mockAppConfig                        = app.injector.instanceOf[AppConfig]
   private val testMockAuthConnector: AuthConnector = mock[AuthConnector]
   private val mockAuthService                      = new AuthService(testMockAuthConnector)
 

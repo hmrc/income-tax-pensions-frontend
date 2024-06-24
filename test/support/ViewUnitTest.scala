@@ -18,7 +18,7 @@ package support
 
 import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.UserBuilder.aUser
-import config.{AppConfig, MockAppConfig}
+import config.AppConfig
 import models.AuthorisationRequest
 import models.requests.UserSessionDataRequest
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -40,7 +40,7 @@ trait ViewUnitTest
 
   // private val fakeRequest = FakeRequest().withHeaders("X-Session-ID" -> aUser.sessionId)
 
-  protected implicit val mockAppConfig: AppConfig      = new MockAppConfig().config()
+  protected implicit val mockAppConfig: AppConfig      = app.injector.instanceOf[AppConfig]
   protected implicit lazy val messagesApi: MessagesApi = inject[MessagesApi]
 
   protected lazy val defaultMessages: Messages = messagesApi.preferred(fakeRequest.withHeaders())

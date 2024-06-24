@@ -16,7 +16,7 @@
 
 package support
 
-import config.{AppConfig, MockAppConfig}
+import config.AppConfig
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.stubMessagesControllerComponents
@@ -28,7 +28,7 @@ import scala.concurrent.ExecutionContext
 trait ControllerUnitTest extends UnitTest with FutureAwaits with DefaultAwaitTimeout with GuiceOneAppPerSuite with Injecting with TestTaxYearHelper {
 
   protected implicit val cc: MessagesControllerComponents = stubMessagesControllerComponents()
-  protected implicit val appConfig: AppConfig             = new MockAppConfig().config()
+  protected implicit val appConfig: AppConfig             = app.injector.instanceOf[AppConfig]
   protected implicit lazy val ec: ExecutionContext        = ExecutionContext.Implicits.global
 
 }
