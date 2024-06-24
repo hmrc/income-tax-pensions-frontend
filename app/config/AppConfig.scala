@@ -27,74 +27,73 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
 
-// TODO The lazy here are risky, you realize they are not set in PROD only when you'll receive the first request. Change them to not be lazy
 @Singleton
 class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
+  private val signInBaseUrl: String         = servicesConfig.getString(ConfigKeys.signInUrl)
+  private val signInContinueBaseUrl: String = servicesConfig.getString(ConfigKeys.signInContinueUrl)
+  val signInContinueUrl: String             = SafeRedirectUrl(signInContinueBaseUrl).encodedUrl // TODO add redirect to overview page
+  private val signInOrigin                  = servicesConfig.getString("appName")
+  val signInUrl: String                     = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
 
-  private lazy val signInBaseUrl: String = servicesConfig.getString(ConfigKeys.signInUrl)
-
-  private lazy val signInContinueBaseUrl: String = servicesConfig.getString(ConfigKeys.signInContinueUrl)
-  lazy val signInContinueUrl: String             = SafeRedirectUrl(signInContinueBaseUrl).encodedUrl // TODO add redirect to overview page
-  private lazy val signInOrigin                  = servicesConfig.getString("appName")
-  lazy val signInUrl: String                     = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
-
+  // TODO Why we need this?
   def defaultTaxYear: Int = servicesConfig.getInt(ConfigKeys.defaultTaxYear)
 
-  lazy val incomeTaxSubmissionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionUrl) + "/income-tax-submission-service"
-
-  lazy val pensionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxPensionsUrl) + "/income-tax-pensions"
+  val incomeTaxSubmissionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionUrl) + "/income-tax-submission-service"
+  val pensionBEBaseUrl: String             = servicesConfig.getString(ConfigKeys.incomeTaxPensionsUrl) + "/income-tax-pensions"
 
   def journeyAnswersUrl(taxYear: TaxYear, nino: Nino, journey: Journey): String =
     pensionBEBaseUrl + s"/${taxYear.endYear}/${journey.toString}/${nino.value}/answers"
 
-  lazy val statePensionBEBaseUrl: String = servicesConfig.getString(incomeTaxStateBenefitsUrl)
-  private val incomeTaxStateBenefitsUrl  = "microservice.services.income-tax-state-benefits.url"
+  val statePensionBEBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxStateBenefitsUrl)
 
-  def incomeTaxSubmissionBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionFrontendUrl) +
+  val incomeTaxSubmissionBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionFrontendUrl) +
     servicesConfig.getString("microservice.services.income-tax-submission-frontend.context")
 
-  def incomeTaxSubmissionOverviewUrl(taxYear: Int): String = incomeTaxSubmissionBaseUrl + "/" + taxYear +
-    servicesConfig.getString("microservice.services.income-tax-submission-frontend.overview")
-  def incomeTaxSubmissionStartUrl(taxYear: Int): String = incomeTaxSubmissionBaseUrl + "/" + taxYear +
-    "/start"
-  def incomeTaxSubmissionIvRedirect: String = incomeTaxSubmissionBaseUrl +
-    servicesConfig.getString("microservice.services.income-tax-submission-frontend.iv-redirect")
+  private val incomeTaxSubmissionFrontendOverview: String = servicesConfig.getString("microservice.services.income-tax-submission-frontend.overview")
 
-  private lazy val vcBaseUrl: String   = servicesConfig.getString(ConfigKeys.viewAndChangeUrl)
+  def incomeTaxSubmissionOverviewUrl(taxYear: Int): String = incomeTaxSubmissionBaseUrl + "/" + taxYear + incomeTaxSubmissionFrontendOverview
+
+  def incomeTaxSubmissionStartUrl(taxYear: Int): String = incomeTaxSubmissionBaseUrl + "/" + taxYear + "/start"
+
+  val incomeTaxSubmissionIvRedirect: String =
+    incomeTaxSubmissionBaseUrl + servicesConfig.getString("microservice.services.income-tax-submission-frontend.iv-redirect")
+
+  private def vcBaseUrl: String =
+    servicesConfig.getString(ConfigKeys.viewAndChangeUrl) // TODO Missing key, what should be set? Change to val once set correctly
   def viewAndChangeEnterUtrUrl: String = s"$vcBaseUrl/report-quarterly/income-and-expenses/view/agents/client-utr"
 
-  lazy private val appUrl: String     = servicesConfig.getString("microservice.url")
-  lazy private val contactFrontEndUrl = servicesConfig.getString(ConfigKeys.contactFrontendUrl)
+  private val appUrl: String     = servicesConfig.getString("microservice.url")
+  private val contactFrontEndUrl = servicesConfig.getString(ConfigKeys.contactFrontendUrl)
 
-  lazy private val contactFormServiceIndividual                               = "update-and-submit-income-tax-return"
-  lazy private val contactFormServiceAgent                                    = "update-and-submit-income-tax-return-agent"
-  private def contactFormServiceIdentifier(implicit isAgent: Boolean): String = if (isAgent) contactFormServiceAgent else contactFormServiceIndividual
+  private val contactFormServiceIndividual                           = "update-and-submit-income-tax-return"
+  private val contactFormServiceAgent                                = "update-and-submit-income-tax-return-agent"
+  private def contactFormServiceIdentifier(isAgent: Boolean): String = if (isAgent) contactFormServiceAgent else contactFormServiceIndividual
 
   private def requestUri(implicit request: RequestHeader): String = SafeRedirectUrl(appUrl + request.uri).encodedUrl
 
   private lazy val feedbackFrontendUrl = servicesConfig.getString(ConfigKeys.feedbackFrontendUrl)
 
-  def feedbackSurveyUrl(implicit isAgent: Boolean): String = s"$feedbackFrontendUrl/feedback/$contactFormServiceIdentifier"
+  def feedbackSurveyUrl(implicit isAgent: Boolean): String = s"$feedbackFrontendUrl/feedback/${contactFormServiceIdentifier(isAgent)}"
 
   def betaFeedbackUrl(implicit request: RequestHeader, isAgent: Boolean): String =
-    s"$contactFrontEndUrl/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=$requestUri"
+    s"$contactFrontEndUrl/contact/beta-feedback?service=${contactFormServiceIdentifier(isAgent)}&backUrl=$requestUri"
 
-  def contactUrl(implicit isAgent: Boolean): String = s"$contactFrontEndUrl/contact/contact-hmrc?service=$contactFormServiceIdentifier"
+  def contactUrl(implicit isAgent: Boolean): String = s"$contactFrontEndUrl/contact/contact-hmrc?service=${contactFormServiceIdentifier(isAgent)}"
 
-  private lazy val basGatewayUrl = servicesConfig.getString(ConfigKeys.basGatewayFrontendUrl)
+  private val basGatewayUrl = servicesConfig.getString(ConfigKeys.basGatewayFrontendUrl)
 
-  lazy val signOutUrl: String = s"$basGatewayUrl/bas-gateway/sign-out-without-state"
+  val signOutUrl: String = s"$basGatewayUrl/bas-gateway/sign-out-without-state"
 
-  lazy val timeoutDialogTimeout: Int   = servicesConfig.getInt("timeoutDialogTimeout")
-  lazy val timeoutDialogCountdown: Int = servicesConfig.getInt("timeoutDialogCountdown")
+  val timeoutDialogTimeout: Int   = servicesConfig.getInt("timeoutDialogTimeout")
+  val timeoutDialogCountdown: Int = servicesConfig.getInt("timeoutDialogCountdown")
 
   // Mongo config
-  lazy val encryptionKey: String = servicesConfig.getString("mongodb.encryption.key")
-  lazy val mongoTTL: Int         = Duration(servicesConfig.getString("mongodb.timeToLive")).toMinutes.toInt
+  val encryptionKey: String = servicesConfig.getString("mongodb.encryption.key")
+  val mongoTTL: Int         = Duration(servicesConfig.getString("mongodb.timeToLive")).toMinutes.toInt
 
-  def taxYearErrorFeature: Boolean = servicesConfig.getBoolean("taxYearErrorFeatureSwitch")
+  val taxYearErrorFeature: Boolean = servicesConfig.getBoolean("taxYearErrorFeatureSwitch") // TODO Why do we need this?
 
-  def languageMap: Map[String, Lang] = Map(
+  val languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
     "cymraeg" -> Lang("cy")
   )
@@ -102,9 +101,9 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   def routeToSwitchLanguage: String => Call =
     (lang: String) => controllers.routes.LanguageSwitchController.switchToLanguage(lang)
 
-  lazy val welshToggleEnabled: Boolean = servicesConfig.getBoolean("feature-switch.welshToggleEnabled")
+  val welshToggleEnabled: Boolean = servicesConfig.getBoolean("feature-switch.welshToggleEnabled") // TODO Why do we need this?
 
-  lazy val useEncryption: Boolean = {
+  val useEncryption: Boolean = {
     logger.warn("[SecureGCMCipher][decrypt] Encryption is turned off")
     servicesConfig.getBoolean("useEncryption")
   }

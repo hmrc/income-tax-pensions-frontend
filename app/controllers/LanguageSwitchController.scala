@@ -39,10 +39,8 @@ class LanguageSwitchController @Inject() (appConfig: AppConfig,
     case None          => appConfig.incomeTaxSubmissionStartUrl(appConfig.defaultTaxYear)
   }
 
-  private def languageMap: Map[String, Lang] = appConfig.languageMap
-
   def switchToLanguage(language: String): Action[AnyContent] = Action { implicit request =>
-    val lang = languageMap.getOrElse(language, Lang.defaultLang)
+    val lang = appConfig.languageMap.getOrElse(language, Lang.defaultLang)
 
     val redirectURL = request.headers
       .get(REFERER)
