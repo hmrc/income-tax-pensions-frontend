@@ -20,7 +20,7 @@ import builders.PensionsCYAModelBuilder.emptyPensionsData
 import cats.data.EitherT
 import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
-import config.{AppConfig, ErrorHandler, MockAppConfig}
+import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.AuthorisedAction
 import models.mongo.PensionsUserData
 import models.{AuthorisationRequest, User}
@@ -80,7 +80,7 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
   implicit val headerCarrierWithSession: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(sessionId)))
   val emptyHeaderCarrier: HeaderCarrier                = HeaderCarrier()
 
-  implicit val mockAppConfig: AppConfig                       = new MockAppConfig().config()
+  implicit val mockAppConfig: AppConfig                       = app.injector.instanceOf[AppConfig]
   implicit val mockErrorHandler: ErrorHandler                 = mock[ErrorHandler]
   implicit val mockControllerComponents: ControllerComponents = Helpers.stubControllerComponents()
   implicit val mockExecutionContext: ExecutionContext         = ExecutionContext.Implicits.global
