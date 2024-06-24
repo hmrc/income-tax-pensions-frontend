@@ -23,10 +23,10 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 class MockAppConfig extends MockFactory {
 
   def config(encrypt: Boolean = true): AppConfig = new AppConfig(mock[ServicesConfig]) {
-    override lazy val signInContinueUrl: String = "/continue"
-    override lazy val signInUrl: String         = "/signIn"
+    override val signInContinueUrl: String = "/continue"
+    override val signInUrl: String         = "/signIn"
 
-    override lazy val defaultTaxYear: Int = 2022
+    override val defaultTaxYear: Int = 2022
 
     override def incomeTaxSubmissionOverviewUrl(taxYear: Int): String = "/overview"
 
@@ -38,22 +38,22 @@ class MockAppConfig extends MockFactory {
 
     override def contactUrl(implicit isAgent: Boolean): String = "/contact-frontend/contact"
 
-    override lazy val signOutUrl: String = "/sign-out-url"
+    override val signOutUrl: String = "/sign-out-url"
 
-    override lazy val timeoutDialogTimeout: Int   = 900
-    override lazy val timeoutDialogCountdown: Int = 120
+    override val timeoutDialogTimeout: Int   = 900
+    override val timeoutDialogCountdown: Int = 120
 
-    override lazy val taxYearErrorFeature: Boolean = true
+    override val taxYearErrorFeature: Boolean = true
 
-    override lazy val welshToggleEnabled: Boolean = true
+    override val welshToggleEnabled: Boolean = true
 
     override def viewAndChangeEnterUtrUrl: String = "/report-quarterly/income-and-expenses/view/agents/client-utr"
 
-    override def incomeTaxSubmissionBaseUrl: String = ""
+    override val incomeTaxSubmissionBaseUrl: String = ""
 
-    override def incomeTaxSubmissionIvRedirect: String = "/update-and-submit-income-tax-return/iv-uplift"
+    override val incomeTaxSubmissionIvRedirect: String = "/update-and-submit-income-tax-return/iv-uplift"
 
-    override lazy val encryptionKey: String  = "encryptionKey12345"
-    override lazy val useEncryption: Boolean = encrypt
+    override val encryptionKey: String  = "encryptionKey12345"
+    override val useEncryption: Boolean = encrypt
   }
 }
