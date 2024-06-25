@@ -26,7 +26,7 @@ import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
-import utils.{EncryptedValue, SecureGCMCipher}
+import utils.{AesGCMCrypto, EncryptedValue}
 
 case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = None,
                                         shortServiceRefundCharge: Option[BigDecimal] = None,
@@ -54,7 +54,7 @@ case class ShortServiceRefundsViewModel(shortServiceRefund: Option[Boolean] = No
       else true
     }
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedShortServiceRefundsViewModel =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedShortServiceRefundsViewModel =
     EncryptedShortServiceRefundsViewModel(
       shortServiceRefund = shortServiceRefund.map(_.encrypted),
       shortServiceRefundCharge = shortServiceRefundCharge.map(_.encrypted),
@@ -116,7 +116,7 @@ case class EncryptedShortServiceRefundsViewModel(
     shortServiceRefundTaxPaidCharge: Option[EncryptedValue] = None,
     refundPensionScheme: Seq[EncryptedOverseasRefundPensionScheme] = Nil
 ) {
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): ShortServiceRefundsViewModel =
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): ShortServiceRefundsViewModel =
     ShortServiceRefundsViewModel(
       shortServiceRefund = shortServiceRefund.map(_.decrypted[Boolean]),
       shortServiceRefundCharge = shortServiceRefundCharge.map(_.decrypted[BigDecimal]),
@@ -146,7 +146,7 @@ case class OverseasRefundPensionScheme(
       alphaTwoCountryCode.isDefined &&
       alphaThreeCountryCode.isDefined
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedOverseasRefundPensionScheme =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedOverseasRefundPensionScheme =
     EncryptedOverseasRefundPensionScheme(
       name = name.map(_.encrypted),
       qualifyingRecognisedOverseasPensionScheme = qualifyingRecognisedOverseasPensionScheme.map(_.encrypted),
@@ -172,7 +172,7 @@ case class EncryptedOverseasRefundPensionScheme(
     alphaTwoCountryCode: Option[EncryptedValue] = None,
     alphaThreeCountryCode: Option[EncryptedValue] = None
 ) {
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): OverseasRefundPensionScheme =
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): OverseasRefundPensionScheme =
     OverseasRefundPensionScheme(
       name = name.map(_.decrypted[String]),
       qualifyingRecognisedOverseasPensionScheme = qualifyingRecognisedOverseasPensionScheme.map(_.decrypted[String]),

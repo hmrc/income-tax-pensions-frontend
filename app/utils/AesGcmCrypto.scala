@@ -16,9 +16,9 @@
 
 package utils
 
+import com.google.inject.Inject
 import config.AppConfig
 import models.mongo.TextAndKey
-import play.api.Logging
 import play.api.libs.json.{Json, OFormat}
 import utils.TypeCaster.Converter
 
@@ -26,22 +26,21 @@ import java.security.{InvalidAlgorithmParameterException, InvalidKeyException, N
 import java.util.Base64
 import javax.crypto._
 import javax.crypto.spec.{GCMParameterSpec, SecretKeySpec}
-import javax.inject.{Inject, Singleton}
+import javax.inject.Singleton
 import scala.util.{Failure, Success, Try}
 
 case class EncryptedValue(value: String, nonce: String)
-
 object EncryptedValue {
   implicit val cryptoFormat: OFormat[EncryptedValue] = Json.format[EncryptedValue]
 }
 
-class EncryptionDecryptionException(method: String, reason: String, message: String) extends RuntimeException {
+class EncryptionDecryptionException(method: String, reason: String, message: String) extends RuntimeException(message) {
   val failureReason          = s"$reason for $method"
   val failureMessage: String = message
 }
 
 @Singleton
-class SecureGCMCipher @Inject() (implicit private val appConfig: AppConfig) extends Logging {
+class AesGCMCrypto @Inject() (implicit private val appConfig: AppConfig) extends Logging {
 
   private val IV_SIZE               = 96
   val TAG_BIT_LENGTH                = 128
@@ -120,7 +119,7 @@ class SecureGCMCipher @Inject() (implicit private val appConfig: AppConfig) exte
 
   private def validateAssociatedText(associatedText: String, method: String): Array[Byte] =
     associatedText match {
-      case text if text.length > 0 => text.getBytes
+      case text if text.nonEmpty => text.getBytes
       case _ => throw new EncryptionDecryptionException(method, "associated text must not be null", "associated text was not defined")
     }
 

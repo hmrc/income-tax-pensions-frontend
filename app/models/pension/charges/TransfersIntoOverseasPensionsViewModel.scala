@@ -24,7 +24,7 @@ import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
-import utils.{EncryptedValue, SecureGCMCipher}
+import utils.{AesGCMCrypto, EncryptedValue}
 
 case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option[Boolean] = None,
                                                   overseasTransferCharge: Option[Boolean] = None,
@@ -50,7 +50,7 @@ case class TransfersIntoOverseasPensionsViewModel(transferPensionSavings: Option
 
   def journeyIsUnanswered: Boolean = this.isEmpty
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransfersIntoOverseasPensionsViewModel =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedTransfersIntoOverseasPensionsViewModel =
     EncryptedTransfersIntoOverseasPensionsViewModel(
       transferPensionSavings = transferPensionSavings.map(_.encrypted),
       overseasTransferCharge = overseasTransferCharge.map(_.encrypted),
@@ -78,7 +78,7 @@ case class EncryptedTransfersIntoOverseasPensionsViewModel(transferPensionSaving
                                                            pensionSchemeTransferChargeAmount: Option[EncryptedValue] = None,
                                                            transferPensionScheme: Seq[EncryptedTransferPensionScheme] = Nil) {
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TransfersIntoOverseasPensionsViewModel =
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): TransfersIntoOverseasPensionsViewModel =
     TransfersIntoOverseasPensionsViewModel(
       transferPensionSavings = transferPensionSavings.map(_.decrypted[Boolean]),
       overseasTransferCharge = overseasTransferCharge.map(_.decrypted[Boolean]),
@@ -103,7 +103,7 @@ case class TransferPensionScheme(ukTransferCharge: Option[Boolean] = None,
   def isFinished: Boolean =
     name.isDefined && providerAddress.isDefined && ukTransferCharge.isDefined && schemeReference.isDefined && alphaThreeCountryCode.isDefined
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedTransferPensionScheme =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedTransferPensionScheme =
     EncryptedTransferPensionScheme(
       ukTransferCharge = ukTransferCharge.map(_.encrypted),
       name = name.map(_.encrypted),
@@ -121,7 +121,7 @@ case class EncryptedTransferPensionScheme(ukTransferCharge: Option[EncryptedValu
                                           alphaTwoCountryCode: Option[EncryptedValue],
                                           alphaThreeCountryCode: Option[EncryptedValue]) {
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): TransferPensionScheme =
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): TransferPensionScheme =
     TransferPensionScheme(
       ukTransferCharge = ukTransferCharge.map(_.decrypted[Boolean]),
       name = name.map(_.decrypted[String]),

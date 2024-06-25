@@ -105,7 +105,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   val welshToggleEnabled: Boolean = servicesConfig.getBoolean("feature-switch.welshToggleEnabled") // TODO Why do we need this?
 
   val useEncryption: Boolean = {
-    logger.warn("[SecureGCMCipher][decrypt] Encryption is turned off")
+    logger.warn("[AesGCMCrypto][decrypt] Encryption is turned off")
     servicesConfig.getBoolean("useEncryption")
   }
 

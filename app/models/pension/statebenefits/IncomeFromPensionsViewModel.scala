@@ -24,7 +24,7 @@ import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.booleanDecryptor
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.booleanEncryptor
-import utils.{EncryptedValue, SecureGCMCipher}
+import utils.{AesGCMCrypto, EncryptedValue}
 
 // TODO Any reason why these two journeys are aggregated in one case class?
 case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewModel] = None,
@@ -72,7 +72,7 @@ case class IncomeFromPensionsViewModel(statePension: Option[StateBenefitViewMode
 
   def journeyIsUnanswered: Boolean = this.isEmpty
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromPensionsViewModel =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedIncomeFromPensionsViewModel =
     EncryptedIncomeFromPensionsViewModel(
       statePension = statePension.map(_.encrypted()),
       statePensionLumpSum = statePensionLumpSum.map(_.encrypted()),
@@ -96,7 +96,7 @@ case class EncryptedIncomeFromPensionsViewModel(statePension: Option[EncryptedSt
                                                 uKPensionIncomesQuestion: Option[EncryptedValue] = None,
                                                 uKPensionIncomes: Option[List[EncryptedUkPensionIncomeViewModel]] = None) {
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): IncomeFromPensionsViewModel =
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): IncomeFromPensionsViewModel =
     IncomeFromPensionsViewModel(
       statePension = statePension.map(_.decrypted()),
       statePensionLumpSum = statePensionLumpSum.map(_.decrypted()),
