@@ -53,11 +53,13 @@ class PensionOverseasIncomeStatus @Inject() (authAction: AuthorisedAction,
         case Right(maybeSessionData) =>
           maybeSessionData match {
             case Some(data) =>
-              cleanUpSchemes(data).map { case Right(_) =>
-                val form =
-                  data.pensions.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion
-                    .fold(yesNoForm(request.user))(yesNoForm(request.user).fill(_))
-                Ok(view(form, taxYear))
+              cleanUpSchemes(data).map {
+                case Left(_) => errorHandler.internalServerError()
+                case Right(_) =>
+                  val form =
+                    data.pensions.incomeFromOverseasPensions.paymentsFromOverseasPensionsQuestion
+                      .fold(yesNoForm(request.user))(yesNoForm(request.user).fill(_))
+                  Ok(view(form, taxYear))
               }
             case None => Future.successful(Redirect(PensionsSummaryController.show(taxYear)))
           }

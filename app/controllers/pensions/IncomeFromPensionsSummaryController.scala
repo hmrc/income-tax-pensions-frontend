@@ -29,7 +29,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.pensions.incomeFromPensions.IncomeFromPensionsSummaryView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
 
 @Singleton
 class IncomeFromPensionsSummaryController @Inject() (mcc: MessagesControllerComponents,
