@@ -22,7 +22,7 @@ import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, localDateDecryptor, uuidDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, localDateEncryptor, uuidEncryptor}
-import utils.{EncryptedValue, SecureGCMCipher}
+import utils.{AesGCMCrypto, EncryptedValue}
 
 import java.time.LocalDate
 import java.util.UUID
@@ -58,7 +58,7 @@ case class StateBenefitViewModel(benefitId: Option[UUID] = None,
     notClaiming || claimIsFinished
   }
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedStateBenefitViewModel =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedStateBenefitViewModel =
     EncryptedStateBenefitViewModel(
       benefitId = benefitId.map(_.encrypted),
       startDateQuestion = startDateQuestion.map(_.encrypted),
@@ -93,7 +93,7 @@ case class EncryptedStateBenefitViewModel(
     addToCalculation: Option[EncryptedValue] = None
 ) {
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): StateBenefitViewModel =
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): StateBenefitViewModel =
     StateBenefitViewModel(
       benefitId = benefitId.map(_.decrypted[UUID]),
       startDateQuestion = startDateQuestion.map(_.decrypted[Boolean]),

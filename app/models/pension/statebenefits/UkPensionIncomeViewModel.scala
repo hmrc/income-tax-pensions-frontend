@@ -17,14 +17,12 @@
 package models.pension.statebenefits
 
 import models.mongo.TextAndKey
-import models.pension.employmentPensions.CreateUpdateEmploymentRequest
-import models.pension.employmentPensions.CreateUpdateEmploymentRequest.{CreateUpdateEmployment, CreateUpdateEmploymentData, PayModel}
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
-import utils.{EncryptedValue, SecureGCMCipher}
+import utils.{AesGCMCrypto, EncryptedValue}
 
 case class UkPensionIncomeViewModel(employmentId: Option[String] = None,
                                     pensionId: Option[String] = None,
@@ -36,7 +34,7 @@ case class UkPensionIncomeViewModel(employmentId: Option[String] = None,
                                     taxPaid: Option[BigDecimal] = None,
                                     isCustomerEmploymentData: Option[Boolean] = None) {
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUkPensionIncomeViewModel =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedUkPensionIncomeViewModel =
     EncryptedUkPensionIncomeViewModel(
       employmentId = employmentId.map(_.encrypted),
       pensionId = pensionId.map(_.encrypted),
@@ -72,7 +70,7 @@ case class EncryptedUkPensionIncomeViewModel(employmentId: Option[EncryptedValue
                                              taxPaid: Option[EncryptedValue] = None,
                                              isCustomerEmploymentData: Option[EncryptedValue] = None) {
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): UkPensionIncomeViewModel =
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): UkPensionIncomeViewModel =
     UkPensionIncomeViewModel(
       employmentId = employmentId.map(_.decrypted[String]),
       pensionId = pensionId.map(_.decrypted[String]),

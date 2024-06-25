@@ -20,11 +20,11 @@ import config.AppConfig
 import models.mongo._
 import models.pension.charges.{EncryptedPensionAnnualAllowancesViewModel, PensionAnnualAllowancesViewModel}
 import models.pension.reliefs.{EncryptedPaymentsIntoPensionViewModel, PaymentsIntoPensionsViewModel}
-import utils.SecureGCMCipher
+import utils.AesGCMCrypto
 
 import javax.inject.Inject
 
-class EncryptionService @Inject() (secureGCMCipher: SecureGCMCipher, appConfig: AppConfig) {
+class EncryptionService @Inject() (aesGCMCrypto: AesGCMCrypto, appConfig: AppConfig) {
 
   def encryptUserData(userData: PensionsUserData): EncryptedPensionsUserData = {
     implicit val textAndKey: TextAndKey = TextAndKey(userData.mtdItId, appConfig.encryptionKey)
@@ -42,34 +42,34 @@ class EncryptionService @Inject() (secureGCMCipher: SecureGCMCipher, appConfig: 
 
   private def encryptPaymentsIntoPension(p: PaymentsIntoPensionsViewModel)(implicit textAndKey: TextAndKey): EncryptedPaymentsIntoPensionViewModel =
     EncryptedPaymentsIntoPensionViewModel(
-      rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(secureGCMCipher.encrypt),
-      totalRASPaymentsAndTaxRelief = p.totalRASPaymentsAndTaxRelief.map(secureGCMCipher.encrypt),
-      oneOffRasPaymentPlusTaxReliefQuestion = p.oneOffRasPaymentPlusTaxReliefQuestion.map(secureGCMCipher.encrypt),
-      totalOneOffRasPaymentPlusTaxRelief = p.totalOneOffRasPaymentPlusTaxRelief.map(secureGCMCipher.encrypt),
-      totalPaymentsIntoRASQuestion = p.totalPaymentsIntoRASQuestion.map(secureGCMCipher.encrypt),
-      pensionTaxReliefNotClaimedQuestion = p.pensionTaxReliefNotClaimedQuestion.map(secureGCMCipher.encrypt),
-      retirementAnnuityContractPaymentsQuestion = p.retirementAnnuityContractPaymentsQuestion.map(secureGCMCipher.encrypt),
-      totalRetirementAnnuityContractPayments = p.totalRetirementAnnuityContractPayments.map(secureGCMCipher.encrypt),
-      workplacePensionPaymentsQuestion = p.workplacePensionPaymentsQuestion.map(secureGCMCipher.encrypt),
-      totalWorkplacePensionPayments = p.totalWorkplacePensionPayments.map(secureGCMCipher.encrypt)
+      rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(aesGCMCrypto.encrypt),
+      totalRASPaymentsAndTaxRelief = p.totalRASPaymentsAndTaxRelief.map(aesGCMCrypto.encrypt),
+      oneOffRasPaymentPlusTaxReliefQuestion = p.oneOffRasPaymentPlusTaxReliefQuestion.map(aesGCMCrypto.encrypt),
+      totalOneOffRasPaymentPlusTaxRelief = p.totalOneOffRasPaymentPlusTaxRelief.map(aesGCMCrypto.encrypt),
+      totalPaymentsIntoRASQuestion = p.totalPaymentsIntoRASQuestion.map(aesGCMCrypto.encrypt),
+      pensionTaxReliefNotClaimedQuestion = p.pensionTaxReliefNotClaimedQuestion.map(aesGCMCrypto.encrypt),
+      retirementAnnuityContractPaymentsQuestion = p.retirementAnnuityContractPaymentsQuestion.map(aesGCMCrypto.encrypt),
+      totalRetirementAnnuityContractPayments = p.totalRetirementAnnuityContractPayments.map(aesGCMCrypto.encrypt),
+      workplacePensionPaymentsQuestion = p.workplacePensionPaymentsQuestion.map(aesGCMCrypto.encrypt),
+      totalWorkplacePensionPayments = p.totalWorkplacePensionPayments.map(aesGCMCrypto.encrypt)
     )
 
   private def encryptedPensionAnnualAllowances(p: PensionAnnualAllowancesViewModel)(implicit
       textAndKey: TextAndKey): EncryptedPensionAnnualAllowancesViewModel =
     EncryptedPensionAnnualAllowancesViewModel(
-      reducedAnnualAllowanceQuestion = p.reducedAnnualAllowanceQuestion.map(secureGCMCipher.encrypt),
-      moneyPurchaseAnnualAllowance = p.moneyPurchaseAnnualAllowance.map(secureGCMCipher.encrypt),
-      taperedAnnualAllowance = p.taperedAnnualAllowance.map(secureGCMCipher.encrypt),
-      aboveAnnualAllowanceQuestion = p.aboveAnnualAllowanceQuestion.map(secureGCMCipher.encrypt),
-      aboveAnnualAllowance = p.aboveAnnualAllowance.map(secureGCMCipher.encrypt),
-      pensionProvidePaidAnnualAllowanceQuestion = p.pensionProvidePaidAnnualAllowanceQuestion.map(secureGCMCipher.encrypt),
-      taxPaidByPensionProvider = p.taxPaidByPensionProvider.map(secureGCMCipher.encrypt),
-      pensionSchemeTaxReferences = p.pensionSchemeTaxReferences.map(_.map(secureGCMCipher.encrypt))
+      reducedAnnualAllowanceQuestion = p.reducedAnnualAllowanceQuestion.map(aesGCMCrypto.encrypt),
+      moneyPurchaseAnnualAllowance = p.moneyPurchaseAnnualAllowance.map(aesGCMCrypto.encrypt),
+      taperedAnnualAllowance = p.taperedAnnualAllowance.map(aesGCMCrypto.encrypt),
+      aboveAnnualAllowanceQuestion = p.aboveAnnualAllowanceQuestion.map(aesGCMCrypto.encrypt),
+      aboveAnnualAllowance = p.aboveAnnualAllowance.map(aesGCMCrypto.encrypt),
+      pensionProvidePaidAnnualAllowanceQuestion = p.pensionProvidePaidAnnualAllowanceQuestion.map(aesGCMCrypto.encrypt),
+      taxPaidByPensionProvider = p.taxPaidByPensionProvider.map(aesGCMCrypto.encrypt),
+      pensionSchemeTaxReferences = p.pensionSchemeTaxReferences.map(_.map(aesGCMCrypto.encrypt))
     )
 
   private def encryptPension(pension: PensionsCYAModel)(implicit textAndKey: TextAndKey): EncryptedPensionCYAModel = {
     // TODO: temporary implicit - this service will be removed completely go once all models updated for new encryption
-    implicit val secureGCMCipher: SecureGCMCipher = this.secureGCMCipher
+    implicit val aesGCMCrypto: AesGCMCrypto = this.aesGCMCrypto
     EncryptedPensionCYAModel(
       encryptedPaymentsIntoPension = encryptPaymentsIntoPension(pension.paymentsIntoPension),
       encryptedPensionAnnualAllowances = encryptedPensionAnnualAllowances(pension.pensionsAnnualAllowances),
@@ -85,38 +85,37 @@ class EncryptionService @Inject() (secureGCMCipher: SecureGCMCipher, appConfig: 
   private def decryptPaymentsIntoPensionViewModel(p: EncryptedPaymentsIntoPensionViewModel)(implicit
       textAndKey: TextAndKey): PaymentsIntoPensionsViewModel =
     PaymentsIntoPensionsViewModel(
-      rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
-      totalRASPaymentsAndTaxRelief = p.totalRASPaymentsAndTaxRelief.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
-      oneOffRasPaymentPlusTaxReliefQuestion = p.oneOffRasPaymentPlusTaxReliefQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
-      totalOneOffRasPaymentPlusTaxRelief = p.totalOneOffRasPaymentPlusTaxRelief.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
-      totalPaymentsIntoRASQuestion = p.totalPaymentsIntoRASQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
-      pensionTaxReliefNotClaimedQuestion = p.pensionTaxReliefNotClaimedQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
+      rasPensionPaymentQuestion = p.rasPensionPaymentQuestion.map(x => aesGCMCrypto.decrypt[Boolean](x.value, x.nonce)),
+      totalRASPaymentsAndTaxRelief = p.totalRASPaymentsAndTaxRelief.map(x => aesGCMCrypto.decrypt[BigDecimal](x.value, x.nonce)),
+      oneOffRasPaymentPlusTaxReliefQuestion = p.oneOffRasPaymentPlusTaxReliefQuestion.map(x => aesGCMCrypto.decrypt[Boolean](x.value, x.nonce)),
+      totalOneOffRasPaymentPlusTaxRelief = p.totalOneOffRasPaymentPlusTaxRelief.map(x => aesGCMCrypto.decrypt[BigDecimal](x.value, x.nonce)),
+      totalPaymentsIntoRASQuestion = p.totalPaymentsIntoRASQuestion.map(x => aesGCMCrypto.decrypt[Boolean](x.value, x.nonce)),
+      pensionTaxReliefNotClaimedQuestion = p.pensionTaxReliefNotClaimedQuestion.map(x => aesGCMCrypto.decrypt[Boolean](x.value, x.nonce)),
       retirementAnnuityContractPaymentsQuestion =
-        p.retirementAnnuityContractPaymentsQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
-      totalRetirementAnnuityContractPayments =
-        p.totalRetirementAnnuityContractPayments.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
-      workplacePensionPaymentsQuestion = p.workplacePensionPaymentsQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
-      totalWorkplacePensionPayments = p.totalWorkplacePensionPayments.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce))
+        p.retirementAnnuityContractPaymentsQuestion.map(x => aesGCMCrypto.decrypt[Boolean](x.value, x.nonce)),
+      totalRetirementAnnuityContractPayments = p.totalRetirementAnnuityContractPayments.map(x => aesGCMCrypto.decrypt[BigDecimal](x.value, x.nonce)),
+      workplacePensionPaymentsQuestion = p.workplacePensionPaymentsQuestion.map(x => aesGCMCrypto.decrypt[Boolean](x.value, x.nonce)),
+      totalWorkplacePensionPayments = p.totalWorkplacePensionPayments.map(x => aesGCMCrypto.decrypt[BigDecimal](x.value, x.nonce))
     )
 
   private def decryptPensionAnnualAllowanceViewModel(p: EncryptedPensionAnnualAllowancesViewModel)(implicit
       textAndKey: TextAndKey): PensionAnnualAllowancesViewModel =
     PensionAnnualAllowancesViewModel(
-      reducedAnnualAllowanceQuestion = p.reducedAnnualAllowanceQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
-      moneyPurchaseAnnualAllowance = p.moneyPurchaseAnnualAllowance.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
-      taperedAnnualAllowance = p.taperedAnnualAllowance.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
-      aboveAnnualAllowanceQuestion = p.aboveAnnualAllowanceQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
-      aboveAnnualAllowance = p.aboveAnnualAllowance.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
+      reducedAnnualAllowanceQuestion = p.reducedAnnualAllowanceQuestion.map(x => aesGCMCrypto.decrypt[Boolean](x.value, x.nonce)),
+      moneyPurchaseAnnualAllowance = p.moneyPurchaseAnnualAllowance.map(x => aesGCMCrypto.decrypt[Boolean](x.value, x.nonce)),
+      taperedAnnualAllowance = p.taperedAnnualAllowance.map(x => aesGCMCrypto.decrypt[Boolean](x.value, x.nonce)),
+      aboveAnnualAllowanceQuestion = p.aboveAnnualAllowanceQuestion.map(x => aesGCMCrypto.decrypt[Boolean](x.value, x.nonce)),
+      aboveAnnualAllowance = p.aboveAnnualAllowance.map(x => aesGCMCrypto.decrypt[BigDecimal](x.value, x.nonce)),
       pensionProvidePaidAnnualAllowanceQuestion =
-        p.pensionProvidePaidAnnualAllowanceQuestion.map(x => secureGCMCipher.decrypt[Boolean](x.value, x.nonce)),
-      taxPaidByPensionProvider = p.taxPaidByPensionProvider.map(x => secureGCMCipher.decrypt[BigDecimal](x.value, x.nonce)),
-      pensionSchemeTaxReferences = p.pensionSchemeTaxReferences.map(_.map(x => secureGCMCipher.decrypt[String](x.value, x.nonce)))
+        p.pensionProvidePaidAnnualAllowanceQuestion.map(x => aesGCMCrypto.decrypt[Boolean](x.value, x.nonce)),
+      taxPaidByPensionProvider = p.taxPaidByPensionProvider.map(x => aesGCMCrypto.decrypt[BigDecimal](x.value, x.nonce)),
+      pensionSchemeTaxReferences = p.pensionSchemeTaxReferences.map(_.map(x => aesGCMCrypto.decrypt[String](x.value, x.nonce)))
     )
 
   private def decryptPensions(pension: EncryptedPensionCYAModel)(implicit textAndKey: TextAndKey): PensionsCYAModel = {
 
     // TODO: temporary implicit - this service will be removed completely go once all models updated for new encryption
-    implicit val secureGCMCipher: SecureGCMCipher = this.secureGCMCipher
+    implicit val aesGCMCrypto: AesGCMCrypto = this.aesGCMCrypto
     PensionsCYAModel(
       paymentsIntoPension = decryptPaymentsIntoPensionViewModel(pension.encryptedPaymentsIntoPension),
       pensionsAnnualAllowances = decryptPensionAnnualAllowanceViewModel(pension.encryptedPensionAnnualAllowances),

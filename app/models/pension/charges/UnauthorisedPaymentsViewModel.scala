@@ -25,7 +25,7 @@ import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
-import utils.{EncryptedValue, SecureGCMCipher}
+import utils.{AesGCMCrypto, EncryptedValue}
 
 case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = None,
                                          noSurchargeQuestion: Option[Boolean] = None,
@@ -93,7 +93,7 @@ case class UnauthorisedPaymentsViewModel(surchargeQuestion: Option[Boolean] = No
 
   def nonEmpty: Boolean = !isEmpty
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedUnauthorisedPaymentsViewModel =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedUnauthorisedPaymentsViewModel =
     EncryptedUnauthorisedPaymentsViewModel(
       surchargeQuestion = surchargeQuestion.map(_.encrypted),
       noSurchargeQuestion = noSurchargeQuestion.map(_.encrypted),
@@ -223,7 +223,7 @@ case class EncryptedUnauthorisedPaymentsViewModel(surchargeQuestion: Option[Encr
                                                   fromUkPensionSchemeQuestion: Option[EncryptedValue],
                                                   pensionSchemeTaxReference: Option[Seq[EncryptedValue]] = None) {
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): UnauthorisedPaymentsViewModel =
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): UnauthorisedPaymentsViewModel =
     UnauthorisedPaymentsViewModel(
       surchargeQuestion = surchargeQuestion.map(_.decrypted[Boolean]),
       noSurchargeQuestion = noSurchargeQuestion.map(_.decrypted[Boolean]),

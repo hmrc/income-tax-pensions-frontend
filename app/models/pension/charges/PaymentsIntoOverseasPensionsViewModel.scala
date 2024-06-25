@@ -25,7 +25,7 @@ import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
-import utils.{EncryptedValue, SecureGCMCipher}
+import utils.{AesGCMCrypto, EncryptedValue}
 
 object TaxReliefQuestion {
   val NoTaxRelief                     = "No tax relief"
@@ -63,7 +63,7 @@ case class OverseasPensionScheme(customerReference: Option[String] = None,
         }
       }
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedRelief =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedRelief =
     EncryptedRelief(
       customerReference = customerReference.map(_.encrypted),
       employerPaymentsAmount = employerPaymentsAmount.map(_.encrypted),
@@ -94,7 +94,7 @@ case class EncryptedRelief(
     sf74Reference: Option[EncryptedValue] = None,
     qualifyingOverseasPensionSchemeReferenceNumber: Option[EncryptedValue] = None
 ) {
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): OverseasPensionScheme =
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): OverseasPensionScheme =
     OverseasPensionScheme(
       customerReference = customerReference.map(_.decrypted[String]),
       employerPaymentsAmount = employerPaymentsAmount.map(_.decrypted[BigDecimal]),
@@ -161,7 +161,7 @@ case class PaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPensionsQue
       )
     }
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPaymentsIntoOverseasPensionsViewModel =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedPaymentsIntoOverseasPensionsViewModel =
     EncryptedPaymentsIntoOverseasPensionsViewModel(
       paymentsIntoOverseasPensionsQuestions = paymentsIntoOverseasPensionsQuestions.map(_.encrypted),
       paymentsIntoOverseasPensionsAmount = paymentsIntoOverseasPensionsAmount.map(_.encrypted),
@@ -187,7 +187,7 @@ case class EncryptedPaymentsIntoOverseasPensionsViewModel(paymentsIntoOverseasPe
                                                           employerPaymentsAmount: Option[EncryptedValue] = None,
                                                           reliefs: Seq[EncryptedRelief] = Seq.empty[EncryptedRelief]) {
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): PaymentsIntoOverseasPensionsViewModel =
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): PaymentsIntoOverseasPensionsViewModel =
     PaymentsIntoOverseasPensionsViewModel(
       paymentsIntoOverseasPensionsQuestions = paymentsIntoOverseasPensionsQuestions.map(_.decrypted[Boolean]),
       paymentsIntoOverseasPensionsAmount = paymentsIntoOverseasPensionsAmount.map(_.decrypted[BigDecimal]),

@@ -24,10 +24,10 @@ import models.pension.PensionCYABaseModel
 import models.pension.income.ForeignPension
 import play.api.libs.json.{Json, OFormat}
 import utils.DecryptableSyntax.DecryptableOps
+import utils.{AesGCMCrypto, EncryptedValue}
 import utils.DecryptorInstances.{bigDecimalDecryptor, booleanDecryptor, stringDecryptor}
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.{bigDecimalEncryptor, booleanEncryptor, stringEncryptor}
-import utils.{EncryptedValue, SecureGCMCipher}
 
 case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion: Option[Boolean] = None,
                                                overseasIncomePensionSchemes: Seq[PensionScheme] = Nil)
@@ -66,7 +66,7 @@ case class IncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuest
         )
       }
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedIncomeFromOverseasPensionsViewModel =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedIncomeFromOverseasPensionsViewModel =
     EncryptedIncomeFromOverseasPensionsViewModel(
       paymentsFromOverseasPensionsQuestion = paymentsFromOverseasPensionsQuestion.map(_.encrypted),
       overseasPensionSchemes = overseasIncomePensionSchemes.map(_.encrypted())
@@ -84,7 +84,7 @@ object IncomeFromOverseasPensionsViewModel {
 case class EncryptedIncomeFromOverseasPensionsViewModel(paymentsFromOverseasPensionsQuestion: Option[EncryptedValue] = None,
                                                         overseasPensionSchemes: Seq[EncryptedPensionSchemeSummary] = Nil) {
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): IncomeFromOverseasPensionsViewModel =
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): IncomeFromOverseasPensionsViewModel =
     IncomeFromOverseasPensionsViewModel(
       paymentsFromOverseasPensionsQuestion = paymentsFromOverseasPensionsQuestion.map(_.decrypted[Boolean]),
       overseasPensionSchemes.map(_.decrypted()))
@@ -105,7 +105,7 @@ case class EncryptedPensionSchemeSummary(
     taxableAmount: Option[EncryptedValue] = None
 ) {
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): PensionScheme =
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): PensionScheme =
     PensionScheme(
       alphaThreeCode = alphaThreeCode.map(_.decrypted[String]),
       alphaTwoCode = alphaTwoCode.map(_.decrypted[String]),
@@ -132,7 +132,7 @@ case class PensionScheme(alphaThreeCode: Option[String] = None,
                          foreignTaxCreditReliefQuestion: Option[Boolean] = None,
                          taxableAmount: Option[BigDecimal] = None) {
 
-  private def resetTaxableAmountIfDifferent(newPensionScheme: PensionScheme) =
+  private def resetTaxableAmountIfDifferent(newPensionScheme: PensionScheme): PensionScheme =
     if (newPensionScheme == this) this else newPensionScheme.copy(taxableAmount = None)
 
   def updateFTCR(newForeignTaxCreditReliefQuestion: Boolean): PensionScheme = {
@@ -150,7 +150,7 @@ case class PensionScheme(alphaThreeCode: Option[String] = None,
     resetTaxableAmountIfDifferent(updatedPensionScheme)
   }
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedPensionSchemeSummary =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedPensionSchemeSummary =
     EncryptedPensionSchemeSummary(
       alphaThreeCode = alphaThreeCode.map(_.encrypted),
       alphaTwoCode = alphaTwoCode.map(_.encrypted),

@@ -16,7 +16,6 @@
 
 package config
 
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import utils.UnitTest
 
 class AppConfigSpec extends UnitTest {

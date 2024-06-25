@@ -22,7 +22,7 @@ import utils.DecryptableSyntax.DecryptableOps
 import utils.DecryptorInstances.bigDecimalDecryptor
 import utils.EncryptableSyntax.EncryptableOps
 import utils.EncryptorInstances.bigDecimalEncryptor
-import utils.{EncryptedValue, SecureGCMCipher}
+import utils.{AesGCMCrypto, EncryptedValue}
 
 case class LifetimeAllowance(amount: Option[BigDecimal] = None, taxPaid: Option[BigDecimal] = None) {
 
@@ -30,7 +30,7 @@ case class LifetimeAllowance(amount: Option[BigDecimal] = None, taxPaid: Option[
 
   def isFinished: Boolean = amount.isDefined && taxPaid.isDefined
 
-  def encrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): EncryptedLifetimeAllowance =
+  def encrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): EncryptedLifetimeAllowance =
     EncryptedLifetimeAllowance(
       amount = amount.map(_.encrypted),
       taxPaid = taxPaid.map(_.encrypted)
@@ -43,7 +43,7 @@ object LifetimeAllowance {
 
 case class EncryptedLifetimeAllowance(amount: Option[EncryptedValue] = None, taxPaid: Option[EncryptedValue] = None) {
 
-  def decrypted()(implicit secureGCMCipher: SecureGCMCipher, textAndKey: TextAndKey): LifetimeAllowance = LifetimeAllowance(
+  def decrypted()(implicit aesGCMCrypto: AesGCMCrypto, textAndKey: TextAndKey): LifetimeAllowance = LifetimeAllowance(
     amount = amount.map(_.decrypted[BigDecimal]),
     taxPaid = taxPaid.map(_.decrypted[BigDecimal])
   )
