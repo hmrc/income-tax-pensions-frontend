@@ -22,9 +22,9 @@ import play.api.Logging
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-class IncomeTaxUserDataConnector @Inject() (val http: HttpClient, val config: AppConfig)(implicit ec: ExecutionContext) extends Logging {
+class IncomeTaxUserDataConnector @Inject() (val http: HttpClient, val config: AppConfig) extends Logging {
 
   def getUserData(nino: String, taxYear: Int)(hc: HeaderCarrier): DownstreamOutcome[IncomeTaxUserData] =
     Future.successful(

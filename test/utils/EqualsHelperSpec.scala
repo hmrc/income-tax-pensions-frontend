@@ -20,7 +20,6 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import utils.EqualsHelper.isDifferent
 
 class EqualsHelperSpec extends AnyWordSpecLike {
-  final case class Model(a: Option[Boolean], b: Option[BigDecimal])
 
   "isDifferent" should {
     "return true for None on the right hand side" in {
@@ -42,3 +41,5 @@ class EqualsHelperSpec extends AnyWordSpecLike {
 
   }
 }
+
+final case class Model(a: Option[Boolean], b: Option[BigDecimal])
