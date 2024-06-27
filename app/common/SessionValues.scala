@@ -22,5 +22,4 @@ object SessionValues {
 
   val TAX_YEAR               = "TAX_YEAR"
   val VALID_TAX_YEARS        = "validTaxYears"
-  val TEMP_NEW_EMPLOYMENT_ID = "TEMP_NEW_EMPLOYMENT_ID"
 }

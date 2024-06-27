@@ -22,13 +22,11 @@ import config.AppConfig
 import connectors.Connector.hcWithCorrelationId
 import connectors.httpParsers.DeletePensionChargesHttpParser.DeletePensionChargesHttpReads
 import connectors.httpParsers.GetJourneyStatusesHttpParser.GetJourneyStatusesHttpReads
-import connectors.httpParsers.LoadPriorEmploymentHttpParser.LoadPriorEmploymentHttpReads
 import models.domain.ApiResultT
 import models.logging.ConnectorRequestInfo
 import models.mongo.{JourneyContext, JourneyStatus}
 import models.pension.Journey._
 import models.pension.charges._
-import models.pension.employmentPensions.EmploymentPensions
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import models.pension.{IncomeFromPensionsStatePensionAnswers, JourneyNameAndStatus}
@@ -42,11 +40,6 @@ import scala.concurrent.ExecutionContext
 class PensionsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends Logging {
   private val apiId                 = "income-tax-pensions"
   private def buildUrl(url: String) = s"${appConfig.pensionBEBaseUrl}$url"
-
-  def loadPriorEmployment(nino: String, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[EmploymentPensions] = {
-    val url = buildUrl(s"/employment-pension/nino/$nino/taxYear/${taxYear.endYear}")
-    http.GET[DownstreamErrorOr[EmploymentPensions]](url)(LoadPriorEmploymentHttpReads, hcWithCorrelationId(hc), ec)
-  }
 
   def savePaymentsIntoPensions(nino: Nino, taxYear: TaxYear, answers: PaymentsIntoPensionsViewModel)(implicit
       hc: HeaderCarrier,
