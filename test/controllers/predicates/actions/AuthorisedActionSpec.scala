@@ -34,6 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthorisedActionSpec extends UnitTest {
 
+  val viewAndChangeUrl = "/report-quarterly/income-and-expenses/view/agents/client-utr"
+
   val auth: AuthorisedAction = authorisedAction
 
   ".enrolmentGetIdentifierValue" should {
@@ -347,8 +349,7 @@ class AuthorisedActionSpec extends UnitTest {
         status(result) shouldBe SEE_OTHER
       }
 
-      // TODO We don't have this key set yet
-      "there is no MTDITID value in session for an agent" ignore {
+      "there is no MTDITID value in session for an agent" in {
         lazy val result = {
 
           (mockAuthConnector
@@ -359,9 +360,8 @@ class AuthorisedActionSpec extends UnitTest {
           auth.invokeBlock(fakeRequestWithNino, block)
         }
         status(result) shouldBe SEE_OTHER
-        redirectUrl(result) shouldBe "/report-quarterly/income-and-expenses/view/agents/client-utr"
+        redirectUrl(result) should endWith(viewAndChangeUrl)
       }
-
     }
 
     "redirect to the sign in page" when {

@@ -51,7 +51,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.EitherTUtils.CasterOps
 import viewmodels.JourneyStatusSummaryViewModel.buildSummaryList
 
-import java.time.{Clock, ZoneOffset}
+import java.time.{Clock, ZoneOffset, ZonedDateTime}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -188,8 +188,11 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
     }
   }
 
-  def createOrUpdateSessionData[A](user: User, cyaModel: PensionsCYAModel, taxYear: Int, isPriorSubmission: Boolean)(onFail: => A)(
-      onSuccess: => A): Future[A] = {
+  def createOrUpdateSessionData[A](user: User,
+                                   cyaModel: PensionsCYAModel,
+                                   taxYear: Int,
+                                   isPriorSubmission: Boolean,
+                                   updateTime: Option[ZonedDateTime] = None)(onFail: => A)(onSuccess: => A): Future[A] = {
 
     val userData = PensionsUserData(
       user.sessionId,
@@ -198,7 +201,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       taxYear,
       isPriorSubmission,
       cyaModel,
-      Clock.systemUTC().instant().atZone(ZoneOffset.UTC)
+      updateTime.getOrElse(Clock.systemUTC().instant().atZone(ZoneOffset.UTC))
     )
 
     repository.createOrUpdate(userData).map {

@@ -50,7 +50,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
       totalWorkplacePensionPayments = zero
     )
 
-    def setPensionReliefs(newPensionReliefs: Reliefs) =
+    def setPensionReliefs(newPensionReliefs: Reliefs): AllPensionsData =
       priorBase.copy(pensionReliefs = priorBase.pensionReliefs.map(_.copy(pensionReliefs = newPensionReliefs)))
 
     val cases = Table(
