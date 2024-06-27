@@ -123,7 +123,7 @@ class AllPensionsDataSpec extends AnyWordSpecLike with TableDrivenPropertyChecks
       )
     )
 
-    // TODO fix when prior data for all journeys is done https://jira.tools.tax.service.gov.uk/browse/SASS-8139
+    // TODO Remove after https://jira.tools.tax.service.gov.uk/browse/SASS-8860
     "convert prior data to FE model" ignore forAll(cases) { (downstreamModel, expectedModel) =>
       val actual = AllPensionsData.generateSessionModelFromPrior(setPensionReliefs(downstreamModel))
       assert(actual.paymentsIntoPension === expectedModel)
