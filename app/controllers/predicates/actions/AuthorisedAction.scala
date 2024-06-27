@@ -16,9 +16,11 @@
 
 package controllers.predicates.actions
 
-import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
+import common.{EnrolmentIdentifiers, EnrolmentKeys}
 import config.AppConfig
+import connectors.IncomeTaxSessionDataConnector
 import models.logging.CorrelationIdMdc.withEnrichedCorrelationId
+import models.sessionData.SessionData
 import models.{AuthorisationRequest, User}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -34,7 +36,9 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedAction @Inject() (appConfig: AppConfig)(implicit val authService: AuthService, val mcc: MessagesControllerComponents)
+class AuthorisedAction @Inject() (appConfig: AppConfig, sessionDataConnector: IncomeTaxSessionDataConnector)(implicit
+    val authService: AuthService,
+    val mcc: MessagesControllerComponents)
     extends ActionBuilder[AuthorisationRequest, AnyContent]
     with I18nSupport {
 
@@ -108,18 +112,30 @@ class AuthorisedAction @Inject() (appConfig: AppConfig)(implicit val authService
 
   private[predicates] def agentAuthentication[A](
       block: AuthorisationRequest[A] => Future[Result])(implicit request: Request[A], hc: HeaderCarrier): Future[Result] = {
+  // TODO Wrap around feature toggle
+//    val optionalNino    = request.session.get(SessionValues.CLIENT_NINO)
+//    val optionalMtdItId = request.session.get(SessionValues.CLIENT_MTDITID)
 
-    lazy val agentDelegatedAuthRuleKey = "mtd-it-auth"
+    sessionId.fold {
+      Future(Redirect(appConfig.signInUrl))
+    } { sessionId =>
+      for {
+        sessionDataOrError <- sessionDataConnector.getSessionData(sessionId)
+        sessionData = sessionDataOrError.toOption.flatten.getOrElse(SessionData.empty)
+        res <- executeRequest(sessionData, block)
+      } yield res
+    }
+  }
 
-    lazy val agentAuthPredicate: String => Enrolment = identifierId =>
+  private def executeRequest[A](sessionData: SessionData, block: AuthorisationRequest[A] => Future[Result])(implicit
+      request: Request[A],
+      hc: HeaderCarrier): Future[Result] = {
+    def agentAuthPredicate: String => Enrolment = identifierId =>
       Enrolment(EnrolmentKeys.Individual)
         .withIdentifier(EnrolmentIdentifiers.individualId, identifierId)
-        .withDelegatedAuthRule(agentDelegatedAuthRuleKey)
+        .withDelegatedAuthRule(AuthorisedAction.AgentDelegatedAuthRuleKey)
 
-    val optionalNino    = request.session.get(SessionValues.CLIENT_NINO)
-    val optionalMtdItId = request.session.get(SessionValues.CLIENT_MTDITID)
-
-    (optionalMtdItId, optionalNino) match {
+    (sessionData.mtditid, sessionData.nino) match {
       case (Some(mtdItId), Some(nino)) =>
         authService
           .authorised(agentAuthPredicate(mtdItId))
@@ -151,6 +167,7 @@ class AuthorisedAction @Inject() (appConfig: AppConfig)(implicit val authService
             s"Redirecting to view & change. MTDITID missing:${mtditid.isEmpty}, NINO missing:${nino.isEmpty}")
         Future.successful(Redirect(appConfig.viewAndChangeEnterUtrUrl))
     }
+
   }
 
   private[predicates] def enrolmentGetIdentifierValue(
@@ -163,4 +180,8 @@ class AuthorisedAction @Inject() (appConfig: AppConfig)(implicit val authService
     }
   }.flatten
 
+}
+
+object AuthorisedAction {
+  val AgentDelegatedAuthRuleKey: String = "mtd-it-auth"
 }

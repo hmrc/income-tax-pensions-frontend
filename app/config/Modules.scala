@@ -18,6 +18,7 @@ package config
 
 import com.google.inject.AbstractModule
 import common.UUID
+import connectors.{IncomeTaxSessionDataConnector, IncomeTaxSessionDataConnectorImpl}
 import repositories.{PensionsUserDataRepository, PensionsUserDataRepositoryImpl}
 import services.{PensionsService, PensionsServiceImpl}
 
@@ -28,6 +29,7 @@ class Modules extends AbstractModule {
     bind(classOf[UUID]).toInstance(UUID)
     bind(classOf[PensionsUserDataRepository]).to(classOf[PensionsUserDataRepositoryImpl]).asEagerSingleton()
     bind(classOf[PensionsService]).to(classOf[PensionsServiceImpl]).asEagerSingleton()
+    bind(classOf[IncomeTaxSessionDataConnector]).to(classOf[IncomeTaxSessionDataConnectorImpl]).asEagerSingleton()
   }
 
 }

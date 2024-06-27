@@ -21,8 +21,6 @@ import play.api.mvc.Request
 
 trait SessionHelper {
 
-  def sessionIdIsUUID(id: String): Boolean = id.matches("^[A-Za-z0-9\\-\n]{36}$")
-
   def getFromSession(key: String)(implicit request: Request[_]): Option[String] =
     request.session.get(key)
 
