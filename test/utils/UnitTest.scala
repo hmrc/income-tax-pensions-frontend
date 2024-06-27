@@ -43,7 +43,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.templates.AgentAuthErrorPageView
 
-import java.time.ZonedDateTime
+import java.time.{Clock, ZoneOffset, ZonedDateTime}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 
@@ -158,8 +158,15 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
   val mtditid    = "1234567890"
   val user: User = authorisationRequest.user
 
-  val emptySessionData: PensionsUserData =
-    PensionsUserData(sessionId, "1234567890", nino, taxYear, isPriorSubmission = true, emptyPensionsData, ZonedDateTime.now())
+  def emptySessionData(updateTime: Option[ZonedDateTime] = None): PensionsUserData =
+    PensionsUserData(
+      sessionId,
+      "1234567890",
+      nino,
+      taxYear,
+      isPriorSubmission = true,
+      emptyPensionsData,
+      updateTime.getOrElse(Clock.systemUTC().instant().atZone(ZoneOffset.UTC)))
 
   implicit class ToFutureOps[A](value: A) {
     def asFuture: Future[A] = Future.successful(value)
