@@ -59,7 +59,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   val incomeTaxSubmissionIvRedirect: String =
     incomeTaxSubmissionBaseUrl + servicesConfig.getString("microservice.services.income-tax-submission-frontend.iv-redirect")
 
-  private val vcBaseUrl: String = servicesConfig.getString(ConfigKeys.viewAndChangeFrontendUrl)
+  private val vcBaseUrl: String        = servicesConfig.getString(ConfigKeys.viewAndChangeFrontendUrl)
   val viewAndChangeEnterUtrUrl: String = s"$vcBaseUrl/report-quarterly/income-and-expenses/view/agents/client-utr"
 
   private[config] val appUrl: String     = servicesConfig.getString("microservice.url")

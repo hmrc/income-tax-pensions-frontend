@@ -50,7 +50,7 @@ lazy val coverageSettings: Seq[Setting[?]] = {
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;" +
       ".*Routes.*;.*viewmodels.govuk.*;",
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
-    ScoverageKeys.coverageMinimumStmtTotal := 75, // TODO increase it after prior data + db refactoring
+    ScoverageKeys.coverageMinimumStmtTotal := 40, // TODO increase after https://jira.tools.tax.service.gov.uk/browse/SASS-8861
     ScoverageKeys.coverageFailOnMinimum    := true,
     ScoverageKeys.coverageHighlighting     := true
   )

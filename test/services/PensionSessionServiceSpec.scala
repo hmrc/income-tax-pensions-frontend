@@ -38,6 +38,7 @@ import play.api.test.Injecting
 import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 
+import java.time.{Clock, ZoneOffset, ZonedDateTime}
 import scala.concurrent.Future
 
 class PensionSessionServiceSpec
@@ -61,6 +62,8 @@ class PensionSessionServiceSpec
 
   val service: PensionSessionService =
     new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, mockPensionsConnector, errorHandler)(mockExecutionContext)
+
+  val now: ZonedDateTime = Clock.systemUTC().instant().atZone(ZoneOffset.UTC)
 
   "loadDataAndHandle" should {
     "invoke block if no errors retrieving session and prior data" in {
@@ -132,20 +135,20 @@ class PensionSessionServiceSpec
     }
   }
 
-  // TODO need to investigate and fix how changing joda time to java time has affected this test
   ".createOrUpdateSessionData" should {
-    "return SEE_OTHER(303) status when createOrUpdate succeeds" ignore {
-      mockCreateOrUpdate(emptySessionData, Right(()))
-      val response = service.createOrUpdateSessionData(user, emptyPensionsData, taxYear, isPriorSubmission = true)(Redirect("400"))(Redirect("303"))
+    "return SEE_OTHER(303) status when createOrUpdate succeeds" in {
+      mockCreateOrUpdate(emptySessionData(Some(now)), Right(()))
+      val response =
+        service.createOrUpdateSessionData(user, emptyPensionsData, taxYear, isPriorSubmission = true, Some(now))(Redirect("400"))(Redirect("303"))
 
       status(response) shouldBe SEE_OTHER
       redirectUrl(response) shouldBe "303"
     }
 
-    "return BAD_REQUEST(400) status when createOrUpdate fails" ignore {
-      mockCreateOrUpdate(emptySessionData, Left(DataNotUpdated))
+    "return BAD_REQUEST(400) status when createOrUpdate fails" in {
+      mockCreateOrUpdate(emptySessionData(Some(now)), Left(DataNotUpdated))
       val response: Future[Result] =
-        service.createOrUpdateSessionData(user, emptyPensionsData, taxYear, isPriorSubmission = true)(Redirect("400"))(Redirect("303"))
+        service.createOrUpdateSessionData(user, emptyPensionsData, taxYear, isPriorSubmission = true, Some(now))(Redirect("400"))(Redirect("303"))
 
       status(response) shouldBe SEE_OTHER
       redirectUrl(response) shouldBe "400"
@@ -154,7 +157,7 @@ class PensionSessionServiceSpec
 
   "generateCyaFromPrior" should {
     "generate a PensionsCYAModel from prior AllPensionsData" in {
-      mockCreateOrUpdate(emptySessionData, Right(()))
+      mockCreateOrUpdate(emptySessionData(), Right(()))
       val response = generateSessionModelFromPrior(anAllPensionDataEmpty)
       val expected = aPensionsCYAGeneratedFromPriorEmpty.copy(
         paymentsIntoPension = PaymentsIntoPensionsViewModel.empty,
@@ -167,14 +170,14 @@ class PensionSessionServiceSpec
 
   ".createOrUpdateSessionData" should {
     "return Right(unit) when createOrUpdate succeeds" in {
-      mockCreateOrUpdate(emptySessionData, Right(()))
-      val response = await(service.createOrUpdateSession(emptySessionData))
+      mockCreateOrUpdate(emptySessionData(Some(now)), Right(()))
+      val response = await(service.createOrUpdateSession(emptySessionData(Some(now))))
       response shouldBe Right(())
     }
 
     "return Left DB Error(400) when createOrUpdate fails" in {
-      mockCreateOrUpdate(emptySessionData, Left(DataNotUpdated))
-      val response = await(service.createOrUpdateSession(emptySessionData))
+      mockCreateOrUpdate(emptySessionData(Some(now)), Left(DataNotUpdated))
+      val response = await(service.createOrUpdateSession(emptySessionData(Some(now))))
       response shouldBe Left(DataNotUpdated)
     }
   }
