@@ -59,9 +59,8 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   val incomeTaxSubmissionIvRedirect: String =
     incomeTaxSubmissionBaseUrl + servicesConfig.getString("microservice.services.income-tax-submission-frontend.iv-redirect")
 
-  private def vcBaseUrl: String =
-    servicesConfig.getString(ConfigKeys.viewAndChangeUrl) // TODO Missing key, what should be set? Change to val once set correctly
-  def viewAndChangeEnterUtrUrl: String = s"$vcBaseUrl/report-quarterly/income-and-expenses/view/agents/client-utr"
+  private val vcBaseUrl: String = servicesConfig.getString(ConfigKeys.viewAndChangeFrontendUrl)
+  val viewAndChangeEnterUtrUrl: String = s"$vcBaseUrl/report-quarterly/income-and-expenses/view/agents/client-utr"
 
   private[config] val appUrl: String     = servicesConfig.getString("microservice.url")
   private[config] val contactFrontEndUrl = servicesConfig.getString(ConfigKeys.contactFrontendUrl)
