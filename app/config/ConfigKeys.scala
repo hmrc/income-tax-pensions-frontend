@@ -27,7 +27,7 @@ object ConfigKeys {
   val incomeTaxEmploymentUrl         = "microservice.services.income-tax-employment.url"
   val basGatewayFrontendUrl          = "microservice.services.bas-gateway-frontend.url"
   val feedbackFrontendUrl            = "microservice.services.feedback-frontend.url"
-  val viewAndChangeFrontendUrl       = "microservice.services.income-tax-view-and-change-frontend.url"
+  val viewAndChangeFrontendUrl       = "microservice.services.view-and-change.url"
   val signInUrl                      = "microservice.services.sign-in.url"
   val signInContinueUrl              = "microservice.services.sign-in.continueUrl"
 
