@@ -91,7 +91,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   val encryptionKey: String = servicesConfig.getString("mongodb.encryption.key")
   val mongoTTL: Int         = Duration(servicesConfig.getString("mongodb.timeToLive")).toMinutes.toInt
 
-  val taxYearErrorFeature: Boolean = servicesConfig.getBoolean("taxYearErrorFeatureSwitch") // TODO Why do we need this?
+  val taxYearErrorFeature: Boolean = servicesConfig.getBoolean("feature-switch.taxYearErrorFeatureSwitch") // TODO Why do we need this?
 
   val languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
