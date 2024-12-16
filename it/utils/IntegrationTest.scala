@@ -98,7 +98,8 @@ trait IntegrationTest
     "microservice.services.income-tax-employment.url"          -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.sign-in.url"                        -> s"/auth-login-stub/gg-sign-in",
     "feature-switch.taxYearErrorFeatureSwitch"                 -> "false",
-    "feature-switch.useEncryption"                             -> "true"
+    "feature-switch.useEncryption"                             -> "true",
+    "feature-switch.ema-supporting-agents-enabled"             -> "true"
   )
 
   def configWithInvalidEncryptionKey: Map[String, String] = Map(
