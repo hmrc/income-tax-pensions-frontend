@@ -48,7 +48,7 @@ class AesGCMCryptoSpec extends UnitTest {
 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
-      .configure("useEncryption" -> "true")
+      .configure("feature-switch.useEncryption" -> "true")
       .build()
 
   "encrypt" should {

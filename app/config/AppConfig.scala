@@ -105,7 +105,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
 
   val useEncryption: Boolean = {
     logger.warn("[AesGCMCrypto][decrypt] Encryption is turned off")
-    servicesConfig.getBoolean("useEncryption")
+    servicesConfig.getBoolean("feature-switch.useEncryption")
   }
 
 }
