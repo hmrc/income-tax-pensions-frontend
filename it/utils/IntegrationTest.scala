@@ -97,8 +97,8 @@ trait IntegrationTest
     "microservice.services.view-and-change.url"                -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.income-tax-employment.url"          -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.sign-in.url"                        -> s"/auth-login-stub/gg-sign-in",
-    "taxYearErrorFeatureSwitch"                                -> "false",
-    "useEncryption"                                            -> "true"
+    "feature-switch.taxYearErrorFeatureSwitch"                 -> "false",
+    "feature-switch.useEncryption"                             -> "true"
   )
 
   def configWithInvalidEncryptionKey: Map[String, String] = Map(
@@ -115,8 +115,8 @@ trait IntegrationTest
     "microservice.services.income-tax-state-benefits.url"      -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.view-and-change.url"                -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.sign-in.url"                        -> s"/auth-login-stub/gg-sign-in",
-    "taxYearErrorFeatureSwitch"                                -> "false",
-    "useEncryption"                                            -> "true",
+    "feature-switch.taxYearErrorFeatureSwitch"                 -> "false",
+    "feature-switch.useEncryption"                             -> "true",
     "mongodb.encryption.key"                                   -> "key"
   )
 

@@ -91,7 +91,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   val encryptionKey: String = servicesConfig.getString("mongodb.encryption.key")
   val mongoTTL: Int         = Duration(servicesConfig.getString("mongodb.timeToLive")).toMinutes.toInt
 
-  val taxYearErrorFeature: Boolean = servicesConfig.getBoolean("taxYearErrorFeatureSwitch") // TODO Why do we need this?
+  val taxYearErrorFeature: Boolean = servicesConfig.getBoolean("feature-switch.taxYearErrorFeatureSwitch") // TODO Why do we need this?
 
   val languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
@@ -105,7 +105,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
 
   val useEncryption: Boolean = {
     logger.warn("[AesGCMCrypto][decrypt] Encryption is turned off")
-    servicesConfig.getBoolean("useEncryption")
+    servicesConfig.getBoolean("feature-switch.useEncryption")
   }
 
 }
