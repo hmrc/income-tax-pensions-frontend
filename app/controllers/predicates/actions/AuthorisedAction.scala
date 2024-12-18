@@ -148,9 +148,13 @@ class AuthorisedAction @Inject() (appConfig: AppConfig)(implicit val authService
           .retrieve(allEnrolments) {
             populateAgent(block, mtdItId, nino, _, affinityGroup, isSecondaryAgent = true)
           }
-          .recoverWith { case _ =>
-            logger.info(s"[AuthorisedAction][agentAuthentication] - Agent does not have secondary delegated authority for Client.")
-            Future(Redirect(controllers.errors.routes.AgentAuthErrorController.show))
+          .recoverWith {
+            case _: AuthorisationException =>
+              logger.info(s"[AuthorisedAction][agentAuthentication] - Agent does not have secondary delegated authority for Client.")
+              Future(Redirect(controllers.errors.routes.AgentAuthErrorController.show))
+            case _ =>
+              logger.info(s"[AuthorisedAction][agentAuthentication] - Downstream service error.")
+              Future(InternalServerError)
           }
       } else {
         logger.info(s"[AuthorisedAction][agentAuthentication] - Agent does not have delegated authority for Client.")
