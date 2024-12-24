@@ -24,7 +24,7 @@ import play.api.http.Status._
 import play.api.mvc.Results._
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.stubMessagesControllerComponents
+import play.api.test.Helpers.{status, stubMessagesControllerComponents}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
@@ -415,6 +415,22 @@ class AuthorisedActionSpec extends UnitTest {
           status(result) shouldBe OK
           bodyOf(result) shouldBe s"$mtdItId $arn"
         }
+
+//        "render ISE page" when {
+//          "Agent authentication fails with a non-Auth related exception (Primary Agent)" in new AgentTest {
+//
+//            object AuthException extends Exception("Some reason")
+//
+//            mockAuthReturnException(AuthException, primaryAgentPredicate(mtdItId))
+//
+//            val result: Future[Result] = testAuth.agentAuthentication(testBlock)(
+//              request = FakeRequest().withSession(fakeRequestWithMtditidAndNino.session.data.toSeq: _*),
+//              hc = emptyHeaderCarrier
+//            )
+//
+//            status(result) shouldBe INTERNAL_SERVER_ERROR
+//          }
+//        }
       }
     }
   }
@@ -491,6 +507,20 @@ class AuthorisedActionSpec extends UnitTest {
         status(result) shouldBe SEE_OTHER
       }
     }
+
+    "return ISE" when {
+
+      "the authorisation service returns an Exception that is not an Auth related Exception" in {
+
+        mockAuthReturnException(new Exception("Some reason"))
+
+        val result = auth.async(block)
+
+        status(result(fakeRequest)) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+
+
   }
 
 }
