@@ -24,7 +24,8 @@ import play.api.http.Status._
 import play.api.mvc.Results._
 import play.api.mvc.{AnyContent, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{status, stubMessagesControllerComponents}
+import play.api.test.Helpers.stubMessagesControllerComponents
+import support.mocks.MockErrorHandler
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
@@ -45,7 +46,7 @@ class AuthorisedActionSpec extends UnitTest {
   val mtdItId: String = "1234567890"
   val arn: String     = "0987654321"
 
-  trait AgentTest {
+  trait AgentTest extends MockErrorHandler {
     val baseUrl = "/update-and-submit-income-tax-return/pensions"
 
     val validHeaderCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("sessionId")))
@@ -119,7 +120,8 @@ class AuthorisedActionSpec extends UnitTest {
       mockSignInUrl()
 
       new AuthorisedAction(
-        appConfig = mockAppConfig
+        appConfig = mockAppConfig,
+        mockErrorHandler
       )(
         mockAuthService,
         mcc = stubMessagesControllerComponents()
@@ -415,22 +417,44 @@ class AuthorisedActionSpec extends UnitTest {
           status(result) shouldBe OK
           bodyOf(result) shouldBe s"$mtdItId $arn"
         }
+      }
 
-//        "render ISE page" when {
-//          "Agent authentication fails with a non-Auth related exception (Primary Agent)" in new AgentTest {
-//
-//            object AuthException extends Exception("Some reason")
-//
-//            mockAuthReturnException(AuthException, primaryAgentPredicate(mtdItId))
-//
-//            val result: Future[Result] = testAuth.agentAuthentication(testBlock)(
-//              request = FakeRequest().withSession(fakeRequestWithMtditidAndNino.session.data.toSeq: _*),
-//              hc = emptyHeaderCarrier
-//            )
-//
-//            status(result) shouldBe INTERNAL_SERVER_ERROR
-//          }
-//        }
+      "results in an unexpected error to be returned during primary agent auth call" should {
+        "render ISE page" in new AgentTest {
+          object AuthException extends Exception("Some reason")
+
+          mockFutureInternalServerError("an error")
+          mockAuthReturnException(AuthException, primaryAgentPredicate(mtdItId))
+
+          val result: Future[Result] = testAuth.agentAuthentication(testBlock)(
+            request = FakeRequest().withSession(fakeRequestWithMtditidAndNino.session.data.toSeq: _*),
+            hc = emptyHeaderCarrier
+          )
+
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+          bodyOf(result) shouldBe "an error"
+        }
+      }
+
+      "[EMA enabled] results in an unexpected error to be returned during secondary agent auth call" should {
+        "render ISE page" in new AgentTest {
+          mockMultipleAgentsSwitch(true)
+
+          object AuthException extends AuthorisationException("Some reason")
+          object OtherException extends Exception("Some reason")
+
+          mockAuthReturnException(AuthException, primaryAgentPredicate(mtdItId))
+          mockAuthReturnException(OtherException, secondaryAgentPredicate(mtdItId))
+          mockFutureInternalServerError("an error")
+
+          val result: Future[Result] = testAuth.agentAuthentication(testBlock)(
+            request = FakeRequest().withSession(fakeRequestWithMtditidAndNino.session.data.toSeq: _*),
+            hc = emptyHeaderCarrier
+          )
+
+          status(result) shouldBe INTERNAL_SERVER_ERROR
+          bodyOf(result) shouldBe "an error"
+        }
       }
     }
   }
@@ -511,12 +535,12 @@ class AuthorisedActionSpec extends UnitTest {
     "return ISE" when {
 
       "the authorisation service returns an Exception that is not an Auth related Exception" in {
-
+        mockInternalServerError
         mockAuthReturnException(new Exception("Some reason"))
 
-        val result = auth.async(block)
+        lazy val result: Future[Result] = auth.async(block)(fakeRequest)
 
-        status(result(fakeRequest)) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
     }
 

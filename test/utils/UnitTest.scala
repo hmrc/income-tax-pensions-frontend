@@ -34,6 +34,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc._
 import play.api.test.{FakeRequest, Helpers}
 import services.AuthService
+import support.mocks.MockErrorHandler
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
@@ -47,7 +48,13 @@ import java.time.{Clock, ZoneOffset, ZonedDateTime}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 
-trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAndAfterEach with GuiceOneAppPerSuite with TestTaxYearHelper {
+trait UnitTest extends AnyWordSpec
+  with Matchers
+  with MockFactory
+  with BeforeAndAfterEach
+  with GuiceOneAppPerSuite
+  with TestTaxYearHelper
+  with MockErrorHandler {
 
   class TestWithAuth(isAgent: Boolean = false, nino: Option[String] = Some("AA123456A")) {
     if (isAgent) mockAuthAsAgent() else mockAuth(nino)
@@ -81,7 +88,6 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
   val emptyHeaderCarrier: HeaderCarrier                = HeaderCarrier()
 
   implicit val mockAppConfig: AppConfig                       = app.injector.instanceOf[AppConfig]
-  implicit val mockErrorHandler: ErrorHandler                 = mock[ErrorHandler]
   implicit val mockControllerComponents: ControllerComponents = Helpers.stubControllerComponents()
   implicit val mockExecutionContext: ExecutionContext         = ExecutionContext.Implicits.global
   implicit val mockAuthConnector: AuthConnector               = mock[AuthConnector]
@@ -92,7 +98,7 @@ trait UnitTest extends AnyWordSpec with Matchers with MockFactory with BeforeAnd
   implicit lazy val authorisationRequest: AuthorisationRequest[AnyContent] =
     new AuthorisationRequest[AnyContent](User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString), fakeRequest)
 
-  val authorisedAction                       = new AuthorisedAction(mockAppConfig)(mockAuthService, stubMessagesControllerComponents())
+  val authorisedAction = new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
   def status(awaitable: Future[Result]): Int = await(awaitable).header.status
 
   def bodyOf(awaitable: Future[Result]): String = {

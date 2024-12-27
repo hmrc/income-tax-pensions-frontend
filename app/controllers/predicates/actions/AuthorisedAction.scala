@@ -17,7 +17,7 @@
 package controllers.predicates.actions
 
 import common.{DelegatedAuthRules, EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import models.logging.CorrelationIdMdc.withEnrichedCorrelationId
 import models.{AuthorisationRequest, User}
 import play.api.Logger
@@ -35,7 +35,8 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedAction @Inject() (appConfig: AppConfig)(implicit val authService: AuthService, val mcc: MessagesControllerComponents)
+class AuthorisedAction @Inject() (appConfig: AppConfig,
+                                  errorHandler: ErrorHandler)(implicit val authService: AuthService, val mcc: MessagesControllerComponents)
     extends ActionBuilder[AuthorisationRequest, AnyContent]
     with I18nSupport {
 
@@ -78,7 +79,7 @@ class AuthorisedAction @Inject() (appConfig: AppConfig)(implicit val authService
           Redirect(controllers.errors.routes.UnauthorisedUserErrorController.show)
         case e =>
           logger.error(s"[AuthorisedAction][agentAuthentication] - Unexpected exception of type '${e.getClass.getSimpleName}' was caught.")
-          InternalServerError
+          errorHandler.internalServerError()(request)
       }
     }
 
@@ -157,12 +158,15 @@ class AuthorisedAction @Inject() (appConfig: AppConfig)(implicit val authService
               Future(Redirect(controllers.errors.routes.AgentAuthErrorController.show))
             case e =>
               logger.error(s"[AuthorisedAction][agentAuthentication] - Unexpected exception of type '${e.getClass.getSimpleName}' was caught.")
-              Future(InternalServerError)
+              errorHandler.futureInternalServerError()
           }
       } else {
         logger.warn(s"[AuthorisedAction][agentAuthentication] - Agent does not have delegated authority for Client.")
         Future(Redirect(controllers.errors.routes.AgentAuthErrorController.show))
       }
+    case e =>
+      logger.error(s"[AuthorisedAction][agentAuthentication] - Unexpected exception of type '${e.getClass.getSimpleName}' was caught.")
+      errorHandler.futureInternalServerError()
   }
 
   private def populateAgent[A](block: AuthorisationRequest[A] => Future[Result],

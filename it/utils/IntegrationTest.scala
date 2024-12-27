@@ -20,7 +20,7 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.StateBenefitsModelBuilder.aStateBenefitsModel
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.SessionValues
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.AuthorisedAction
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.IncomeTaxUserData
@@ -180,7 +180,8 @@ trait IntegrationTest
       stubbedRetrieval: Future[_],
       acceptedConfidenceLevel: Seq[ConfidenceLevel] = Seq.empty[ConfidenceLevel]
   ): AuthorisedAction = new AuthorisedAction(
-    appConfig
+    appConfig,
+    app.injector.instanceOf[ErrorHandler]
   )(
     authService(
       stubbedRetrieval,
