@@ -37,10 +37,12 @@ trait MockAuthorisedAction extends MockFactory { this: GuiceOneAppPerSuite =>
   private val mockAppConfig                        = app.injector.instanceOf[AppConfig]
   private val testMockAuthConnector: AuthConnector = mock[AuthConnector]
   private val mockAuthService                      = new AuthService(testMockAuthConnector)
-  private val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
+  private val mockErrorHandler: ErrorHandler       = mock[ErrorHandler]
 
-  protected val mockAuthorisedAction: AuthorisedAction = new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
-  protected val authorisedAction: AuthorisedAction     = new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
+  protected val mockAuthorisedAction: AuthorisedAction =
+    new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
+  protected val authorisedAction: AuthorisedAction =
+    new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
 
   protected def mockAuthAsAgent(): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] = {
     val enrolments: Enrolments = Enrolments(

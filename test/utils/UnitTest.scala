@@ -48,13 +48,14 @@ import java.time.{Clock, ZoneOffset, ZonedDateTime}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 
-trait UnitTest extends AnyWordSpec
-  with Matchers
-  with MockFactory
-  with BeforeAndAfterEach
-  with GuiceOneAppPerSuite
-  with TestTaxYearHelper
-  with MockErrorHandler {
+trait UnitTest
+    extends AnyWordSpec
+    with Matchers
+    with MockFactory
+    with BeforeAndAfterEach
+    with GuiceOneAppPerSuite
+    with TestTaxYearHelper
+    with MockErrorHandler {
 
   class TestWithAuth(isAgent: Boolean = false, nino: Option[String] = Some("AA123456A")) {
     if (isAgent) mockAuthAsAgent() else mockAuth(nino)

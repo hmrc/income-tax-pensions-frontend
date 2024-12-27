@@ -440,7 +440,7 @@ class AuthorisedActionSpec extends UnitTest {
         "render ISE page" in new AgentTest {
           mockMultipleAgentsSwitch(true)
 
-          object AuthException extends AuthorisationException("Some reason")
+          object AuthException  extends AuthorisationException("Some reason")
           object OtherException extends Exception("Some reason")
 
           mockAuthReturnException(AuthException, primaryAgentPredicate(mtdItId))

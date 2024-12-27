@@ -35,8 +35,9 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedAction @Inject() (appConfig: AppConfig,
-                                  errorHandler: ErrorHandler)(implicit val authService: AuthService, val mcc: MessagesControllerComponents)
+class AuthorisedAction @Inject() (appConfig: AppConfig, errorHandler: ErrorHandler)(implicit
+    val authService: AuthService,
+    val mcc: MessagesControllerComponents)
     extends ActionBuilder[AuthorisationRequest, AnyContent]
     with I18nSupport {
 
