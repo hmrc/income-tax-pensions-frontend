@@ -520,7 +520,6 @@ class AuthorisedActionSpec extends UnitTest {
       }
     }
 
-
   }
 
 }
