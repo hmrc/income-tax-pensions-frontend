@@ -20,7 +20,7 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.StateBenefitsModelBuilder.aStateBenefitsModel
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.SessionValues
-import config.AppConfig
+import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.AuthorisedAction
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.IncomeTaxUserData
@@ -98,7 +98,8 @@ trait IntegrationTest
     "microservice.services.income-tax-employment.url"          -> s"http://$wiremockHost:$wiremockPort",
     "microservice.services.sign-in.url"                        -> s"/auth-login-stub/gg-sign-in",
     "feature-switch.taxYearErrorFeatureSwitch"                 -> "false",
-    "feature-switch.useEncryption"                             -> "true"
+    "feature-switch.useEncryption"                             -> "true",
+    "feature-switch.ema-supporting-agents-enabled"             -> "true"
   )
 
   def configWithInvalidEncryptionKey: Map[String, String] = Map(
@@ -179,7 +180,8 @@ trait IntegrationTest
       stubbedRetrieval: Future[_],
       acceptedConfidenceLevel: Seq[ConfidenceLevel] = Seq.empty[ConfidenceLevel]
   ): AuthorisedAction = new AuthorisedAction(
-    appConfig
+    appConfig,
+    app.injector.instanceOf[ErrorHandler]
   )(
     authService(
       stubbedRetrieval,

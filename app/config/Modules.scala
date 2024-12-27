@@ -28,6 +28,7 @@ class Modules extends AbstractModule {
     bind(classOf[UUID]).toInstance(UUID)
     bind(classOf[PensionsUserDataRepository]).to(classOf[PensionsUserDataRepositoryImpl]).asEagerSingleton()
     bind(classOf[PensionsService]).to(classOf[PensionsServiceImpl]).asEagerSingleton()
+    bind(classOf[AppConfig]).to(classOf[AppConfigImpl]).asEagerSingleton()
   }
 
 }

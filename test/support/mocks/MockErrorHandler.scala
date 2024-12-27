@@ -22,6 +22,8 @@ import org.scalamock.scalatest.MockFactory
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Request, Result}
 
+import scala.concurrent.Future
+
 trait MockErrorHandler extends MockFactory {
 
   protected val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
@@ -37,4 +39,10 @@ trait MockErrorHandler extends MockFactory {
       .internalServerError()(_: Request[_]))
       .expects(*)
       .returns(InternalServerError)
+
+  def mockFutureInternalServerError(errString: String): CallHandler1[Request[_], Future[Result]] =
+    (mockErrorHandler
+      .futureInternalServerError()(_: Request[_]))
+      .expects(*)
+      .returns(Future.successful(InternalServerError(errString)))
 }

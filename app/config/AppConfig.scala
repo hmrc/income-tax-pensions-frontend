@@ -16,6 +16,7 @@
 
 package config
 
+import com.google.inject.ImplementedBy
 import common.{Nino, TaxYear}
 import models.pension.Journey
 import play.api.Logging
@@ -27,13 +28,97 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
 
+@ImplementedBy(classOf[AppConfigImpl])
+trait AppConfig {
+
+  def signInBaseUrl: String
+
+  def signInContinueBaseUrl: String
+
+  def signInContinueUrl: String
+
+  def signInOrigin: String
+
+  def signInUrl: String
+
+  def defaultTaxYear: Int
+
+  def incomeTaxSubmissionBEBaseUrl: String
+
+  def pensionBEBaseUrl: String
+
+  def journeyAnswersUrl(taxYear: TaxYear, nino: Nino, journey: Journey): String
+
+  def statePensionBEBaseUrl: String
+
+  def incomeTaxSubmissionBaseUrl: String
+
+  def incomeTaxSubmissionFrontendOverview: String
+
+  def incomeTaxSubmissionOverviewUrl(taxYear: Int): String
+
+  def incomeTaxSubmissionStartUrl(taxYear: Int): String
+
+  def incomeTaxSubmissionIvRedirect: String
+
+  def vcBaseUrl: String
+
+  def viewAndChangeEnterUtrUrl: String
+
+  def appUrl: String
+
+  def contactFrontEndUrl: String
+
+  def contactFormServiceIndividual: String
+
+  def contactFormServiceAgent: String
+
+  def contactFormServiceIdentifier(isAgent: Boolean): String
+
+  def requestUri(implicit request: RequestHeader): String
+
+  val feedbackFrontendUrl: String
+
+  def feedbackSurveyUrl(implicit isAgent: Boolean): String
+
+  def betaFeedbackUrl(implicit request: RequestHeader, isAgent: Boolean): String
+
+  def contactUrl(implicit isAgent: Boolean): String
+
+  def basGatewayUrl: String
+
+  def signOutUrl: String
+
+  def timeoutDialogTimeout: Int
+
+  def timeoutDialogCountdown: Int
+
+  // Mongo config
+  def encryptionKey: String
+
+  def mongoTTL: Int
+
+  def taxYearErrorFeature: Boolean
+
+  def languageMap: Map[String, Lang]
+
+  def routeToSwitchLanguage: String => Call
+
+  def welshToggleEnabled: Boolean
+
+  def useEncryption: Boolean
+
+  def emaSupportingAgentsEnabled: Boolean
+
+}
+
 @Singleton
-class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
-  private[config] val signInBaseUrl: String         = servicesConfig.getString(ConfigKeys.signInUrl)
-  private[config] val signInContinueBaseUrl: String = servicesConfig.getString(ConfigKeys.signInContinueUrl)
-  val signInContinueUrl: String                     = SafeRedirectUrl(signInContinueBaseUrl).encodedUrl // TODO add redirect to overview page
-  private[config] val signInOrigin                  = servicesConfig.getString("appName")
-  val signInUrl: String                             = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
+class AppConfigImpl @Inject() (servicesConfig: ServicesConfig) extends Logging with AppConfig {
+  val signInBaseUrl: String         = servicesConfig.getString(ConfigKeys.signInUrl)
+  val signInContinueBaseUrl: String = servicesConfig.getString(ConfigKeys.signInContinueUrl)
+  val signInContinueUrl: String     = SafeRedirectUrl(signInContinueBaseUrl).encodedUrl // TODO add redirect to overview page
+  val signInOrigin                  = servicesConfig.getString("appName")
+  val signInUrl: String             = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
 
   // TODO Why we need this?
   def defaultTaxYear: Int = servicesConfig.getInt(ConfigKeys.defaultTaxYear)
@@ -49,7 +134,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   val incomeTaxSubmissionBaseUrl: String = servicesConfig.getString(ConfigKeys.incomeTaxSubmissionFrontendUrl) +
     servicesConfig.getString("microservice.services.income-tax-submission-frontend.context")
 
-  private[config] val incomeTaxSubmissionFrontendOverview: String =
+  val incomeTaxSubmissionFrontendOverview: String =
     servicesConfig.getString("microservice.services.income-tax-submission-frontend.overview")
 
   def incomeTaxSubmissionOverviewUrl(taxYear: Int): String = incomeTaxSubmissionBaseUrl + "/" + taxYear + incomeTaxSubmissionFrontendOverview
@@ -59,19 +144,20 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
   val incomeTaxSubmissionIvRedirect: String =
     incomeTaxSubmissionBaseUrl + servicesConfig.getString("microservice.services.income-tax-submission-frontend.iv-redirect")
 
-  private val vcBaseUrl: String        = servicesConfig.getString(ConfigKeys.viewAndChangeFrontendUrl)
+  val vcBaseUrl: String                = servicesConfig.getString(ConfigKeys.viewAndChangeFrontendUrl)
   val viewAndChangeEnterUtrUrl: String = s"$vcBaseUrl/report-quarterly/income-and-expenses/view/agents/client-utr"
 
-  private[config] val appUrl: String     = servicesConfig.getString("microservice.url")
-  private[config] val contactFrontEndUrl = servicesConfig.getString(ConfigKeys.contactFrontendUrl)
+  val appUrl: String     = servicesConfig.getString("microservice.url")
+  val contactFrontEndUrl = servicesConfig.getString(ConfigKeys.contactFrontendUrl)
 
-  private[config] val contactFormServiceIndividual                   = "update-and-submit-income-tax-return"
-  private[config] val contactFormServiceAgent                        = "update-and-submit-income-tax-return-agent"
-  private def contactFormServiceIdentifier(isAgent: Boolean): String = if (isAgent) contactFormServiceAgent else contactFormServiceIndividual
+  val contactFormServiceIndividual = "update-and-submit-income-tax-return"
+  val contactFormServiceAgent      = "update-and-submit-income-tax-return-agent"
 
-  private def requestUri(implicit request: RequestHeader): String = SafeRedirectUrl(appUrl + request.uri).encodedUrl
+  def contactFormServiceIdentifier(isAgent: Boolean): String = if (isAgent) contactFormServiceAgent else contactFormServiceIndividual
 
-  private lazy val feedbackFrontendUrl = servicesConfig.getString(ConfigKeys.feedbackFrontendUrl)
+  def requestUri(implicit request: RequestHeader): String = SafeRedirectUrl(appUrl + request.uri).encodedUrl
+
+  lazy val feedbackFrontendUrl = servicesConfig.getString(ConfigKeys.feedbackFrontendUrl)
 
   def feedbackSurveyUrl(implicit isAgent: Boolean): String = s"$feedbackFrontendUrl/feedback/${contactFormServiceIdentifier(isAgent)}"
 
@@ -80,7 +166,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
 
   def contactUrl(implicit isAgent: Boolean): String = s"$contactFrontEndUrl/contact/contact-hmrc?service=${contactFormServiceIdentifier(isAgent)}"
 
-  private[config] val basGatewayUrl = servicesConfig.getString(ConfigKeys.basGatewayFrontendUrl)
+  val basGatewayUrl = servicesConfig.getString(ConfigKeys.basGatewayFrontendUrl)
 
   val signOutUrl: String = s"$basGatewayUrl/bas-gateway/sign-out-without-state"
 
@@ -107,5 +193,7 @@ class AppConfig @Inject() (servicesConfig: ServicesConfig) extends Logging {
     logger.warn("[AesGCMCrypto][decrypt] Encryption is turned off")
     servicesConfig.getBoolean("feature-switch.useEncryption")
   }
+
+  def emaSupportingAgentsEnabled: Boolean = servicesConfig.getBoolean("feature-switch.ema-supporting-agents-enabled")
 
 }
