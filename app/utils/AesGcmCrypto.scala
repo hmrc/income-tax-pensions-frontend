@@ -44,7 +44,7 @@ class AesGCMCrypto @Inject() (implicit private val appConfig: AppConfig) extends
 
   private val IV_SIZE               = 96
   val TAG_BIT_LENGTH                = 128
-  val ALGORITHM_TO_TRANSFORM_STRING = "AES/GCM/PKCS5Padding"
+  val ALGORITHM_TO_TRANSFORM_STRING = "AES/GCM/NoPadding"
   lazy val secureRandom             = new SecureRandom()
   val ALGORITHM_KEY                 = "AES"
   val METHOD_ENCRYPT                = "encrypt"
