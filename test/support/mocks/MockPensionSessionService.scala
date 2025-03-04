@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,15 @@ import models.mongo.{DatabaseError, PensionsUserData}
 import models.pension.Journey
 import org.scalamock.handlers._
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import play.api.mvc.{Request, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
-trait MockPensionSessionService extends MockFactory {
+trait MockPensionSessionService extends MockFactory with TestSuite {
 
   val mockPensionSessionService: PensionSessionService = mock[PensionSessionService]
 

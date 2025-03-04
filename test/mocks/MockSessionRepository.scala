@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,13 @@ import models.User
 import models.mongo.{DatabaseError, PensionsUserData}
 import org.scalamock.handlers.{CallHandler1, CallHandler2}
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import repositories.PensionsUserDataRepository
+import utils.UnitTest
 
 import scala.concurrent.Future
 
-trait MockSessionRepository extends MockFactory {
+trait MockSessionRepository extends MockFactory with TestSuite {
 
   val mockSessionRepository: PensionsUserDataRepository = mock[PensionsUserDataRepository]
 

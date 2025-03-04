@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.AuthorisedAction
 import org.scalamock.handlers.CallHandler4
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.{Outcome, TestSuite}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Helpers.stubMessagesControllerComponents
 import services.AuthService
@@ -33,7 +34,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockAuthorisedAction extends MockFactory { this: GuiceOneAppPerSuite =>
+trait MockAuthorisedAction extends MockFactory with TestSuite { this: GuiceOneAppPerSuite =>
+
   private val mockAppConfig                        = app.injector.instanceOf[AppConfig]
   private val testMockAuthConnector: AuthConnector = mock[AuthConnector]
   private val mockAuthService                      = new AuthService(testMockAuthConnector)
@@ -41,6 +43,7 @@ trait MockAuthorisedAction extends MockFactory { this: GuiceOneAppPerSuite =>
 
   protected val mockAuthorisedAction: AuthorisedAction =
     new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
+
   protected val authorisedAction: AuthorisedAction =
     new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
 

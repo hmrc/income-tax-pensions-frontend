@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,14 +20,15 @@ import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector}
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
 import org.scalamock.handlers.CallHandler3
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-trait MockIncomeTaxUserDataConnector extends MockFactory {
+trait MockIncomeTaxUserDataConnector extends MockFactory with TestSuite {
 
-  val apiError = APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError)
+  val apiError: APIErrorModel = APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError)
 
   val mockUserDataConnector: IncomeTaxUserDataConnector = mock[IncomeTaxUserDataConnector]
 

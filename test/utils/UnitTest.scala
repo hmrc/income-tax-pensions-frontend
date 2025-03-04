@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import builders.PensionsCYAModelBuilder.emptyPensionsData
 import cats.data.EitherT
 import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import models.mongo.PensionsUserData
 import models.{AuthorisationRequest, User}
@@ -178,6 +178,7 @@ trait UnitTest
   implicit class ToFutureOps[A](value: A) {
     def asFuture: Future[A] = Future.successful(value)
   }
+
   implicit class ToEitherTOps[A, B](value: Either[A, B]) {
     def toEitherT: EitherT[Future, A, B] = EitherT.fromEither[Future](value)
   }

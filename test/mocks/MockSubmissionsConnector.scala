@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,31 @@ package mocks
 
 import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector}
 import models.IncomeTaxUserData
-import org.scalamock.handlers.CallHandler3
+import org.scalamock.handlers.{CallHandler3, CallHandler4}
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.UnitTest
 
-trait MockSubmissionsConnector extends MockFactory {
+trait MockSubmissionsConnector extends MockFactory with TestSuite {
 
   val mockSubmissionsConnector: IncomeTaxUserDataConnector = mock[IncomeTaxUserDataConnector]
 
   object MockSubmissionsConnector {
 
-    def getUserData(nino: String, taxYear: Int): CallHandler3[String, Int, HeaderCarrier, DownstreamOutcome[IncomeTaxUserData]] =
+    def getUserData(
+                     nino: String,
+                     taxYear: Int
+                   ): CallHandler3[String, Int, HeaderCarrier, DownstreamOutcome[IncomeTaxUserData]] =
       (mockSubmissionsConnector
         .getUserData(_: String, _: Int)(_: HeaderCarrier))
         .expects(nino, taxYear, *)
 
-    def refreshPensionsResponse(nino: String, mtditid: String, taxYear: Int) =
+    def refreshPensionsResponse(
+                                 nino: String,
+                                 mtditid: String,
+                                 taxYear: Int
+                               ): CallHandler4[String, String, Int, HeaderCarrier, DownstreamOutcome[Unit]] =
       (mockSubmissionsConnector
         .refreshPensionsResponse(_: String, _: String, _: Int)(_: HeaderCarrier))
         .expects(nino, mtditid, taxYear, *)

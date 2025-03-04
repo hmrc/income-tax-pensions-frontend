@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTemplate,
@@ -38,12 +39,16 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
                               notFoundTemplate: NotFoundTemplate)(implicit appConfig: AppConfig)
     extends FrontendErrorHandler
     with I18nSupport {
+
   private val logger = Logger(getClass)
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
-    internalServerErrorTemplate()
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit
+                                                                                          request: RequestHeader
+  ): Future[Html] =
+    Future.successful(internalServerErrorTemplate())
 
-  override def notFoundTemplate(implicit request: Request[_]): Html = notFoundTemplate()
+  override def notFoundTemplate(implicit request: RequestHeader): Future[Html] =
+    Future.successful(notFoundTemplate())
 
   def internalServerError()(implicit request: Request[_]): Result = {
     val errorLogMessage = s"[$CorrelationIdHeaderKey=${maybeCorrelationIdFromMdc()}] error occurred: for ${request.method} [${request.uri}]"
@@ -72,7 +77,7 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
     statusCode match {
       case NOT_FOUND =>
         logger.debug(clientErrorLogMessage) // May be lots of Not found errors (broken links etc. Don't want to clutter logging)
-        Future.successful(NotFound(notFoundTemplate(request.withBody(""))))
+        Future.successful(NotFound(notFoundTemplate()(request.withBody(""), request2Messages(request), appConfig)))
       case _ =>
         logger.error(clientErrorLogMessage)
         Future.successful(InternalServerError(internalServerErrorTemplate()(request.withBody(""), request2Messages(request), appConfig)))
@@ -81,7 +86,7 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
     logErrorWithmaybeCorrelationIdFromMdc(request, exception)
-    Future.successful(resolveError(request, exception))
+    resolveError(request, exception)
   }
 
   private def logErrorWithmaybeCorrelationIdFromMdc(request: RequestHeader, ex: Throwable): Unit =
@@ -100,4 +105,6 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
         request.uri),
       ex
     )
+
+  override protected implicit val ec: ExecutionContext = global
 }

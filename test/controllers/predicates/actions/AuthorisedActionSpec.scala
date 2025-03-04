@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,13 +53,8 @@ class AuthorisedActionSpec extends UnitTest {
 
     val testBlock: AuthorisationRequest[AnyContent] => Future[Result] = user => Future.successful(Ok(s"${user.user.mtditid} ${user.user.arn.get}"))
 
-    val mockAppConfig: AppConfig = mock[AppConfig]
-
     val viewAndChangeUrl: String = "/report-quarterly/income-and-expenses/view/agents/client-utr"
     val signInUrl: String        = s"$baseUrl/signIn"
-
-    def redirectUrl(awaitable: Future[Result]): String =
-      await(awaitable).header.headers.getOrElse("Location", "/")
 
     def primaryAgentPredicate(mtdId: String): Predicate =
       Enrolment("HMRC-MTD-IT")

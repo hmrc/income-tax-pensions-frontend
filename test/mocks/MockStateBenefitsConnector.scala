@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,13 @@ import connectors.StateBenefitsConnector
 import models.mongo.StateBenefitsUserData
 import org.scalamock.handlers.{CallHandler4, CallHandler5}
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.util.UUID
 import scala.concurrent.ExecutionContext
 
-trait MockStateBenefitsConnector extends MockFactory {
+trait MockStateBenefitsConnector extends MockFactory with TestSuite  {
 
   val mockStateBenefitsConnector: StateBenefitsConnector = mock[StateBenefitsConnector]
 

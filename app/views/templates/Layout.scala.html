@@ -40,7 +40,7 @@
         timeout: Boolean = true,
         isAgent: Boolean = false,
         stylesheetsBlock: Option[Html] = None
-)(contentBlock: Html)(implicit request: Request[_], messages: Messages, appConfig: AppConfig)
+)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages, appConfig: AppConfig)
 
 @headerBlock = {
 @hmrcHeader(

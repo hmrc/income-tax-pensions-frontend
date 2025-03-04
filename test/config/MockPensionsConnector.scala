@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,22 +23,18 @@ import models.APIErrorModel
 import models.domain.ApiResultT
 import models.mongo.{JourneyContext, JourneyStatus}
 import models.pension.JourneyNameAndStatus
-import models.pension.charges.{
-  IncomeFromOverseasPensionsViewModel,
-  PensionAnnualAllowancesViewModel,
-  ShortServiceRefundsViewModel,
-  TransfersIntoOverseasPensionsViewModel
-}
+import models.pension.charges._
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
 import org.scalamock.handlers.{CallHandler3, CallHandler4, CallHandler5}
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.TestSuite
 import uk.gov.hmrc.http.HeaderCarrier
-
 import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockPensionsConnector extends MockFactory {
+trait MockPensionsConnector extends MockFactory with TestSuite {
 
   val mockPensionsConnector: PensionsConnector = mock[PensionsConnector]
 
