@@ -25,6 +25,8 @@ GET         /error/you-need-client-authorisation                                
 
 GET         /error/wrong-tax-year                                                                                                  controllers.errors.TaxYearErrorController.show
 
+GET         /error/supporting-agent-not-authorised                                                                                 controllers.errors.SupportingAgentAuthErrorController.show
+
 ###########################     Pension summary pages     ####################################
 
 GET         /:taxYear/pensions-summary                                                                                             controllers.pensions.PensionsSummaryController.show(taxYear: Int)

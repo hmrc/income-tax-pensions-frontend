@@ -188,6 +188,9 @@ error.unauthorised.2 = creu cyfrif gwasanaethau asiant
 error.unauthorised.2a = cofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 error.unauthorised.3 = cyn i chi allu bwrw golwg dros y dudalen hon.
 
+error.supp.agent.unauthorised.paragraph = Rydych yn asiant ategol ar gyfer y cleient hwn. Dim ond eich cleient neu ei brif asiant, os oes ganddo un, sy’n gallu cael at a chyflwyno ei Ffurflen Dreth.
+error.supp.agent.unauthorised.link = Yn ôl i hafan y cyfrif
+
 taxYear-error-template.paragraph.1 = Gallwch nodi gwybodaeth ar gyfer blynyddoedd treth {0} i {1} yn unig.
 taxYear-error-template.paragraph.1.single = Gallwch nodi gwybodaeth ar gyfer blwyddyn dreth ddilys yn unig.
 taxYear-error-template.paragraph.2 = Gwiriwch eich bod wedi nodi’r cyfeiriad gwe cywir.
