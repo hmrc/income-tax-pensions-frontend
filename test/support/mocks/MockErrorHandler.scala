@@ -17,33 +17,48 @@
 package support.mocks
 
 import config.ErrorHandler
-import org.scalamock.handlers.CallHandler1
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.TestSuite
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.MockitoSugar
+import org.mockito.stubbing.ScalaOngoingStubbing
 import play.api.mvc.Results.InternalServerError
-import play.api.mvc.{Request, Result}
+import play.api.mvc.Result
 
 import scala.concurrent.Future
 
-trait MockErrorHandler extends MockFactory with TestSuite {
+trait MockErrorHandler extends MockitoSugar  {
 
-  protected val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
+  val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
 
-  def mockHandleError(status: Int, result: Result): Unit =
-    (mockErrorHandler
-      .handleError(_: Int)(_: Request[_]))
-      .expects(status, *)
-      .returns(result)
+  def mockHandleError(status: Int, result: Result): ScalaOngoingStubbing[Result] = {
 
-  def mockInternalServerError: CallHandler1[Request[_], Result] =
-    (mockErrorHandler
-      .internalServerError()(_: Request[_]))
-      .expects(*)
-      .returns(InternalServerError)
+    when(mockErrorHandler.handleError(eqTo(status))(any()))
+      .thenReturn(result)
 
-  def mockFutureInternalServerError(errString: String): CallHandler1[Request[_], Future[Result]] =
-    (mockErrorHandler
-      .futureInternalServerError()(_: Request[_]))
-      .expects(*)
-      .returns(Future.successful(InternalServerError(errString)))
+    //    (mockErrorHandler
+    //      .handleError(_: Int)(_: Request[_]))
+    //      .expects(status, *)
+    //      .returns(result)
+  }
+
+  def mockInternalServerError: ScalaOngoingStubbing[Result] = {
+
+    when(mockErrorHandler.internalServerError()(any()))
+      .thenReturn(InternalServerError)
+    //    (mockErrorHandler
+    //      .internalServerError()(_: Request[_]))
+    //      .expects(*)
+    //      .returns(InternalServerError)
+  }
+
+  def mockFutureInternalServerError(errString: String): ScalaOngoingStubbing[Future[Result]] = {
+
+    when(mockErrorHandler.futureInternalServerError()(any()))
+      .thenReturn(Future.successful(InternalServerError(errString)))
+
+    //    (mockErrorHandler
+    //      .futureInternalServerError()(_: Request[_]))
+    //      .expects(*)
+    //      .returns(Future.successful(InternalServerError(errString)))
+  }
 }

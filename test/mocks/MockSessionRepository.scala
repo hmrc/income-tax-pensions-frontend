@@ -22,7 +22,6 @@ import org.scalamock.handlers.{CallHandler1, CallHandler2}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.TestSuite
 import repositories.PensionsUserDataRepository
-import utils.UnitTest
 
 import scala.concurrent.Future
 

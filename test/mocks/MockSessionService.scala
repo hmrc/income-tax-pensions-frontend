@@ -26,7 +26,6 @@ import org.scalatest.TestSuite
 import repositories.PensionsUserDataRepository.QueryResult
 import services.{PensionSessionService, ServiceOutcomeT}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.UnitTest
 
 import scala.concurrent.ExecutionContext
 

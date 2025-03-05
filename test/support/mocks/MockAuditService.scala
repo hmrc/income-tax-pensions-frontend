@@ -17,26 +17,31 @@
 package support.mocks
 
 import models.audit.AuditModel
-import org.scalamock.handlers.CallHandler
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.TestSuite
-import play.api.libs.json.Writes
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.MockitoSugar
+import org.mockito.stubbing.ScalaOngoingStubbing
 import services.AuditService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import utils.UnitTest
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-trait MockAuditService extends MockFactory with TestSuite {
+trait MockAuditService extends MockitoSugar {
 
   val mockAuditService: AuditService = mock[AuditService]
 
-  def mockAuditResult[T](event: AuditModel[T], auditResult: Future[AuditResult]): CallHandler[Future[AuditResult]] =
-    (mockAuditService
-      .sendAudit(_: AuditModel[T])(_: HeaderCarrier, _: ExecutionContext, _: Writes[T]))
-      .expects(event, *, *, *)
-      .returns(auditResult)
+  def mockAuditResult[T](event: AuditModel[T],
+                         auditResult: Future[AuditResult]
+                        ): ScalaOngoingStubbing[Future[AuditResult]] = {
+
+    when(mockAuditService.sendAudit(eqTo(event))(any(), any(), any()))
+      .thenReturn(auditResult)
+
+//    (mockAuditService
+//      .sendAudit(_: AuditModel[T])(_: HeaderCarrier, _: ExecutionContext, _: Writes[T]))
+//      .expects(event, *, *, *)
+//      .returns(auditResult)
+  }
 }
 
 object MockAuditService {

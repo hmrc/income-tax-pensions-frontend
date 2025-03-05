@@ -18,6 +18,7 @@ package controllers.predicates.actions
 
 import builders.AuthorisationRequestBuilder.anAuthorisationRequest
 import builders.PensionsUserDataBuilder.{aPensionsUserData, taxYear}
+import builders.UserBuilder.aUser
 import models.requests.UserSessionDataRequest
 import models.{APIErrorBodyModel, APIErrorModel}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
@@ -43,6 +44,7 @@ class UserRequestWithSessionRefinerActionSpec extends UnitTest with MockPensionS
     "handle InternalServerError when when getting session data result in an error" in {
       mockGetPensionSessionData(
         taxYear,
+        aUser,
         Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues."))))
       mockHandleError(INTERNAL_SERVER_ERROR, InternalServerError)
 
@@ -50,7 +52,7 @@ class UserRequestWithSessionRefinerActionSpec extends UnitTest with MockPensionS
     }
 
     "return StateBenefitsUserData when the service returns data" in {
-      mockGetPensionSessionData(taxYear, Right(Some(aPensionsUserData)))
+      mockGetPensionSessionData(taxYear, aUser, Right(Some(aPensionsUserData)))
 
       await(underTest.refine(anAuthorisationRequest)) shouldBe
         Right(UserSessionDataRequest(aPensionsUserData, anAuthorisationRequest.user, anAuthorisationRequest.request))

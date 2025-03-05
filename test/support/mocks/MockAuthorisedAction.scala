@@ -19,22 +19,20 @@ package support.mocks
 import common.{EnrolmentIdentifiers, EnrolmentKeys}
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.actions.AuthorisedAction
-import org.scalamock.handlers.CallHandler4
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.{Outcome, TestSuite}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.MockitoSugar
+import org.mockito.stubbing.ScalaOngoingStubbing
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Helpers.stubMessagesControllerComponents
 import services.AuthService
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.syntax.retrieved.authSyntaxForRetrieved
-import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
-trait MockAuthorisedAction extends MockFactory with TestSuite { this: GuiceOneAppPerSuite =>
+trait MockAuthorisedAction extends MockitoSugar { this: GuiceOneAppPerSuite =>
 
   private val mockAppConfig                        = app.injector.instanceOf[AppConfig]
   private val testMockAuthConnector: AuthConnector = mock[AuthConnector]
@@ -47,7 +45,7 @@ trait MockAuthorisedAction extends MockFactory with TestSuite { this: GuiceOneAp
   protected val authorisedAction: AuthorisedAction =
     new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
 
-  protected def mockAuthAsAgent(): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] = {
+  protected def mockAuthAsAgent(): ScalaOngoingStubbing[Future[Enrolments]] = {
     val enrolments: Enrolments = Enrolments(
       Set(
         Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
@@ -56,21 +54,24 @@ trait MockAuthorisedAction extends MockFactory with TestSuite { this: GuiceOneAp
 
     val agentRetrievals: Some[AffinityGroup] = Some(AffinityGroup.Agent)
 
-    (testMockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, Retrievals.affinityGroup, *, *)
-      .returning(Future.successful(agentRetrievals))
+    when(testMockAuthConnector.authorise(any(), eqTo(Retrievals.affinityGroup))(any(), any()))
+      .thenReturn(Future.successful(agentRetrievals))
 
-    (testMockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, Retrievals.allEnrolments, *, *)
-      .returning(Future.successful(enrolments))
+//    (testMockAuthConnector
+//      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+//      .expects(*, Retrievals.affinityGroup, *, *)
+//      .returning(Future.successful(agentRetrievals))
+
+    when(testMockAuthConnector.authorise(any(), eqTo(Retrievals.allEnrolments))(any(), any()))
+      .thenReturn(Future.successful(enrolments))
+
+//    (testMockAuthConnector
+//      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+//      .expects(*, Retrievals.allEnrolments, *, *)
+//      .returning(Future.successful(enrolments))
   }
 
-  protected def mockAuth(nino: Option[String]): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] =
-    mockAuthAsIndividual(nino)
-
-  protected def mockAuthAsIndividual(nino: Option[String]): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] = {
+  protected def mockAuthAsIndividual(nino: Option[String]) = {
     val enrolments = Enrolments(
       Set(
         Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
@@ -78,26 +79,42 @@ trait MockAuthorisedAction extends MockFactory with TestSuite { this: GuiceOneAp
       ) ++ nino.fold(Seq.empty[Enrolment])(unwrappedNino =>
         Seq(Enrolment(EnrolmentKeys.nino, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, unwrappedNino)), "Activated"))))
 
-    (testMockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, Retrievals.affinityGroup, *, *)
-      .returning(Future.successful(Some(AffinityGroup.Individual)))
+    when(testMockAuthConnector.authorise(any(), eqTo(Retrievals.affinityGroup))(any(), any()))
+      .thenReturn(Future.successful(Some(AffinityGroup.Individual)))
 
-    (testMockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-      .returning(Future.successful(enrolments and ConfidenceLevel.L250))
+//    (testMockAuthConnector
+//      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+//      .expects(*, Retrievals.affinityGroup, *, *)
+//      .returning(Future.successful(Some(AffinityGroup.Individual)))
+
+    when(testMockAuthConnector.authorise(any(), eqTo(Retrievals.allEnrolments and Retrievals.confidenceLevel))(any(), any()))
+      .thenReturn(Future.successful(enrolments and ConfidenceLevel.L250))
+
+//    (testMockAuthConnector
+//      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+//      .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
+//      .returning(Future.successful(enrolments and ConfidenceLevel.L250))
   }
 
-  protected def mockAuthReturnException(exception: Exception): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] =
-    (testMockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *)
-      .returning(Future.failed(exception))
+  protected def mockAuthReturnException(exception: Exception): ScalaOngoingStubbing[Future[Nothing]] = {
 
-  protected def mockFailToAuthenticate(): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] =
-    (testMockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *)
-      .returning(Future.failed(InsufficientConfidenceLevel()))
+    when(testMockAuthConnector.authorise(any(), any())(any(), any()))
+      .thenReturn(Future.failed(exception))
+
+    //    (testMockAuthConnector
+    //      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+    //      .expects(*, *, *, *)
+    //      .returning(Future.failed(exception))
+  }
+
+  protected def mockFailToAuthenticate(): ScalaOngoingStubbing[Future[Nothing]] = {
+
+    when(testMockAuthConnector.authorise(any(), any())(any(), any()))
+      .thenReturn(Future.failed(InsufficientConfidenceLevel()))
+
+//    (testMockAuthConnector
+//      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
+//      .expects(*, *, *, *)
+//      .returning(Future.failed(InsufficientConfidenceLevel()))
+  }
 }
