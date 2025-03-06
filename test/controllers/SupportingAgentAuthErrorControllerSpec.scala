@@ -14,30 +14,22 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.errors
 
-import play.api.test.FakeRequest
+import controllers.ControllerSpecBase
 import play.api.test.Helpers._
 import views.html.SupportingAgentAuthErrorView
 
-class SupportingAgentAuthErrorControllerSpec extends SpecBase with MockAppConfig {
+class SupportingAgentAuthErrorControllerSpec extends ControllerSpecBase {
+  val view       = app.injector.instanceOf[SupportingAgentAuthErrorView]
+  val controller = new SupportingAgentAuthErrorController(mcc, appConfig, view)
 
-  "Unauthorised Controller" - {
+  "show" should {
+    "return Unauthorized and render the correct view for a GET" in {
+      val result = controller.show(fakeRequest)
 
-    "must return UNAUTHORIZED and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.SupportingAgentAuthErrorController.show.url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[SupportingAgentAuthErrorView]
-
-        status(result) mustEqual UNAUTHORIZED
-        contentAsString(result) mustEqual view()(request, messages(application), config(application)).toString
-      }
+      assert(status(result) === UNAUTHORIZED)
+      assert(contentAsString(result) === view().toString())
     }
   }
 }
