@@ -33,27 +33,18 @@ trait MockSubmissionsConnector extends MockitoSugar {
     def getUserData(nino: String,
                     taxYear: Int
                    ): ScalaOngoingStubbing[DownstreamOutcome[IncomeTaxUserData]] = {
-
       when(mockSubmissionsConnector.getUserData(eqTo(nino), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Future.successful(Right(IncomeTaxUserData())))
 
-      //      (mockSubmissionsConnector
-      //        .getUserData(_: String, _: Int)(_: HeaderCarrier))
-      //        .expects(nino, taxYear, *)
     }
 
     def refreshPensionsResponse(nino: String,
                                 mtditid: String,
                                 taxYear: Int
                                ): ScalaOngoingStubbing[DownstreamOutcome[Unit]] = {
-
-
       when(mockSubmissionsConnector.refreshPensionsResponse(eqTo(nino), eqTo(mtditid), eqTo(taxYear))(any[HeaderCarrier]))
         .thenReturn(Future.successful(Right(())))
 
-      //      (mockSubmissionsConnector
-      //        .refreshPensionsResponse(_: String, _: String, _: Int)(_: HeaderCarrier))
-      //        .expects(nino, mtditid, taxYear, *)
     }
 
   }

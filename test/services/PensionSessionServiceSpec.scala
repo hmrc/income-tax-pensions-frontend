@@ -35,6 +35,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.Result
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.test.Injecting
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.UnitTest
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 
@@ -59,6 +60,7 @@ class PensionSessionServiceSpec
     mockFrontendAppConfig)
 
   implicit val messages: Messages = inject[MessagesApi].preferred(fakeRequest.withHeaders())
+  override implicit val hc: HeaderCarrier = HeaderCarrier()
 
   val service: PensionSessionService =
     new PensionSessionService(mockPensionUserDataRepository, mockUserDataConnector, mockPensionsConnector, errorHandler)(mockExecutionContext)

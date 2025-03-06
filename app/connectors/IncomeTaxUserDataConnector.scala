@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,13 @@ package connectors
 import config.AppConfig
 import models.IncomeTaxUserData
 import play.api.Logging
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class IncomeTaxUserDataConnector @Inject() (val http: HttpClient, val config: AppConfig) extends Logging {
+class IncomeTaxUserDataConnector @Inject() (val http: HttpClientV2, val config: AppConfig) extends Logging {
 
   def getUserData(nino: String, taxYear: Int)(hc: HeaderCarrier): DownstreamOutcome[IncomeTaxUserData] =
     Future.successful(
