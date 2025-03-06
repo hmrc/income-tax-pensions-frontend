@@ -24,7 +24,7 @@ import views.html.SupportingAgentAuthErrorView
 
 import javax.inject.Inject
 
-class SupportingAgentAuthErrorController @Inject()(
+class SupportingAgentAuthErrorController @Inject() (
     val mcc: MessagesControllerComponents,
     implicit val appConfig: AppConfig,
     view: SupportingAgentAuthErrorView

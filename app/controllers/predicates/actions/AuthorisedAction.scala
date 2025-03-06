@@ -149,19 +149,19 @@ class AuthorisedAction @Inject() (appConfig: AppConfig, errorHandler: ErrorHandl
       logger.warn(s"$agentAuthLogString - No active session. Redirecting to ${appConfig.signInUrl}")
       Future(Redirect(appConfig.signInUrl))
     case _: AuthorisationException =>
-        authService
-          .authorised(secondaryAgentPredicate(mtdItId))
-          .retrieve(allEnrolments) {
-            populateAgent(block, mtdItId, nino, _, affinityGroup, isSecondaryAgent = true)
-          }
-          .recoverWith {
-            case _: AuthorisationException =>
-              logger.warn(s"$agentAuthLogString - Agent does not have secondary delegated authority for Client.")
-              Future(Redirect(controllers.errors.routes.AgentAuthErrorController.show))
-            case e =>
-              logger.error(s"$agentAuthLogString - Unexpected exception of type '${e.getClass.getSimpleName}' was caught.")
-              errorHandler.futureInternalServerError()
-          }
+      authService
+        .authorised(secondaryAgentPredicate(mtdItId))
+        .retrieve(allEnrolments) {
+          populateAgent(block, mtdItId, nino, _, affinityGroup, isSecondaryAgent = true)
+        }
+        .recoverWith {
+          case _: AuthorisationException =>
+            logger.warn(s"$agentAuthLogString - Agent does not have secondary delegated authority for Client.")
+            Future(Redirect(controllers.errors.routes.AgentAuthErrorController.show))
+          case e =>
+            logger.error(s"$agentAuthLogString - Unexpected exception of type '${e.getClass.getSimpleName}' was caught.")
+            errorHandler.futureInternalServerError()
+        }
     case e =>
       logger.error(s"$agentAuthLogString - Unexpected exception of type '${e.getClass.getSimpleName}' was caught.")
       errorHandler.futureInternalServerError()
@@ -179,14 +179,14 @@ class AuthorisedAction @Inject() (appConfig: AppConfig, errorHandler: ErrorHandl
         Future.successful(Redirect(controllers.errors.routes.SupportingAgentAuthErrorController.show))
       case false =>
         enrolmentGetIdentifierValue(EnrolmentKeys.Agent, EnrolmentIdentifiers.agentReference, enrolments) match {
-      case Some(arn) =>
-        sessionIdBlock(
-          errorLogString = s"$agentAuthLogString - No session id in request",
-          errorAction = Future.successful(Redirect(appConfig.signInUrl))
-        )(sessionId => block(AuthorisationRequest(User(mtdItId, Some(arn), nino, sessionId, affinityGroup.toString, isSecondaryAgent), request)))
-      case None =>
-        logger.warn(s"$agentAuthLogString - Agent with no HMRC-AS-AGENT enrolment. Rendering unauthorised view.")
-        Future.successful(Redirect(controllers.errors.routes.YouNeedAgentServicesController.show))
+          case Some(arn) =>
+            sessionIdBlock(
+              errorLogString = s"$agentAuthLogString - No session id in request",
+              errorAction = Future.successful(Redirect(appConfig.signInUrl))
+            )(sessionId => block(AuthorisationRequest(User(mtdItId, Some(arn), nino, sessionId, affinityGroup.toString, isSecondaryAgent), request)))
+          case None =>
+            logger.warn(s"$agentAuthLogString - Agent with no HMRC-AS-AGENT enrolment. Rendering unauthorised view.")
+            Future.successful(Redirect(controllers.errors.routes.YouNeedAgentServicesController.show))
         }
     }
 
