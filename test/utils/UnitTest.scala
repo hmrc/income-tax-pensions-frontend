@@ -101,6 +101,7 @@ trait UnitTest
     new AuthorisationRequest[AnyContent](User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString), fakeRequest)
 
   val authorisedAction = new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
+
   def status(awaitable: Future[Result]): Int = await(awaitable).header.status
 
   def bodyOf(awaitable: Future[Result]): String = {

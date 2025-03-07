@@ -26,8 +26,7 @@ import models.pension.JourneyNameAndStatus
 import models.pension.charges._
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar
 import org.mockito.stubbing.ScalaOngoingStubbing
 import uk.gov.hmrc.http.HeaderCarrier
@@ -68,48 +67,43 @@ trait MockPensionsConnector extends MockitoSugar {
 
   }
 
-  def mockSavePaymentsIntoPensions(nino: Nino, taxYear: TaxYear): ScalaOngoingStubbing[ApiResultT[Unit]] = {
-    when(mockPensionsConnector.savePaymentsIntoPensions(eqTo(nino), eqTo(taxYear), any[PaymentsIntoPensionsViewModel])
+  def mockSavePaymentsIntoPensions(): ScalaOngoingStubbing[ApiResultT[Unit]] = {
+    when(mockPensionsConnector.savePaymentsIntoPensions(any[Nino], any[TaxYear], any[PaymentsIntoPensionsViewModel])
     (any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(EitherT.rightT[Future, APIErrorModel](()))
 
   }
 
-  def mockSaveUkPensionIncome(nino: Nino, taxYear: TaxYear): ScalaOngoingStubbing[ApiResultT[Unit]] = {
-    when(mockPensionsConnector.saveUkPensionIncome(eqTo(nino), eqTo(taxYear), any[IncomeFromPensionsViewModel])
+  def mockSaveUkPensionIncome(): ScalaOngoingStubbing[ApiResultT[Unit]] = {
+    when(mockPensionsConnector.saveUkPensionIncome(any[Nino], any[TaxYear], any[IncomeFromPensionsViewModel])
     (any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(EitherT.rightT[Future, APIErrorModel](()))
 
   }
 
-  def mockSaveAnnualAllowances(nino: Nino, taxYear: TaxYear): ScalaOngoingStubbing[ApiResultT[Unit]] = {
-    when(mockPensionsConnector.saveAnnualAllowances(eqTo(nino), eqTo(taxYear), any[PensionAnnualAllowancesViewModel])
+  def mockSaveAnnualAllowances(): ScalaOngoingStubbing[ApiResultT[Unit]] = {
+    when(mockPensionsConnector.saveAnnualAllowances(any[Nino], any[TaxYear], any[PensionAnnualAllowancesViewModel])
     (any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(EitherT.rightT[Future, APIErrorModel](()))
 
   }
 
-  def mockSaveTransfersIntoOverseasPensions(nino: Nino, taxYear: TaxYear): ScalaOngoingStubbing[ApiResultT[Unit]] = {
-    when(mockPensionsConnector.saveTransfersIntoOverseasPensions(eqTo(nino), eqTo(taxYear), any[TransfersIntoOverseasPensionsViewModel])
+  def mockSaveTransfersIntoOverseasPensions(): ScalaOngoingStubbing[ApiResultT[Unit]] = {
+    when(mockPensionsConnector.saveTransfersIntoOverseasPensions(any[Nino], any[TaxYear], any[TransfersIntoOverseasPensionsViewModel])
     (any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(EitherT.rightT[Future, APIErrorModel](()))
 
   }
 
-  def mockSaveIncomeFromOverseasPensions(nino: Nino, taxYear: TaxYear): ScalaOngoingStubbing[ApiResultT[Unit]] = {
-    when(mockPensionsConnector.saveIncomeFromOverseasPensions(eqTo(nino), eqTo(taxYear), any[IncomeFromOverseasPensionsViewModel])
+  def mockSaveIncomeFromOverseasPensions(): ScalaOngoingStubbing[ApiResultT[Unit]] = {
+    when(mockPensionsConnector.saveIncomeFromOverseasPensions(any[Nino], any[TaxYear], any[IncomeFromOverseasPensionsViewModel])
     (any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(EitherT.rightT[Future, APIErrorModel](()))
 
   }
 
-//  def mockGetAllJourneyStatuses(taxYear: TaxYear,
-//                                response: Either[APIErrorModel,
-//                                  List[JourneyNameAndStatus]]
-//                               ): ScalaOngoingStubbing[DownstreamOutcome[List[JourneyNameAndStatus]]] = {
-//    when(mockPensionsConnector.getAllJourneyStatuses(eqTo(taxYear))(any(), any()))
-//      .thenReturn(Future.successful(response))
-//
-//  }
+  def mockShortServiceRefunds(): ScalaOngoingStubbing[ApiResultT[Unit]] =
+    when(mockPensionsConnector.saveShortServiceRefunds(any[Nino], any[TaxYear], any[ShortServiceRefundsViewModel])(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(EitherT.rightT[Future, APIErrorModel](()))
 
 }
