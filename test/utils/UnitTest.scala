@@ -125,17 +125,10 @@ trait UnitTest
 
      when(mockAuthConnector.authorise(any(),eqTo(Retrievals.affinityGroup))(any(), any()))
        .thenReturn(Future.successful(Some(AffinityGroup.Individual)))
-//    (mockAuthConnector
-//      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-//      .expects(*, Retrievals.affinityGroup, *, *)
-//      .returning(Future.successful(Some(AffinityGroup.Individual)))
+
     when(mockAuthConnector.authorise(any(),eqTo(Retrievals.allEnrolments and Retrievals.confidenceLevel))(any(), any()))
       .thenReturn(Future.successful(enrolments and ConfidenceLevel.L250))
 
-//    (mockAuthConnector
-//      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-//      .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-//      .returning(Future.successful(enrolments and ConfidenceLevel.L250))
   }
 
   // noinspection ScalaStyle
@@ -148,18 +141,8 @@ trait UnitTest
 
     val agentRetrievals: Some[AffinityGroup] = Some(AffinityGroup.Agent)
 
-    //    (mockAuthConnector
-    //      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-    //      .expects(*, Retrievals.affinityGroup, *, *)
-    //      .returning(Future.successful(agentRetrievals))
-
     when(mockAuthConnector.authorise(any(), eqTo(Retrievals.affinityGroup))(any(), any()))
       .thenReturn(Future.successful(agentRetrievals))
-
-    //    (mockAuthConnector
-    //      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-    //      .expects(*, Retrievals.allEnrolments, *, *)
-    //      .returning(Future.successful(enrolments))
 
     when(mockAuthConnector.authorise(any(), eqTo(Retrievals.allEnrolments))(any(), any()))
       .thenReturn(Future.successful(enrolments))
@@ -172,11 +155,6 @@ trait UnitTest
       .thenReturn(Future.failed(exception))
 
   }
-
-  //    (mockAuthConnector
-//      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-//      .expects(*, *, *, *)
-//      .returning(Future.failed(exception))
 
   val nino       = "AA123456A"
   val mtditid    = "1234567890"

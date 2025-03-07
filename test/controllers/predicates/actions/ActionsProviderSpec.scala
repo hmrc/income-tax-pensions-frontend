@@ -69,7 +69,6 @@ class ActionsProviderSpec extends ControllerUnitTest with MockAuthorisedAction w
           mockAuthAsIndividual(Some(aUser.nino))
           mockGetPensionSessionData(
             taxYearEOY,
-            aUser,
             Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues."))))
           mockHandleError(INTERNAL_SERVER_ERROR, InternalServerError)
 
@@ -83,7 +82,7 @@ class ActionsProviderSpec extends ControllerUnitTest with MockAuthorisedAction w
       if (actionName == "userPriorAndSessionDataFor") {
         "handle internal server error when getUserPriorAndSessionData result in error" in {
           mockAuthAsIndividual(Some(aUser.nino))
-          mockGetPensionSessionData(taxYearEOY, aUser, Right(Some(aPensionsUserData)))
+          mockGetPensionSessionData(taxYearEOY, Right(Some(aPensionsUserData)))
           mockGetPriorData(
             taxYearEOY,
             aUser,
@@ -99,7 +98,7 @@ class ActionsProviderSpec extends ControllerUnitTest with MockAuthorisedAction w
 
       "return successful response when end of year" in {
         mockAuthAsIndividual(Some(aUser.nino))
-        if (actionName != "endOfYear") mockGetPensionSessionData(taxYearEOY, aUser, Right(Some(aPensionsUserData)))
+        if (actionName != "endOfYear") mockGetPensionSessionData(taxYearEOY, Right(Some(aPensionsUserData)))
         if (actionName == "userPriorAndSessionDataFor") mockGetPriorData(taxYearEOY, aUser, Right(anIncomeTaxUserData))
 
         val underTest = action(taxYearEOY)(block = anyBlock)

@@ -17,12 +17,11 @@
 package support.mocks
 
 import config.ErrorHandler
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchersSugar.{any, eqTo}
 import org.mockito.MockitoSugar
 import org.mockito.stubbing.ScalaOngoingStubbing
 import play.api.mvc.Results.InternalServerError
-import play.api.mvc.Result
+import play.api.mvc.{Request, Result}
 
 import scala.concurrent.Future
 
@@ -31,29 +30,19 @@ trait MockErrorHandler extends MockitoSugar  {
   val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
 
   def mockHandleError(status: Int, result: Result): ScalaOngoingStubbing[Result] = {
-
-    when(mockErrorHandler.handleError(eqTo(status))(any()))
+    when(mockErrorHandler.handleError(eqTo(status))(any[Request[_]]))
       .thenReturn(result)
 
-    //    (mockErrorHandler
-    //      .handleError(_: Int)(_: Request[_]))
-    //      .expects(status, *)
-    //      .returns(result)
   }
 
   def mockInternalServerError: ScalaOngoingStubbing[Result] = {
-
-    when(mockErrorHandler.internalServerError()(any()))
+    when(mockErrorHandler.internalServerError()(any[Request[_]]))
       .thenReturn(InternalServerError)
-    //    (mockErrorHandler
-    //      .internalServerError()(_: Request[_]))
-    //      .expects(*)
-    //      .returns(InternalServerError)
+
   }
 
   def mockFutureInternalServerError(errString: String): ScalaOngoingStubbing[Future[Result]] = {
-
-    when(mockErrorHandler.futureInternalServerError()(any()))
+    when(mockErrorHandler.futureInternalServerError()(any[Request[_]]))
       .thenReturn(Future.successful(InternalServerError(errString)))
 
     //    (mockErrorHandler

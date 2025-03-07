@@ -44,7 +44,6 @@ class UserRequestWithSessionRefinerActionSpec extends UnitTest with MockPensionS
     "handle InternalServerError when when getting session data result in an error" in {
       mockGetPensionSessionData(
         taxYear,
-        aUser,
         Left(APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel("INTERNAL_SERVER_ERROR", "The service is currently facing issues."))))
       mockHandleError(INTERNAL_SERVER_ERROR, InternalServerError)
 
@@ -52,7 +51,7 @@ class UserRequestWithSessionRefinerActionSpec extends UnitTest with MockPensionS
     }
 
     "return StateBenefitsUserData when the service returns data" in {
-      mockGetPensionSessionData(taxYear, aUser, Right(Some(aPensionsUserData)))
+      mockGetPensionSessionData(taxYear, Right(Some(aPensionsUserData)))
 
       await(underTest.refine(anAuthorisationRequest)) shouldBe
         Right(UserSessionDataRequest(aPensionsUserData, anAuthorisationRequest.user, anAuthorisationRequest.request))
