@@ -42,14 +42,14 @@ class SupportingAgentAuthErrorPageViewSpec extends ViewUnitTest {
     val h1Expected = "You are not authorised to use this service"
     val accessServiceText: String = "You’re a supporting agent for this client. Only your client or their main agent, if they have one, can access and submit their tax return."
     val linkText = "Go back to account home"
-    val tryAnotherClientExpectedHref = "http://localhost:9081/report-quarterly/income-and-expenses/view/agents"
+    val tryAnotherClientExpectedHref = "/report-quarterly/income-and-expenses/view/agents"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val h1Expected = "Nid ydych wedi’ch awdurdodi i ddefnyddio’r gwasanaeth hwn"
     val accessServiceText: String = "Rydych yn asiant ategol ar gyfer y cleient hwn. Dim ond eich cleient neu ei brif asiant, os oes ganddo un, sy’n gallu cael at a chyflwyno ei Ffurflen Dreth."
     val linkText = "Yn ôl i hafan y cyfrif"
-    val tryAnotherClientExpectedHref = "http://localhost:9081/report-quarterly/income-and-expenses/view/agents"
+    val tryAnotherClientExpectedHref = "/report-quarterly/income-and-expenses/view/agents"
   }
 
   val userScenarios: Seq[UserScenario[CommonExpectedResults, CommonExpectedResults]] = Seq(
