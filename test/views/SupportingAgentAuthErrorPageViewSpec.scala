@@ -27,7 +27,7 @@ import views.html.SupportingAgentAuthErrorView
 class SupportingAgentAuthErrorPageViewSpec extends ViewUnitTest {
 
   object Selectors {
-    val p1Selector = "#main-content > div > div > p:nth-child(2)"
+    val p1Selector                     = "#main-content > div > div > p:nth-child(2)"
     val authoriseAsAnAgentLinkSelector = "#account_home_link"
   }
 
@@ -40,15 +40,17 @@ class SupportingAgentAuthErrorPageViewSpec extends ViewUnitTest {
 
   object CommonExpectedEN extends CommonExpectedResults {
     val h1Expected = "You are not authorised to use this service"
-    val accessServiceText: String = "You’re a supporting agent for this client. Only your client or their main agent, if they have one, can access and submit their tax return."
-    val linkText = "Go back to account home"
+    val accessServiceText: String =
+      "You’re a supporting agent for this client. Only your client or their main agent, if they have one, can access and submit their tax return."
+    val linkText                     = "Go back to account home"
     val tryAnotherClientExpectedHref = "/report-quarterly/income-and-expenses/view/agents"
   }
 
   object CommonExpectedCY extends CommonExpectedResults {
     val h1Expected = "Nid ydych wedi’ch awdurdodi i ddefnyddio’r gwasanaeth hwn"
-    val accessServiceText: String = "Rydych yn asiant ategol ar gyfer y cleient hwn. Dim ond eich cleient neu ei brif asiant, os oes ganddo un, sy’n gallu cael at a chyflwyno ei Ffurflen Dreth."
-    val linkText = "Yn ôl i hafan y cyfrif"
+    val accessServiceText: String =
+      "Rydych yn asiant ategol ar gyfer y cleient hwn. Dim ond eich cleient neu ei brif asiant, os oes ganddo un, sy’n gallu cael at a chyflwyno ei Ffurflen Dreth."
+    val linkText                     = "Yn ôl i hafan y cyfrif"
     val tryAnotherClientExpectedHref = "/report-quarterly/income-and-expenses/view/agents"
   }
 
@@ -65,7 +67,7 @@ class SupportingAgentAuthErrorPageViewSpec extends ViewUnitTest {
     s"language is ${welshTest(userScenario.isWelsh)} and request is from an ${agentTest(userScenario.isAgent)}" should {
       "Render correctly" which {
         implicit val authRequest: AuthorisationRequest[AnyContent] = getAuthRequest(userScenario.isAgent)
-        implicit val messages: Messages = getMessages(userScenario.isWelsh)
+        implicit val messages: Messages                            = getMessages(userScenario.isWelsh)
 
         val htmlFormat = underTest()
 
