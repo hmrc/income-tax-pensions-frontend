@@ -33,14 +33,9 @@ trait MockAuditService extends MockitoSugar {
   def mockAuditResult[T](event: AuditModel[T],
                          auditResult: Future[AuditResult]
                         ): ScalaOngoingStubbing[Future[AuditResult]] = {
-
     when(mockAuditService.sendAudit(eqTo(event))(any(), any(), any()))
       .thenReturn(auditResult)
 
-//    (mockAuditService
-//      .sendAudit(_: AuditModel[T])(_: HeaderCarrier, _: ExecutionContext, _: Writes[T]))
-//      .expects(event, *, *, *)
-//      .returns(auditResult)
   }
 }
 

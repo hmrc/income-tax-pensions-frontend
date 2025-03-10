@@ -45,9 +45,5 @@ trait MockErrorHandler extends MockitoSugar  {
     when(mockErrorHandler.futureInternalServerError()(any[Request[_]]))
       .thenReturn(Future.successful(InternalServerError(errString)))
 
-    //    (mockErrorHandler
-    //      .futureInternalServerError()(_: Request[_]))
-    //      .expects(*)
-    //      .returns(Future.successful(InternalServerError(errString)))
   }
 }

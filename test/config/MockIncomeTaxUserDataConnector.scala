@@ -37,41 +37,24 @@ trait MockIncomeTaxUserDataConnector extends MockitoSugar {
                taxYear: Int,
                userData: IncomeTaxUserData
               ): ScalaOngoingStubbing[DownstreamOutcome[IncomeTaxUserData]] = {
-
     when(mockUserDataConnector.getUserData(eqTo(nino), eqTo(taxYear))(any[HeaderCarrier]))
       .thenReturn(Future.successful(Right(userData)))
 
-//    (mockUserDataConnector
-//      .getUserData(_: String, _: Int)(_: HeaderCarrier))
-//      .expects(nino, taxYear, *)
-//      .returns(Future.successful(Right(userData)))
-//      .anyNumberOfTimes()
   }
 
   def mockFindNoContent(nino: String,
                         taxYear: Int
                        ): ScalaOngoingStubbing[DownstreamOutcome[IncomeTaxUserData]] = {
-
     when(mockUserDataConnector.getUserData(eqTo(nino), eqTo(taxYear))(any[HeaderCarrier]))
       .thenReturn(Future.successful(Right(IncomeTaxUserData())))
 
-//    (mockUserDataConnector
-//      .getUserData(_: String, _: Int)(_: HeaderCarrier))
-//      .expects(nino, taxYear, *)
-//      .returns(Future.successful(Right(IncomeTaxUserData())))
-//      .anyNumberOfTimes()
   }
 
   def mockFindFail(nino: String,
                    taxYear: Int
                   ): ScalaOngoingStubbing[DownstreamOutcome[IncomeTaxUserData]] = {
-
     when(mockUserDataConnector.getUserData(eqTo(nino), eqTo(taxYear))(any[HeaderCarrier]))
       .thenReturn(Future.successful(Left(apiError)))
-//    (mockUserDataConnector
-//      .getUserData(_: String, _: Int)(_: HeaderCarrier))
-//      .expects(nino, taxYear, *)
-//      .returns(Future.successful(Left(apiError)))
-//      .anyNumberOfTimes()
+
   }
 }

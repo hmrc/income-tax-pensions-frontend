@@ -29,7 +29,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -106,5 +105,5 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
       ex
     )
 
-  override protected implicit val ec: ExecutionContext = global
+  override protected implicit val ec: ExecutionContext = ExecutionContext.Implicits.global
 }

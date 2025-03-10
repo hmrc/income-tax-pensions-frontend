@@ -36,56 +36,33 @@ trait MockPensionUserDataRepository extends UnitTest with MockitoSugar {
                user: User,
                repositoryResponse: Either[DatabaseError, Option[PensionsUserData]]
               ):ScalaOngoingStubbing[QueryResult[Option[PensionsUserData]]] = {
-
     when(mockPensionUserDataRepository.find(eqTo(taxYear), eqTo(user)))
       .thenReturn(Future.successful(repositoryResponse))
-//    (mockPensionUserDataRepository
-//      .find(_: Int, _: User))
-//      .expects(taxYear, user)
-//      .returns(Future.successful(repositoryResponse))
-//      .anyNumberOfTimes()
+
   }
 
   def mockCreateOrUpdate(pensionUserData: PensionsUserData,
                          response: Either[DatabaseError, Unit]
                         ): ScalaOngoingStubbing[QueryResult[Unit]] = {
-
     when(mockPensionUserDataRepository.createOrUpdate(eqTo(pensionUserData)))
       .thenReturn(Future.successful(response))
 
-    //    (mockPensionUserDataRepository
-    //      .createOrUpdate(_: PensionsUserData))
-    //      .expects(PensionUserData)
-    //      .returns(Future.successful(response))
-    //      .anyNumberOfTimes()
   }
 
   def mockCreateOrUpdate(response: Either[DatabaseError, Unit]
                         ): ScalaOngoingStubbing[QueryResult[Unit]] = {
-
     when(mockPensionUserDataRepository.createOrUpdate(any[PensionsUserData]))
       .thenReturn(Future.successful(response))
 
-    //    (mockPensionUserDataRepository
-    //      .createOrUpdate(_: PensionsUserData))
-    //      .expects(*)
-    //      .returns(Future.successful(response))
-    //      .anyNumberOfTimes()
   }
 
   def mockClear(taxYear: Int,
                 user: User,
                 response: Boolean
                ): ScalaOngoingStubbing[Future[Boolean]] = {
-
     when(mockPensionUserDataRepository.clear(eqTo(taxYear), eqTo(user)))
       .thenReturn(Future.successful(response))
 
-//    (mockPensionUserDataRepository
-//      .clear(_: Int, _: User))
-//      .expects(taxYear, user)
-//      .returns(Future.successful(response))
-//      .anyNumberOfTimes()
   }
 
 }

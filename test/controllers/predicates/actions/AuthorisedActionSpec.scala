@@ -288,6 +288,10 @@ class AuthorisedActionSpec extends UnitTest {
 
         mockAuthReturnException(AuthException, primaryAgentPredicate(mtdItId))
 
+        //          val result: Future[Result] = testAuth.agentAuthentication(testBlock)(
+        //            request = FakeRequest().withSession(fakeRequestWithMtditidAndNino.session.data.toSeq: _*),
+        //            hc = emptyHeaderCarrier
+        //          )
         lazy val result: Future[Result] =
           authorisedAction.agentAuthentication[AnyContent](testBlock)(fakeRequestWithMtditidAndNino, emptyHeaderCarrier)
 
