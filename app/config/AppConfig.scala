@@ -32,84 +32,46 @@ import scala.concurrent.duration.Duration
 trait AppConfig {
 
   def signInBaseUrl: String
-
   def signInContinueBaseUrl: String
-
   def signInContinueUrl: String
-
   def signInOrigin: String
-
   def signInUrl: String
-
   def defaultTaxYear: Int
-
   def incomeTaxSubmissionBEBaseUrl: String
-
   def pensionBEBaseUrl: String
-
   def journeyAnswersUrl(taxYear: TaxYear, nino: Nino, journey: Journey): String
-
   def statePensionBEBaseUrl: String
-
   def incomeTaxSubmissionBaseUrl: String
-
   def incomeTaxSubmissionFrontendOverview: String
-
   def incomeTaxSubmissionOverviewUrl(taxYear: Int): String
-
   def incomeTaxSubmissionStartUrl(taxYear: Int): String
-
   def incomeTaxSubmissionIvRedirect: String
-
   def vcBaseUrl: String
-
   def viewAndChangeEnterUtrUrl: String
-
+  def viewAndChangeViewUrlAgent: String
   def appUrl: String
-
   def contactFrontEndUrl: String
-
   def contactFormServiceIndividual: String
-
   def contactFormServiceAgent: String
-
   def contactFormServiceIdentifier(isAgent: Boolean): String
-
   def requestUri(implicit request: RequestHeader): String
-
   val feedbackFrontendUrl: String
-
   def feedbackSurveyUrl(implicit isAgent: Boolean): String
-
   def betaFeedbackUrl(implicit request: RequestHeader, isAgent: Boolean): String
-
   def contactUrl(implicit isAgent: Boolean): String
-
   def basGatewayUrl: String
-
   def signOutUrl: String
-
   def timeoutDialogTimeout: Int
-
   def timeoutDialogCountdown: Int
 
   // Mongo config
   def encryptionKey: String
-
   def mongoTTL: Int
-
   def taxYearErrorFeature: Boolean
-
   def languageMap: Map[String, Lang]
-
   def routeToSwitchLanguage: String => Call
-
   def welshToggleEnabled: Boolean
-
   def useEncryption: Boolean
-
-  def emaSupportingAgentsEnabled: Boolean
-
 }
 
 @Singleton
@@ -144,8 +106,9 @@ class AppConfigImpl @Inject() (servicesConfig: ServicesConfig) extends Logging w
   val incomeTaxSubmissionIvRedirect: String =
     incomeTaxSubmissionBaseUrl + servicesConfig.getString("microservice.services.income-tax-submission-frontend.iv-redirect")
 
-  val vcBaseUrl: String                = servicesConfig.getString(ConfigKeys.viewAndChangeFrontendUrl)
-  val viewAndChangeEnterUtrUrl: String = s"$vcBaseUrl/report-quarterly/income-and-expenses/view/agents/client-utr"
+  val vcBaseUrl: String                 = servicesConfig.getString(ConfigKeys.viewAndChangeFrontendUrl)
+  val viewAndChangeEnterUtrUrl: String  = s"$vcBaseUrl/report-quarterly/income-and-expenses/view/agents/client-utr"
+  val viewAndChangeViewUrlAgent: String = s"$vcBaseUrl/report-quarterly/income-and-expenses/view/agents"
 
   val appUrl: String     = servicesConfig.getString("microservice.url")
   val contactFrontEndUrl = servicesConfig.getString(ConfigKeys.contactFrontendUrl)
@@ -193,7 +156,5 @@ class AppConfigImpl @Inject() (servicesConfig: ServicesConfig) extends Logging w
     logger.warn("[AesGCMCrypto][decrypt] Encryption is turned off")
     servicesConfig.getBoolean("feature-switch.useEncryption")
   }
-
-  def emaSupportingAgentsEnabled: Boolean = servicesConfig.getBoolean("feature-switch.ema-supporting-agents-enabled")
 
 }

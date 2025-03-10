@@ -71,12 +71,6 @@ class AuthorisedActionSpec extends UnitTest {
         .withIdentifier("MTDITID", mtdId)
         .withDelegatedAuthRule("mtd-it-auth-supp")
 
-    def mockMultipleAgentsSwitch(bool: Boolean): CallHandler0[Boolean] =
-      (mockAppConfig.emaSupportingAgentsEnabled _: () => Boolean)
-        .expects()
-        .returning(bool)
-        .anyNumberOfTimes()
-
     val primaryAgentEnrolment: Enrolments = Enrolments(
       Set(
         Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, mtdItId)), "Activated"),
@@ -321,27 +315,8 @@ class AuthorisedActionSpec extends UnitTest {
         }
       }
 
-      "[EMA disabled] results in an AuthorisationException error being returned from Auth" should {
-        "return a redirect to the agent error page" in new AgentTest {
-          mockMultipleAgentsSwitch(false)
-
-          object AuthException extends AuthorisationException("Some reason")
-
-          mockAuthReturnException(AuthException, primaryAgentPredicate(mtdItId))
-
-          val result: Future[Result] = testAuth.agentAuthentication(testBlock)(
-            request = FakeRequest().withSession(fakeRequestWithMtditidAndNino.session.data.toSeq: _*),
-            hc = emptyHeaderCarrier
-          )
-
-          status(result) shouldBe SEE_OTHER
-          redirectUrl(result) shouldBe s"$baseUrl/error/you-need-client-authorisation"
-        }
-      }
-
       "[EMA enabled] results in an AuthorisationException error being returned from Auth" should {
         "return a redirect to the agent error page when secondary agent auth call also fails" in new AgentTest {
-          mockMultipleAgentsSwitch(true)
 
           object AuthException extends AuthorisationException("Some reason")
 
@@ -358,7 +333,6 @@ class AuthorisedActionSpec extends UnitTest {
         }
 
         "handle appropriately when a supporting agent is properly authorised" in new AgentTest {
-          mockMultipleAgentsSwitch(true)
 
           object AuthException extends AuthorisationException("Some reason")
 
@@ -370,8 +344,8 @@ class AuthorisedActionSpec extends UnitTest {
             hc = validHeaderCarrier
           )
 
-          status(result) shouldBe OK
-          bodyOf(result) shouldBe s"$mtdItId $arn"
+          status(result) shouldBe SEE_OTHER
+          redirectUrl(result) shouldBe s"$baseUrl/error/supporting-agent-not-authorised"
         }
       }
 
@@ -438,7 +412,6 @@ class AuthorisedActionSpec extends UnitTest {
 
       "[EMA enabled] results in an unexpected error to be returned during secondary agent auth call" should {
         "render ISE page" in new AgentTest {
-          mockMultipleAgentsSwitch(true)
 
           object AuthException  extends AuthorisationException("Some reason")
           object OtherException extends Exception("Some reason")
