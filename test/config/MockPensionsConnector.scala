@@ -18,108 +18,132 @@ package config
 
 import cats.data.EitherT
 import common.{Nino, TaxYear}
-import connectors.{DownstreamOutcome, PensionsConnector}
+import connectors.PensionsConnector
 import models.APIErrorModel
-import models.domain.ApiResultT
 import models.mongo.{JourneyContext, JourneyStatus}
 import models.pension.JourneyNameAndStatus
-import models.pension.charges.{
-  IncomeFromOverseasPensionsViewModel,
-  PensionAnnualAllowancesViewModel,
-  ShortServiceRefundsViewModel,
-  TransfersIntoOverseasPensionsViewModel
-}
+import models.pension.charges.{IncomeFromOverseasPensionsViewModel, PensionAnnualAllowancesViewModel, ShortServiceRefundsViewModel, TransfersIntoOverseasPensionsViewModel}
 import models.pension.reliefs.PaymentsIntoPensionsViewModel
 import models.pension.statebenefits.IncomeFromPensionsViewModel
-import org.scalamock.handlers.{CallHandler3, CallHandler4, CallHandler5}
-import org.scalamock.scalatest.MockFactory
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockPensionsConnector extends MockFactory {
+trait MockPensionsConnector extends MockitoSugar {
 
   val mockPensionsConnector: PensionsConnector = mock[PensionsConnector]
 
   def mockDeletePensionChargesSessionData(
-      nino: String,
-      taxYear: Int,
-      response: Either[APIErrorModel, Unit]): CallHandler4[String, Int, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
-    (mockPensionsConnector
-      .deletePensionCharges(_: String, _: Int)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(nino, taxYear, *, *)
-      .returns(Future.successful(response))
-      .anyNumberOfTimes()
+                                           nino: String,
+                                           taxYear: Int,
+                                           response: Either[APIErrorModel, Unit]
+                                         ): Unit = {
+    when(mockPensionsConnector.deletePensionCharges(
+      eqTo(nino),
+      eqTo(taxYear))
+    (
+      any[HeaderCarrier],
+      any[ExecutionContext]
+    )).thenReturn(Future.successful(response))
+  }
 
-  def mockGetAllJourneyStatuses(taxYear: TaxYear, response: Either[APIErrorModel, List[JourneyNameAndStatus]])
-      : CallHandler3[TaxYear, HeaderCarrier, ExecutionContext, DownstreamOutcome[List[JourneyNameAndStatus]]] =
-    (mockPensionsConnector
-      .getAllJourneyStatuses(_: TaxYear)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(taxYear, *, *)
-      .returns(Future.successful(response))
-      .anyNumberOfTimes()
+  def mockGetAllJourneyStatuses(
+                                 taxYear: TaxYear,
+                                 response: Either[APIErrorModel, List[JourneyNameAndStatus]]
+                               ): Unit = {
+    when(mockPensionsConnector.getAllJourneyStatuses(
+      eqTo(taxYear))
+    (
+      any[HeaderCarrier],
+      any[ExecutionContext]
+    )).thenReturn(Future.successful(response))
+  }
 
-  def mockGetJourneyStatus(ctx: JourneyContext, response: Either[APIErrorModel, List[JourneyNameAndStatus]])
-      : CallHandler3[JourneyContext, HeaderCarrier, ExecutionContext, DownstreamOutcome[List[JourneyNameAndStatus]]] =
-    (mockPensionsConnector
-      .getJourneyStatus(_: JourneyContext)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(ctx, *, *)
-      .returns(Future.successful(response))
-      .anyNumberOfTimes()
+  def mockGetJourneyStatus(
+                            ctx: JourneyContext,
+                            response: Either[APIErrorModel, List[JourneyNameAndStatus]]
+                          ): Unit = {
+    when(mockPensionsConnector.getJourneyStatus(
+      eqTo(ctx))(
+      any[HeaderCarrier],
+      any[ExecutionContext]
+    )).thenReturn(Future.successful(response))
+  }
 
   def mockSaveJourneyStatus(
-      ctx: JourneyContext,
-      status: JourneyStatus,
-      response: Either[APIErrorModel, Unit]): CallHandler4[JourneyContext, JourneyStatus, HeaderCarrier, ExecutionContext, DownstreamOutcome[Unit]] =
-    (mockPensionsConnector
-      .saveJourneyStatus(_: JourneyContext, _: JourneyStatus)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(ctx, status, *, *)
-      .returns(Future.successful(response))
-      .anyNumberOfTimes()
+                             ctx: JourneyContext,
+                             status: JourneyStatus,
+                             response: Either[APIErrorModel, Unit]
+                           ): Unit = {
+    when(mockPensionsConnector.saveJourneyStatus(
+      eqTo(ctx),
+      eqTo(status))(
+      any[HeaderCarrier],
+      any[ExecutionContext]
+    )).thenReturn(Future.successful(response))
+  }
 
-  def mockSavePaymentsIntoPensions(): CallHandler5[Nino, TaxYear, PaymentsIntoPensionsViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
-    (mockPensionsConnector
-      .savePaymentsIntoPensions(_: Nino, _: TaxYear, _: PaymentsIntoPensionsViewModel)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *, *)
-      .returns(EitherT.rightT[Future, APIErrorModel](()))
-      .anyNumberOfTimes()
+  def mockSavePaymentsIntoPensions(): Unit = {
+    when(mockPensionsConnector.savePaymentsIntoPensions(
+      any[Nino],
+      any[TaxYear],
+      any[PaymentsIntoPensionsViewModel])(
+      any[HeaderCarrier],
+      any[ExecutionContext]
+    )).thenReturn(EitherT.rightT[Future, APIErrorModel](()))
+  }
 
-  def mockSaveUkPensionIncome(): CallHandler5[Nino, TaxYear, IncomeFromPensionsViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
-    (mockPensionsConnector
-      .saveUkPensionIncome(_: Nino, _: TaxYear, _: IncomeFromPensionsViewModel)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *, *)
-      .returns(EitherT.rightT[Future, APIErrorModel](()))
-      .anyNumberOfTimes()
+  def mockSaveUkPensionIncome(): Unit = {
+    when(mockPensionsConnector.saveUkPensionIncome(
+      any[Nino],
+      any[TaxYear],
+      any[IncomeFromPensionsViewModel])(
+      any[HeaderCarrier],
+      any[ExecutionContext]
+    )).thenReturn(EitherT.rightT[Future, APIErrorModel](()))
+  }
 
-  def mockSaveAnnualAllowances(): CallHandler5[Nino, TaxYear, PensionAnnualAllowancesViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
-    (mockPensionsConnector
-      .saveAnnualAllowances(_: Nino, _: TaxYear, _: PensionAnnualAllowancesViewModel)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *, *)
-      .returns(EitherT.rightT[Future, APIErrorModel](()))
-      .anyNumberOfTimes()
+  def mockSaveAnnualAllowances(): Unit = {
+    when(mockPensionsConnector.saveAnnualAllowances(
+      any[Nino],
+      any[TaxYear],
+      any[PensionAnnualAllowancesViewModel])(
+      any[HeaderCarrier],
+      any[ExecutionContext]
+    )).thenReturn(EitherT.rightT[Future, APIErrorModel](()))
+  }
 
-  def mockSaveTransfersIntoOverseasPensions()
-      : CallHandler5[Nino, TaxYear, TransfersIntoOverseasPensionsViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
-    (mockPensionsConnector
-      .saveTransfersIntoOverseasPensions(_: Nino, _: TaxYear, _: TransfersIntoOverseasPensionsViewModel)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *, *)
-      .returns(EitherT.rightT[Future, APIErrorModel](()))
-      .anyNumberOfTimes()
+  def mockSaveTransfersIntoOverseasPensions(): Unit = {
+    when(mockPensionsConnector.saveTransfersIntoOverseasPensions(
+      any[Nino],
+      any[TaxYear],
+      any[TransfersIntoOverseasPensionsViewModel])(
+      any[HeaderCarrier],
+      any[ExecutionContext]
+    )).thenReturn(EitherT.rightT[Future, APIErrorModel](()))
+  }
 
-  def mockSaveIncomeFromOverseasPensions()
-      : CallHandler5[Nino, TaxYear, IncomeFromOverseasPensionsViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
-    (mockPensionsConnector
-      .saveIncomeFromOverseasPensions(_: Nino, _: TaxYear, _: IncomeFromOverseasPensionsViewModel)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *, *)
-      .returns(EitherT.rightT[Future, APIErrorModel](()))
-      .anyNumberOfTimes()
+  def mockSaveIncomeFromOverseasPensions(): Unit = {
+    when(mockPensionsConnector.saveIncomeFromOverseasPensions(
+      any[Nino],
+      any[TaxYear],
+      any[IncomeFromOverseasPensionsViewModel])(
+      any[HeaderCarrier],
+      any[ExecutionContext]
+    )).thenReturn(EitherT.rightT[Future, APIErrorModel](()))
+  }
 
-  def mockShortServiceRefunds(): CallHandler5[Nino, TaxYear, ShortServiceRefundsViewModel, HeaderCarrier, ExecutionContext, ApiResultT[Unit]] =
-    (mockPensionsConnector
-      .saveShortServiceRefunds(_: Nino, _: TaxYear, _: ShortServiceRefundsViewModel)(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *, *)
-      .returns(EitherT.rightT[Future, APIErrorModel](()))
-      .anyNumberOfTimes()
-
+  def mockShortServiceRefunds(): Unit = {
+    when(mockPensionsConnector.saveShortServiceRefunds(
+      any[Nino],
+      any[TaxYear],
+      any[ShortServiceRefundsViewModel])(
+      any[HeaderCarrier],
+      any[ExecutionContext]
+    )).thenReturn(EitherT.rightT[Future, APIErrorModel](()))
+  }
 }

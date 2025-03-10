@@ -16,41 +16,53 @@
 
 package config
 
-import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector}
+import connectors.IncomeTaxUserDataConnector
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
-import org.scalamock.handlers.CallHandler3
-import org.scalamock.scalatest.MockFactory
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-trait MockIncomeTaxUserDataConnector extends MockFactory {
+trait MockIncomeTaxUserDataConnector extends MockitoSugar {
 
-  val apiError = APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError)
+  val apiError: APIErrorModel = APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError)
 
   val mockUserDataConnector: IncomeTaxUserDataConnector = mock[IncomeTaxUserDataConnector]
 
-  def mockFind(nino: String,
-               taxYear: Int,
-               userData: IncomeTaxUserData): CallHandler3[String, Int, HeaderCarrier, DownstreamOutcome[IncomeTaxUserData]] =
-    (mockUserDataConnector
-      .getUserData(_: String, _: Int)(_: HeaderCarrier))
-      .expects(nino, taxYear, *)
-      .returns(Future.successful(Right(userData)))
-      .anyNumberOfTimes()
+  def mockFind(
+                nino: String,
+                taxYear: Int,
+                userData: IncomeTaxUserData
+              ): Unit = {
+    when(mockUserDataConnector.getUserData(
+      eqTo(nino),
+      eqTo(taxYear))(
+      any[HeaderCarrier]
+    )).thenReturn(Future.successful(Right(userData)))
+  }
 
-  def mockFindNoContent(nino: String, taxYear: Int): CallHandler3[String, Int, HeaderCarrier, DownstreamOutcome[IncomeTaxUserData]] =
-    (mockUserDataConnector
-      .getUserData(_: String, _: Int)(_: HeaderCarrier))
-      .expects(nino, taxYear, *)
-      .returns(Future.successful(Right(IncomeTaxUserData())))
-      .anyNumberOfTimes()
+  def mockFindNoContent(
+                         nino: String,
+                         taxYear: Int
+                       ): Unit = {
+    when(mockUserDataConnector.getUserData(
+      eqTo(nino),
+      eqTo(taxYear))(
+      any[HeaderCarrier]
+    )).thenReturn(Future.successful(Right(IncomeTaxUserData())))
+  }
 
-  def mockFindFail(nino: String, taxYear: Int): CallHandler3[String, Int, HeaderCarrier, DownstreamOutcome[IncomeTaxUserData]] =
-    (mockUserDataConnector
-      .getUserData(_: String, _: Int)(_: HeaderCarrier))
-      .expects(nino, taxYear, *)
-      .returns(Future.successful(Left(apiError)))
-      .anyNumberOfTimes()
+  def mockFindFail(
+                    nino: String,
+                    taxYear: Int
+                  ): Unit = {
+    when(mockUserDataConnector.getUserData(
+      eqTo(nino),
+      eqTo(taxYear))(
+      any[HeaderCarrier]
+    )).thenReturn(Future.successful(Left(apiError)))
+  }
 }

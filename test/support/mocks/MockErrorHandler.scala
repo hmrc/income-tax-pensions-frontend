@@ -17,32 +17,27 @@
 package support.mocks
 
 import config.ErrorHandler
-import org.scalamock.handlers.CallHandler1
-import org.scalamock.scalatest.MockFactory
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Request, Result}
 
 import scala.concurrent.Future
 
-trait MockErrorHandler extends MockFactory {
+trait MockErrorHandler extends MockitoSugar {
 
-  protected val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
+  val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
 
   def mockHandleError(status: Int, result: Result): Unit =
-    (mockErrorHandler
-      .handleError(_: Int)(_: Request[_]))
-      .expects(status, *)
-      .returns(result)
+    when(mockErrorHandler.handleError(eqTo(status))(any[Request[_]]))
+      .thenReturn(result)
 
-  def mockInternalServerError: CallHandler1[Request[_], Result] =
-    (mockErrorHandler
-      .internalServerError()(_: Request[_]))
-      .expects(*)
-      .returns(InternalServerError)
+  def mockInternalServerError(): Unit =
+    when(mockErrorHandler.internalServerError()(any[Request[_]]))
+      .thenReturn(InternalServerError)
 
-  def mockFutureInternalServerError(errString: String): CallHandler1[Request[_], Future[Result]] =
-    (mockErrorHandler
-      .futureInternalServerError()(_: Request[_]))
-      .expects(*)
-      .returns(Future.successful(InternalServerError(errString)))
+  def mockFutureInternalServerError(errString: String): Unit =
+    when(mockErrorHandler.futureInternalServerError()(any[Request[_]]))
+      .thenReturn(Future.successful(InternalServerError(errString)))
 }

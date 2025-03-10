@@ -17,8 +17,9 @@
 package support.mocks
 
 import models.audit.AuditModel
-import org.scalamock.handlers.CallHandler
-import org.scalamock.scalatest.MockFactory
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Writes
 import services.AuditService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -26,18 +27,23 @@ import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockAuditService extends MockFactory {
+trait MockAuditService extends MockitoSugar {
 
   val mockAuditService: AuditService = mock[AuditService]
 
-  def mockAuditResult[T](event: AuditModel[T], auditResult: Future[AuditResult]): CallHandler[Future[AuditResult]] =
-    (mockAuditService
-      .sendAudit(_: AuditModel[T])(_: HeaderCarrier, _: ExecutionContext, _: Writes[T]))
-      .expects(event, *, *, *)
-      .returns(auditResult)
+  def mockAuditResult[T](event: AuditModel[T], auditResult: Future[AuditResult]): Unit =
+    when(mockAuditService.sendAudit(
+      eqTo(event))
+    (any[HeaderCarrier],
+      any[ExecutionContext],
+      any[Writes[T]]
+    )).thenReturn(auditResult)
 }
 
 object MockAuditService {
-  val mockedAuditSuccessResult = Future.successful(AuditResult.Success)
-  val mockedAuditFailureResult = Future.successful(AuditResult.Failure("Some audit send failure"))
+  val mockedAuditSuccessResult: Future[AuditResult.Success.type] =
+    Future.successful(AuditResult.Success)
+
+  val mockedAuditFailureResult: Future[AuditResult.Failure] =
+    Future.successful(AuditResult.Failure("Some audit send failure"))
 }

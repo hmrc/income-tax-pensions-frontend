@@ -20,16 +20,17 @@ import builders.PensionsCYAModelBuilder.emptyPensionsData
 import cats.data.EitherT
 import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import models.mongo.PensionsUserData
 import models.{AuthorisationRequest, User}
 import org.apache.pekko.actor.ActorSystem
-import org.scalamock.handlers.CallHandler4
-import org.scalamock.scalatest.MockFactory
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc._
 import play.api.test.{FakeRequest, Helpers}
@@ -47,11 +48,12 @@ import views.html.templates.AgentAuthErrorPageView
 import java.time.{Clock, ZoneOffset, ZonedDateTime}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
+import scala.language.implicitConversions
 
 trait UnitTest
-    extends AnyWordSpec
+  extends AnyWordSpec
     with Matchers
-    with MockFactory
+    with MockitoSugar
     with BeforeAndAfterEach
     with GuiceOneAppPerSuite
     with TestTaxYearHelper
@@ -113,8 +115,7 @@ trait UnitTest
   def getSession(awaitable: Future[Result]): Session =
     await(awaitable).session
 
-  // noinspection ScalaStyle
-  def mockAuth(nino: Option[String]): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] = {
+  def mockAuth(nino: Option[String]): Unit = {
     val enrolments = Enrolments(
       Set(
         Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
@@ -122,44 +123,31 @@ trait UnitTest
       ) ++ nino.fold(Seq.empty[Enrolment])(unwrappedNino =>
         Seq(Enrolment(EnrolmentKeys.nino, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, unwrappedNino)), "Activated"))))
 
-    (mockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, Retrievals.affinityGroup, *, *)
-      .returning(Future.successful(Some(AffinityGroup.Individual)))
+    when(mockAuthConnector.authorise(any[Predicate], eqTo(Retrievals.affinityGroup))(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful(Some(AffinityGroup.Individual)))
 
-    (mockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-      .returning(Future.successful(enrolments and ConfidenceLevel.L250))
+    when(mockAuthConnector.authorise(any[Predicate], eqTo(Retrievals.allEnrolments and Retrievals.confidenceLevel))(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful(enrolments and ConfidenceLevel.L250))
   }
 
-  // noinspection ScalaStyle
-  def mockAuthAsAgent(): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] = {
+  def mockAuthAsAgent(): Unit = {
     val enrolments: Enrolments = Enrolments(
       Set(
         Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
         Enrolment(EnrolmentKeys.Agent, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.agentReference, "0987654321")), "Activated")
       ))
 
-    val agentRetrievals: Some[AffinityGroup] = Some(AffinityGroup.Agent)
+    when(mockAuthConnector.authorise(any[Predicate], eqTo(Retrievals.affinityGroup))(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful(Some(AffinityGroup.Agent)))
 
-    (mockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, Retrievals.affinityGroup, *, *)
-      .returning(Future.successful(agentRetrievals))
-
-    (mockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, Retrievals.allEnrolments, *, *)
-      .returning(Future.successful(enrolments))
+    when(mockAuthConnector.authorise(any[Predicate], eqTo(Retrievals.allEnrolments))(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.successful(enrolments))
   }
 
-  // noinspection ScalaStyle
-  def mockAuthReturnException(exception: Exception): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] =
-    (mockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *)
-      .returning(Future.failed(exception))
+  def mockAuthReturnException(exception: Exception): Unit = {
+    when(mockAuthConnector.authorise(any[Predicate], any[Retrieval[_]])(any[HeaderCarrier], any[ExecutionContext]))
+      .thenReturn(Future.failed(exception))
+  }
 
   val nino       = "AA123456A"
   val mtditid    = "1234567890"
@@ -178,6 +166,7 @@ trait UnitTest
   implicit class ToFutureOps[A](value: A) {
     def asFuture: Future[A] = Future.successful(value)
   }
+
   implicit class ToEitherTOps[A, B](value: Either[A, B]) {
     def toEitherT: EitherT[Future, A, B] = EitherT.fromEither[Future](value)
   }

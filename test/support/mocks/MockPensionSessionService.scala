@@ -17,12 +17,13 @@
 package support.mocks
 
 import cats.data.EitherT
-import connectors.{DownstreamErrorOr, DownstreamOutcome}
+import connectors.DownstreamErrorOr
 import models._
 import models.mongo.{DatabaseError, PensionsUserData}
 import models.pension.Journey
-import org.scalamock.handlers._
-import org.scalamock.scalatest.MockFactory
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito._
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.mvc.{Request, Result}
 import services.PensionSessionService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -30,47 +31,53 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait MockPensionSessionService extends MockFactory {
+trait MockPensionSessionService extends MockitoSugar {
 
   val mockPensionSessionService: PensionSessionService = mock[PensionSessionService]
 
-  def mockGetPriorData(taxYear: Int,
-                       user: User,
-                       result: DownstreamErrorOr[IncomeTaxUserData]): CallHandler3[Int, User, HeaderCarrier, DownstreamOutcome[IncomeTaxUserData]] =
-    (mockPensionSessionService
-      .loadPriorData(_: Int, _: User)(_: HeaderCarrier))
-      .expects(taxYear, user, *)
-      .returning(Future.successful(result))
+  def mockGetPriorData(
+                        taxYear: Int,
+                        user: User,
+                        result: DownstreamErrorOr[IncomeTaxUserData]
+                      ): Unit = {
+    when(mockPensionSessionService.loadPriorData(eqTo(taxYear), eqTo(user))(any[HeaderCarrier]))
+      .thenReturn(Future.successful(result))
+  }
 
   def mockGetPensionsSessionDataResult(
-      taxYear: Int,
-      result: Result): CallHandler4[Int, User, Option[PensionsUserData] => Future[Result], Request[_], Future[Result]] =
-    (mockPensionSessionService
-      .getPensionsSessionDataResult(_: Int, _: User)(_: Option[PensionsUserData] => Future[Result])(_: Request[_]))
-      .expects(taxYear, *, *, *)
-      .returns(Future.successful(result))
-      .anyNumberOfTimes()
+                                        taxYear: Int,
+                                        result: Result
+                                      ): Unit = {
+    when(mockPensionSessionService.getPensionsSessionDataResult(
+      eqTo(taxYear),
+      any[User]
+    )
+    (any[Option[PensionsUserData] => Future[Result]])
+    (any[Request[_]]
+    )).thenReturn(Future.successful(result))
+  }
 
   def mockGetPensionSessionData(
-      taxYear: Int,
-      result: Either[Unit, Option[PensionsUserData]]): CallHandler2[Int, User, Future[Either[Unit, Option[PensionsUserData]]]] =
-    (mockPensionSessionService
-      .loadSessionData(_: Int, _: User))
-      .expects(taxYear, *)
-      .returns(Future.successful(result))
-      .anyNumberOfTimes()
+                                 taxYear: Int,
+                                 result: Either[Unit, Option[PensionsUserData]]
+                               ): Unit = {
+    when(mockPensionSessionService.loadSessionData(eqTo(taxYear), any[User]))
+      .thenReturn(Future.successful(result))
+  }
 
-  def mockCreateOrUpdateSessionData(userData: PensionsUserData, result: Either[DatabaseError, Unit] = Right(())): Unit =
-    (mockPensionSessionService
-      .createOrUpdateSession(_: PensionsUserData))
-      .expects(userData)
-      .returns(Future.successful(result))
-      .anyNumberOfTimes()
+  def mockCreateOrUpdateSessionData(
+                                     userData: PensionsUserData,
+                                     result: Either[DatabaseError, Unit] = Right(())
+                                   ): Unit = {
+    when(mockPensionSessionService.createOrUpdateSession(eqTo(userData)))
+      .thenReturn(Future.successful(result))
+  }
 
-  def mockClearSessionOnSuccess(expectedJourney: Journey, result: Either[APIErrorModel, Unit] = Right(())): Unit =
-    (mockPensionSessionService
-      .clearSessionOnSuccess(_: Journey, _: PensionsUserData))
-      .expects(expectedJourney, *)
-      .returns(EitherT.fromEither[Future](result))
-      .anyNumberOfTimes()
+  def mockClearSessionOnSuccess(
+                                 expectedJourney: Journey,
+                                 result: Either[APIErrorModel, Unit] = Right(())
+                               ): Unit = {
+    when(mockPensionSessionService.clearSessionOnSuccess(eqTo(expectedJourney), any[PensionsUserData]))
+      .thenReturn(EitherT.fromEither[Future](result))
+  }
 }

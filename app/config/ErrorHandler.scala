@@ -40,10 +40,7 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
     with I18nSupport {
   private val logger = Logger(getClass)
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit request: Request[_]): Html =
-    internalServerErrorTemplate()
-
-  override def notFoundTemplate(implicit request: Request[_]): Html = notFoundTemplate()
+  def notFoundTemplate(implicit request: Request[_]): Html = notFoundTemplate()
 
   def internalServerError()(implicit request: Request[_]): Result = {
     val errorLogMessage = s"[$CorrelationIdHeaderKey=${maybeCorrelationIdFromMdc()}] error occurred: for ${request.method} [${request.uri}]"
@@ -81,7 +78,7 @@ class ErrorHandler @Inject() (internalServerErrorTemplate: InternalServerErrorTe
 
   override def onServerError(request: RequestHeader, exception: Throwable): Future[Result] = {
     logErrorWithmaybeCorrelationIdFromMdc(request, exception)
-    Future.successful(resolveError(request, exception))
+    Future.successful(resolveError(request, exception)).flatten
   }
 
   private def logErrorWithmaybeCorrelationIdFromMdc(request: RequestHeader, ex: Throwable): Unit =
