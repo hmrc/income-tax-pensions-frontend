@@ -41,14 +41,9 @@ trait MockErrorHandler extends MockitoSugar  {
 
   }
 
-
-
   def mockFutureInternalServerError(errString: String): ScalaOngoingStubbing[Future[Result]] = {
     when(mockErrorHandler.futureInternalServerError()(any[Request[_]]))
       .thenReturn(Future.successful(InternalServerError(errString)))
-//
-//    when(mockErrorHandler.futureInternalServerError(any[Request[_]]))
-//      .thenReturn(Future.successful(InternalServerError(errString)))
 
     //    (mockErrorHandler
     //      .futureInternalServerError()(_: Request[_]))
