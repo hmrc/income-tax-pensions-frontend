@@ -86,13 +86,13 @@ class AuthorisedActionSpec extends UnitTest {
     def mockAuthReturnException(exception: Exception,
                                 predicate: Predicate): ScalaOngoingStubbing[Future[Enrolments]] =
       when(mockAuthConnector
-        .authorise(any[Predicate], any[Retrieval[Enrolments]])(any[HeaderCarrier], any[ExecutionContext]))
+        .authorise(eqTo(predicate), any[Retrieval[Enrolments]])(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.failed(exception))
 
     def mockAuthReturn(enrolments: Enrolments,
                        predicate: Predicate): ScalaOngoingStubbing[Future[Enrolments]] =
       when(mockAuthConnector
-        .authorise(any[Predicate], any[Retrieval[Enrolments]])(any[HeaderCarrier], any[ExecutionContext]))
+        .authorise(eqTo(predicate), any[Retrieval[Enrolments]])(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(enrolments))
 
     def mockSignInUrl(): ScalaOngoingStubbing[String] =
