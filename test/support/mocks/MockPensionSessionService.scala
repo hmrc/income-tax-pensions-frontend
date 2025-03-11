@@ -40,46 +40,27 @@ trait MockPensionSessionService extends MockitoSugar {
 
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
-
-  def mockGetPriorData(taxYear: Int,
-                       user: User,
-                       result: DownstreamErrorOr[IncomeTaxUserData]
-                      ): ScalaOngoingStubbing[DownstreamOutcome[PriorData]] = {
+  def mockGetPriorData(taxYear: Int, user: User, result: DownstreamErrorOr[IncomeTaxUserData]): ScalaOngoingStubbing[DownstreamOutcome[PriorData]] =
     when(mockPensionSessionService.loadPriorData(eqTo(taxYear), eqTo(user))(any))
       .thenReturn(Future.successful(result))
 
-  }
-
-  def mockGetPensionsSessionDataResult(
-                                        taxYear: Int,
-                                        user: User,
-                                        result: Result): OngoingStubbing[Future[Result]] = {
+  def mockGetPensionsSessionDataResult(taxYear: Int, user: User, result: Result): OngoingStubbing[Future[Result]] =
     when(mockPensionSessionService.getPensionsSessionDataResult(eqTo(taxYear), eqTo(user))(any[Option[PensionsUserData] => Future[Result]])(any()))
       .thenReturn(Future.successful(result))
 
-  }
-
   def mockGetPensionSessionData(
-                                 taxYear: Int,
-                                 result: Either[Unit, Option[PensionsUserData]]
-                               ): ScalaOngoingStubbing[Future[Either[Unit, Option[SessionData]]]] = {
+      taxYear: Int,
+      result: Either[Unit, Option[PensionsUserData]]
+  ): ScalaOngoingStubbing[Future[Either[Unit, Option[SessionData]]]] =
     when(mockPensionSessionService.loadSessionData(eqTo(taxYear), any[User]))
       .thenReturn(Future.successful(result))
-  }
 
-  def mockCreateOrUpdateSessionData(userData: PensionsUserData,
-                                    result: Either[DatabaseError, Unit] = Right(())
-                                   ): Unit = {
+  def mockCreateOrUpdateSessionData(userData: PensionsUserData, result: Either[DatabaseError, Unit] = Right(())): Unit =
     when(mockPensionSessionService.createOrUpdateSession(eqTo(userData)))
       .thenReturn(Future.successful(result))
-  }
 
-  def mockClearSessionOnSuccess(expectedJourney: Journey,
-                                pensionsUserData: PensionsUserData,
-                                result: Either[APIErrorModel, Unit] = Right(())
-                               ): Unit = {
+  def mockClearSessionOnSuccess(expectedJourney: Journey, pensionsUserData: PensionsUserData, result: Either[APIErrorModel, Unit] = Right(())): Unit =
     when(mockPensionSessionService.clearSessionOnSuccess(eqTo(expectedJourney), eqTo(pensionsUserData)))
       .thenReturn(EitherT.fromEither[Future](result))
 
-  }
 }

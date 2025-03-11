@@ -58,8 +58,7 @@ class AuditServiceSpec extends UnitTestWithApp {
       }
 
       "generates an event with the correct auditSource" in new Test {
-        when(mockAuditConnector.sendExtendedEvent(
-          argThat((event: ExtendedDataEvent) => event.auditSource == mockedAppName))(any(), any()))
+        when(mockAuditConnector.sendExtendedEvent(argThat((event: ExtendedDataEvent) => event.auditSource == mockedAppName))(any(), any()))
           .thenReturn(expected)
 
         private val event = AuditModel(auditType, transactionName, eventDetails)
@@ -77,8 +76,7 @@ class AuditServiceSpec extends UnitTestWithApp {
       }
 
       "generates an event with the correct details" in new Test {
-        when(mockAuditConnector.sendExtendedEvent(
-          argThat((event: ExtendedDataEvent) => event.detail == Json.toJson(eventDetails)))(any(), any()))
+        when(mockAuditConnector.sendExtendedEvent(argThat((event: ExtendedDataEvent) => event.detail == Json.toJson(eventDetails)))(any(), any()))
           .thenReturn(expected)
 
         private val event = AuditModel(auditType, transactionName, eventDetails)
@@ -87,8 +85,8 @@ class AuditServiceSpec extends UnitTestWithApp {
       }
 
       "generates an event with the correct transactionName" in new Test {
-        when(mockAuditConnector.sendExtendedEvent(
-          argThat((eventArg: ExtendedDataEvent) => eventArg.tags.exists(tag => tag == "transactionName" -> transactionName)))(any(), any()))
+        when(mockAuditConnector.sendExtendedEvent(argThat((eventArg: ExtendedDataEvent) =>
+          eventArg.tags.exists(tag => tag == "transactionName" -> transactionName)))(any(), any()))
           .thenReturn(expected)
 
         private val event = AuditModel(auditType, transactionName, eventDetails)

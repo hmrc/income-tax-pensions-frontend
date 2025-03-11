@@ -24,8 +24,9 @@ import views.html.pensions.annualAllowances.AnnualAllowancesCYAView
 
 class AnnualAllowancesCYAControllerSpec extends ControllerSpecBase {
 
-  val view: AnnualAllowancesCYAView            = app.injector.instanceOf[AnnualAllowancesCYAView]
-  val controller: AnnualAllowanceCYAController = new AnnualAllowanceCYAController(auditProvider, view, pensionsService, errorHandler, mcc)(appConfig, ec)
+  val view: AnnualAllowancesCYAView = app.injector.instanceOf[AnnualAllowancesCYAView]
+  val controller: AnnualAllowanceCYAController =
+    new AnnualAllowanceCYAController(auditProvider, view, pensionsService, errorHandler, mcc)(appConfig, ec)
 
   "show" should {
     "return OK and the correct view for a GET" in {

@@ -30,16 +30,13 @@ trait MockAuditService extends MockitoSugar {
 
   val mockAuditService: AuditService = mock[AuditService]
 
-  def mockAuditResult[T](event: AuditModel[T],
-                         auditResult: Future[AuditResult]
-                        ): ScalaOngoingStubbing[Future[AuditResult]] = {
+  def mockAuditResult[T](event: AuditModel[T], auditResult: Future[AuditResult]): ScalaOngoingStubbing[Future[AuditResult]] =
     when(mockAuditService.sendAudit(eqTo(event))(any(), any(), any()))
       .thenReturn(auditResult)
 
-  }
 }
 
 object MockAuditService {
   val mockedAuditSuccessResult: Future[AuditResult.Success.type] = Future.successful(AuditResult.Success)
-  val mockedAuditFailureResult: Future[AuditResult.Failure] = Future.successful(AuditResult.Failure("Some audit send failure"))
+  val mockedAuditFailureResult: Future[AuditResult.Failure]      = Future.successful(AuditResult.Failure("Some audit send failure"))
 }

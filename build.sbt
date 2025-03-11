@@ -95,9 +95,9 @@ lazy val microservice = Project(appName, file("."))
           "javascripts/app.js"
         ))
     ),
-    pipelineStages        := Seq(digest),
+    pipelineStages := Seq(digest),
     // below line required to force asset pipeline to operate in dev rather than only prod
-    Assets / pipelineStages := Seq(concat),
+    Assets / pipelineStages := Seq(concat)
   )
 
 lazy val testSettings: Seq[Def.Setting[_]] = Seq(

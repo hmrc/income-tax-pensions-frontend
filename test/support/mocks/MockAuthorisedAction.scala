@@ -79,15 +79,12 @@ trait MockAuthorisedAction extends MockitoSugar { this: GuiceOneAppPerSuite =>
 
   }
 
-  protected def mockAuthReturnException(exception: Exception): ScalaOngoingStubbing[Future[Nothing]] = {
+  protected def mockAuthReturnException(exception: Exception): ScalaOngoingStubbing[Future[Nothing]] =
     when(testMockAuthConnector.authorise(any(), any())(any(), any()))
       .thenReturn(Future.failed(exception))
 
-  }
-
-  protected def mockFailToAuthenticate(): ScalaOngoingStubbing[Future[Nothing]] = {
+  protected def mockFailToAuthenticate(): ScalaOngoingStubbing[Future[Nothing]] =
     when(testMockAuthConnector.authorise(any(), any())(any(), any()))
       .thenReturn(Future.failed(InsufficientConfidenceLevel()))
 
-  }
 }

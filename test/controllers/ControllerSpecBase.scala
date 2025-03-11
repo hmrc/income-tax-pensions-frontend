@@ -57,7 +57,7 @@ trait ControllerSpecBase extends PlaySpec with AnyWordSpecLike with MockitoSugar
   val mcc: MessagesControllerComponents            = stubMessagesControllerComponents()
   val user: User                                   = UserBuilder.aUser
 
-  val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/")
+  val fakeRequest: FakeRequest[AnyContentAsEmpty.type]                     = FakeRequest("GET", "/")
   val mockActionBuilder: ActionBuilder[UserSessionDataRequest, AnyContent] = mock[ActionBuilder[UserSessionDataRequest, AnyContent]]
 
   implicit val messages: Messages = mcc.messagesApi.preferred(FakeRequest())

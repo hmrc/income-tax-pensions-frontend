@@ -76,9 +76,9 @@ trait UnitTest
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders("X-Session-ID" -> sessionId)
   val fakeRequestWithMtditidAndNino: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
     .withSession(
-      SessionValues.CLIENT_MTDITID -> "1234567890",
-      SessionValues.CLIENT_NINO -> "AA123456A",
-      SessionValues.TAX_YEAR -> s"$taxYear",
+      SessionValues.CLIENT_MTDITID  -> "1234567890",
+      SessionValues.CLIENT_NINO     -> "AA123456A",
+      SessionValues.TAX_YEAR        -> s"$taxYear",
       SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(",")
     )
     .withHeaders("X-Session-ID" -> sessionId)
@@ -124,10 +124,10 @@ trait UnitTest
       ) ++ nino.fold(Seq.empty[Enrolment])(unwrappedNino =>
         Seq(Enrolment(EnrolmentKeys.nino, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, unwrappedNino)), "Activated"))))
 
-     when(mockAuthConnector.authorise(any(),eqTo(Retrievals.affinityGroup))(any(), any()))
-       .thenReturn(Future.successful(Some(AffinityGroup.Individual)))
+    when(mockAuthConnector.authorise(any(), eqTo(Retrievals.affinityGroup))(any(), any()))
+      .thenReturn(Future.successful(Some(AffinityGroup.Individual)))
 
-    when(mockAuthConnector.authorise(any(),eqTo(Retrievals.allEnrolments and Retrievals.confidenceLevel))(any(), any()))
+    when(mockAuthConnector.authorise(any(), eqTo(Retrievals.allEnrolments and Retrievals.confidenceLevel))(any(), any()))
       .thenReturn(Future.successful(enrolments and ConfidenceLevel.L250))
 
   }
@@ -151,11 +151,9 @@ trait UnitTest
   }
 
   // noinspection ScalaStyle
-  def mockAuthReturnException(exception: Exception): ScalaOngoingStubbing[Future[Nothing]] = {
+  def mockAuthReturnException(exception: Exception): ScalaOngoingStubbing[Future[Nothing]] =
     when(mockAuthConnector.authorise(any(), any())(any(), any()))
       .thenReturn(Future.failed(exception))
-
-  }
 
   val nino       = "AA123456A"
   val mtditid    = "1234567890"

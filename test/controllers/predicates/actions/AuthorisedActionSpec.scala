@@ -83,16 +83,16 @@ class AuthorisedActionSpec extends UnitTest {
         Enrolment(EnrolmentKeys.Agent, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.agentReference, arn)), "Activated")
       ))
 
-    def mockAuthReturnException(exception: Exception,
-                                predicate: Predicate): ScalaOngoingStubbing[Future[Enrolments]] =
-      when(mockAuthConnector
-        .authorise(eqTo(predicate), any[Retrieval[Enrolments]])(any[HeaderCarrier], any[ExecutionContext]))
+    def mockAuthReturnException(exception: Exception, predicate: Predicate): ScalaOngoingStubbing[Future[Enrolments]] =
+      when(
+        mockAuthConnector
+          .authorise(eqTo(predicate), any[Retrieval[Enrolments]])(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.failed(exception))
 
-    def mockAuthReturn(enrolments: Enrolments,
-                       predicate: Predicate): ScalaOngoingStubbing[Future[Enrolments]] =
-      when(mockAuthConnector
-        .authorise(eqTo(predicate), any[Retrieval[Enrolments]])(any[HeaderCarrier], any[ExecutionContext]))
+    def mockAuthReturn(enrolments: Enrolments, predicate: Predicate): ScalaOngoingStubbing[Future[Enrolments]] =
+      when(
+        mockAuthConnector
+          .authorise(eqTo(predicate), any[Retrieval[Enrolments]])(any[HeaderCarrier], any[ExecutionContext]))
         .thenReturn(Future.successful(enrolments))
 
     def mockSignInUrl(): ScalaOngoingStubbing[String] =
@@ -166,8 +166,9 @@ class AuthorisedActionSpec extends UnitTest {
           ))
 
         lazy val result: Future[Result] = {
-          when(mockAuthConnector
-            .authorise(any[Predicate], any[Retrieval[Enrolments ~ ConfidenceLevel]])(any[HeaderCarrier], any[ExecutionContext]))
+          when(
+            mockAuthConnector
+              .authorise(any[Predicate], any[Retrieval[Enrolments ~ ConfidenceLevel]])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(enrolments and ConfidenceLevel.L250))
           auth.individualAuthentication[AnyContent](block, AffinityGroup.Individual)(fakeRequest, headerCarrierWithSession)
         }
@@ -195,8 +196,9 @@ class AuthorisedActionSpec extends UnitTest {
           ))
 
         lazy val result: Future[Result] = {
-          when(mockAuthConnector
-            .authorise(any[Predicate], any[Retrieval[Enrolments ~ ConfidenceLevel]])(any[HeaderCarrier], any[ExecutionContext]))
+          when(
+            mockAuthConnector
+              .authorise(any[Predicate], any[Retrieval[Enrolments ~ ConfidenceLevel]])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(enrolments and ConfidenceLevel.L250))
           auth.individualAuthentication[AnyContent](block, AffinityGroup.Individual)(fakeRequest, emptyHeaderCarrier)
         }
@@ -211,8 +213,9 @@ class AuthorisedActionSpec extends UnitTest {
         val enrolments                                                = Enrolments(Set())
 
         lazy val result: Future[Result] = {
-          when(mockAuthConnector
-            .authorise(any[Predicate], any[Retrieval[Enrolments ~ ConfidenceLevel]])(any[HeaderCarrier], any[ExecutionContext]))
+          when(
+            mockAuthConnector
+              .authorise(any[Predicate], any[Retrieval[Enrolments ~ ConfidenceLevel]])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(enrolments and ConfidenceLevel.L250))
           auth.individualAuthentication[AnyContent](block, AffinityGroup.Individual)(fakeRequest, headerCarrierWithSession)
         }
@@ -228,8 +231,9 @@ class AuthorisedActionSpec extends UnitTest {
         val enrolments = Enrolments(Set(Enrolment("HMRC-NI", Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, nino)), "Activated")))
 
         lazy val result: Future[Result] = {
-          when(mockAuthConnector
-            .authorise(any[Predicate], any[Retrieval[Enrolments ~ ConfidenceLevel]])(any[HeaderCarrier], any[ExecutionContext]))
+          when(
+            mockAuthConnector
+              .authorise(any[Predicate], any[Retrieval[Enrolments ~ ConfidenceLevel]])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(enrolments and ConfidenceLevel.L250))
           auth.individualAuthentication[AnyContent](block, AffinityGroup.Individual)(fakeRequest, headerCarrierWithSession)
         }
@@ -256,8 +260,9 @@ class AuthorisedActionSpec extends UnitTest {
           ))
 
         lazy val result: Future[Result] = {
-          when(mockAuthConnector
-            .authorise(any[Predicate], any[Retrieval[Enrolments ~ ConfidenceLevel]])(any[HeaderCarrier], any[ExecutionContext]))
+          when(
+            mockAuthConnector
+              .authorise(any[Predicate], any[Retrieval[Enrolments ~ ConfidenceLevel]])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(enrolments and ConfidenceLevel.L50))
           auth.individualAuthentication[AnyContent](block, AffinityGroup.Individual)(fakeRequest, headerCarrierWithSession)
         }
@@ -283,7 +288,7 @@ class AuthorisedActionSpec extends UnitTest {
         )
 
         status(result) shouldBe SEE_OTHER
-        redirectUrl(result) shouldBe viewAndChangeUrl
+        redirectUrl(result) shouldBe this.viewAndChangeUrl
       }
     }
 
@@ -469,8 +474,9 @@ class AuthorisedActionSpec extends UnitTest {
       "there is no MTDITID value in session for an agent" in {
         lazy val result = {
 
-          when(mockAuthConnector
-            .authorise(any[Predicate], any[Retrieval[Option[AffinityGroup]]])(any[HeaderCarrier], any[ExecutionContext]))
+          when(
+            mockAuthConnector
+              .authorise(any[Predicate], any[Retrieval[Option[AffinityGroup]]])(any[HeaderCarrier], any[ExecutionContext]))
             .thenReturn(Future.successful(Some(AffinityGroup.Agent)))
 
           auth.invokeBlock(fakeRequestWithNino, block)

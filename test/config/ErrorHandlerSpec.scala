@@ -38,6 +38,7 @@ class ErrorHandlerSpec extends UnitTest with GuiceOneAppPerSuite with ViewTest {
   val mockFrontendAppConfig: AppConfig = app.injector.instanceOf[AppConfig]
 
   val errorHandler = new ErrorHandler(internalServerErrorTemplate, serviceUnavailableTemplate, mockMessagesApi, notFoundTemplate)(
+    mockExecutionContext,
     mockFrontendAppConfig)
 
   val h1Expected    = "Page not found"
@@ -65,7 +66,7 @@ class ErrorHandlerSpec extends UnitTest with GuiceOneAppPerSuite with ViewTest {
 
   "the NotFoundTemplate" should {
 
-    lazy val view: Future[Html] = errorHandler.notFoundTemplate
+    lazy val view: Future[Html]                        = errorHandler.notFoundTemplate
     lazy implicit val documentFuture: Future[Document] = view.map(html => Jsoup.parse(html.body))
 
     "displays the correct page title" in {

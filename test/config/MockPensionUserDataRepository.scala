@@ -34,35 +34,20 @@ trait MockPensionUserDataRepository extends UnitTest with MockitoSugar {
 
   def mockFind(taxYear: Int,
                user: User,
-               repositoryResponse: Either[DatabaseError, Option[PensionsUserData]]
-              ):ScalaOngoingStubbing[QueryResult[Option[PensionsUserData]]] = {
+               repositoryResponse: Either[DatabaseError, Option[PensionsUserData]]): ScalaOngoingStubbing[QueryResult[Option[PensionsUserData]]] =
     when(mockPensionUserDataRepository.find(eqTo(taxYear), eqTo(user)))
       .thenReturn(Future.successful(repositoryResponse))
 
-  }
-
-  def mockCreateOrUpdate(pensionUserData: PensionsUserData,
-                         response: Either[DatabaseError, Unit]
-                        ): ScalaOngoingStubbing[QueryResult[Unit]] = {
+  def mockCreateOrUpdate(pensionUserData: PensionsUserData, response: Either[DatabaseError, Unit]): ScalaOngoingStubbing[QueryResult[Unit]] =
     when(mockPensionUserDataRepository.createOrUpdate(eqTo(pensionUserData)))
       .thenReturn(Future.successful(response))
 
-  }
-
-  def mockCreateOrUpdate(response: Either[DatabaseError, Unit]
-                        ): ScalaOngoingStubbing[QueryResult[Unit]] = {
+  def mockCreateOrUpdate(response: Either[DatabaseError, Unit]): ScalaOngoingStubbing[QueryResult[Unit]] =
     when(mockPensionUserDataRepository.createOrUpdate(any[PensionsUserData]))
       .thenReturn(Future.successful(response))
 
-  }
-
-  def mockClear(taxYear: Int,
-                user: User,
-                response: Boolean
-               ): ScalaOngoingStubbing[Future[Boolean]] = {
+  def mockClear(taxYear: Int, user: User, response: Boolean): ScalaOngoingStubbing[Future[Boolean]] =
     when(mockPensionUserDataRepository.clear(eqTo(taxYear), eqTo(user)))
       .thenReturn(Future.successful(response))
-
-  }
 
 }

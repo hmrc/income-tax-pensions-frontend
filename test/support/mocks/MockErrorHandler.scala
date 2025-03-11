@@ -25,25 +25,20 @@ import play.api.mvc.{Request, Result}
 
 import scala.concurrent.Future
 
-trait MockErrorHandler extends MockitoSugar  {
+trait MockErrorHandler extends MockitoSugar {
 
   val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
 
-  def mockHandleError(status: Int, result: Result): ScalaOngoingStubbing[Result] = {
+  def mockHandleError(status: Int, result: Result): ScalaOngoingStubbing[Result] =
     when(mockErrorHandler.handleError(eqTo(status))(any[Request[_]]))
       .thenReturn(result)
 
-  }
-
-  def mockInternalServerError: ScalaOngoingStubbing[Result] = {
+  def mockInternalServerError: ScalaOngoingStubbing[Result] =
     when(mockErrorHandler.internalServerError()(any[Request[_]]))
       .thenReturn(InternalServerError)
 
-  }
-
-  def mockFutureInternalServerError(errString: String): ScalaOngoingStubbing[Future[Result]] = {
+  def mockFutureInternalServerError(errString: String): ScalaOngoingStubbing[Future[Result]] =
     when(mockErrorHandler.futureInternalServerError()(any[Request[_]]))
       .thenReturn(Future.successful(InternalServerError(errString)))
 
-  }
 }

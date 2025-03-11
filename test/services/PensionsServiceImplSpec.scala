@@ -16,7 +16,6 @@
 
 package services
 
-
 import builders.PensionsUserDataBuilder.{aPensionsUserData, user}
 import common.Nino
 import config.MockPensionsConnector
@@ -32,9 +31,9 @@ import scala.concurrent.ExecutionContext
 
 class PensionsServiceImplSpec extends AnyWordSpecLike with MockPensionsConnector with MockPensionSessionService {
 
-  val service: PensionsServiceImpl = new PensionsServiceImpl(mockPensionsConnector, mockPensionSessionService)
-  val session: PensionsUserData = aPensionsUserData
-  val nino: Nino = Nino("nino")
+  val service: PensionsServiceImpl  = new PensionsServiceImpl(mockPensionsConnector, mockPensionSessionService)
+  val session: PensionsUserData     = aPensionsUserData
+  val nino: Nino                    = Nino("nino")
   implicit val ec: ExecutionContext = ExecutionContext.global
 
   override implicit val hc: HeaderCarrier = HeaderCarrier()
