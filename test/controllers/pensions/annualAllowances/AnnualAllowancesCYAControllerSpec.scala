@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,10 @@ import utils.CommonData.{currTaxYear, ec}
 import views.html.pensions.annualAllowances.AnnualAllowancesCYAView
 
 class AnnualAllowancesCYAControllerSpec extends ControllerSpecBase {
-  val view       = app.injector.instanceOf[AnnualAllowancesCYAView]
-  val controller = new AnnualAllowanceCYAController(auditProvider, view, pensionsService, errorHandler, mcc)(appConfig, ec)
+
+  val view: AnnualAllowancesCYAView = app.injector.instanceOf[AnnualAllowancesCYAView]
+  val controller: AnnualAllowanceCYAController =
+    new AnnualAllowanceCYAController(auditProvider, view, pensionsService, errorHandler, mcc)(appConfig, ec)
 
   "show" should {
     "return OK and the correct view for a GET" in {

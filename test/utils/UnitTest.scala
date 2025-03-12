@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,15 @@ import builders.PensionsCYAModelBuilder.emptyPensionsData
 import cats.data.EitherT
 import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
-import config.{AppConfig, ErrorHandler}
+import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import models.mongo.PensionsUserData
 import models.{AuthorisationRequest, User}
 import org.apache.pekko.actor.ActorSystem
-import org.scalamock.handlers.CallHandler4
-import org.scalamock.scalatest.MockFactory
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.MockitoSugar
+import org.mockito.stubbing.ScalaOngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -36,8 +38,7 @@ import play.api.test.{FakeRequest, Helpers}
 import services.AuthService
 import support.mocks.MockErrorHandler
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.Retrieval
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.syntax.retrieved.authSyntaxForRetrieved
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
@@ -51,7 +52,7 @@ import scala.concurrent.{Await, Awaitable, ExecutionContext, Future}
 trait UnitTest
     extends AnyWordSpec
     with Matchers
-    with MockFactory
+    with MockitoSugar
     with BeforeAndAfterEach
     with GuiceOneAppPerSuite
     with TestTaxYearHelper
@@ -100,6 +101,7 @@ trait UnitTest
     new AuthorisationRequest[AnyContent](User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString), fakeRequest)
 
   val authorisedAction = new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
+
   def status(awaitable: Future[Result]): Int = await(awaitable).header.status
 
   def bodyOf(awaitable: Future[Result]): String = {
@@ -114,7 +116,7 @@ trait UnitTest
     await(awaitable).session
 
   // noinspection ScalaStyle
-  def mockAuth(nino: Option[String]): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] = {
+  def mockAuth(nino: Option[String]): ScalaOngoingStubbing[Future[Enrolments ~ ConfidenceLevel]] = {
     val enrolments = Enrolments(
       Set(
         Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
@@ -122,19 +124,16 @@ trait UnitTest
       ) ++ nino.fold(Seq.empty[Enrolment])(unwrappedNino =>
         Seq(Enrolment(EnrolmentKeys.nino, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.nino, unwrappedNino)), "Activated"))))
 
-    (mockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, Retrievals.affinityGroup, *, *)
-      .returning(Future.successful(Some(AffinityGroup.Individual)))
+    when(mockAuthConnector.authorise(any(), eqTo(Retrievals.affinityGroup))(any(), any()))
+      .thenReturn(Future.successful(Some(AffinityGroup.Individual)))
 
-    (mockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, Retrievals.allEnrolments and Retrievals.confidenceLevel, *, *)
-      .returning(Future.successful(enrolments and ConfidenceLevel.L250))
+    when(mockAuthConnector.authorise(any(), eqTo(Retrievals.allEnrolments and Retrievals.confidenceLevel))(any(), any()))
+      .thenReturn(Future.successful(enrolments and ConfidenceLevel.L250))
+
   }
 
   // noinspection ScalaStyle
-  def mockAuthAsAgent(): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] = {
+  def mockAuthAsAgent(): ScalaOngoingStubbing[Future[Enrolments]] = {
     val enrolments: Enrolments = Enrolments(
       Set(
         Enrolment(EnrolmentKeys.Individual, Seq(EnrolmentIdentifier(EnrolmentIdentifiers.individualId, "1234567890")), "Activated"),
@@ -143,23 +142,18 @@ trait UnitTest
 
     val agentRetrievals: Some[AffinityGroup] = Some(AffinityGroup.Agent)
 
-    (mockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, Retrievals.affinityGroup, *, *)
-      .returning(Future.successful(agentRetrievals))
+    when(mockAuthConnector.authorise(any(), eqTo(Retrievals.affinityGroup))(any(), any()))
+      .thenReturn(Future.successful(agentRetrievals))
 
-    (mockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, Retrievals.allEnrolments, *, *)
-      .returning(Future.successful(enrolments))
+    when(mockAuthConnector.authorise(any(), eqTo(Retrievals.allEnrolments))(any(), any()))
+      .thenReturn(Future.successful(enrolments))
+
   }
 
   // noinspection ScalaStyle
-  def mockAuthReturnException(exception: Exception): CallHandler4[Predicate, Retrieval[_], HeaderCarrier, ExecutionContext, Future[Any]] =
-    (mockAuthConnector
-      .authorise(_: Predicate, _: Retrieval[_])(_: HeaderCarrier, _: ExecutionContext))
-      .expects(*, *, *, *)
-      .returning(Future.failed(exception))
+  def mockAuthReturnException(exception: Exception): ScalaOngoingStubbing[Future[Nothing]] =
+    when(mockAuthConnector.authorise(any(), any())(any(), any()))
+      .thenReturn(Future.failed(exception))
 
   val nino       = "AA123456A"
   val mtditid    = "1234567890"
@@ -178,6 +172,7 @@ trait UnitTest
   implicit class ToFutureOps[A](value: A) {
     def asFuture: Future[A] = Future.successful(value)
   }
+
   implicit class ToEitherTOps[A, B](value: Either[A, B]) {
     def toEitherT: EitherT[Future, A, B] = EitherT.fromEither[Future](value)
   }

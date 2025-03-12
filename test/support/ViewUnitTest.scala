@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,6 @@ trait ViewUnitTest
     with PageUrlsHelpers
     with TestTaxYearHelper
     with FakeRequestProvider {
-
-  // private val fakeRequest = FakeRequest().withHeaders("X-Session-ID" -> aUser.sessionId)
 
   protected implicit val mockAppConfig: AppConfig      = app.injector.instanceOf[AppConfig]
   protected implicit lazy val messagesApi: MessagesApi = inject[MessagesApi]

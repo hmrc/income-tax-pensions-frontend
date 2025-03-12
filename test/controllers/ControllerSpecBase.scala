@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package controllers
 import builders.UserBuilder
 import config.{AppConfig, ErrorHandler}
 import controllers.predicates.auditActions.AuditActionsProvider
+import models.User
 import models.mongo.{PensionsCYAModel, PensionsUserData}
 import models.requests.{UserPriorAndSessionDataRequest, UserSessionDataRequest}
 import org.mockito.ArgumentMatchers.any
@@ -41,22 +42,23 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 
 trait ControllerSpecBase extends PlaySpec with AnyWordSpecLike with MockitoSugar {
+
   implicit val appConfig: AppConfig = mock[AppConfig]
 
   lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
     .build()
 
-  val auditProvider         = mock[AuditActionsProvider]
-  val pensionsService       = PensionsServiceStub()
-  val pensionSessionService = mock[PensionSessionService]
-  val excludeJourneyService = mock[ExcludeJourneyService]
-  val errorHandler          = mock[ErrorHandler]
-  val mcc                   = stubMessagesControllerComponents()
-  val user                  = UserBuilder.aUser
+  val auditProvider: AuditActionsProvider          = mock[AuditActionsProvider]
+  val pensionsService: PensionsServiceStub         = PensionsServiceStub()
+  val pensionSessionService: PensionSessionService = mock[PensionSessionService]
+  val excludeJourneyService: ExcludeJourneyService = mock[ExcludeJourneyService]
+  val errorHandler: ErrorHandler                   = mock[ErrorHandler]
+  val mcc: MessagesControllerComponents            = stubMessagesControllerComponents()
+  val user: User                                   = UserBuilder.aUser
 
-  val fakeRequest       = FakeRequest("GET", "/")
-  val mockActionBuilder = mock[ActionBuilder[UserSessionDataRequest, AnyContent]]
+  val fakeRequest: FakeRequest[AnyContentAsEmpty.type]                     = FakeRequest("GET", "/")
+  val mockActionBuilder: ActionBuilder[UserSessionDataRequest, AnyContent] = mock[ActionBuilder[UserSessionDataRequest, AnyContent]]
 
   implicit val messages: Messages = mcc.messagesApi.preferred(FakeRequest())
   implicit val userSessionDataRequest: UserSessionDataRequest[_] =

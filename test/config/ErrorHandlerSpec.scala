@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status._
 import play.api.i18n._
 import play.api.mvc.Result
+import play.twirl.api.Html
 import utils.{UnitTest, ViewTest}
 import views.html.templates.{InternalServerErrorTemplate, NotFoundTemplate, ServiceUnavailableTemplate}
 
@@ -37,6 +38,7 @@ class ErrorHandlerSpec extends UnitTest with GuiceOneAppPerSuite with ViewTest {
   val mockFrontendAppConfig: AppConfig = app.injector.instanceOf[AppConfig]
 
   val errorHandler = new ErrorHandler(internalServerErrorTemplate, serviceUnavailableTemplate, mockMessagesApi, notFoundTemplate)(
+    mockExecutionContext,
     mockFrontendAppConfig)
 
   val h1Expected    = "Page not found"
@@ -64,13 +66,11 @@ class ErrorHandlerSpec extends UnitTest with GuiceOneAppPerSuite with ViewTest {
 
   "the NotFoundTemplate" should {
 
-    "return the notFoundTemplate when an incorrect web address when been entered" which {
+    lazy val view: Future[Html]                        = errorHandler.notFoundTemplate
+    lazy implicit val documentFuture: Future[Document] = view.map(html => Jsoup.parse(html.body))
 
-      lazy val view                        = errorHandler.notFoundTemplate
-      lazy implicit val document: Document = Jsoup.parse(view.body)
-
-      "displays the correct page title" in {
-
+    "displays the correct page title" in {
+      documentFuture.map { document =>
         document.title shouldBe expectedTitle
       }
     }

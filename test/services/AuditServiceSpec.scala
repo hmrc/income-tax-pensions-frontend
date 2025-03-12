@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,26 @@
 package services
 
 import models.audit.AuditModel
+import org.mockito.ArgumentMatchers.{any, argThat}
 import play.api.Configuration
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 import utils.UnitTestWithApp
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class AuditServiceSpec extends UnitTestWithApp {
 
   private trait Test {
+
     val mockedAppName                      = "some-app-name"
     val mockAuditConnector: AuditConnector = mock[AuditConnector]
     val mockConfig: Configuration          = mock[Configuration]
 
-    (mockConfig
-      .get[String](_: String)(_: play.api.ConfigLoader[String]))
-      .expects(*, *)
-      .returns(mockedAppName)
+    when(mockConfig.get(any[String])(any[play.api.ConfigLoader[String]]))
+      .thenReturn(mockedAppName)
 
     lazy val target = new AuditService(mockAuditConnector, mockConfig)
   }
@@ -48,26 +47,19 @@ class AuditServiceSpec extends UnitTestWithApp {
       val transactionName               = "Name"
       val eventDetails                  = "Details"
       val expected: Future[AuditResult] = Future.successful(Success)
+
       "return a successful audit result" in new Test {
 
-        (mockAuditConnector
-          .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
-          .expects(*, *, *)
-          .returns(expected)
+        when(mockAuditConnector.sendExtendedEvent(any[ExtendedDataEvent])(any(), any()))
+          .thenReturn(expected)
 
         private val event = AuditModel(auditType, transactionName, eventDetails)
         target.sendAudit(event) shouldBe expected
       }
 
       "generates an event with the correct auditSource" in new Test {
-        (mockAuditConnector
-          .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
-          .expects(
-            where { (eventArg: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
-              eventArg.auditSource == mockedAppName
-            }
-          )
-          .returns(expected)
+        when(mockAuditConnector.sendExtendedEvent(argThat((event: ExtendedDataEvent) => event.auditSource == mockedAppName))(any(), any()))
+          .thenReturn(expected)
 
         private val event = AuditModel(auditType, transactionName, eventDetails)
 
@@ -75,28 +67,17 @@ class AuditServiceSpec extends UnitTestWithApp {
       }
 
       "generates an event with the correct auditType" in new Test {
-        (mockAuditConnector
-          .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
-          .expects(
-            where { (eventArg: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
-              eventArg.auditType == auditType
-            }
-          )
-          .returns(expected)
+        when(mockAuditConnector.sendExtendedEvent(argThat((event: ExtendedDataEvent) => event.auditType == auditType))(any(), any()))
+          .thenReturn(expected)
 
         private val event = AuditModel(auditType, transactionName, eventDetails)
+
         target.sendAudit(event)
       }
 
       "generates an event with the correct details" in new Test {
-        (mockAuditConnector
-          .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
-          .expects(
-            where { (eventArg: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
-              eventArg.detail == Json.toJson(eventDetails)
-            }
-          )
-          .returns(expected)
+        when(mockAuditConnector.sendExtendedEvent(argThat((event: ExtendedDataEvent) => event.detail == Json.toJson(eventDetails)))(any(), any()))
+          .thenReturn(expected)
 
         private val event = AuditModel(auditType, transactionName, eventDetails)
 
@@ -104,14 +85,9 @@ class AuditServiceSpec extends UnitTestWithApp {
       }
 
       "generates an event with the correct transactionName" in new Test {
-        (mockAuditConnector
-          .sendExtendedEvent(_: ExtendedDataEvent)(_: HeaderCarrier, _: ExecutionContext))
-          .expects(
-            where { (eventArg: ExtendedDataEvent, _: HeaderCarrier, _: ExecutionContext) =>
-              eventArg.tags.exists(tag => tag == "transactionName" -> transactionName)
-            }
-          )
-          .returns(expected)
+        when(mockAuditConnector.sendExtendedEvent(argThat((eventArg: ExtendedDataEvent) =>
+          eventArg.tags.exists(tag => tag == "transactionName" -> transactionName)))(any(), any()))
+          .thenReturn(expected)
 
         private val event = AuditModel(auditType, transactionName, eventDetails)
 

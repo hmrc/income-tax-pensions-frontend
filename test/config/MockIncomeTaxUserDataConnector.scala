@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,39 +18,31 @@ package config
 
 import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector}
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}
-import org.scalamock.handlers.CallHandler3
-import org.scalamock.scalatest.MockFactory
+import org.mockito.scalatest.MockitoSugar
+import org.mockito.stubbing.ScalaOngoingStubbing
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
-trait MockIncomeTaxUserDataConnector extends MockFactory {
+trait MockIncomeTaxUserDataConnector extends MockitoSugar {
 
-  val apiError = APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError)
+  val apiError: APIErrorModel = APIErrorModel(INTERNAL_SERVER_ERROR, APIErrorBodyModel.parsingError)
 
   val mockUserDataConnector: IncomeTaxUserDataConnector = mock[IncomeTaxUserDataConnector]
 
-  def mockFind(nino: String,
-               taxYear: Int,
-               userData: IncomeTaxUserData): CallHandler3[String, Int, HeaderCarrier, DownstreamOutcome[IncomeTaxUserData]] =
-    (mockUserDataConnector
-      .getUserData(_: String, _: Int)(_: HeaderCarrier))
-      .expects(nino, taxYear, *)
-      .returns(Future.successful(Right(userData)))
-      .anyNumberOfTimes()
+  implicit val hc: HeaderCarrier = HeaderCarrier()
 
-  def mockFindNoContent(nino: String, taxYear: Int): CallHandler3[String, Int, HeaderCarrier, DownstreamOutcome[IncomeTaxUserData]] =
-    (mockUserDataConnector
-      .getUserData(_: String, _: Int)(_: HeaderCarrier))
-      .expects(nino, taxYear, *)
-      .returns(Future.successful(Right(IncomeTaxUserData())))
-      .anyNumberOfTimes()
+  def mockFind(nino: String, taxYear: Int, userData: IncomeTaxUserData): ScalaOngoingStubbing[DownstreamOutcome[IncomeTaxUserData]] =
+    when(mockUserDataConnector.getUserData(eqTo(nino), eqTo(taxYear))(any[HeaderCarrier]))
+      .thenReturn(Future.successful(Right(userData)))
 
-  def mockFindFail(nino: String, taxYear: Int): CallHandler3[String, Int, HeaderCarrier, DownstreamOutcome[IncomeTaxUserData]] =
-    (mockUserDataConnector
-      .getUserData(_: String, _: Int)(_: HeaderCarrier))
-      .expects(nino, taxYear, *)
-      .returns(Future.successful(Left(apiError)))
-      .anyNumberOfTimes()
+  def mockFindNoContent(nino: String, taxYear: Int): ScalaOngoingStubbing[DownstreamOutcome[IncomeTaxUserData]] =
+    when(mockUserDataConnector.getUserData(eqTo(nino), eqTo(taxYear))(any[HeaderCarrier]))
+      .thenReturn(Future.successful(Right(IncomeTaxUserData())))
+
+  def mockFindFail(nino: String, taxYear: Int): ScalaOngoingStubbing[DownstreamOutcome[IncomeTaxUserData]] =
+    when(mockUserDataConnector.getUserData(eqTo(nino), eqTo(taxYear))(any[HeaderCarrier]))
+      .thenReturn(Future.successful(Left(apiError)))
+
 }

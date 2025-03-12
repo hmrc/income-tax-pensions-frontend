@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,44 +18,36 @@ package config
 
 import models.User
 import models.mongo.{DatabaseError, PensionsUserData}
-import org.scalamock.handlers.{CallHandler1, CallHandler2}
-import org.scalamock.scalatest.MockFactory
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.MockitoSugar
+import org.mockito.stubbing.ScalaOngoingStubbing
 import repositories.PensionsUserDataRepository
+import repositories.PensionsUserDataRepository.QueryResult
+import utils.UnitTest
 
 import scala.concurrent.Future
 
-trait MockPensionUserDataRepository extends MockFactory {
+trait MockPensionUserDataRepository extends UnitTest with MockitoSugar {
 
   val mockPensionUserDataRepository: PensionsUserDataRepository = mock[PensionsUserDataRepository]
 
-  def mockFind(taxYear: Int, user: User, repositoryResponse: Either[DatabaseError, Option[PensionsUserData]])
-      : CallHandler2[Int, User, Future[Either[DatabaseError, Option[PensionsUserData]]]] =
-    (mockPensionUserDataRepository
-      .find(_: Int, _: User))
-      .expects(taxYear, user)
-      .returns(Future.successful(repositoryResponse))
-      .anyNumberOfTimes()
+  def mockFind(taxYear: Int,
+               user: User,
+               repositoryResponse: Either[DatabaseError, Option[PensionsUserData]]): ScalaOngoingStubbing[QueryResult[Option[PensionsUserData]]] =
+    when(mockPensionUserDataRepository.find(eqTo(taxYear), eqTo(user)))
+      .thenReturn(Future.successful(repositoryResponse))
 
-  def mockCreateOrUpdate(PensionUserData: PensionsUserData,
-                         response: Either[DatabaseError, Unit]): CallHandler1[PensionsUserData, Future[Either[DatabaseError, Unit]]] =
-    (mockPensionUserDataRepository
-      .createOrUpdate(_: PensionsUserData))
-      .expects(PensionUserData)
-      .returns(Future.successful(response))
-      .anyNumberOfTimes()
+  def mockCreateOrUpdate(pensionUserData: PensionsUserData, response: Either[DatabaseError, Unit]): ScalaOngoingStubbing[QueryResult[Unit]] =
+    when(mockPensionUserDataRepository.createOrUpdate(eqTo(pensionUserData)))
+      .thenReturn(Future.successful(response))
 
-  def mockCreateOrUpdate(response: Either[DatabaseError, Unit]): CallHandler1[PensionsUserData, Future[Either[DatabaseError, Unit]]] =
-    (mockPensionUserDataRepository
-      .createOrUpdate(_: PensionsUserData))
-      .expects(*)
-      .returns(Future.successful(response))
-      .anyNumberOfTimes()
+  def mockCreateOrUpdate(response: Either[DatabaseError, Unit]): ScalaOngoingStubbing[QueryResult[Unit]] =
+    when(mockPensionUserDataRepository.createOrUpdate(any[PensionsUserData]))
+      .thenReturn(Future.successful(response))
 
-  def mockClear(taxYear: Int, user: User, response: Boolean): Unit =
-    (mockPensionUserDataRepository
-      .clear(_: Int, _: User))
-      .expects(taxYear, user)
-      .returns(Future.successful(response))
-      .anyNumberOfTimes()
+  def mockClear(taxYear: Int, user: User, response: Boolean): ScalaOngoingStubbing[Future[Boolean]] =
+    when(mockPensionUserDataRepository.clear(eqTo(taxYear), eqTo(user)))
+      .thenReturn(Future.successful(response))
 
 }
