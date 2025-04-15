@@ -23,11 +23,11 @@
 @layout(pageTitle = messages("not-found-template.heading")) {
     @heading(messages("not-found-template.heading"), None, "govuk-!-margin-bottom-5", "xl")
 
-    <div class="govuk-body">
-        <p>@messages("not-found-template.paragraph.1")</p>
-        <p>@messages("not-found-template.paragraph.2")</p>
+    <div class="govuk-form-group">
+        <p class="govuk-body">@messages("not-found-template.paragraph.1")</p>
+        <p class="govuk-body">@messages("not-found-template.paragraph.2")</p>
 
-        <p>
+        <p class="govuk-body">
             @messages("common.error.self-assessment.paragraph.1.1")
             <a href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment" target="_blank"
                id=govuk-self-assessment-link class="govuk-link" rel="noopener noreferrer">@messages("common.error.self-assessment.paragraph.1.2")</a>
