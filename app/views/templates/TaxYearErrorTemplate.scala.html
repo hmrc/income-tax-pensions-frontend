@@ -23,14 +23,14 @@
 @layout(pageTitle = messages("not-found-template.heading")) {
 @heading(messages("not-found-template.heading"), None, "govuk-!-margin-bottom-5", "xl")
 
-<div class="govuk-body">
+<div class="govuk-form-group">
     @if(singleValidTaxYear)  {
-        <p>@messages("taxYear-error-template.paragraph.1.single")</p>
+        <p class="govuk-body">@messages("taxYear-error-template.paragraph.1.single")</p>
     } else {
-        <p>@messages("taxYear-error-template.paragraph.1", firstClientTaxYear.toString, latestClientTaxYear.toString)</p>
+        <p class="govuk-body">@messages("taxYear-error-template.paragraph.1", firstClientTaxYear.toString, latestClientTaxYear.toString)</p>
     }
-    <p>@messages("taxYear-error-template.paragraph.2")</p>
-    <p>
+    <p class="govuk-body">@messages("taxYear-error-template.paragraph.2")</p>
+    <p class="govuk-body">
         @messages("common.error.self-assessment.paragraph.1.1")
         <a target="_blank" id=govuk-self-assessment-link href="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/self-assessment"
            class="govuk-link" rel="noopener noreferrer">@messages("common.error.self-assessment.paragraph.1.2")</a>

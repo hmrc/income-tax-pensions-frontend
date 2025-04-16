@@ -90,7 +90,7 @@ class TaxYearActionSpec extends UnitTest with TestTaxYearHelper {
         }
 
         "has the start page redirect url" in {
-          redirectUrl(result.map(_.left.toOption.get)) shouldBe "http://localhost:9302/update-and-submit-income-tax-return/2025/start"
+          redirectUrl(result.map(_.left.toOption.get)) shouldBe "http://localhost:9302/update-and-submit-income-tax-return/2026/start"
         }
 
       }
