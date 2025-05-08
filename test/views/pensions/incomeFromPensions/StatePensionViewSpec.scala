@@ -57,7 +57,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val noText                               = "No"
     val buttonText                           = "Continue"
     val amountSubheading                     = "Total amount this tax year"
-    val amountExample                        = "For example, £193.54"
+    val amountExample                        = "For example, £600 or £193.54"
     val expectedIncorrectOrEmptyErrorMessage = "Enter the total amount of State Pension payments in pounds"
   }
 
@@ -67,7 +67,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
     val noText                               = "Na"
     val buttonText                           = "Yn eich blaen"
     val amountSubheading                     = "Cyfanswm ar gyfer y flwyddyn dreth hon"
-    val amountExample                        = "Er enghraifft, £193.54"
+    val amountExample                        = "Er enghraifft, £600 neu £193.54"
     val expectedIncorrectOrEmptyErrorMessage = "Enter the total amount of State Pension payments in pounds"
   }
 

@@ -127,7 +127,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
     val yesText                        = "Yes"
     val noText                         = "No"
     val amountHeading                  = "Amount of tax paid"
-    val amountHint                     = "For example, £193.54"
+    val amountHint                     = "For example, £600 or £193.54"
     val incorrectFormatErrorText       = "Enter the total amount of tax paid on the State Pension lump sum in pounds"
   }
 
@@ -138,7 +138,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
     val yesText                        = "Iawn"
     val noText                         = "Na"
     val amountHeading                  = "Swm y dreth a dalwyd"
-    val amountHint                     = "Er enghraifft, £193.54"
+    val amountHint                     = "Er enghraifft, £600 neu £193.54"
     val incorrectFormatErrorText       = "Nodwch gyfanswm y dreth a dalwyd ar gyfandaliad Pensiwn y Wladwriaeth yn y fformat cywir"
   }
 
