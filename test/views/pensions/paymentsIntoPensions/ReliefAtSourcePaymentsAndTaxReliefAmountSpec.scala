@@ -72,7 +72,7 @@ object ReliefAtSourcePaymentsAndTaxReliefAmountSpec {
     val expectedErrorTitle             = s"Error: $expectedTitle"
     val expectedCalculationHeading     = "Example calculation"
     val expectedExampleCalculation = "Emma paid £500 into her pension scheme. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625."
-    val hintText                   = "For example, £193.52"
+    val hintText                   = "For example, £600 or £193.54"
     val emptyErrorText             = "Enter the total paid into RAS pensions, plus basic rate tax relief"
     val invalidFormatErrorText     = "Enter the total paid into RAS pensions, plus basic rate tax relief, in pounds"
     val maxAmountErrorText         = "The total paid into RAS pensions, plus basic rate tax relief, must be less than £100,000,000,000"
@@ -87,7 +87,7 @@ object ReliefAtSourcePaymentsAndTaxReliefAmountSpec {
     val expectedCalculationHeading = "Cyfrifiad enghreifftiol"
     val expectedExampleCalculation =
       "Talodd Elin £500 i mewn i’w chynllun pensiwn. £500 wedi’i rhannu ag 80, ac yna ei lluosi â 100 yw £625. Ei hateb yw £625."
-    val hintText       = "Er enghraifft, £193.52"
+    val hintText       = "Er enghraifft, £600 neu £193.54"
     val emptyErrorText = "Nodwch y cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
     val invalidFormatErrorText =
       "Nodwch y cyfanswm a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol, yn y fformat cywir"

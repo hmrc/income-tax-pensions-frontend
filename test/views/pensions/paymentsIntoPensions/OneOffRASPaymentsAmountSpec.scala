@@ -75,7 +75,7 @@ object OneOffRASPaymentsAmountSpec {
     val expectedHowToWorkOut           = "To work it out, divide your one-off payment amount by 80 and multiply the result by 100."
     val expectedCalculationHeading     = "Example calculation"
     val expectedExampleCalculation     = "Emma made a one-off payment of £500. £500 divided by 80 and multiplied by 100 is £625. Her answer is £625."
-    val hintText                       = "For example, £193.52"
+    val hintText                       = "For example, £600 or £193.54"
     val emptyErrorText                 = "Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief"
     val invalidFormatErrorText         = "Enter the total amount of one-off payments paid into RAS pensions, plus basic rate tax relief, in pounds"
     val maxAmountErrorText =
@@ -93,7 +93,7 @@ object OneOffRASPaymentsAmountSpec {
     val expectedHowToWorkOut       = "Er mwyn ei gyfrifo, rhannwch swm eich taliad untro ag 80, a lluoswch y canlyniad â 100."
     val expectedCalculationHeading = "Cyfrifiad enghreifftiol"
     val expectedExampleCalculation = "Gwnaeth Elin daliad untro o £500. £500 wedi’i rhannu ag 80, a’i lluosi â 100 yw £625. Ei hateb yw £625."
-    val hintText                   = "Er enghraifft, £193.52"
+    val hintText                   = "Er enghraifft, £600 neu £193.54"
     val emptyErrorText = "Nodwch gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, ynghyd â rhyddhad treth ar y gyfradd sylfaenol"
 
     val invalidFormatErrorText = "Nodwch gyfanswm y taliadau untro a dalwyd i mewn i bensiynau RAS, " +

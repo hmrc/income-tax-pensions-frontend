@@ -157,7 +157,7 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into overseas pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
     val expectedButtonText             = "Continue"
-    val hintText: String               = "For example, £193.52"
+    val hintText: String               = "For example, £600 or £193.54"
     val expectedTitle: String          = "Untaxed employer payments"
     val expectedErrorTitle: String     = s"Error: $expectedTitle"
     val expectedPara1: String          = "This is also known as exempt employers’ contributions."
@@ -169,7 +169,7 @@ class UntaxedEmployerControllerSpec extends ViewUnitTest with FakeRequestProvide
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau tramor ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
     val expectedButtonText             = "Yn eich blaen"
-    val hintText: String               = "Er enghraifft, £193.52"
+    val hintText: String               = "Er enghraifft, £600 neu £193.54"
     val expectedTitle: String          = "Taliadau cyflogwr sydd heb eu trethu"
     val expectedErrorTitle: String     = s"Gwall: $expectedTitle"
     val expectedPara1: String          = "Enw arall ar hyn yw cyfraniadau cyflogwr sydd wedi eu heithrio."

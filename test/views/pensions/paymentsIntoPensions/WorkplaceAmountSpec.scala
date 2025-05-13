@@ -71,7 +71,7 @@ object WorkplaceAmountSpec {
 
   object CommonExpectedEN extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Payments into pensions for 6 April ${taxYear - 1} to 5 April $taxYear"
-    val hintText                       = "For example, £193.52"
+    val hintText                       = "For example, £600 or £193.54"
     val emptyErrorText                 = "Enter the amount paid into workplace pensions"
     val invalidFormatErrorText         = "Enter the amount paid into workplace pensions in pounds"
     val maxAmountErrorText             = "The amount paid into workplace pensions must be less than £100,000,000,000"
@@ -81,7 +81,7 @@ object WorkplaceAmountSpec {
 
   object CommonExpectedCY extends CommonExpectedResults {
     val expectedCaption: Int => String = (taxYear: Int) => s"Taliadau i bensiynau ar gyfer 6 Ebrill ${taxYear - 1} i 5 Ebrill $taxYear"
-    val hintText                       = "Er enghraifft, £193.52"
+    val hintText                       = "Er enghraifft, £600 neu £193.54"
     val emptyErrorText                 = "Nodwch y swm a dalwyd i mewn i bensiynau gweithle"
     val invalidFormatErrorText         = "Nodwch y swm a dalwyd i mewn i bensiynau gweithle yn y fformat cywir"
     val maxAmountErrorText             = "Mae’n rhaid i’r swm a dalwyd i mewn i bensiynau gweithle fod yn llai na £100,000,000,000"
