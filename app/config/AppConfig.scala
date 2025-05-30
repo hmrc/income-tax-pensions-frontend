@@ -28,6 +28,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
 
+//noinspection ScalaStyle
 @ImplementedBy(classOf[AppConfigImpl])
 trait AppConfig {
 
@@ -46,6 +47,7 @@ trait AppConfig {
   def incomeTaxSubmissionOverviewUrl(taxYear: Int): String
   def incomeTaxSubmissionStartUrl(taxYear: Int): String
   def incomeTaxSubmissionIvRedirect: String
+  def vcSessionServiceBaseUrl: String
   def vcBaseUrl: String
   def viewAndChangeEnterUtrUrl: String
   def viewAndChangeViewUrlAgent: String
@@ -105,6 +107,8 @@ class AppConfigImpl @Inject() (servicesConfig: ServicesConfig) extends Logging w
 
   val incomeTaxSubmissionIvRedirect: String =
     incomeTaxSubmissionBaseUrl + servicesConfig.getString("microservice.services.income-tax-submission-frontend.iv-redirect")
+
+  val vcSessionServiceBaseUrl: String = servicesConfig.baseUrl("income-tax-session-data")
 
   val vcBaseUrl: String                 = servicesConfig.getString(ConfigKeys.viewAndChangeFrontendUrl)
   val viewAndChangeEnterUtrUrl: String  = s"$vcBaseUrl/report-quarterly/income-and-expenses/view/agents/client-utr"
