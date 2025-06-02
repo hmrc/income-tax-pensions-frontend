@@ -23,6 +23,7 @@ import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
 import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import models.mongo.PensionsUserData
+import models.session.SessionData
 import models.{AuthorisationRequest, User}
 import org.apache.pekko.actor.ActorSystem
 import org.mockito.ArgumentMatchers.any
@@ -72,6 +73,10 @@ trait UnitTest
   def await[T](awaitable: Awaitable[T]): T = Await.result(awaitable, Duration.Inf)
 
   val sessionId: String = "eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
+  val mtdItId: String = "1234567890"
+  val nino: String = "AA123456A"
+  val utr: String = "9999912345"
+  val sessionData: SessionData = SessionData(sessionId, mtdItId, nino, Some(utr))
 
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders("X-Session-ID" -> sessionId)
   val fakeRequestWithMtditidAndNino: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
@@ -155,8 +160,6 @@ trait UnitTest
     when(mockAuthConnector.authorise(any(), any())(any(), any()))
       .thenReturn(Future.failed(exception))
 
-  val nino       = "AA123456A"
-  val mtditid    = "1234567890"
   val user: User = authorisationRequest.user
 
   def emptySessionData(updateTime: Option[ZonedDateTime] = None): PensionsUserData =

@@ -18,7 +18,7 @@ package services
 
 import builders.PensionsUserDataBuilder.{aPensionsUserData, user}
 import common.Nino
-import config.MockPensionsConnector
+import connectors.mocks.MockPensionsConnector
 import models.mongo.PensionsUserData
 import models.pension.Journey
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture

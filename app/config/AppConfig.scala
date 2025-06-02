@@ -73,6 +73,7 @@ trait AppConfig {
   def languageMap: Map[String, Lang]
   def routeToSwitchLanguage: String => Call
   def welshToggleEnabled: Boolean
+  def sessionCookieServiceEnabled: Boolean
   def useEncryption: Boolean
 }
 
@@ -160,5 +161,7 @@ class AppConfigImpl @Inject() (servicesConfig: ServicesConfig) extends Logging w
     logger.warn("[AesGCMCrypto][decrypt] Encryption is turned off")
     servicesConfig.getBoolean("feature-switch.useEncryption")
   }
+
+  lazy val sessionCookieServiceEnabled: Boolean = servicesConfig.getBoolean("feature-switch.sessionCookieServiceEnabled")
 
 }

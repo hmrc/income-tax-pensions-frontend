@@ -43,7 +43,6 @@ class AuthorisedActionSpec extends UnitTest {
 
   val auth: AuthorisedAction = authorisedAction
 
-  val mtdItId: String = "1234567890"
   val arn: String     = "0987654321"
 
   trait AgentTest extends MockErrorHandler {
