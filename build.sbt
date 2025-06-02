@@ -19,7 +19,7 @@ import play.sbt.routes.RoutesKeys
 lazy val appName = "income-tax-pensions-frontend"
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "2.13.16"
 
 lazy val coverageSettings: Seq[Setting[?]] = {
   import scoverage.ScoverageKeys
@@ -77,7 +77,6 @@ lazy val microservice = Project(appName, file("."))
   .settings(inConfig(Test)(testSettings): _*)
   .configs(IntegrationTest extend Test)
   .settings(inConfig(IntegrationTest)(itSettings): _*)
-  .settings(resolvers += Resolver.jcenterRepo)
   .settings(coverageSettings: _*)
   .settings(RoutesKeys.routesImport ++= Seq(
     "models.pension._",
