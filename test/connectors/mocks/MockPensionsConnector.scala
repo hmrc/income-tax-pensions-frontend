@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package config
+package connectors.mocks
 
 import cats.data.EitherT
 import common.{Nino, TaxYear}

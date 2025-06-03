@@ -41,7 +41,7 @@ class SF74ReferenceController @Inject() (actionsProvider: ActionsProvider,
                                          view: SF74ReferenceView,
                                          formsProvider: FormsProvider,
                                          errorHandler: ErrorHandler,
-                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+                                         mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

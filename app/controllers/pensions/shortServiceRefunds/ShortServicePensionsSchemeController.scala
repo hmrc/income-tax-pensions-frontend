@@ -45,7 +45,7 @@ import scala.util.{Failure, Success, Try}
 class ShortServicePensionsSchemeController @Inject() (actionsProvider: ActionsProvider,
                                                       service: PensionSessionService,
                                                       view: ShortServicePensionsSchemeView,
-                                                      mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                                      mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

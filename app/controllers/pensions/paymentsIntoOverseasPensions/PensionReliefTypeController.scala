@@ -42,7 +42,7 @@ class PensionReliefTypeController @Inject() (actionsProvider: ActionsProvider,
                                              view: PensionReliefTypeView,
                                              formsProvider: FormsProvider,
                                              errorHandler: ErrorHandler,
-                                             mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+                                             mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

@@ -40,7 +40,7 @@ class RetirementAnnuityAmountController @Inject() (authAction: AuthorisedAction,
                                                    pensionSessionService: PensionSessionService,
                                                    errorHandler: ErrorHandler,
                                                    formProvider: PaymentsIntoPensionFormProvider,
-                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                                   mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

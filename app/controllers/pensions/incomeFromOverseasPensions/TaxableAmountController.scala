@@ -43,7 +43,7 @@ class TaxableAmountController @Inject() (authAction: AuthorisedAction,
                                          pensionSessionService: PensionSessionService,
                                          view: TaxableAmountView,
                                          errorHandler: ErrorHandler,
-                                         mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                         mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper

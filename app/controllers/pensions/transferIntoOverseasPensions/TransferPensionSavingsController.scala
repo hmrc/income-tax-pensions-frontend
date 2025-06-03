@@ -38,7 +38,7 @@ class TransferPensionSavingsController @Inject() (actionsProvider: ActionsProvid
                                                   pensionSessionService: PensionSessionService,
                                                   view: TransferPensionSavingsView,
                                                   errorHandler: ErrorHandler,
-                                                  mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+                                                  mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

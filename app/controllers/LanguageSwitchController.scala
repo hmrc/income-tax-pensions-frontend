@@ -27,7 +27,7 @@ import utils.{RedirectUtils, SessionHelper}
 import javax.inject.Singleton
 
 @Singleton
-class LanguageSwitchController @Inject() (appConfig: AppConfig,
+class LanguageSwitchController @Inject() (val appConfig: AppConfig,
                                           override implicit val messagesApi: MessagesApi,
                                           val controllerComponents: MessagesControllerComponents)
     extends FrontendBaseController

@@ -31,7 +31,7 @@ import scala.concurrent.Future
 
 @Singleton
 class RefundSummaryController @Inject() (actionsProvider: ActionsProvider, view: RefundSummaryView, mcc: MessagesControllerComponents)(implicit
-    appConfig: AppConfig)
+    val appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

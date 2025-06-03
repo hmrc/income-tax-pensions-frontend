@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PaymentsIntoOverseasPensionsGatewayController @Inject() (authAction: AuthorisedAction,
                                                                form: PaymentsIntoOverseasPensionsFormProvider,
                                                                view: PaymentsIntoOverseasPensionsView,
-                                                               mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                                               mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

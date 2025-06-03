@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 @Singleton
 class ReliefsSchemeDetailsController @Inject() (view: ReliefSchemeDetailsView, actionsProvider: ActionsProvider, mcc: MessagesControllerComponents)(
-    implicit appConfig: AppConfig)
+    implicit val appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

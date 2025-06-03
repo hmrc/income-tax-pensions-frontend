@@ -23,6 +23,7 @@ import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
 import config.AppConfig
 import controllers.predicates.actions.AuthorisedAction
 import models.mongo.PensionsUserData
+import models.session.SessionData
 import models.{AuthorisationRequest, User}
 import org.apache.pekko.actor.ActorSystem
 import org.mockito.ArgumentMatchers.any
@@ -35,7 +36,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc._
 import play.api.test.{FakeRequest, Helpers}
-import services.AuthService
+import services.{AuthService, SessionDataService}
 import support.mocks.MockErrorHandler
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -72,9 +73,13 @@ trait UnitTest
   def await[T](awaitable: Awaitable[T]): T = Await.result(awaitable, Duration.Inf)
 
   val sessionId: String = "eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
+  val mtdItId: String = "1234567890"
+  val nino: String = "AA123456A"
+  val utr: String = "9999912345"
+  val sessionData: SessionData = SessionData(sessionId, mtdItId, nino, Some(utr))
 
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders("X-Session-ID" -> sessionId)
-  val fakeRequestWithMtditidAndNino: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  val fakeRequestWithMtditidAndNino: FakeRequest[AnyContentAsEmpty.type] = fakeRequest
     .withSession(
       SessionValues.CLIENT_MTDITID  -> "1234567890",
       SessionValues.CLIENT_NINO     -> "AA123456A",
@@ -82,7 +87,7 @@ trait UnitTest
       SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(",")
     )
     .withHeaders("X-Session-ID" -> sessionId)
-  val fakeRequestWithNino: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
+  val fakeRequestWithNino: FakeRequest[AnyContentAsEmpty.type] = fakeRequest.withSession(
     SessionValues.CLIENT_NINO     -> "AA123456A",
     SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(",")
   )
@@ -99,8 +104,6 @@ trait UnitTest
   implicit lazy val mockMessagesControllerComponents: MessagesControllerComponents = Helpers.stubMessagesControllerComponents()
   implicit lazy val authorisationRequest: AuthorisationRequest[AnyContent] =
     new AuthorisationRequest[AnyContent](User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString), fakeRequest)
-
-  val authorisedAction = new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
 
   def status(awaitable: Future[Result]): Int = await(awaitable).header.status
 
@@ -155,8 +158,6 @@ trait UnitTest
     when(mockAuthConnector.authorise(any(), any())(any(), any()))
       .thenReturn(Future.failed(exception))
 
-  val nino       = "AA123456A"
-  val mtditid    = "1234567890"
   val user: User = authorisationRequest.user
 
   def emptySessionData(updateTime: Option[ZonedDateTime] = None): PensionsUserData =

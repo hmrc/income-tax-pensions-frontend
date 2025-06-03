@@ -31,7 +31,7 @@ import javax.inject.Inject
 import scala.concurrent.Future
 
 class PensionSchemeSummaryController @Inject() (view: PensionSchemeSummaryView, actionsProvider: ActionsProvider, cc: MessagesControllerComponents)(
-    implicit appConfig: AppConfig)
+    implicit val appConfig: AppConfig)
     extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {

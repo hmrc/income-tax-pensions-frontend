@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class BenefitsFromSchemeController @Inject() (authAction: AuthorisedAction, view: BenefitsFromSchemeView, cc: MessagesControllerComponents)(implicit
-    appConfig: AppConfig,
+    val appConfig: AppConfig,
     ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport

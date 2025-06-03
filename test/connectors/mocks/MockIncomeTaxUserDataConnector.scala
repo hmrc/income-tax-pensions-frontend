@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package config
+package connectors.mocks
 
 import connectors.{DownstreamOutcome, IncomeTaxUserDataConnector}
 import models.{APIErrorBodyModel, APIErrorModel, IncomeTaxUserData}

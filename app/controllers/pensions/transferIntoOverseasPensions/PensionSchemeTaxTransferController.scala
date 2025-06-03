@@ -42,7 +42,7 @@ class PensionSchemeTaxTransferController @Inject() (actionsProvider: ActionsProv
                                                     view: pensionSchemeTaxTransferChargeView,
                                                     formsProvider: FormsProvider,
                                                     errorHandler: ErrorHandler,
-                                                    mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+                                                    mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

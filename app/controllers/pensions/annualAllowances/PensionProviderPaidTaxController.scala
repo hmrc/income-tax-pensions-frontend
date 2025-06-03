@@ -41,7 +41,7 @@ class PensionProviderPaidTaxController @Inject() (actionsProvider: ActionsProvid
                                                   pensionSessionService: PensionSessionService,
                                                   view: PensionProviderPaidTaxView,
                                                   errorHandler: ErrorHandler,
-                                                  cc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+                                                  cc: MessagesControllerComponents)(implicit val appConfig: AppConfig)
     extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {

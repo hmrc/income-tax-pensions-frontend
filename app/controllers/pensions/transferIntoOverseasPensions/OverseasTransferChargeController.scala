@@ -44,7 +44,7 @@ class OverseasTransferChargeController @Inject() (actionsProvider: ActionsProvid
                                                   pensionSessionService: PensionSessionService,
                                                   view: OverseasTransferChargeView,
                                                   errorHandler: ErrorHandler,
-                                                  mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+                                                  mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

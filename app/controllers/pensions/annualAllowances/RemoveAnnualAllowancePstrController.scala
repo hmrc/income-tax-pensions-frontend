@@ -41,7 +41,7 @@ class RemoveAnnualAllowancePstrController @Inject() (cc: MessagesControllerCompo
                                                      authAction: AuthorisedAction,
                                                      view: RemoveAnnualAllowancesPstrView,
                                                      pensionSessionService: PensionSessionService,
-                                                     errorHandler: ErrorHandler)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                                     errorHandler: ErrorHandler)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {
