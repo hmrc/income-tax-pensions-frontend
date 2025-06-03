@@ -34,7 +34,7 @@ import scala.concurrent.Future
 @Singleton
 class TransferChargeSummaryController @Inject() (actionsProvider: ActionsProvider,
                                                  view: TransferChargeSummaryView,
-                                                 mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+                                                 mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

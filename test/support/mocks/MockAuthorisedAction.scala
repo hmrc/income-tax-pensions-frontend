@@ -25,7 +25,7 @@ import org.mockito.MockitoSugar
 import org.mockito.stubbing.ScalaOngoingStubbing
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Helpers.stubMessagesControllerComponents
-import services.AuthService
+import services.{AuthService, SessionDataService}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -35,16 +35,17 @@ import scala.concurrent.Future
 
 trait MockAuthorisedAction extends MockitoSugar { this: GuiceOneAppPerSuite =>
 
-  private val mockAppConfig                        = app.injector.instanceOf[AppConfig]
-  private val testMockAuthConnector: AuthConnector = mock[AuthConnector]
-  private val mockAuthService                      = new AuthService(testMockAuthConnector)
-  private val mockErrorHandler: ErrorHandler       = mock[ErrorHandler]
+  private val mockAppConfig                              = app.injector.instanceOf[AppConfig]
+  private val testMockAuthConnector: AuthConnector       = mock[AuthConnector]
+  private val mockAuthService                            = new AuthService(testMockAuthConnector)
+  private val mockErrorHandler: ErrorHandler             = mock[ErrorHandler]
+  private val mockSessionDataService: SessionDataService = mock[SessionDataService]
 
   protected val mockAuthorisedAction: AuthorisedAction =
-    new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
+    new AuthorisedAction(mockAppConfig, mockErrorHandler, mockAuthService, mockSessionDataService)(stubMessagesControllerComponents())
 
   protected val authorisedAction: AuthorisedAction =
-    new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
+    new AuthorisedAction(mockAppConfig, mockErrorHandler, mockAuthService, mockSessionDataService)(stubMessagesControllerComponents())
 
   protected def mockAuthAsAgent(): ScalaOngoingStubbing[Future[Enrolments]] = {
     val enrolments: Enrolments = Enrolments(

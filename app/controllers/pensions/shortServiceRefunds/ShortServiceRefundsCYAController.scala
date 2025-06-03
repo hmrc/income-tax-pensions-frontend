@@ -27,7 +27,7 @@ import play.api.mvc._
 import services.PensionsService
 import services.redirects.ShortServiceRefundsPages.CYAPage
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.SessionHelper
+import utils.{Logging, SessionHelper}
 import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.validateFlow
 import views.html.pensions.shortServiceRefunds.ShortServiceRefundsCYAView
 
@@ -39,10 +39,8 @@ class ShortServiceRefundsCYAController @Inject() (auditProvider: AuditActionsPro
                                                   view: ShortServiceRefundsCYAView,
                                                   pensionService: PensionsService,
                                                   errorHandler: ErrorHandler,
-                                                  mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
-    extends FrontendController(mcc)
-    with I18nSupport
-    with SessionHelper {
+                                                  mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig, ec: ExecutionContext)
+    extends FrontendController(mcc) with I18nSupport with SessionHelper {
 
   def show(taxYear: TaxYear): Action[AnyContent] = auditProvider.shortServiceRefundsViewAuditing(taxYear.endYear) async { implicit request =>
     val answers = request.sessionData.pensions.shortServiceRefunds

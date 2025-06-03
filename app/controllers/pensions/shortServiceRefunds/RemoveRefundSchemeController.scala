@@ -40,7 +40,7 @@ class RemoveRefundSchemeController @Inject() (actionsProvider: ActionsProvider,
                                               service: PensionSessionService,
                                               view: RemoveRefundSchemeView,
                                               errorHandler: ErrorHandler,
-                                              mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                              mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

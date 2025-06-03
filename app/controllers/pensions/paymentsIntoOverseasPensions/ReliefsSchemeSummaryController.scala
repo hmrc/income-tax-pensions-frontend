@@ -36,7 +36,7 @@ import scala.concurrent.Future
 class ReliefsSchemeSummaryController @Inject() (view: ReliefSchemeSummaryView,
                                                 actionsProvider: ActionsProvider,
                                                 pensionSessionService: PensionSessionService,
-                                                mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+                                                mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

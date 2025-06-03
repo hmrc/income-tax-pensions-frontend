@@ -43,7 +43,7 @@ class DoubleTaxationAgreementController @Inject() (actionsProvider: ActionsProvi
                                                    pensionSessionService: PensionSessionService,
                                                    view: DoubleTaxationAgreementView,
                                                    errorHandler: ErrorHandler,
-                                                   mcc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+                                                   mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

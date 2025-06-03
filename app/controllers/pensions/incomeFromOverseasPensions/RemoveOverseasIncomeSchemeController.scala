@@ -41,7 +41,7 @@ class RemoveOverseasIncomeSchemeController @Inject() (actionsProvider: ActionsPr
                                                       pensionSessionService: PensionSessionService,
                                                       view: RemoveOverseasIncomeSchemeView,
                                                       errorHandler: ErrorHandler,
-                                                      cc: MessagesControllerComponents)(implicit appConfig: AppConfig)
+                                                      cc: MessagesControllerComponents)(implicit val appConfig: AppConfig)
     extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {

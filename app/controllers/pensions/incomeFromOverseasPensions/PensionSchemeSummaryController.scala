@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 @Singleton
 class PensionSchemeSummaryController @Inject() (actionsProvider: ActionsProvider, pageView: PensionsSchemeSummary, cc: MessagesControllerComponents)(
-    implicit appConfig: AppConfig)
+    implicit val appConfig: AppConfig)
     extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {

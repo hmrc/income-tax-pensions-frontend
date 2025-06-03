@@ -43,7 +43,7 @@ class NonUkTaxRefundsController @Inject() (actionsProvider: ActionsProvider,
                                            service: PensionSessionService,
                                            view: NonUkTaxRefundsView,
                                            formsProvider: FormsProvider,
-                                           mcc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                           mcc: MessagesControllerComponents)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper {

@@ -167,56 +167,6 @@ trait IntegrationTest
 
   lazy val mcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
 
-  val defaultAcceptedConfidenceLevels: Seq[ConfidenceLevel] = Seq(
-    ConfidenceLevel.L250,
-    ConfidenceLevel.L500
-  )
-
-  def authService(stubbedRetrieval: Future[_], acceptedConfidenceLevel: Seq[ConfidenceLevel]): AuthService = new AuthService(
-    new MockAuthConnector(stubbedRetrieval, acceptedConfidenceLevel)
-  )
-
-  def authAction(
-      stubbedRetrieval: Future[_],
-      acceptedConfidenceLevel: Seq[ConfidenceLevel] = Seq.empty[ConfidenceLevel]
-  ): AuthorisedAction = new AuthorisedAction(
-    appConfig,
-    app.injector.instanceOf[ErrorHandler]
-  )(
-    authService(
-      stubbedRetrieval,
-      if (acceptedConfidenceLevel.nonEmpty) {
-        acceptedConfidenceLevel
-      } else {
-        defaultAcceptedConfidenceLevels
-      }),
-    mcc
-  )
-
-  def successfulRetrieval: Future[Enrolments ~ Some[AffinityGroup] ~ ConfidenceLevel] = Future.successful(
-    Enrolments(
-      Set(
-        Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", "1234567890")), "Activated", None),
-        Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", "AA123456A")), "Activated", None)
-      )) and Some(AffinityGroup.Individual) and ConfidenceLevel.L250
-  )
-
-  def insufficientConfidenceRetrieval: Future[Enrolments ~ Some[AffinityGroup] ~ ConfidenceLevel] = Future.successful(
-    Enrolments(
-      Set(
-        Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", "1234567890")), "Activated", None),
-        Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", "AA123456A")), "Activated", None)
-      )) and Some(AffinityGroup.Individual) and ConfidenceLevel.L50
-  )
-
-  def incorrectCredsRetrieval: Future[Enrolments ~ Some[AffinityGroup] ~ ConfidenceLevel] = Future.successful(
-    Enrolments(
-      Set(
-        Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("UTR", "1234567890")), "Activated", None),
-        Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", "AA123456A")), "Activated", None)
-      )) and Some(AffinityGroup.Individual) and ConfidenceLevel.L250
-  )
-
   def playSessionCookies(taxYear: Int, validTaxYears: Seq[Int], extraData: Map[String, String] = Map.empty): String =
     PlaySessionCookieBaker.bakeSessionCookie(
       Map(

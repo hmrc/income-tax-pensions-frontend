@@ -42,7 +42,7 @@ class PensionAmountController @Inject() (mcc: MessagesControllerComponents,
                                          view: PensionAmountView,
                                          pensionSessionService: PensionSessionService,
                                          errorHandler: ErrorHandler,
-                                         formsProvider: FormsProvider)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                         formsProvider: FormsProvider)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(mcc)
     with I18nSupport
     with SessionHelper

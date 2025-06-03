@@ -37,7 +37,7 @@ class CountrySummaryListController @Inject() (actionsProvider: ActionsProvider,
                                               countrySummary: CountrySummaryList,
                                               pensionSessionService: PensionSessionService,
                                               errorHandler: ErrorHandler,
-                                              cc: MessagesControllerComponents)(implicit appConfig: AppConfig, ec: ExecutionContext)
+                                              cc: MessagesControllerComponents)(implicit val appConfig: AppConfig, ec: ExecutionContext)
     extends FrontendController(cc)
     with I18nSupport
     with SessionHelper {

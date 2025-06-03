@@ -36,7 +36,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc._
 import play.api.test.{FakeRequest, Helpers}
-import services.AuthService
+import services.{AuthService, SessionDataService}
 import support.mocks.MockErrorHandler
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
@@ -79,7 +79,7 @@ trait UnitTest
   val sessionData: SessionData = SessionData(sessionId, mtdItId, nino, Some(utr))
 
   val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withHeaders("X-Session-ID" -> sessionId)
-  val fakeRequestWithMtditidAndNino: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  val fakeRequestWithMtditidAndNino: FakeRequest[AnyContentAsEmpty.type] = fakeRequest
     .withSession(
       SessionValues.CLIENT_MTDITID  -> "1234567890",
       SessionValues.CLIENT_NINO     -> "AA123456A",
@@ -87,7 +87,7 @@ trait UnitTest
       SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(",")
     )
     .withHeaders("X-Session-ID" -> sessionId)
-  val fakeRequestWithNino: FakeRequest[AnyContentAsEmpty.type] = FakeRequest().withSession(
+  val fakeRequestWithNino: FakeRequest[AnyContentAsEmpty.type] = fakeRequest.withSession(
     SessionValues.CLIENT_NINO     -> "AA123456A",
     SessionValues.VALID_TAX_YEARS -> validTaxYearList.mkString(",")
   )
@@ -104,8 +104,6 @@ trait UnitTest
   implicit lazy val mockMessagesControllerComponents: MessagesControllerComponents = Helpers.stubMessagesControllerComponents()
   implicit lazy val authorisationRequest: AuthorisationRequest[AnyContent] =
     new AuthorisationRequest[AnyContent](User("1234567890", None, "AA123456A", sessionId, AffinityGroup.Individual.toString), fakeRequest)
-
-  val authorisedAction = new AuthorisedAction(mockAppConfig, mockErrorHandler)(mockAuthService, stubMessagesControllerComponents())
 
   def status(awaitable: Future[Result]): Int = await(awaitable).header.status
 
