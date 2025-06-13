@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package connectors
 
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.Nino
 import models.mongo.JourneyStatus.{Completed, InProgress}
 import models.mongo.{JourneyContext, Mtditid}
@@ -42,10 +43,10 @@ class PensionsConnectorISpec extends IntegrationTest with ScalaFutures {
 
   implicit override val headerCarrier: HeaderCarrier = HeaderCarrier().withExtraHeaders("mtditid" -> mtditid, "X-Session-ID" -> sessionId)
 
-  def stubGetAnswers(url: String, status: Int, body: String) =
+  def stubGetAnswers(url: String, status: Int, body: String): StubMapping =
     stubGetWithHeadersCheck(url, status, body, "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
-  def stubPutAnswers(url: String, status: Int, body: String) =
+  def stubPutAnswers(url: String, status: Int, body: String): StubMapping =
     stubPutWithHeadersCheck(url, status, body, "X-Session-ID" -> sessionId, "mtditid" -> mtditid)
 
   "savePaymentsIntoPensions" should {

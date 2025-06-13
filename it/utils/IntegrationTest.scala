@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,8 @@ import services.AuthService
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.syntax.retrieved.authSyntaxForRetrieved
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, SessionKeys}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import views.html.templates.AgentAuthErrorPageView
 
 import scala.concurrent.duration.Duration
@@ -57,6 +58,7 @@ trait IntegrationTest
     with WiremockStubHelpers
     with BeforeAndAfterAll
     with TaxYearHelper {
+
   val nino          = "AA123456A"
   val currNino      = common.Nino(nino)
   val mtditid       = "1234567890"
@@ -78,7 +80,7 @@ trait IntegrationTest
 
   implicit def wsClient: WSClient = app.injector.instanceOf[WSClient]
 
-  val httpClient: HttpClient = app.injector.instanceOf[HttpClient]
+  val httpClient: HttpClientV2 = app.injector.instanceOf[HttpClientV2]
 
   val appUrl = s"http://localhost:$port/update-and-submit-income-tax-return/pensions"
 
