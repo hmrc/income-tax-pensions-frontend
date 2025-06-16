@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,54 +16,39 @@
 
 package connectors
 
-import cats.data.EitherT
 import config.AppConfig
+import connectors.Connector.hcWithCorrelationId
 import connectors.httpParsers.DeleteStateBenefitsHttpParser.DeleteStateBenefitsHttpReads
 import connectors.httpParsers.SaveStateBenefitsHttpParser.SaveStateBenefitsHttpReads
 import models.logging.ConnectorRequestInfo
 import models.mongo.StateBenefitsUserData
 import play.api.Logging
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
-import java.net.URI
 import java.util.UUID
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class StateBenefitsConnector @Inject() (val httpClientV2: HttpClientV2, val appConfig: AppConfig) extends Logging {
+class StateBenefitsConnector @Inject() (val http: HttpClient, val appConfig: AppConfig) extends Logging {
 
-  def saveClaim(nino: String,
-                model: StateBenefitsUserData
-               )(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
-    val url: URI = new URI(appConfig.statePensionBEBaseUrl + s"/income-tax-state-benefits/claim-data/nino/$nino")
-
-    ConnectorRequestInfo("PUT", url.toString, "income-tax-state-benefits").logRequestWithBody(logger, model)
-
-    implicit val reads: HttpReads[DownstreamErrorOr[Unit]] = SaveStateBenefitsHttpReads
-    EitherT {
-      httpClientV2
-        .put(url.toURL)
-        .withBody(Json.toJson(model))
-        .execute[DownstreamErrorOr[Unit]](reads, ec)
-    }.value
+  def saveClaim(nino: String, model: StateBenefitsUserData)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
+    val url = appConfig.statePensionBEBaseUrl + s"/income-tax-state-benefits/claim-data/nino/$nino"
+    ConnectorRequestInfo("PUT", url, "income-tax-state-benefits").logRequestWithBody(logger, model)
+    http.PUT[StateBenefitsUserData, DownstreamErrorOr[Unit]](url, model)(
+      StateBenefitsUserData.stateBenefitsUserDataWrites,
+      SaveStateBenefitsHttpReads,
+      hcWithCorrelationId(hc),
+      ec)
   }
 
-  def deleteClaim(nino: String,
-                  taxYear: Int,
-                  benefitId: UUID
-                 )(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
-    val url: URI = new URI(appConfig.statePensionBEBaseUrl + s"/income-tax-state-benefits/claim-data/nino/$nino/$taxYear/$benefitId/remove")
-    ConnectorRequestInfo("DELETE", url.toString, "income-tax-state-benefits").logRequest(logger)
-
-    implicit val reads: HttpReads[DownstreamErrorOr[Unit]] = DeleteStateBenefitsHttpReads
-
-    EitherT {
-      httpClientV2
-        .delete(url.toURL)
-        .execute[DownstreamErrorOr[Unit]](reads, ec)
-    }.value
+  def deleteClaim(nino: String, taxYear: Int, benefitId: UUID)(implicit hc: HeaderCarrier, ec: ExecutionContext): DownstreamOutcome[Unit] = {
+    val url = appConfig.statePensionBEBaseUrl + s"/income-tax-state-benefits/claim-data/nino/$nino/$taxYear/$benefitId/remove"
+    ConnectorRequestInfo("DELETE", url, "income-tax-state-benefits").logRequest(logger)
+    http.DELETE[DownstreamErrorOr[Unit]](url)(
+      DeleteStateBenefitsHttpReads,
+      hcWithCorrelationId(hc),
+      ec
+    )
 
   }
 
