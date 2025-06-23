@@ -14,12 +14,12 @@ The service manager profile for this service is:
 Run the following command to start the remaining services locally:
 
     sudo mongod (If not already running)
-    sm2 --start INCOME_TAX_SUBMISSION_ALL -r
+    sm2 --start INCOME_TAX_SUBMISSION_ALL
 
 To run the service locally:
 
     sudo mongod (If not already running)
-    sm2 --start INCOME_TAX_SUBMISSION_ALL -r
+    sm2 --start INCOME_TAX_SUBMISSION_ALL
     sm2 --stop INCOME_TAX_PENSIONS_FRONTEND
     ./run.sh **OR** sbt -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes run
 
@@ -27,11 +27,11 @@ This service runs on port: `localhost:9321`
 
 ### Feature Switches
 
-| Feature | Environments Enabled In |
-| --- |-----------------------|
-| Encryption | QA, Staging, Production |
-| Welsh Toggle | QA, Staging           |
-| taxYearError | Production            |
+| Feature | Description                                                                                                                                                                                                                                                                                                                                                                                                        |
+| --- |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Encryption | Conditionally encrypt sensitive information before storing it in a database. Can be configured per environment, for example, can be turned off in pre-production for testing purposes but turned on in Production.                                                                                                                                                                                                 |
+| Welsh Toggle | Toggle Welsh language                                                                                                                                                                                                                                                                                                                                                                                              |
+| taxYearError | Conditionally allow taxYear validation. When turned off, any tax year is accepted. When on, only tax years in the session's valid list are allowed. The intention was to turn this feature off in all pre-production environments to allow for flexible testing. Automated tests are not blocked by session state or data setup and prevents unnecessary test failures due to missing or mismatched tax year data. |
 
 ## Pensions Journeys
 
