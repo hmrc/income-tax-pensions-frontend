@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-sbt scalastyle scalafmtCheckAll test:scalafmtCheckAll test it:test
+sbt scalafmtCheckAll test:scalafmtCheckAll test it/test
