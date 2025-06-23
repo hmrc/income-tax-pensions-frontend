@@ -15,6 +15,7 @@
  */
 
 import play.sbt.routes.RoutesKeys
+import uk.gov.hmrc.DefaultBuildSettings
 
 lazy val appName = "income-tax-pensions-frontend"
 
@@ -76,8 +77,6 @@ lazy val microservice = Project(appName, file("."))
     scalacOptions += "-Wconf:src=routes/.*:s"
   )
   .settings(inConfig(Test)(testSettings): _*)
-  .configs(IntegrationTest extend Test)
-  .settings(inConfig(IntegrationTest)(itSettings): _*)
   .settings(coverageSettings: _*)
   .settings(RoutesKeys.routesImport ++= Seq(
     "models.pension._",
@@ -114,3 +113,8 @@ lazy val itSettings = Defaults.itSettings ++ Seq(
   parallelExecution := false,
   fork              := true
 )
+
+lazy val it = project.enablePlugins(PlayScala)
+  .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(DefaultBuildSettings.itSettings())
+  .settings(libraryDependencies ++= AppDependencies.test)
