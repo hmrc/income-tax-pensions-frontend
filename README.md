@@ -48,7 +48,7 @@ This service pulls pensions data from [income-tax-pensions](https://github.com/h
 ### Employment Sources (HMRC-Held and Customer Data) - for Income From Pensions
 Data for Income from pensions comes  from employment data through income-tax-submission. Employment data can come from different sources: HMRC-Held and Customer. 
 
-HMRC-Held data is employment data that HMRC have for the user within the tax year, prior to any updates made by the user. The Income from pensions data displayed in-year is HMRC-Held.
+HMRC-Held data is employment data that HMRC has for the user within the tax year, prior to any updates made by the user. The Income from pensions data displayed in-year is HMRC-Held.
 
 Customer data is provided by the user. At the end of the tax year, users can view any existing employment data and make changes (create, update and delete).
 
