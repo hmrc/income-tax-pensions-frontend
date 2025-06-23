@@ -103,16 +103,6 @@ lazy val testSettings: Seq[Def.Setting[_]] = Seq(
   fork := false
 )
 
-lazy val itSettings = Defaults.itSettings ++ Seq(
-  unmanagedSourceDirectories := Seq(
-    baseDirectory.value / "it"
-  ),
-  unmanagedResourceDirectories := Seq(
-    baseDirectory.value / "it" / "resources"
-  ),
-  parallelExecution := false,
-  fork              := true
-)
 
 lazy val it = project.enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test") // the "test->test" allows reusing test code and test dependencies
