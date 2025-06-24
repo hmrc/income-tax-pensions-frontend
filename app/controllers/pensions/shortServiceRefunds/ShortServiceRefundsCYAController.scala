@@ -18,7 +18,6 @@ package controllers.pensions.shortServiceRefunds
 
 import common.TaxYear
 import config.{AppConfig, ErrorHandler}
-import connectors.ContentHttpReads.logger
 import controllers.handleResult
 import controllers.predicates.auditActions.AuditActionsProvider
 import models.pension.Journey
@@ -27,7 +26,7 @@ import play.api.mvc._
 import services.PensionsService
 import services.redirects.ShortServiceRefundsPages.CYAPage
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{Logging, SessionHelper}
+import utils.SessionHelper
 import validation.pensions.shortServiceRefunds.ShortServiceRefundsValidator.validateFlow
 import views.html.pensions.shortServiceRefunds.ShortServiceRefundsCYAView
 

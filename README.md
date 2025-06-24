@@ -6,22 +6,44 @@ This is where users can review and make changes to the Pensions section of their
 
 you will need to have the following:
 - Installed [MongoDB](https://docs.mongodb.com/manual/installation/)
-- Installed/configured [service-manager](https://github.com/hmrc/service-manager)
+- Installed/configured [service-manager](https://github.com/hmrc/sm2)
 
 The service manager profile for this service is:
 
-    sm2 --start INCOME_TAX_PENSIONS_FRONTEND
+### MongoDB 
+```shell
+   sudo mongod
+```
+
+### Service
+```shell
+   sm2 --start INCOME_TAX_PENSIONS_FRONTEND
+```
+   
 Run the following command to start the remaining services locally:
 
-    sudo mongod (If not already running)
+```shell
     sm2 --start INCOME_TAX_SUBMISSION_ALL
+```
 
 To run the service locally:
 
-    sudo mongod (If not already running)
+```shell
     sm2 --start INCOME_TAX_SUBMISSION_ALL
-    sm2 --stop INCOME_TAX_PENSIONS_FRONTEND
-    ./run.sh **OR** sbt -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes run
+    sm2 --stop INCOME_TAX_PENSIONS_FRONTEND     
+    sbt -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes run
+```
+
+To format and test locally
+
+```shell
+   sbt scalafmtCheckAll test:scalafmtCheckAll test it/test
+```
+To test coverage locally
+
+```shell
+   sbt clean compile coverage test it/test coverageReport
+```
 
 This service runs on port: `localhost:9321`
 
@@ -48,7 +70,7 @@ This service pulls pensions data from [income-tax-pensions](https://github.com/h
 ### Employment Sources (HMRC-Held and Customer Data) - for Income From Pensions
 Data for Income from pensions comes  from employment data through income-tax-submission. Employment data can come from different sources: HMRC-Held and Customer. 
 
-HMRC-Held data is employment data that HMRC have for the user within the tax year, prior to any updates made by the user. The Income from pensions data displayed in-year is HMRC-Held.
+HMRC-Held data is employment data that HMRC has for the user within the tax year, prior to any updates made by the user. The Income from pensions data displayed in-year is HMRC-Held.
 
 Customer data is provided by the user. At the end of the tax year, users can view any existing employment data and make changes (create, update and delete).
 
