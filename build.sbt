@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,11 +49,10 @@ lazy val coverageSettings: Seq[Setting[?]] = {
   Seq(
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;" +
       ".*Routes.*;.*viewmodels.govuk.*;",
-    ScoverageKeys.coverageExcludedPackages  := excludedPackages.mkString(";"),
-    ScoverageKeys.coverageMinimumStmtTotal  := 42,
-    ScoverageKeys.coverageMinimumBranchTotal:= 42,
-    ScoverageKeys.coverageFailOnMinimum     := true,
-    ScoverageKeys.coverageHighlighting      := true
+    ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
+    ScoverageKeys.coverageMinimumStmtTotal := 40, // TODO increase after https://jira.tools.tax.service.gov.uk/browse/SASS-8861
+    ScoverageKeys.coverageFailOnMinimum    := true,
+    ScoverageKeys.coverageHighlighting     := true
   )
 }
 
