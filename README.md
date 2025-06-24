@@ -34,6 +34,11 @@ To run the service locally:
     sbt -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes run
 ```
 
+To format and test locally
+
+```shell
+   sbt scalafmtCheckAll test:scalafmtCheckAll test it/test
+```
 To test coverage locally
 
 ```shell
