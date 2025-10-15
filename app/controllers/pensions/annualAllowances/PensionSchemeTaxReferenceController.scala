@@ -101,10 +101,10 @@ class PensionSchemeTaxReferenceController @Inject() (cc: MessagesControllerCompo
                   val newPensionSchemeTaxRef             = Seq(pensionScheme)
 
                   val updatedPstrList: Seq[String] = (viewModel.pensionSchemeTaxReferences, optIndex) match {
-                    case (Some(pstrList), Some(pstrIndex)) =>
-                      pstrList.updated(pstrIndex, newPensionSchemeTaxRef.head)
-                    case (Some(pstrList), None) =>
-                      pstrList ++ newPensionSchemeTaxRef
+                    case (Some(updPstrList), Some(pstrIndex)) =>
+                      updPstrList.updated(pstrIndex, newPensionSchemeTaxRef.head)
+                    case (Some(updPstrList), None) =>
+                      updPstrList ++ newPensionSchemeTaxRef
                     case (None, _) =>
                       newPensionSchemeTaxRef
                   }

@@ -52,7 +52,8 @@ class StatePensionLumpSumController @Inject() (actionsProvider: ActionsProvider,
     validateFlow(journey, StatePensionLumpSumPage, taxYear) {
       val form = journey.statePensionLumpSum
         .flatMap(_.amountPaidQuestion)
-        .fold(ifEmpty = formProvider)(formProvider.fill(_, journey.statePensionLumpSum.flatMap(_.amount)))
+        .fold(ifEmpty = formProvider)(amountPaidQ =>
+          formProvider.fill((amountPaidQ, journey.statePensionLumpSum.flatMap(_.amount)): (Boolean, Option[BigDecimal])))
 
       Future.successful(Ok(view(form, taxYear)))
     }

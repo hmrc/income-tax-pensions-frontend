@@ -34,7 +34,7 @@ case class UserPriorAndSessionDataRequestRefinerAction(taxYear: Int, service: Pe
 
   override protected[predicates] def refine[A](input: UserSessionDataRequest[A]): Future[Either[Result, UserPriorAndSessionDataRequest[A]]] =
     service
-      .loadPriorData(taxYear, input.user)(input.user.withDownstreamHc(hc(input.request)))
+      .loadPriorData()
       .map {
         case Left(error) =>
           errorHandler
