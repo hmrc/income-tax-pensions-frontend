@@ -20,8 +20,7 @@ import builders.PensionsUserDataBuilder.aPensionsUserData
 import builders.StateBenefitsModelBuilder.aStateBenefitsModel
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.SessionValues
-import config.{AppConfig, ErrorHandler}
-import controllers.predicates.actions.AuthorisedAction
+import config.AppConfig
 import helpers.{PlaySessionCookieBaker, WireMockHelper, WiremockStubHelpers}
 import models.IncomeTaxUserData
 import models.mongo.PensionsUserData
@@ -39,10 +38,6 @@ import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.OK
 import play.api.{Application, Environment, Mode}
-import services.AuthService
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
-import uk.gov.hmrc.auth.core.syntax.retrieved.authSyntaxForRetrieved
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, SessionKeys}
 import views.html.templates.AgentAuthErrorPageView

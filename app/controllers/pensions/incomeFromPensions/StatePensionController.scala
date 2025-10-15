@@ -48,7 +48,8 @@ class StatePensionController @Inject() (actionsProvider: ActionsProvider,
     val formProvider = formsProvider.statePensionForm(request.user)
     val form = journey.statePension
       .flatMap(_.amountPaidQuestion)
-      .fold(ifEmpty = formProvider)(formProvider.fill(_, journey.statePension.flatMap(_.amount)))
+      .fold(ifEmpty = formProvider)(amountPaidQ =>
+        formProvider.fill((amountPaidQ, journey.statePension.flatMap(_.amount)): (Boolean, Option[BigDecimal])))
 
     Ok(view(form, taxYear))
   }

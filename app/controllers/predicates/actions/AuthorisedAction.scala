@@ -144,7 +144,7 @@ class AuthorisedAction @Inject()(val appConfig: AppConfig,
                                sessionId: String,
                                enrolments: Enrolments,
                                affinityGroup: AffinityGroup,
-                               isSecondaryAgent: Boolean)(implicit request: Request[A], hc: HeaderCarrier): Future[Result] =
+                               isSecondaryAgent: Boolean)(implicit request: Request[A]): Future[Result] =
     if (isSecondaryAgent) {
       logger.warn(s"[AuthorisedAction][agentAuthentication] - Secondary agent unauthorised")
       Future.successful(Redirect(controllers.errors.routes.SupportingAgentAuthErrorController.show))

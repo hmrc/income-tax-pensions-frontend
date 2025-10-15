@@ -48,7 +48,8 @@ class TaxableRefundAmountController @Inject() (actionsProvider: ActionsProvider,
   def show(taxYear: Int): Action[AnyContent] = actionsProvider.authoriseWithSession(taxYear) { implicit request =>
     val answers      = request.sessionData.pensions.shortServiceRefunds
     val formProvider = formsProvider.shortServiceTaxableRefundForm(request.user)
-    val form         = answers.shortServiceRefund.fold(ifEmpty = formProvider)(formProvider.fill(_, answers.shortServiceRefundCharge))
+    val form         = answers.shortServiceRefund.fold(ifEmpty = formProvider)(ssr =>
+      formProvider.fill((ssr, answers.shortServiceRefundCharge): (Boolean, Option[BigDecimal])))
 
     Ok(view(form, taxYear))
   }

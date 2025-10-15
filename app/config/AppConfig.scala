@@ -22,9 +22,9 @@ import models.pension.Journey
 import play.api.Logging
 import play.api.i18n.Lang
 import play.api.mvc.{Call, RequestHeader}
-import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.net.URLEncoder
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.duration.Duration
 
@@ -81,7 +81,7 @@ trait AppConfig {
 class AppConfigImpl @Inject() (servicesConfig: ServicesConfig) extends Logging with AppConfig {
   val signInBaseUrl: String         = servicesConfig.getString(ConfigKeys.signInUrl)
   val signInContinueBaseUrl: String = servicesConfig.getString(ConfigKeys.signInContinueUrl)
-  val signInContinueUrl: String     = SafeRedirectUrl(signInContinueBaseUrl).encodedUrl // TODO add redirect to overview page
+  val signInContinueUrl: String     = URLEncoder.encode(signInContinueBaseUrl, "UTF-8") // TODO add redirect to overview page
   val signInOrigin                  = servicesConfig.getString("appName")
   val signInUrl: String             = s"$signInBaseUrl?continue=$signInContinueUrl&origin=$signInOrigin"
 
@@ -123,7 +123,7 @@ class AppConfigImpl @Inject() (servicesConfig: ServicesConfig) extends Logging w
 
   def contactFormServiceIdentifier(isAgent: Boolean): String = if (isAgent) contactFormServiceAgent else contactFormServiceIndividual
 
-  def requestUri(implicit request: RequestHeader): String = SafeRedirectUrl(appUrl + request.uri).encodedUrl
+  def requestUri(implicit request: RequestHeader): String = URLEncoder.encode(appUrl + request.uri, "UTF-8")
 
   lazy val feedbackFrontendUrl = servicesConfig.getString(ConfigKeys.feedbackFrontendUrl)
 

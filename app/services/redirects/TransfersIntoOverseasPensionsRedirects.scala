@@ -45,7 +45,7 @@ object TransfersIntoOverseasPensionsRedirects {
           Future.successful(Redirect(redirectForSchemeLoop(schemes, taxYear)))
         }
 
-      case (_, optIndex) =>
+      case _ =>
         val checkRedirect = journeyCheck(currentPage, _, taxYear, optIndex)
         redirectBasedOnCurrentAnswers(taxYear, Some(data), cyaPageCall(taxYear))(checkRedirect) { data: PensionsUserData =>
           continue(data)

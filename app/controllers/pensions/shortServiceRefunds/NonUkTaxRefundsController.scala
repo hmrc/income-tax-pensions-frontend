@@ -53,7 +53,8 @@ class NonUkTaxRefundsController @Inject() (actionsProvider: ActionsProvider,
     val formProvider = formsProvider.nonUkTaxRefundsForm(request.user)
 
     validateFlow(answers, NonUkTaxRefundsAmountPage, taxYear) {
-      val form = answers.shortServiceRefundTaxPaid.fold(formProvider)(formProvider.fill(_, answers.shortServiceRefundTaxPaidCharge))
+      val form = answers.shortServiceRefundTaxPaid.fold(formProvider)(ssrtp =>
+        formProvider.fill((ssrtp, answers.shortServiceRefundTaxPaidCharge): (Boolean, Option[BigDecimal])))
 
       Future.successful(Ok(view(form, taxYear)))
     }

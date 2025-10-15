@@ -21,7 +21,6 @@ import cats.data.EitherT
 import com.codahale.metrics.SharedMetricRegistries
 import common.{EnrolmentIdentifiers, EnrolmentKeys, SessionValues}
 import config.AppConfig
-import controllers.predicates.actions.AuthorisedAction
 import models.mongo.PensionsUserData
 import models.session.SessionData
 import models.{AuthorisationRequest, User}
@@ -36,14 +35,13 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc._
 import play.api.test.{FakeRequest, Helpers}
-import services.{AuthService, SessionDataService}
+import services.AuthService
 import support.mocks.MockErrorHandler
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.auth.core.syntax.retrieved.authSyntaxForRetrieved
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
-import uk.gov.hmrc.play.bootstrap.tools.Stubs.stubMessagesControllerComponents
 import views.html.templates.AgentAuthErrorPageView
 
 import java.time.{Clock, ZoneOffset, ZonedDateTime}

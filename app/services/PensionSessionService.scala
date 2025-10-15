@@ -112,15 +112,15 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
     result.map(_.getOrElse(PensionsCYAModel.emptyModels))
   }
 
-  def loadPriorAndSession(user: User, taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): ServiceOutcomeT[(PriorData, SessionData)] =
+  def loadPriorAndSession(user: User, taxYear: TaxYear)(implicit ec: ExecutionContext): ServiceOutcomeT[(PriorData, SessionData)] =
     for {
-      prior        <- EitherT(loadPriorData(taxYear.endYear, user)).leftAs[ServiceError]
+      prior        <- EitherT(loadPriorData()).leftAs[ServiceError]
       maybeSession <- EitherT(repository.find(taxYear.endYear, user)).leftAs[ServiceError]
       session      <- EitherT.fromOption[Future](maybeSession, SessionNotFound).leftAs[ServiceError]
     } yield (prior, session)
 
-  def loadPriorData(taxYear: Int, user: User)(implicit hc: HeaderCarrier): DownstreamOutcome[PriorData] =
-    submissionsConnector.getUserData(user.nino, taxYear)(hc.withMtditId(user.mtditid))
+  def loadPriorData(): DownstreamOutcome[PriorData] =
+    submissionsConnector.getUserData()
 
   def getPensionsSessionDataResult(taxYear: Int, user: User)(result: Option[SessionData] => Future[Result])(implicit
       request: Request[_]): Future[Result] =
@@ -155,7 +155,7 @@ class PensionSessionService @Inject() (repository: PensionsUserDataRepository,
       hc: HeaderCarrier): Future[Result] = {
     val resultT = for {
       maybeSession <- EitherT(repository.find(taxYear, user)).leftAs[ServiceError]
-      prior        <- EitherT(loadPriorData(taxYear, user)).leftAs[ServiceError]
+      prior        <- EitherT(loadPriorData()).leftAs[ServiceError]
       journeyStatuses <- EitherT(pensionsConnector.getAllJourneyStatuses(TaxYear(taxYear))(hc.withMtditId(user.mtditid), ec))
         .leftAs[ServiceError]
     } yield block(maybeSession, prior.pensions, journeyStatuses)
