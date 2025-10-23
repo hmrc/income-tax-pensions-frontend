@@ -41,7 +41,7 @@ trait MockPensionSessionService extends MockitoSugar {
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   def mockGetPriorData(taxYear: Int, user: User, result: DownstreamErrorOr[IncomeTaxUserData]): ScalaOngoingStubbing[DownstreamOutcome[PriorData]] =
-    when(mockPensionSessionService.loadPriorData(eqTo(taxYear), eqTo(user))(any))
+    when(mockPensionSessionService.loadPriorData())
       .thenReturn(Future.successful(result))
 
   def mockGetPensionsSessionDataResult(taxYear: Int, user: User, result: Result): OngoingStubbing[Future[Result]] =

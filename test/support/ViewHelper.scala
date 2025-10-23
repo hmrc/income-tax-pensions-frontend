@@ -268,7 +268,7 @@ trait ViewHelper {
 
     def linkLanguage = Map("English" -> "English", "Welsh" -> "Cymraeg")
 
-    def linkText = Map("English" -> "Change the language to English English", "Welsh" -> "Newid yr iaith ir Gymraeg Cymraeg")
+    def linkText = Map("English" -> "Change the language to English English", "Welsh" -> "Newid yr iaith i’r Gymraeg Cymraeg")
 
     s"have the language toggle already set to $activeLanguage" which {
       s"has the text '$activeLanguage" in {

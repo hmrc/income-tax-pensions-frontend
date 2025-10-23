@@ -19,7 +19,6 @@ package connectors
 import config.AppConfig
 import models.IncomeTaxUserData
 import play.api.Logging
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.Inject
@@ -27,13 +26,9 @@ import scala.concurrent.Future
 
 class IncomeTaxUserDataConnector @Inject() (val http: HttpClientV2, val config: AppConfig) extends Logging {
 
-  def getUserData(nino: String, taxYear: Int)(hc: HeaderCarrier): DownstreamOutcome[IncomeTaxUserData] =
+  def getUserData(): DownstreamOutcome[IncomeTaxUserData] =
     Future.successful(
       Right(IncomeTaxUserData(None, None))
     ) // TODO This is an old way of loading prior data (before we had the database) - it will be removed
-
-  def refreshPensionsResponse(nino: String, mtditid: String, taxYear: Int)(implicit hc: HeaderCarrier): DownstreamOutcome[Unit] =
-    // TODO This will be removed, we don't use cache anymore
-    Future.successful(Right(()))
 
 }

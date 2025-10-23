@@ -34,15 +34,15 @@ trait MockIncomeTaxUserDataConnector extends MockitoSugar {
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   def mockFind(nino: String, taxYear: Int, userData: IncomeTaxUserData): ScalaOngoingStubbing[DownstreamOutcome[IncomeTaxUserData]] =
-    when(mockUserDataConnector.getUserData(eqTo(nino), eqTo(taxYear))(any[HeaderCarrier]))
+    when(mockUserDataConnector.getUserData())
       .thenReturn(Future.successful(Right(userData)))
 
   def mockFindNoContent(nino: String, taxYear: Int): ScalaOngoingStubbing[DownstreamOutcome[IncomeTaxUserData]] =
-    when(mockUserDataConnector.getUserData(eqTo(nino), eqTo(taxYear))(any[HeaderCarrier]))
+    when(mockUserDataConnector.getUserData())
       .thenReturn(Future.successful(Right(IncomeTaxUserData())))
 
   def mockFindFail(nino: String, taxYear: Int): ScalaOngoingStubbing[DownstreamOutcome[IncomeTaxUserData]] =
-    when(mockUserDataConnector.getUserData(eqTo(nino), eqTo(taxYear))(any[HeaderCarrier]))
+    when(mockUserDataConnector.getUserData())
       .thenReturn(Future.successful(Left(apiError)))
 
 }
