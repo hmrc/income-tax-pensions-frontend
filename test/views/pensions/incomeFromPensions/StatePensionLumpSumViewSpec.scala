@@ -183,7 +183,7 @@ class StatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequestProvider 
         radioButtonCheck(yesText, 1, checked = false)
         radioButtonCheck(noText, 2, checked = false)
         buttonCheck(expectedButtonText, continueButtonSelector)
-        welshToggleCheck(userScenario.isWelsh)
+        welshToggleCheck(userScenario.isWelsh, newPageLayout = true)
       }
 
       "render page with pre-filled data" which {
@@ -212,7 +212,7 @@ class StatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequestProvider 
         radioButtonCheck(noText, 2, checked = false)
         inputFieldValueCheck(amountInputName, Selectors.amountValueSelector, "142.24")
         buttonCheck(expectedButtonText, continueButtonSelector)
-        welshToggleCheck(userScenario.isWelsh)
+        welshToggleCheck(userScenario.isWelsh, newPageLayout = true)
       }
 
       "render page with error when no data is submitted" which {

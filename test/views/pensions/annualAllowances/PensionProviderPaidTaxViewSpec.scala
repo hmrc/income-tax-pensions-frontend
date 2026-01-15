@@ -147,7 +147,7 @@ class PensionProviderPaidTaxViewSpec extends ViewUnitTest {
         radioButtonCheck(userScenario.commonExpectedResults.yesText, 1, checked = false)
         radioButtonCheck(userScenario.commonExpectedResults.noText, 2, checked = false)
         buttonCheck(continue)
-        welshToggleCheck(userScenario.isWelsh)
+        welshToggleCheck(userScenario.isWelsh, newPageLayout = true)
       }
 
       "render the page with a radio choice Yes selected and an amount is submitted" which {
@@ -168,7 +168,7 @@ class PensionProviderPaidTaxViewSpec extends ViewUnitTest {
         textOnPageCheck(userScenario.commonExpectedResults.amountHint, Selectors.amountHintSelector)
         inputFieldValueCheck(userScenario.commonExpectedResults.errorAmountIdOpt, Selectors.amountValueSelector, "20")
         buttonCheck(continue)
-        welshToggleCheck(userScenario.isWelsh)
+        welshToggleCheck(userScenario.isWelsh, newPageLayout = true)
       }
 
       "render the page with a radio choice No" which {
@@ -186,7 +186,7 @@ class PensionProviderPaidTaxViewSpec extends ViewUnitTest {
         radioButtonCheck(userScenario.commonExpectedResults.yesText, 1, checked = false)
         radioButtonCheck(userScenario.commonExpectedResults.noText, 2, checked = true)
         buttonCheck(continue)
-        welshToggleCheck(userScenario.isWelsh)
+        welshToggleCheck(userScenario.isWelsh, newPageLayout = true)
       }
 
       for (errorType <- Seq("empty", "incorrect format", "max amount", "zero amount"))
