@@ -38,14 +38,14 @@
 }
 
 @govukRadios(Radios(
-    classes = s"${if(inline){"govuk-radios--inline"}}",
+    classes = s"${if(inline){"govuk-radios--inline"}else{""}}",
     name = name,
     fieldset = Some(Fieldset(
     classes = "govuk-!-margin-top-7",
         legend = Some(Legend(
             content = HtmlContent(contentHtml),
             isPageHeading = legendAsHeading,
-            classes = if(legendAsHeading) "govuk-label--l" else if (legendAsLabel) "govuk-fieldset__legend--m" else if (legendHidden) "govuk-visually-hidden" else ""
+            classes = if(legendAsHeading) "govuk-fieldset__legend govuk-fieldset__legend--l" else if (legendAsLabel) "govuk-fieldset__legend--m" else if (legendHidden) "govuk-visually-hidden" else ""
         ))
     )),
     hint = hint.map(hintHtml => Hint(
