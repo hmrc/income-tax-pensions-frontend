@@ -77,6 +77,7 @@ class MessagesSpec extends ViewTest with GuiceOneAppPerSuite {
     "pension.pensionSchemeTaxReference.title",
     "unauthorisedPayments.removePensionSchemeTaxReference.title",
     "common.pensionSchemeTaxReference.p1",
+    "common.fullStop",
     "common.addAnotherPstrLink",
     "common.annualAllowance.caption",
     "common.pensionAnnualAllowance.caption",
