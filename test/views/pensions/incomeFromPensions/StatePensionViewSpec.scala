@@ -142,7 +142,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
         inputFieldValueCheck("amount-2", Selectors.amountValueSelector, "")
         radioButtonCheck(userScenario.commonExpectedResults.noText, radioNumber = 2, checked = false)
         buttonCheck(userScenario.commonExpectedResults.buttonText, Selectors.continueButtonSelector)
-        welshToggleCheck(userScenario.isWelsh)
+        welshToggleCheck(userScenario.isWelsh, newPageLayout = true)
       }
 
       "render page with pre-filled data" which {
@@ -169,7 +169,7 @@ class StatePensionViewSpec extends ViewUnitTest with FakeRequestProvider {
         inputFieldValueCheck("amount-2", Selectors.amountValueSelector, "42.24")
         radioButtonCheck(userScenario.commonExpectedResults.noText, radioNumber = 2, checked = false)
         buttonCheck(userScenario.commonExpectedResults.buttonText, Selectors.continueButtonSelector)
-        welshToggleCheck(userScenario.isWelsh)
+        welshToggleCheck(userScenario.isWelsh, newPageLayout = true)
       }
 
       "render page with no-entry error when no data is submitted" which {

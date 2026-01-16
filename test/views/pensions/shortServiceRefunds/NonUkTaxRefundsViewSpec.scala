@@ -166,7 +166,7 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
         radioButtonCheck(userScenario.commonExpectedResults.no, 2, checked = false)
         textOnPageCheck(userScenario.commonExpectedResults.expectedAmountText, Selectors.amountLabelSelector)
         buttonCheck(userScenario.commonExpectedResults.continue)
-        welshToggleCheck(userScenario.isWelsh)
+        welshToggleCheck(userScenario.isWelsh, newPageLayout = true)
       }
       "show the Non UK tax on short service refund page when yes is selected" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
@@ -188,7 +188,7 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
         textOnPageCheck(userScenario.commonExpectedResults.expectedAmountText, Selectors.amountLabelSelector)
         inputFieldValueCheck("amount-2", Selectors.amountTextSelector, "200")
         buttonCheck(userScenario.commonExpectedResults.continue)
-        welshToggleCheck(userScenario.isWelsh)
+        welshToggleCheck(userScenario.isWelsh, newPageLayout = true)
       }
       "show the Non UK tax on short service refund page when no is selected" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)
@@ -210,7 +210,7 @@ class NonUkTaxRefundsViewSpec extends ViewUnitTest {
         textOnPageCheck(userScenario.commonExpectedResults.expectedAmountText, Selectors.amountLabelSelector)
         inputFieldValueCheck("amount-2", Selectors.amountTextSelector, "")
         buttonCheck(userScenario.commonExpectedResults.continue)
-        welshToggleCheck(userScenario.isWelsh)
+        welshToggleCheck(userScenario.isWelsh, newPageLayout = true)
       }
       "show an error message when page is submitted without any input" which {
         implicit val userSessionDataRequest: UserSessionDataRequest[AnyContent] = getUserSession(userScenario.isAgent)

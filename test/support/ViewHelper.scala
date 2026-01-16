@@ -258,21 +258,24 @@ trait ViewHelper {
       }
     }
 
-  def welshToggleCheck(isWelsh: Boolean)(implicit document: Document): Unit =
-    welshToggleCheck(if (isWelsh) WELSH else ENGLISH)
+  def welshToggleCheck(isWelsh: Boolean, newPageLayout: Boolean = false)(implicit document: Document): Unit =
+    welshToggleCheck(if (isWelsh) WELSH else ENGLISH, newPageLayout)
 
-  def welshToggleCheck(activeLanguage: String)(implicit document: Document): Unit = {
+  def welshToggleCheck(activeLanguage: String, newPageLayout: Boolean)(implicit document: Document): Unit = {
     val otherLanguage = if (activeLanguage == "English") "Welsh" else "English"
 
     def selector = Map("English" -> 0, "Welsh" -> 1)
 
-    def linkLanguage = Map("English" -> "English", "Welsh" -> "Cymraeg")
+    def linkLanguageText = Map("English" -> "English", "Welsh" -> "Cymraeg")
+    def linkLanguageCode = if(newPageLayout){Map("English" -> "En", "Welsh" -> "Cy")} else {Map("English" -> "English", "Welsh" -> "Cymraeg")}
 
     def linkText = Map("English" -> "Change the language to English English", "Welsh" -> "Newid yr iaith i’r Gymraeg Cymraeg")
 
+    val hmrcfrontend: String = if (newPageLayout) "/hmrc-frontend" else ""
+
     s"have the language toggle already set to $activeLanguage" which {
       s"has the text '$activeLanguage" in {
-        document.select(".hmrc-language-select__list-item").get(selector(activeLanguage)).text() shouldBe linkLanguage(activeLanguage)
+        document.select(".hmrc-language-select__list-item").get(selector(activeLanguage)).text() shouldBe linkLanguageText(activeLanguage)
       }
     }
     s"has a link to change the language to $otherLanguage" which {
@@ -281,7 +284,7 @@ trait ViewHelper {
       }
       s"has a link to change the language" in {
         document.select(".hmrc-language-select__list-item > a").attr("href") shouldBe
-          s"/update-and-submit-income-tax-return/pensions/language/${linkLanguage(otherLanguage).toLowerCase}"
+          s"/update-and-submit-income-tax-return/pensions$hmrcfrontend/language/${linkLanguageCode(otherLanguage).toLowerCase}"
       }
     }
   }

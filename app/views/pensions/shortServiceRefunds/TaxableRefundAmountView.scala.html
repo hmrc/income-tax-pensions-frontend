@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.Layout
+@import views.html.templates.HmrcStandardPageLayout
 @import views.html.templates.helpers.InputTextAlt
 @import views.html.templates.helpers.Heading
 @import views.html.templates.helpers.InputRadioAlt
@@ -23,10 +23,11 @@
 @import models.requests.UserSessionDataRequest
 @import utils.ViewUtils._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
 @import views.html.templates.helpers.Details
 
 @this(
-    layout: Layout,
+    layout: HmrcStandardPageLayout,
     heading: Heading,
     button: Button,
     inputText: InputTextAlt,
@@ -74,14 +75,15 @@
 
         @details("shortServiceRefunds.taxableRefundAmount.details.title", detailsHtml)
 
-        <h2 class="govuk-heading-m">@messages(s"shortServiceRefunds.taxableRefundAmount.h2.${if(request.user.isAgent) "agent" else "individual"}")</h2>
+
+
 
         @formWithCsrf(action = controllers.pensions.shortServiceRefunds.routes.TaxableRefundAmountController.submit(taxYear)) {
             @inputRadio(
                 form = form,
-                legendHeading = Some(Html(titleForUse)),
-                legendHidden = true,
-                inline = false,
+                legendHeading = Some(Html(messages(s"shortServiceRefunds.taxableRefundAmount.h2.${if(request.user.isAgent) "agent" else "individual"}"))),
+                legendHidden = false,
+                legendAsLabel = true,
                 items = Seq(
                     RadioItem(
                         id = Some("value"),

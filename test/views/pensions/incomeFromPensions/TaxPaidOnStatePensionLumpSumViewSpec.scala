@@ -179,7 +179,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
         textOnPageCheck(userScenario.specificExpectedResults.get.expectedDetailsBullet1, detailsBulletSelector(1))
         textOnPageCheck(userScenario.specificExpectedResults.get.expectedDetailsBullet2, detailsBulletSelector(2))
         buttonCheck(userScenario.commonExpectedResults.expectedButtonText, continueButtonSelector)
-        welshToggleCheck(userScenario.isWelsh)
+        welshToggleCheck(userScenario.isWelsh, newPageLayout = true)
       }
 
       "render page with pre-filled data" which {
@@ -211,7 +211,7 @@ class TaxPaidOnStatePensionLumpSumViewSpec extends ViewUnitTest with FakeRequest
         textOnPageCheck(userScenario.specificExpectedResults.get.expectedDetailsBullet1, detailsBulletSelector(1))
         textOnPageCheck(userScenario.specificExpectedResults.get.expectedDetailsBullet2, detailsBulletSelector(2))
         buttonCheck(userScenario.commonExpectedResults.expectedButtonText, continueButtonSelector)
-        welshToggleCheck(userScenario.isWelsh)
+        welshToggleCheck(userScenario.isWelsh, newPageLayout = true)
       }
 
       "render page with error when no data is submitted" which {

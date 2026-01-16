@@ -116,7 +116,7 @@ object JourneyStatusSummaryViewModel {
        |  <div class="app-task-list">
        |    <ul class="app-task-list__items govuk-!-padding-left-0">
        |      ${rows.map(row => s"<li class='app-task-list__item'>$row</li>").mkString("\n")}
-       |    </ul
+       |    </ul>
        |  </div>
        |""".stripMargin
 
@@ -135,10 +135,10 @@ object JourneyStatusSummaryViewModel {
     val journeyId = s"${journey.toString}-link"
     s"""
        |  <span class="app-task-list__task-name">
-       |    <a id="$journeyId" class="govuk-link govuk-task-list__link"
-       |       href=$href aria-describedby=$statusId> ${messages(s"journey.${journey.toString}")}</a>
+       |    <a id="$journeyId" class="govuk-link"
+       |       href="$href" aria-describedby="$statusId"> ${messages(s"journey.${journey.toString}")}</a>
        |  </span>
-       |  <div class="right-float" id=$statusId> $statusTag </div>
+       |  <div class="right-float" id="$statusId"> $statusTag </div>
        |""".stripMargin
   }
 

@@ -41,7 +41,7 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     val detailsTitle        = "#main-content > div > div > details > summary"
     val detailsP1Selector   = "#main-content > div > div > details > div > p:nth-child(1)"
     val detailsP2Selector   = "#main-content > div > div > details > div > p:nth-child(2)"
-    val h2Selector          = "#main-content > div > div > h2"
+    val legendSelector          = "#main-content > div > div > form > div > fieldset > legend"
   }
 
   trait CommonExpectedResults {
@@ -58,7 +58,7 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
   trait SpecificExpectedResults {
     val expectedP1: String
     val expectedP2: String
-    val h2: String
+    val legend: String
     val expectedDetailsP1: String
     val expectedDetailsP2: String
     val expectedNoEntryErrorText: String
@@ -73,7 +73,7 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     override val expectedDetailsP1: String = "A short service refund is a refund of money you paid into a workplace pension."
     override val expectedDetailsP2: String =
       "You might have got a short service refund if you paid into a scheme for less than 2 years. This depends on the type of pension scheme you have."
-    override val h2: String                               = "Did you get a short service refund?"
+    override val legend: String                               = "Did you get a short service refund?"
     override val expectedNoEntryErrorText: String         = "Select yes if you got a taxable short service refund from an overseas pension scheme"
     override val expectedNoAmountEntryErrorText: String   = "Enter your taxable short service refund amount"
     override val expectedIncorrectFormatErrorText: String = "Enter the taxable short service refund amount in pounds"
@@ -87,7 +87,7 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     override val expectedDetailsP1: String = "Ad-daliad o arian a dalwyd gennych i mewn i bensiwn gweithle yw ad-daliad am wasanaeth byr."
     override val expectedDetailsP2: String =
       "Mae’n bosibl eich bod wedi cael ad-daliad am wasanaeth byr os gwnaethoch dalu i mewn i gynllun am lai na 2 flynedd. Mae hyn yn ddibynnol ar y math o bensiwn sydd gennych."
-    override val h2: String                               = "A gawsoch ad-daliad am wasanaeth byr?"
+    override val legend: String                               = "A gawsoch ad-daliad am wasanaeth byr?"
     override val expectedNoEntryErrorText: String         = "Dewiswch ‘Iawn’ os cawsoch ad-daliad trethadwy am wasanaeth byr o gynllun pensiwn tramor"
     override val expectedNoAmountEntryErrorText: String   = "Nodwch swm yr ad-daliad trethadwy am wasanaeth byr"
     override val expectedIncorrectFormatErrorText: String = "Nodwch swm yr ad-daliad trethadwy am wasanaeth byr yn y fformat cywir"
@@ -100,7 +100,7 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     override val expectedDetailsP1: String = "A short service refund is a refund of money your client paid into a workplace pension."
     override val expectedDetailsP2: String =
       "Your client might have got a short service refund if they paid into a scheme for less than 2 years. This depends on the type of pension scheme they have."
-    override val h2: String                       = "Did your client get a short service refund?"
+    override val legend: String                       = "Did your client get a short service refund?"
     override val expectedNoEntryErrorText: String = "Select yes if your client got a taxable short service refund from an overseas pension scheme"
     override val expectedNoAmountEntryErrorText: String   = "Enter your client’s taxable short service refund amount"
     override val expectedIncorrectFormatErrorText: String = "Enter your client’s taxable short service refund amount in pounds"
@@ -114,7 +114,7 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
     override val expectedDetailsP1: String = "Ad-daliad o arian a dalwyd gan eich cleient i mewn i bensiwn gweithle yw ad-daliad am wasanaeth byr."
     override val expectedDetailsP2: String =
       "Mae’n bosibl i’ch cleient fod wedi cael ad-daliad am wasanaeth byr os dalodd i mewn i gynllun am lai na 2 flynedd. Mae hyn yn ddibynnol ar y math o bensiwn sydd gan eich cleient."
-    override val h2: String = "A gafodd eich cleient ad-daliad am wasanaeth byr?"
+    override val legend: String = "A gafodd eich cleient ad-daliad am wasanaeth byr?"
     override val expectedNoEntryErrorText: String =
       "Dewiswch ‘Iawn’ os cafodd eich cleient ad-daliad trethadwy am wasanaeth byr o gynllun pensiwn tramor"
     override val expectedNoAmountEntryErrorText: String   = "Nodwch swm ad-daliad trethadwy eich cleient am wasanaeth byr"
@@ -175,7 +175,7 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
         textOnPageCheck(userScenario.specificExpectedResults.get.expectedDetailsP1, Selectors.detailsP1Selector)
         textOnPageCheck(userScenario.specificExpectedResults.get.expectedDetailsP2, Selectors.detailsP2Selector)
         textOnPageCheck(userScenario.commonExpectedResults.expectedAmountText, Selectors.amountLabelSelector)
-        textOnPageCheck(userScenario.specificExpectedResults.get.h2, Selectors.h2Selector)
+        textOnPageCheck(userScenario.specificExpectedResults.get.legend, Selectors.legendSelector)
         radioButtonCheck(userScenario.commonExpectedResults.yes, 1, checked = false)
         radioButtonCheck(userScenario.commonExpectedResults.no, 2, checked = false)
         buttonCheck(userScenario.commonExpectedResults.continue)
@@ -202,7 +202,7 @@ class ShortServiceTaxableRefundAmountSpec extends ViewUnitTest with FakeRequestP
         textOnPageCheck(userScenario.specificExpectedResults.get.expectedDetailsP1, Selectors.detailsP1Selector)
         textOnPageCheck(userScenario.specificExpectedResults.get.expectedDetailsP2, Selectors.detailsP2Selector)
         textOnPageCheck(userScenario.commonExpectedResults.expectedAmountText, Selectors.amountLabelSelector)
-        textOnPageCheck(userScenario.specificExpectedResults.get.h2, Selectors.h2Selector)
+        textOnPageCheck(userScenario.specificExpectedResults.get.legend, Selectors.legendSelector)
         inputFieldValueCheck("amount-2", Selectors.amountTextSelector, "100")
         radioButtonCheck(userScenario.commonExpectedResults.yes, 1, checked = true)
         radioButtonCheck(userScenario.commonExpectedResults.no, 2, checked = false)
